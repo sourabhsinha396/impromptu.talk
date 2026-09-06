@@ -19,11 +19,11 @@ impromptu.talk: a random topic, a minute to think, a minute to talk. This repo i
 
 Frontend, from `frontend/`:
 
-- `pnpm dev` serves on 3008. `pnpm build` for production. `pnpm test` runs vitest once, `pnpm test:watch` keeps it running. `pnpm lint` typechecks.
+- `pnpm dev` serves on 3009. `pnpm build` for production. `pnpm test` runs vitest once, `pnpm test:watch` keeps it running. `pnpm lint` typechecks.
 
 Backend, from `backend/`:
 
-- `docker compose up --build` is how the backend runs: Postgres 17, Redis 8 and the API on 8008, migrated on boot. `apps/` and `impromptu/` are bind-mounted and reload on edit; a dependency change needs `--build` again. Copy `.env.example` to `.env` first.
+- `docker compose up --build` is how the backend runs: Postgres 17, Redis 8 and the API on 8009, migrated on boot. `apps/` and `impromptu/` are bind-mounted and reload on edit; a dependency change needs `--build` again. Copy `.env.example` to `.env` first.
 - Management commands run in the container: `docker compose exec api python manage.py <cmd>`.
 - The database and Redis are not published on the host, so their ports never collide with the neighbouring stacks. Reach them through the container: `docker compose exec db psql -U impromptu impromptu`.
 - The app is on Postgres everywhere it runs. The only SQLite in the project is the in-memory one tests use, pinned by test.
@@ -35,7 +35,7 @@ Tests and lint, from `backend/` on the host:
 - `manage.py` defaults to production settings on purpose: a host that forgot its `.env` gets the settings that refuse to boot, not DEBUG.
 - `.env` is add-only: a session may add a key (mirrored in `.env.example`), never change or remove an existing value.
 
-Ports are 3008 and 8008. algoholic keeps 3007/8007 and v0 keeps 8078, so all three run at once during the port.
+Ports are 3009 and 8009. algoholic keeps 3007/8007 and v0 keeps 8078, so all three run at once during the port.
 
 ## Invariants
 

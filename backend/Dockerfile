@@ -12,4 +12,4 @@ RUN uv sync --frozen --no-dev
 COPY . .
 ENV PATH="/app/.venv/bin:$PATH"
 
-EXPOSE 8008
+EXPOSE 8009

@@ -1,4 +1,4 @@
-const BACKEND_ORIGIN = process.env.BACKEND_ORIGIN ?? "http://127.0.0.1:8008";
+const BACKEND_ORIGIN = process.env.BACKEND_ORIGIN ?? "http://127.0.0.1:8009";
 
 /* The browser only knows the frontend origin. Keeping this hop explicit
    preserves both the session it sends and the session the backend opens. */

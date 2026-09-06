@@ -6,7 +6,7 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["dev"],
       "cwd": "frontend",
-      "port": 3008,
+      "port": 3009,
       "autoPort": false
     },
     {
@@ -14,7 +14,7 @@
       "runtimeExecutable": "docker",
       "runtimeArgs": ["compose", "up", "--build", "api"],
       "cwd": "backend",
-      "port": 8008,
+      "port": 8009,
       "autoPort": false
     }
   ]

@@ -21,7 +21,7 @@ export const SITE_DESCRIPTION =
 /* No trailing slash, because everything here appends one. The default is
    the dev port rather than a domain: a wrong domain baked in as a fallback
    would be published by a host that simply forgot to set the variable. */
-export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3008").replace(/\/$/, "");
+export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3009").replace(/\/$/, "");
 
 /** A site path or an absolute URL, as an address a crawler can follow. */
 export function absolute(path: string): string {

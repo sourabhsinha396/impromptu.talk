@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import proxy, { config } from "@/proxy";
 
 function requestFor(path: string, { cookie, method = "GET" }: { cookie?: string; method?: string } = {}) {
-  return new NextRequest(`http://localhost:3008${path}`, { method, headers: cookie ? { cookie } : {} });
+  return new NextRequest(`http://localhost:3009${path}`, { method, headers: cookie ? { cookie } : {} });
 }
 
 describe("proxy", () => {

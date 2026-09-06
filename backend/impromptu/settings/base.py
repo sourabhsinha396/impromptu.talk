@@ -109,7 +109,7 @@ RATELIMIT_TRUSTED_PROXY_HOPS = 1
 
 # Where the frontend answers: mail links and checkout returns are built
 # from it. An address, so env; the default is the dev server.
-FRONTEND_ORIGIN = os.environ.get("FRONTEND_ORIGIN") or "http://localhost:3008"
+FRONTEND_ORIGIN = os.environ.get("FRONTEND_ORIGIN") or "http://localhost:3009"
 
 # Console here keeps every non-production environment safe by default.
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

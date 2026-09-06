@@ -38,9 +38,9 @@ services:
     env_file: .env
     environment:
       PYTHONUNBUFFERED: "1"
-    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8008"
+    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8009"
     ports:
-      - "${WEB_PORT:-8008}:8008"
+      - "${WEB_PORT:-8009}:8009"
     volumes:
       - ./apps:/app/apps
       - ./impromptu:/app/impromptu
@@ -50,7 +50,7 @@ services:
       redis:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "python -c \"import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8008/api/v1/common/health').status==200 else 1)\""]
+      test: ["CMD-SHELL", "python -c \"import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8009/api/v1/common/health').status==200 else 1)\""]
       interval: 10s
       timeout: 3s
       retries: 10
