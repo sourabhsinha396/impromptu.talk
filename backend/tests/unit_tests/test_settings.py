@@ -55,15 +55,16 @@ def test_tests_run_on_in_memory_sqlite():
 
 def test_the_app_itself_runs_on_postgres(monkeypatch):
     """The in-memory database above is the tests' and nobody else's: local
-    and production both talk to the compose Postgres, and this is the pin
-    that keeps a SQLite fallback from creeping back into base.py."""
+    and production both talk to the compose Postgres by its service name,
+    and this is the pin that keeps a SQLite fallback from creeping back
+    into base.py."""
     monkeypatch.delenv("POSTGRES_HOST", raising=False)
     spec = importlib.util.find_spec("impromptu.settings.local")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     database = module.DATABASES["default"]
     assert database["ENGINE"] == "django.db.backends.postgresql"
-    assert database["HOST"] == "127.0.0.1"
+    assert database["HOST"] == "db"
 
 
 def test_session_cookie_is_prefixed_and_lax():

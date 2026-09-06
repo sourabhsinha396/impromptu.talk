@@ -24,8 +24,8 @@ def _required(name: str) -> str:
 
 SECRET_KEY = _required("SECRET_KEY")
 ALLOWED_HOSTS = [host.strip() for host in _required("ALLOWED_HOSTS").split(",") if host.strip()]
-# base.py defaults the database host to loopback for a laptop. A production
-# host without one named has forgotten its .env, and must say so.
+# base.py defaults the database host to the compose service name. A
+# production host without one named has forgotten its .env, and must say so.
 _required("POSTGRES_HOST")
 
 SESSION_COOKIE_SECURE = True

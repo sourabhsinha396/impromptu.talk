@@ -7,14 +7,11 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-impromptu}
       POSTGRES_USER: ${POSTGRES_USER:-impromptu}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-impromptu}
+    # No host port on purpose: 5432 on the host collided with the other
+    # projects' stacks running side by side. Reach it through the container
+    # (`docker compose exec db psql -U impromptu impromptu`).
     volumes:
       - db-data:/var/lib/postgresql/data
-    # Published so a host process (psql, a GUI, manage.py in a pinch) reaches
-    # the same database the container uses. Bound to loopback on purpose: a
-    # development database with a development password has no business
-    # being reachable from the network.
-    ports:
-      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
     healthcheck:
       # Named database on purpose: with nothing named, pg_isready knocks on a
       # database called $POSTGRES_USER, which exists only while the two words
@@ -24,14 +21,12 @@ services:
       timeout: 3s
       retries: 10
 
-  # Rate-limit counters, shared across API workers. Published on loopback
-  # for the same host-process reason as the database.
+  # Rate-limit counters, shared across API workers. No host port, for the
+  # same reason as the database.
   redis:
     image: redis:8-alpine
     volumes:
       - redis-data:/data
-    ports:
-      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -42,10 +37,6 @@ services:
     build: .
     env_file: .env
     environment:
-      # Compose network names, not the host loopback ones .env holds.
-      POSTGRES_HOST: db
-      POSTGRES_PORT: 5432
-      RATELIMIT_STORAGE_URI: redis://redis:6379/0
       PYTHONUNBUFFERED: "1"
     command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8008"
     ports:

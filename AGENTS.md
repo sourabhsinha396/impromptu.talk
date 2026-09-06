@@ -25,7 +25,7 @@ Backend, from `backend/`:
 
 - `docker compose up --build` is how the backend runs: Postgres 17, Redis 8 and the API on 8008, migrated on boot. `apps/` and `impromptu/` are bind-mounted and reload on edit; a dependency change needs `--build` again. Copy `.env.example` to `.env` first.
 - Management commands run in the container: `docker compose exec api python manage.py <cmd>`.
-- The database and Redis are published on loopback only, so a host process (psql, a GUI, `uv run manage.py` in a pinch) reaches the same database the container uses.
+- The database and Redis are not published on the host, so their ports never collide with the neighbouring stacks. Reach them through the container: `docker compose exec db psql -U impromptu impromptu`.
 - The app is on Postgres everywhere it runs. The only SQLite in the project is the in-memory one tests use, pinned by test.
 
 Tests and lint, from `backend/` on the host:

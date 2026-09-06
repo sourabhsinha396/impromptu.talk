@@ -58,18 +58,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "impromptu.wsgi.application"
 
-# Postgres everywhere the app runs, from `docker compose up db` at the repo
-# root; the only SQLite in the project is the in-memory one tests run on.
-# The host defaults to the loopback address compose publishes, so a host
-# run and the `api` container reach the same database; production still
-# requires the host to be named (see production.py).
+# Postgres everywhere the app runs, from `docker compose up` in backend/;
+# the only SQLite in the project is the in-memory one tests run on. The
+# host defaults to the compose network name, and nothing is published on
+# the host, so this stack never collides with a neighbouring project's
+# Postgres on 5432; production still requires the host to be named (see
+# production.py).
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": os.environ.get("POSTGRES_DB", "impromptu"),
         "USER": os.environ.get("POSTGRES_USER", "impromptu"),
         "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "impromptu"),
-        "HOST": os.environ.get("POSTGRES_HOST") or "127.0.0.1",
+        "HOST": os.environ.get("POSTGRES_HOST") or "db",
         "PORT": os.environ.get("POSTGRES_PORT") or "5432",
     }
 }
