@@ -9,6 +9,7 @@ from django.core.cache import cache
 from django.test import Client
 
 from apps.common import ratelimit
+from tests.unit_tests import factories
 
 
 @pytest.fixture(autouse=True)
@@ -17,14 +18,14 @@ def _isolate_state():
     # Counters persist in process memory, so without this a suite that
     # signs in ten times would trip the limit for the eleventh test.
     ratelimit.reset()
+    for factory_class in factories.all_factories():
+        factory_class.reset_sequence()
     yield
 
 
 @pytest.fixture
 def user(db):
-    from apps.authentication.models import User
-
-    return User.objects.create_user("speaker@example.com", "correct horse battery")
+    return factories.UserFactory(email="speaker@example.com")
 
 
 # Own Client instances on purpose: reusing pytest-django's `client` here

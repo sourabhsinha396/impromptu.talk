@@ -44,3 +44,7 @@ cd frontend && pnpm test && pnpm lint
 ## Admin
 
 http://localhost:8009/re-admin/ with the superuser made above. Every table, editable.
+
+## Docs
+
+`docs/SPEC.md` is every settled product decision, `docs/PRICING.md` everything with money in it, `docs/DECISIONS.md` the dated log of what v1 decided on its own, and `docs/tech/v0-parity.md` the checklist of what has landed.

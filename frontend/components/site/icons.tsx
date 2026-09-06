@@ -111,9 +111,10 @@ export function GenreIcon({ slug, ...rest }: IconProps & { slug: string }) {
   return <Glyph {...rest} />;
 }
 
-/* One glyph per format. Hot take is a bolt rather than a flame, because the
-   flame is the streak's mark and a header with two flames says nothing. */
-export const FORMAT_ICONS: Record<string, Glyph> = {
+/* One glyph per category, the kind of talk a prompt asks for (v0 called it
+   the format). Hot take is a bolt rather than a flame, because the flame is
+   the streak's mark and a header with two flames says nothing. */
+export const CATEGORY_ICONS: Record<string, Glyph> = {
   surprise: Shuffle,
   "just-talk": MessageCircle,
   "hot-take": Zap,
@@ -121,8 +122,8 @@ export const FORMAT_ICONS: Record<string, Glyph> = {
   story: BookOpen,
 };
 
-export function FormatIcon({ format, ...rest }: IconProps & { format: string }) {
-  const Glyph = icon(FORMAT_ICONS[format] ?? Shuffle);
+export function CategoryIcon({ category, ...rest }: IconProps & { category: string }) {
+  const Glyph = icon(CATEGORY_ICONS[category] ?? Shuffle);
   return <Glyph {...rest} />;
 }
 

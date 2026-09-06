@@ -23,7 +23,7 @@ dev = [
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "impromptu.settings.testing"
 testpaths = ["tests/unit_tests"]
-addopts = "--strict-markers --tb=short --no-migrations"
+addopts = "--strict-markers --tb=short --no-migrations --durations=10 --durations-min=0.2"
 
 [tool.ruff]
 line-length = 120

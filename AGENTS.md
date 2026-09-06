@@ -1,6 +1,6 @@
 # impromptu conventions
 
-impromptu.talk: a random topic, a minute to think, a minute to talk. This repo is v1, the rebuild of v0 (FastAPI + Jinja, at `../zpersonal/0-lessworked/impromptuv0`) on Next.js + Django Ninja, in the shape of `../algoholic`. Read `docs/SPEC.md` and `docs/PRICING.md` once they land (board card 06) for every settled product decision; until then v0's `CLAUDE.md`, `docs/SPEC.md` and `docs/PRICING.md` are the record. This file is the rulebook: what is true everywhere, all the time. Where another doc disagrees with this one, this one wins.
+impromptu.talk: a random topic, a minute to think, a minute to talk. This repo is v1, the rebuild of v0 (FastAPI + Jinja, at `../zpersonal/0-lessworked/impromptuv0`) on Next.js + Django Ninja, in the shape of `../algoholic`. Read `docs/SPEC.md` and `docs/PRICING.md` for every settled product decision, `docs/DECISIONS.md` for the dated log of the calls v1 makes on its own, and `docs/tech/v0-parity.md` for what has landed and what has not. This file is the rulebook: what is true everywhere, all the time. Where another doc disagrees with this one, this one wins.
 
 ## The three rules
 
@@ -50,7 +50,7 @@ Ports are 3009 and 8009. algoholic keeps 3007/8007 and v0 keeps 8078, so all thr
 - **Design tokens live in `globals.css` only, and little else does.** It holds the tokens, the four `@font-face` rules and a short base layer; everything else is Tailwind utilities, shadcn copied in, and Magic UI on marketing surfaces. Components use token utilities, never raw hex. The accent colours what you read; the primary button is ink and its colour never moves.
 - **Icons are lucide, mapped by meaning in `components/site/icons.tsx`.** Nothing on the site is an emoji.
 - **shadcn is copied in, not depended on.** Never run `shadcn init`; on Tailwind v4 it rewrites `globals.css`. `components.json` is hand-written. The button is ours (`components/site/button.tsx`), not the registry's.
-- **Tests are centralized on both sides and few.** `backend/tests/unit_tests/<app>/` mirrors the apps; `frontend/tests/` mirrors `app/`, `lib/` and `components/`. A test pins a decision or a behaviour that would break silently (a contrast floor, a cookie flag, a fallback); it does not check that markup renders. Test names read as sentences.
+- **Tests are centralized on both sides, few and fast.** `backend/tests/unit_tests/<app>/` mirrors the apps, with rows from `tests/unit_tests/factories.py`; `frontend/tests/` mirrors `app/`, `lib/` and `components/`. A test pins a decision or a behaviour that would break silently (a contrast floor, a cookie flag, a fallback); it does not check that markup renders. Test names read as sentences. Each side's whole suite runs in under a minute, two at the very most; a test that needs seconds is testing the wrong layer, and both runners print their slow ones. No network, no real timers.
 - **Comments carry only the non-obvious why**, ideally with the named failure that motivated them.
 - **One branch, one feature at a time.** Everything lands directly on `main`; no feature branches, no worktrees. One board card is in doing at any moment, and it is committed and moved to done before the next one starts.
 
