@@ -32,7 +32,7 @@ Everything else hangs off that loop and must never get in front of it.
 
 v1 is v0 rebuilt on Next.js and Django Ninja, in the shape of `../algoholic`, so that voice analysis and model-based feedback have somewhere to live later. Three rules govern every card, stated in full in `AGENTS.md`:
 
-1. **Parity first.** Every v0 feature ships in v1 before any new one is discussed. v0 is the spec and the baseline and is read-only: port behaviour, copy, algorithms and tests; never copy files.
+1. **Parity first, and the look is not the parity.** Every v0 feature ships in v1 before any new one is discussed. v0 is the spec and the baseline and is read-only: port behaviour, rules, copy, algorithms and tests; never copy files, and never copy the UI. Every surface is redesigned from a mock the owner approves ([`UI.md`](UI.md)).
 2. **Simple product.** An improvement earns its place by removing something. Django's own auth, sessions, hashers, migrations, mail and admin replace hand-rolled ones; shadcn replaces hand-rolled sheets and menus; a pure TypeScript run engine replaces DOM script. No caching layers, no queues, no webhooks.
 3. **The ten-second rule** above.
 
@@ -64,7 +64,7 @@ General, Everyday life, Relationships, Career and work, Money and business, Tech
 
 Shipped as twenty in v0 and cut to ten on 5 September 2026. A flat scroll list stops working somewhere around fifteen, which is exactly why ten needs no shelves: there are no category headers in the picker, no search box and no blurbs (ten names fit on one screen and name themselves). The blurb earns its place on the genre page, where somebody arriving from a search engine has to be told what they landed on.
 
-**Merged, never deleted.** The ten that went took their topics into the ten that stayed: food and travel into Everyday life; productivity into Career; personal finance and startups into Money and business; climate into Science; fitness, mental health and psychology into Health and mind; ethics into Philosophy; history, film and TV, anime and manga into Culture. The bank is still 800; genres hold between 40 and 120 each, and 40 is the floor. Anime and manga was the one contested call and is the first to split out again if genre pages earn their traffic.
+**Merged, never deleted.** The ten that went took their topics into the ten that stayed: food and travel into Everyday life; productivity into Career; personal finance and startups into Money and business; climate into Science; fitness, mental health and psychology into Health and mind; ethics into Philosophy; history, film and TV, anime and manga into Culture. The bank was 800 in v0 and is 1000 in v1 (owner's call, 6 September 2026: 200 written for the rebuild, the thin genres first); genres hold between 80 and 120 each, and 40 stays the floor. Anime and manga was the one contested call and is the first to split out again if genre pages earn their traffic.
 
 Removing a built-in genre from the seeder's list deletes its row once its topics have moved off it; one that still owns topics is deactivated, never deleted with them. `Session.genre_slug` on finished runs is a plain string with no foreign key, so history stays readable through a merge.
 
@@ -78,7 +78,7 @@ A coined style exists only under an owned genre (§8).
 
 ### The bank
 
-800 topics across the ten genres, one JSON file per genre in the backend, loaded by an idempotent seeder that owns every column it touches on built-in rows, upserts by text, never deletes a topic (`is_active` off instead) and never reads past `owner IS NULL`. It is a management command run once by hand, never a boot step: nothing seeds itself, and compose only migrates. Text and slug are unique per genre, not globally, because two owners may both write the same sentence.
+1000 topics across the ten genres, one JSON file per genre in the backend, loaded by an idempotent seeder that owns every column it touches on built-in rows, upserts by text, never deletes a topic (`is_active` off instead) and never reads past `owner IS NULL`. It is a management command run once by hand, never a boot step: nothing seeds itself, and compose only migrates. Text and slug are unique per genre, not globally, because two owners may both write the same sentence.
 
 Written global-first. Every "new topic" click is instant because the whole bank ships with the page and is shuffled in the browser; the no-repeat pool hands nothing back until it is exhausted, and a thin filter still gets a full spin by borrowing decoys from the genre and then the bank.
 

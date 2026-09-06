@@ -3,163 +3,323 @@
   "topics": [
     {
       "text": "Low tide",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "The word “later”",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Queues",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "The smell of rain",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Loose change",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Wednesday",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "A pen that stops working",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "The middle seat",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Handwriting still matters",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "The weekend should be three days",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Small talk is underrated",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Everyone should learn a second language",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "The last time you were genuinely surprised",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "A stranger who helped you",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "The worst advice you ever followed",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Something you lost",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Explain the internet to someone from 1900",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Explain why we dream",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Explain what you do all day",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Explain how a fridge works",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Sell me this pen",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Sell me a rainy Sunday",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "What are you known for?",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "What are you unreasonably good at?",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "A eulogy for your phone battery",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Why cats are plotting something",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Defend the worst holiday",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Complain about something trivial for a minute",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "What does home mean to you?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Is patience a skill or a trait?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "What would you tell yourself at sixteen?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "How do you know when to quit?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "What is worth queueing for?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Describe a place you would go back to",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Describe a decision you took time over",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Describe something you made yourself",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Argue that boredom is good for you",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Argue against your favourite hobby",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Argue that nostalgia is a trap",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Argue that being busy is a choice",
-      "format": "hot-take"
+      "style": "hot-take"
+    },
+    {
+      "text": "Doors",
+      "style": "just-talk"
+    },
+    {
+      "text": "Keys",
+      "style": "just-talk"
+    },
+    {
+      "text": "Lists",
+      "style": "just-talk"
+    },
+    {
+      "text": "Rain on a window",
+      "style": "just-talk"
+    },
+    {
+      "text": "Your name",
+      "style": "just-talk"
+    },
+    {
+      "text": "Corners",
+      "style": "just-talk"
+    },
+    {
+      "text": "Second-hand things",
+      "style": "just-talk"
+    },
+    {
+      "text": "The last hour of the day",
+      "style": "just-talk"
+    },
+    {
+      "text": "Saying goodbye",
+      "style": "just-talk"
+    },
+    {
+      "text": "Birthdays",
+      "style": "just-talk"
+    },
+    {
+      "text": "Silence in a lift",
+      "style": "just-talk"
+    },
+    {
+      "text": "Waiting for a reply",
+      "style": "just-talk"
+    },
+    {
+      "text": "Everyone should live in a small town once",
+      "style": "hot-take"
+    },
+    {
+      "text": "Tea is better than coffee",
+      "style": "hot-take"
+    },
+    {
+      "text": "Round numbers are a scam",
+      "style": "hot-take"
+    },
+    {
+      "text": "Most rules exist for someone else's convenience",
+      "style": "hot-take"
+    },
+    {
+      "text": "Being early is rude",
+      "style": "hot-take"
+    },
+    {
+      "text": "Sell me a paper map",
+      "style": "hot-take"
+    },
+    {
+      "text": "Sell me a Monday",
+      "style": "hot-take"
+    },
+    {
+      "text": "Argue that plans ruin days",
+      "style": "hot-take"
+    },
+    {
+      "text": "Argue that lists make you forget",
+      "style": "hot-take"
+    },
+    {
+      "text": "Argue for owning one good pen",
+      "style": "hot-take"
+    },
+    {
+      "text": "Everyone should be bad at something in public",
+      "style": "hot-take"
+    },
+    {
+      "text": "Doorbells should be abolished",
+      "style": "hot-take"
+    },
+    {
+      "text": "The last time you were lost",
+      "style": "story"
+    },
+    {
+      "text": "A door you should not have opened",
+      "style": "story"
+    },
+    {
+      "text": "The day the power went out",
+      "style": "story"
+    },
+    {
+      "text": "A conversation with a stranger on a train",
+      "style": "story"
+    },
+    {
+      "text": "Something you fixed with tape",
+      "style": "story"
+    },
+    {
+      "text": "The time you were early for once",
+      "style": "story"
+    },
+    {
+      "text": "A gift you did not want",
+      "style": "story"
+    },
+    {
+      "text": "A eulogy for a broken umbrella",
+      "style": "story"
+    },
+    {
+      "text": "Explain what a week is for",
+      "style": "explain"
+    },
+    {
+      "text": "Explain queues to someone who has never waited",
+      "style": "explain"
+    },
+    {
+      "text": "Explain why we say hello",
+      "style": "explain"
+    },
+    {
+      "text": "Explain a joke you like",
+      "style": "explain"
+    },
+    {
+      "text": "Explain your morning to a robot",
+      "style": "explain"
+    },
+    {
+      "text": "Explain why keys get lost",
+      "style": "explain"
+    },
+    {
+      "text": "Explain what makes a good question",
+      "style": "explain"
+    },
+    {
+      "text": "Explain patience without using the word",
+      "style": "explain"
     }
   ]
 }

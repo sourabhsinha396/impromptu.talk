@@ -82,7 +82,7 @@ Ticked as of 2026-09-06, after cards 01 to 07.
 
 ### Content
 
-- [x] Ten genres, one flat list, the merge map; 800 topics; every style in every built-in genre (07)
+- [x] Ten genres, one flat list, the merge map; 1000 topics (v0 had 800; 200 added for v1); every style in every built-in genre (07)
 - [x] Seeder as a one-off management command, never on boot; idempotent, never deletes a topic, deletes an emptied built-in genre, deactivates one still owning topics, never touches an owned genre (07)
 - [x] Style (v0 format) as a tag, four values plus Surprise me (07)
 - [ ] The bank ships with the home page and is shuffled in the browser; no-repeat pool; tiered decoys (08, 10)

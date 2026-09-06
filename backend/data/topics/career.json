@@ -3,323 +3,403 @@
   "topics": [
     {
       "text": "Your first job",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Working with someone difficult",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Changing career",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Being managed",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Office small talk",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "The job you almost took",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Working from home",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Being the youngest in the room",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Tell me about yourself",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Why should we hire you?",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "A time you were wrong at work",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Where do you want to be in five years?",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Describe a project that failed",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "How do you handle disagreement?",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "What do you look for in a manager?",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "How do you prioritise?",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Tell me about a time you led without authority",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Why did you leave your last role?",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Meetings should default to fifteen minutes",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Job titles are meaningless",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Nobody should work for the same firm twice",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Performance reviews should be abolished",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Loyalty to an employer is irrational",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "The best advice you ignored",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "A colleague you learned from",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "The time you asked for help",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "A day you nearly quit",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Explain your job to a ten-year-old",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Explain what your team actually does",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Explain how you learn something new",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Argue that ambition is a trap",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Argue against following your passion",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Argue that experience is overrated",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Four-day work weeks should be standard",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Degrees should not be required for most jobs",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Remote work harms early-career people",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Describe a skill you are building",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Describe a person you admire at work",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Sell me a job nobody wants",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Give your acceptance speech for an award you did not win",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Mornings",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "To-do lists",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Deadlines",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Interruptions",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Email",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Doing nothing",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Starting",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Finishing",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Notes you never read again",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Productivity systems are procrastination",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Multitasking does not exist",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Inbox zero is a waste of a life",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Most meetings should be a message",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Busy is a choice, not a condition",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "A habit that actually worked",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "The time you missed a deadline",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Something you keep starting and stopping",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Explain a method you actually use",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Explain why deadlines help",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Explain how you decide what not to do",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Explain focus to someone who cannot sit still",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "What do you want less of?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "What are you postponing?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "What is worth doing badly?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "How do you know when to stop working?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Is rest productive?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Argue for doing less, on purpose",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Argue that planning is a waste of time",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Argue that deadlines make work worse",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Argue against waking up early",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "The four-day week should be law",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Open-plan offices should be banned",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Companies should ban after-hours email",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Describe a time you organised something well",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Describe a typical day",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Sell me a to-do list app",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Sell me an empty calendar",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Explain your procrastination to your boss",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Rank the days of the week",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Tell me how you prioritise when everything is urgent",
-      "format": "explain"
+      "style": "explain"
+    },
+    {
+      "text": "Lunch breaks",
+      "style": "just-talk"
+    },
+    {
+      "text": "Your first boss",
+      "style": "just-talk"
+    },
+    {
+      "text": "Job interviews",
+      "style": "just-talk"
+    },
+    {
+      "text": "Learning on the job",
+      "style": "just-talk"
+    },
+    {
+      "text": "Side projects",
+      "style": "just-talk"
+    },
+    {
+      "text": "Retirement",
+      "style": "just-talk"
+    },
+    {
+      "text": "Everyone should be fired once",
+      "style": "hot-take"
+    },
+    {
+      "text": "Cover letters should be abolished",
+      "style": "hot-take"
+    },
+    {
+      "text": "Argue that promotions are a trap",
+      "style": "hot-take"
+    },
+    {
+      "text": "Sell me a job with no title",
+      "style": "hot-take"
+    },
+    {
+      "text": "Every manager should have been managed badly first",
+      "style": "hot-take"
+    },
+    {
+      "text": "Internships should always be paid",
+      "style": "hot-take"
+    },
+    {
+      "text": "The interview you bombed",
+      "style": "story"
+    },
+    {
+      "text": "The email you sent to the wrong person",
+      "style": "story"
+    },
+    {
+      "text": "A mentor who did not know they were one",
+      "style": "story"
+    },
+    {
+      "text": "The day you became the senior person",
+      "style": "story"
+    },
+    {
+      "text": "Explain what a good meeting looks like",
+      "style": "explain"
+    },
+    {
+      "text": "Explain your industry to a stranger at a party",
+      "style": "explain"
+    },
+    {
+      "text": "Explain why people quit",
+      "style": "explain"
+    },
+    {
+      "text": "Tell me about a time you changed a process",
+      "style": "explain"
     }
   ]
 }

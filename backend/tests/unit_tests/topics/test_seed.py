@@ -16,9 +16,9 @@ def seeded(db):
     seed_topics()
 
 
-def test_the_bank_is_ten_genres_and_eight_hundred_topics_and_no_genre_is_thin(seeded):
+def test_the_bank_is_ten_genres_and_a_thousand_topics_and_no_genre_is_thin(seeded):
     assert Genre.objects.filter(owner__isnull=True).count() == 10
-    assert Topic.objects.count() == 800
+    assert Topic.objects.count() == 1000
     for genre in Genre.objects.filter(owner__isnull=True):
         assert genre.topics.count() >= 40, genre.slug
         assert genre.icon in ICONS
@@ -36,7 +36,7 @@ def test_every_built_in_style_reaches_every_genre_and_surprise_is_never_stored(s
 def test_a_second_run_changes_nothing_and_keeps_every_id(seeded):
     before = dict(Topic.objects.values_list("text", "id"))
     genres = dict(Genre.objects.values_list("slug", "id"))
-    assert seed_topics() == (10, 800)
+    assert seed_topics() == (10, 1000)
     assert dict(Topic.objects.values_list("text", "id")) == before
     assert dict(Genre.objects.values_list("slug", "id")) == genres
 
@@ -73,7 +73,7 @@ def test_a_merged_genre_carries_its_topics_and_the_emptied_row_goes(seeded, monk
     seed_topics()
     assert not Genre.objects.filter(slug="tech-ai").exists()
     assert set(Topic.objects.filter(id__in=moved).values_list("genre__slug", flat=True)) == {"science"}
-    assert Topic.objects.count() == 800
+    assert Topic.objects.count() == 1000
 
 
 def test_a_genre_that_left_the_list_but_still_owns_topics_is_only_deactivated(seeded, monkeypatch):
@@ -81,14 +81,14 @@ def test_a_genre_that_left_the_list_but_still_owns_topics_is_only_deactivated(se
     seed_topics()
     genre = Genre.objects.get(slug="tech-ai")
     assert genre.is_active is False
-    assert genre.topics.count() == 40
+    assert genre.topics.count() == 80
 
 
 def test_a_topic_that_left_every_file_is_switched_off_not_deleted(seeded, monkeypatch):
     original = bank.load
     monkeypatch.setattr(bank, "load", lambda slug: original(slug)[1:] if slug == "general" else original(slug))
     seed_topics()
-    assert Topic.objects.count() == 800
+    assert Topic.objects.count() == 1000
     assert Topic.objects.filter(is_active=False).count() == 1
 
 

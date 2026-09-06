@@ -3,163 +3,323 @@
   "topics": [
     {
       "text": "Long friendships",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Saying no",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Being the new person",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Living with someone",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "The friend you drifted from",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Apologies",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Family dinners",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Being alone",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "First impressions",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Growing up with siblings",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Long-distance friendships never survive",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Everyone should live alone once",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Honesty is overrated in friendship",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Weddings are for the guests",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "You should not be friends with your boss",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "A stranger you still think about",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "The time you were forgiven",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "A friendship that started badly",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Someone you should have thanked",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "An argument you still replay",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Explain small talk to someone who hates it",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Explain what makes a good listener",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Explain why people gossip",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "What do you look for in a friend?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "How do you decide who to trust?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "The difference between kind and nice",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "What does loyalty actually cost?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Describe a person who changed your mind",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Describe a time you helped someone",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Argue that we should have fewer friends",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Argue against staying in touch",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Argue that families should live further apart",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Social media has made us lonelier",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Marriage is an outdated institution",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Sell me a night in with no phone",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Sell me a difficult conversation",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Why group chats are a governance problem",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Rank your relatives by usefulness",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Why you would be a terrible flatmate",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Tell me about a conflict you resolved",
-      "format": "explain"
+      "style": "explain"
+    },
+    {
+      "text": "Neighbours",
+      "style": "just-talk"
+    },
+    {
+      "text": "Old friends, new cities",
+      "style": "just-talk"
+    },
+    {
+      "text": "Sharing a kitchen",
+      "style": "just-talk"
+    },
+    {
+      "text": "Group holidays",
+      "style": "just-talk"
+    },
+    {
+      "text": "Grandparents",
+      "style": "just-talk"
+    },
+    {
+      "text": "Inside jokes",
+      "style": "just-talk"
+    },
+    {
+      "text": "Being introduced",
+      "style": "just-talk"
+    },
+    {
+      "text": "Forgiving",
+      "style": "just-talk"
+    },
+    {
+      "text": "Keeping secrets",
+      "style": "just-talk"
+    },
+    {
+      "text": "Long phone calls",
+      "style": "just-talk"
+    },
+    {
+      "text": "Making friends as an adult",
+      "style": "just-talk"
+    },
+    {
+      "text": "Being a guest",
+      "style": "just-talk"
+    },
+    {
+      "text": "Advice from parents",
+      "style": "just-talk"
+    },
+    {
+      "text": "Saying thank you",
+      "style": "just-talk"
+    },
+    {
+      "text": "You cannot be close to more than five people",
+      "style": "hot-take"
+    },
+    {
+      "text": "Roommates should sign contracts",
+      "style": "hot-take"
+    },
+    {
+      "text": "Nobody should marry before thirty",
+      "style": "hot-take"
+    },
+    {
+      "text": "Birthday parties should end at twelve",
+      "style": "hot-take"
+    },
+    {
+      "text": "Friends should never lend money",
+      "style": "hot-take"
+    },
+    {
+      "text": "Argue that families should eat separately",
+      "style": "hot-take"
+    },
+    {
+      "text": "Argue that everyone should have one enemy",
+      "style": "hot-take"
+    },
+    {
+      "text": "Argue against best friends",
+      "style": "hot-take"
+    },
+    {
+      "text": "Sell me a family reunion",
+      "style": "hot-take"
+    },
+    {
+      "text": "Sell me a friendship with a neighbour",
+      "style": "hot-take"
+    },
+    {
+      "text": "Apologies should have a time limit",
+      "style": "hot-take"
+    },
+    {
+      "text": "You should tell people what you earn",
+      "style": "hot-take"
+    },
+    {
+      "text": "The friend who moved away first",
+      "style": "story"
+    },
+    {
+      "text": "A dinner that went wrong",
+      "style": "story"
+    },
+    {
+      "text": "The best gift you ever gave",
+      "style": "story"
+    },
+    {
+      "text": "Someone who believed you before you did",
+      "style": "story"
+    },
+    {
+      "text": "A fight about nothing",
+      "style": "story"
+    },
+    {
+      "text": "The neighbour you never met properly",
+      "style": "story"
+    },
+    {
+      "text": "A wedding you remember",
+      "style": "story"
+    },
+    {
+      "text": "Why you would be a terrible parent to a cat",
+      "style": "story"
+    },
+    {
+      "text": "Explain loyalty to a child",
+      "style": "explain"
+    },
+    {
+      "text": "Explain how to end a friendship kindly",
+      "style": "explain"
+    },
+    {
+      "text": "Explain what a good apology contains",
+      "style": "explain"
+    },
+    {
+      "text": "Explain why families argue at holidays",
+      "style": "explain"
+    },
+    {
+      "text": "Explain trust without using the word",
+      "style": "explain"
+    },
+    {
+      "text": "Tell me about a time you supported a friend",
+      "style": "explain"
     }
   ]
 }

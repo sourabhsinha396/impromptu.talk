@@ -3,483 +3,483 @@
   "topics": [
     {
       "text": "Socks",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Ceiling fans",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Umbrellas",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Stairs",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Ice cubes",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Doorbells",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Traffic lights",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Tangled headphones",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "The last page of a book",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Junk drawers",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Empty parking lots",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Streetlights",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Puddles",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Old receipts",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Shoelaces",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Dust",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Waiting rooms",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Escalators",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Wind chimes",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "The colour beige",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Alarm clocks are a form of violence",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Open-plan anything is a mistake",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Instruction manuals should be illustrated only",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Nobody needs a landline",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Explain how a zip fastener works",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Explain why bread goes stale",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Explain a light switch to an alien",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "A jar that will not open",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Something you found and kept",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "The last thing you fixed",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Sell me a second fridge",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Sell me a chair you already own",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "The secret life of lost socks",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Why your houseplant resents you",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "A day in the life of your left shoe",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Rebrand vegetables",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Describe an object you would never throw away",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Describe a room you know well",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Argue that clutter is healthy",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Argue that we should own fewer things",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Breakfast",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Street food",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Leftovers",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Cooking for one",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "The perfect sandwich",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Warm bread",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Eating alone in public",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "A meal you keep making",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Food you hated as a child",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "The second cup of coffee",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Tipping should end",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Breakfast is not the most important meal",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Restaurant menus are too long",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Meal kits are a scam",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Everyone should be able to cook five dishes",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "A meal you remember",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "The worst thing you ever cooked",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Food from someone else's kitchen",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "A dish that reminds you of a person",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Explain fermentation to a beginner",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Explain why onions make you cry",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Explain how to taste properly",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Explain what makes a recipe good",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Defend pineapple on pizza",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Give a tour of your fridge",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Rebrand a vegetable nobody likes",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Complain about a restaurant for a minute",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Sell me a food you dislike",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Sell me tap water",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Describe a meal you would cook for a guest",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Describe a place you like to eat",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Argue that home cooking is overrated",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Argue for eating the same thing every day",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Argue that food should be boring",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Sugar should be taxed like tobacco",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Lab-grown meat is the future",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "What does a good meal need besides food?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Is cooking a chore or a pleasure?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "What would you eat every day forever?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "What food tradition should we keep?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Airports",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Packing",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Getting lost",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Trains",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Hotel rooms",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Coming home",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Travelling alone",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "The middle seat on a plane",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Souvenirs",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "A city that surprised you",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Tourism ruins the places it loves",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Planning a trip beats taking it",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Nobody needs a bucket list",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Beach holidays are wasted time",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "A journey that went wrong",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "The kindest stranger abroad",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "A place you would go back to",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "The time you missed the connection",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Something you left behind",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Explain jet lag",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Explain how to read a map",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Explain time zones to a child",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Sell me your hometown",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Sell me a holiday in the rain",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Why you would be a bad tour guide",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Rate the seasons for travelling",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Complain about a flight for a minute",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Describe a journey you remember",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Describe a place you want to visit",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Describe a building you find interesting",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Argue for never leaving your own country",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Argue that photographs ruin travel",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Argue for going back to the same place forever",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Cheap flights should be restricted",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Tourists should pay a city tax",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "What does travel actually teach you?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Is anywhere still undiscovered?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "What makes a place feel like home?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Would you live abroad permanently?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Tell me about a time you adapted quickly",
-      "format": "explain"
+      "style": "explain"
     }
   ]
 }

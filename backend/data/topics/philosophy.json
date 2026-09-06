@@ -3,323 +3,403 @@
   "topics": [
     {
       "text": "Free will",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Luck",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Boredom",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Regret",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Silence",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Waiting",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Beginnings",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Enough",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "The idea of progress",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Being remembered",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Happiness is overrated",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Comfort is dangerous",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Nobody actually changes",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Ambition is a form of anxiety",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Certainty is always a mistake",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "The last thing you changed your mind about",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "A belief you gave up",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "A rule you broke and do not regret",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Explain a paradox you like",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Explain why people disagree",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Explain what makes an argument good",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Explain fairness to a child",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "What is worth being slow about?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Does luck deserve credit?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Is honesty always right?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "What makes something beautiful?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "How do you want to be remembered?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Is boredom useful?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "What is the point of tradition?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "When is it right to be selfish?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Argue that ignorance is sometimes better",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Argue against your own strongest belief",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Argue that meaning is invented, not found",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Argue that consistency is overrated",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "There is no such thing as a selfless act",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Technology has not made us wiser",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Describe an idea that changed how you think",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Describe a decision you took a long time over",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Sell me a life with less choice",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Explain the meaning of life in sixty seconds",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Lying to protect someone",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Fairness",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Promises",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Second chances",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Whistleblowing",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Inherited wealth",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Anonymity",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Punishment",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Voting should be mandatory",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Anonymity online is a net good",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Every job should publish its salary",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Advertising to children should be illegal",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Failure should go on your resume",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "A time you were wrong",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "A rule you broke for a good reason",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "When you stayed silent",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "A promise you kept at a cost",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Explain the trolley problem",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Explain conflict of interest",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Explain why rules and ethics differ",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Is it ever right to break a promise?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Who deserves a second chance?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "What would you refuse to do for money?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Is it wrong to profit from someone else's mistake?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Is privacy a right or a privilege?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Argue that white lies are harmful",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Argue against forgiveness",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Argue that intentions do not matter",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Argue that fairness is impossible",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Inheritance should be taxed at one hundred percent",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "AI decisions should always be explainable",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Prisons should be abolished",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Everyone should be required to volunteer",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Zoos have no future",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Describe a difficult decision you made",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Describe a rule you disagree with",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Tell me about a time you disagreed with a decision",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "A time you had to deliver bad news",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Sell me a rule nobody likes",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Defend a crime that should be legal",
-      "format": "story"
+      "style": "story"
+    },
+    {
+      "text": "Doubt",
+      "style": "just-talk"
+    },
+    {
+      "text": "Courage",
+      "style": "just-talk"
+    },
+    {
+      "text": "Habits of mind",
+      "style": "just-talk"
+    },
+    {
+      "text": "Being right",
+      "style": "just-talk"
+    },
+    {
+      "text": "Envy",
+      "style": "just-talk"
+    },
+    {
+      "text": "Growing old",
+      "style": "just-talk"
+    },
+    {
+      "text": "What you owe strangers",
+      "style": "just-talk"
+    },
+    {
+      "text": "Kindness is a strategy",
+      "style": "hot-take"
+    },
+    {
+      "text": "Argue that we should not have heroes",
+      "style": "hot-take"
+    },
+    {
+      "text": "Argue that comfort makes better people",
+      "style": "hot-take"
+    },
+    {
+      "text": "Sell me a day without opinions",
+      "style": "hot-take"
+    },
+    {
+      "text": "Everyone should be wrong in public once a week",
+      "style": "hot-take"
+    },
+    {
+      "text": "Rules should expire after twenty years",
+      "style": "hot-take"
+    },
+    {
+      "text": "The last time you changed your mind about a person",
+      "style": "story"
+    },
+    {
+      "text": "A time you chose the harder right",
+      "style": "story"
+    },
+    {
+      "text": "A eulogy for a belief you outgrew",
+      "style": "story"
+    },
+    {
+      "text": "Explain courage to a child",
+      "style": "explain"
+    },
+    {
+      "text": "Explain the difference between happy and content",
+      "style": "explain"
+    },
+    {
+      "text": "Explain why we keep promises",
+      "style": "explain"
+    },
+    {
+      "text": "Explain a moral rule you follow",
+      "style": "explain"
     }
   ]
 }

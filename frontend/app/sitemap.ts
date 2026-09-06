@@ -4,7 +4,7 @@ import { GENRE_SLUGS } from "@/lib/genres";
 import { absolute } from "@/lib/site";
 
 /* Home, /genres, the paperwork and every genre. Not the topics, and not
-   the share pages. The 800 permalinks are still crawlable, every one a
+   the share pages. The thousand topics are still crawlable, every one a
    link on its genre page, so dropping them costs a crawler nothing but a
    shortcut. What it buys is a file that says which pages route into the
    tool, rather than one in which the ten that do are 1% of the lines.

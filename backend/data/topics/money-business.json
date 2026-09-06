@@ -3,323 +3,403 @@
   "topics": [
     {
       "text": "Saving",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Your first paycheque",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Rent",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Borrowing from friends",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Cash",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Insurance",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Budgets",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "The cost of convenience",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Subscriptions are the new debt",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Owning a home is overrated",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Nobody should give financial advice on social media",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Cash should stay",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Tipping culture has gone too far",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Frugality can be a false economy",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "A purchase you regret",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "The best money you ever spent",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "The time you could not afford something",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "A financial lesson you learned late",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Explain compound interest",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Explain inflation to a child",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Explain what a pension actually is",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Explain why insurance exists",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Explain the difference between price and value",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "What deserves more of your money?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Is money a good measure of anything?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "What would you do with an extra hour a day?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Would you rather have time or money?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Argue that saving is overrated",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Argue for spending on experiences you cannot afford",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Argue that budgeting makes people miserable",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Universal basic income should be tried",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Inheritance is unearned and should be limited",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Financial literacy should be a school subject",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Describe something you saved up for",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Describe a purchase that was worth it",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Sell me a savings account",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Sell me something you already own",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Convince me to buy a second fridge",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Explain your spending to your bank manager",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Tell me about a time you worked to a tight budget",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Starting something",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Working with a co-founder",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "The first customer",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Naming things",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Competition",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Scaling too early",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Pricing",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Saying no to customers",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Most startups should be small businesses",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Fundraising is a distraction",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Ideas really are worthless",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Growth at all costs was always wrong",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Founder stories are survivorship bias",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "A time you shipped something too early",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "The first thing you sold",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "A decision you would make differently",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Explain what a business model is",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Explain product-market fit without jargon",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Explain why most startups fail",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Explain cash flow to a beginner",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Pitch a terrible business idea",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Pitch your worst product",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Rebrand a failing company",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Sell me a product that already exists",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Sell me your idea in sixty seconds",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Sell me a subscription to nothing",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Argue that you should never start a company",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Argue against venture capital",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Argue that first movers usually lose",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Startups should be regulated like banks",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Every company should be employee-owned",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Monopolies are sometimes good for consumers",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "What makes a good business?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "When should you give up on an idea?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Is risk-taking a skill or a privilege?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "What would you build if it could not fail?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Describe a business you admire",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Describe a product you use every day",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Tell me about a time you persuaded someone",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Describe a risk you took",
-      "format": "explain"
+      "style": "explain"
+    },
+    {
+      "text": "Free trials",
+      "style": "just-talk"
+    },
+    {
+      "text": "Haggling",
+      "style": "just-talk"
+    },
+    {
+      "text": "Pocket money",
+      "style": "just-talk"
+    },
+    {
+      "text": "Loyalty cards",
+      "style": "just-talk"
+    },
+    {
+      "text": "Second-hand markets",
+      "style": "just-talk"
+    },
+    {
+      "text": "Splitting the bill",
+      "style": "just-talk"
+    },
+    {
+      "text": "Discounts make you spend more",
+      "style": "hot-take"
+    },
+    {
+      "text": "Every child should run a lemonade stand",
+      "style": "hot-take"
+    },
+    {
+      "text": "Argue that credit cards should be banned for under-25s",
+      "style": "hot-take"
+    },
+    {
+      "text": "Sell me a company that sells nothing",
+      "style": "hot-take"
+    },
+    {
+      "text": "Advertising should be taxed",
+      "style": "hot-take"
+    },
+    {
+      "text": "Small businesses deserve lower taxes than big ones",
+      "style": "hot-take"
+    },
+    {
+      "text": "Your first sale",
+      "style": "story"
+    },
+    {
+      "text": "The bargain that was not",
+      "style": "story"
+    },
+    {
+      "text": "The time you were overcharged and said nothing",
+      "style": "story"
+    },
+    {
+      "text": "Pitch a shop that only opens on Sundays",
+      "style": "story"
+    },
+    {
+      "text": "Explain a stock market to a ten-year-old",
+      "style": "explain"
+    },
+    {
+      "text": "Explain why prices end in 99",
+      "style": "explain"
+    },
+    {
+      "text": "Explain what a brand is",
+      "style": "explain"
+    },
+    {
+      "text": "Tell me about a time you negotiated",
+      "style": "explain"
     }
   ]
 }

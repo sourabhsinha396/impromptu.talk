@@ -3,163 +3,323 @@
   "topics": [
     {
       "text": "Phones",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Passwords",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Software updates",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "The first computer you used",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Autocomplete",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Screens",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Open source",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Automation",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "AI should be taught in every school",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Most software is worse than it was ten years ago",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Nobody reads the terms and conditions, and that is fine",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Self-driving cars will arrive later than promised",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Chatbots have made customer service worse",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Every company claiming to use AI is exaggerating",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "The first time technology genuinely helped you",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "A gadget you regret buying",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "The time the system went down",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Explain what a large language model actually does",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Explain what an algorithm is",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Explain encryption without maths",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Explain why software has bugs",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Explain cloud computing to your grandparent",
-      "format": "explain"
+      "style": "explain"
     },
     {
       "text": "Argue that AI is overrated",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Argue for less automation, not more",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Argue that we should slow down technology",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Argue that privacy is already lost",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Social media needs an age limit",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "AI-generated work should be labelled by law",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Big tech should be broken up",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Facial recognition should be banned in public",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "What should technology never be used for?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "What has technology made worse?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Would you give up your phone for a year?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "What will feel old-fashioned in ten years?",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Describe a piece of technology you rely on",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Describe a website or app you like",
-      "format": "just-talk"
+      "style": "just-talk"
     },
     {
       "text": "Sell me a phone with no apps",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Sell me a fax machine in 2026",
-      "format": "hot-take"
+      "style": "hot-take"
     },
     {
       "text": "Explain the internet to a Victorian",
-      "format": "story"
+      "style": "story"
     },
     {
       "text": "Why you would be a bad hacker",
-      "format": "story"
+      "style": "story"
+    },
+    {
+      "text": "Notifications",
+      "style": "just-talk"
+    },
+    {
+      "text": "Old phones in a drawer",
+      "style": "just-talk"
+    },
+    {
+      "text": "Loading screens",
+      "style": "just-talk"
+    },
+    {
+      "text": "Voice assistants",
+      "style": "just-talk"
+    },
+    {
+      "text": "Typing versus talking",
+      "style": "just-talk"
+    },
+    {
+      "text": "Charging cables",
+      "style": "just-talk"
+    },
+    {
+      "text": "Search engines",
+      "style": "just-talk"
+    },
+    {
+      "text": "Video calls",
+      "style": "just-talk"
+    },
+    {
+      "text": "Dark mode",
+      "style": "just-talk"
+    },
+    {
+      "text": "Maps on your phone",
+      "style": "just-talk"
+    },
+    {
+      "text": "The last thing you searched for",
+      "style": "just-talk"
+    },
+    {
+      "text": "Keyboards",
+      "style": "just-talk"
+    },
+    {
+      "text": "Every app should have an off switch",
+      "style": "hot-take"
+    },
+    {
+      "text": "Notifications should be illegal after 9pm",
+      "style": "hot-take"
+    },
+    {
+      "text": "Video calls should always be optional",
+      "style": "hot-take"
+    },
+    {
+      "text": "Argue that the smartphone peaked years ago",
+      "style": "hot-take"
+    },
+    {
+      "text": "Argue that AI makes writing worse",
+      "style": "hot-take"
+    },
+    {
+      "text": "Argue for a slower internet",
+      "style": "hot-take"
+    },
+    {
+      "text": "Argue that kids should learn to code less, not more",
+      "style": "hot-take"
+    },
+    {
+      "text": "Sell me a phone with buttons",
+      "style": "hot-take"
+    },
+    {
+      "text": "Sell me an email newsletter",
+      "style": "hot-take"
+    },
+    {
+      "text": "Passwords should be replaced entirely",
+      "style": "hot-take"
+    },
+    {
+      "text": "Every website should work without JavaScript",
+      "style": "hot-take"
+    },
+    {
+      "text": "AI should never grade a student",
+      "style": "hot-take"
+    },
+    {
+      "text": "Open source should be publicly funded",
+      "style": "hot-take"
+    },
+    {
+      "text": "Streaming should let you own what you buy",
+      "style": "hot-take"
+    },
+    {
+      "text": "The day you lost your phone",
+      "style": "story"
+    },
+    {
+      "text": "The message you wish you had not sent",
+      "style": "story"
+    },
+    {
+      "text": "Teaching a grandparent to video call",
+      "style": "story"
+    },
+    {
+      "text": "A gadget that outlived its maker",
+      "style": "story"
+    },
+    {
+      "text": "The first time a computer said no",
+      "style": "story"
+    },
+    {
+      "text": "Explain a smartphone to your great-grandparent",
+      "style": "story"
+    },
+    {
+      "text": "Explain how the internet gets to your house",
+      "style": "explain"
+    },
+    {
+      "text": "Explain what a bug is to your parents",
+      "style": "explain"
+    },
+    {
+      "text": "Explain why your phone battery dies",
+      "style": "explain"
+    },
+    {
+      "text": "Explain machine learning with a recipe",
+      "style": "explain"
+    },
+    {
+      "text": "Explain what the cloud actually is",
+      "style": "explain"
+    },
+    {
+      "text": "Explain why AI makes things up",
+      "style": "explain"
+    },
+    {
+      "text": "Explain how a search engine ranks pages",
+      "style": "explain"
+    },
+    {
+      "text": "Explain two-factor authentication to a friend who hates it",
+      "style": "explain"
     }
   ]
 }

@@ -4,7 +4,7 @@ impromptu.talk: a random topic, a minute to think, a minute to talk. This repo i
 
 ## The three rules
 
-1. **Parity first.** Every v0 feature ships in v1 before any new one is discussed. v0 is the spec and the baseline, and it is read-only: port behaviour, copy, algorithms and tests; never copy files. `docs/tech/v0-parity.md` is the acceptance list.
+1. **Parity first, and the look is not the parity.** Every v0 feature ships in v1 before any new one is discussed. v0 is the spec and the baseline, and it is read-only: port behaviour, rules, copy, algorithms and tests; never copy files, and never copy the UI. The rebuild is the chance to improve every screen. Before a card builds a surface, a mock of it lands as a standalone HTML page under `docs/mocks/`, the owner approves it, and `docs/UI.md` records what changed and why. `docs/tech/v0-parity.md` is the acceptance list for behaviour.
 2. **Simple product.** An improvement earns its place by removing something. Django's own auth, sessions, hashers, migrations, mail backends and admin replace hand-rolled ones; shadcn replaces hand-rolled sheets and menus; a pure TypeScript run engine replaces DOM script. No caching layers, no queues, no webhooks, no abstraction for a provider that does not exist. If a change is getting clever, stop and ask.
 3. **The ten-second rule outranks features.** A stranger lands on the site and is talking out loud within ten seconds, having clicked exactly one button. Home is the tool: near-zero words, one primary button, everything else behind the account menu. Chrome hides during the round.
 
