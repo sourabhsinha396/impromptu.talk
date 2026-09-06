@@ -1,0 +1,103 @@
+@import "tailwindcss";
+
+/* Dark is a state on <html data-theme>, set by the pre-paint script from a
+   stored choice, with the system preference as the fallback when nothing
+   was chosen. The tokens below are the skeleton's; the design-system card
+   ports the full set from v0's app.css. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+:root {
+  --surface: #ffffff;
+  --card: #ffffff;
+  --card2: oklch(0.965 0.008 120);
+  --ink: #1c1917;
+  --muted: #57534e;
+  --line: #e7e5e4;
+  --line-strong: #918b87;
+
+  /* A colour is a hue and a chroma; the theme owns the lightness. That is
+     what lets a brand accent land on the largest thing on screen and stay
+     readable in both themes: the number that governs contrast is never the
+     part a person chooses. */
+  --accent-h: 120;
+  --accent-c: 0.12;
+  --accent-l: 0.5;
+  --accent-l-strong: 0.42;
+  --accent: oklch(var(--accent-l) var(--accent-c) var(--accent-h));
+  --accent-strong: oklch(var(--accent-l-strong) var(--accent-c) var(--accent-h));
+
+  /* The primary button is ink, never the accent. The accent belongs to the
+     topic, and a colour that is on the biggest thing on screen cannot also
+     be what marks the smallest one as pressable. */
+  --btn: #1c1917;
+  --btn-ink: #ffffff;
+  --btn-strong: #000000;
+}
+
+[data-theme="dark"] {
+  --surface: #0c0b0a;
+  --card: #171513;
+  --card2: #121110;
+  --ink: #f5f5f4;
+  --muted: #a8a29e;
+  --line: #292524;
+  --line-strong: #6b6560;
+
+  --accent-l: 0.8;
+  --accent-l-strong: 0.86;
+
+  --btn: #f5f5f4;
+  --btn-ink: #1c1917;
+  --btn-strong: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --surface: #0c0b0a;
+    --card: #171513;
+    --card2: #121110;
+    --ink: #f5f5f4;
+    --muted: #a8a29e;
+    --line: #292524;
+    --line-strong: #6b6560;
+
+    --accent-l: 0.8;
+    --accent-l-strong: 0.86;
+
+    --btn: #f5f5f4;
+    --btn-ink: #1c1917;
+    --btn-strong: #ffffff;
+  }
+}
+
+@theme inline {
+  --color-surface: var(--surface);
+  --color-card: var(--card);
+  --color-card2: var(--card2);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-btn: var(--btn);
+  --color-btn-ink: var(--btn-ink);
+  --color-btn-strong: var(--btn-strong);
+
+  --font-sans: ui-sans-serif, system-ui, sans-serif;
+  --font-display: ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+  }
+}

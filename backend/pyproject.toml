@@ -1,0 +1,32 @@
+[project]
+name = "impromptu-backend"
+version = "0.1.0"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+    "django>=5.2,<6.0",
+    "django-ninja>=1.4",
+    "psycopg[binary]>=3.2",
+    "python-dotenv>=1.0",
+    "argon2-cffi>=23.1",
+    "pydantic[email]>=2.9",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "pytest-django>=4.9",
+    "factory-boy>=3.3",
+    "ruff>=0.9",
+]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "impromptu.settings.testing"
+testpaths = ["tests/unit_tests"]
+addopts = "--strict-markers --tb=short --no-migrations"
+
+[tool.ruff]
+line-length = 120
+extend-exclude = ["apps/*/migrations"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "C4"]

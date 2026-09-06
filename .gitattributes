@@ -1,0 +1,8 @@
+# Markdown and source are checked out with LF everywhere, so a Windows
+# checkout does not rewrite every line of a file nobody edited.
+*.md text eol=lf
+*.py text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.css text eol=lf
+*.json text eol=lf

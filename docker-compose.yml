@@ -1,0 +1,69 @@
+name: impromptu
+
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-impromptu}
+      POSTGRES_USER: ${POSTGRES_USER:-impromptu}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-impromptu}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    # Published so a backend run straight on the host (runserver, psql, a
+    # GUI) reaches the same database the container uses. Bound to loopback
+    # on purpose: a development database with a development password has no
+    # business being reachable from the network.
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    healthcheck:
+      # Named database on purpose: with nothing named, pg_isready knocks on a
+      # database called $POSTGRES_USER, which exists only while the two words
+      # are the same, and writes a FATAL to the log every interval otherwise.
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-impromptu} -d ${POSTGRES_DB:-impromptu}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # Rate-limit counters, once the proxy card wires them. Published on
+  # loopback for the same host-run reason as the database.
+  redis:
+    image: redis:8-alpine
+    volumes:
+      - redis-data:/data
+    ports:
+      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build: ./backend
+    env_file: ./backend/.env
+    environment:
+      # Compose network names, not the host loopback ones .env holds.
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      PYTHONUNBUFFERED: "1"
+    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8008"
+    ports:
+      - "${WEB_PORT:-8008}:8008"
+    volumes:
+      - ./backend/apps:/app/apps
+      - ./backend/impromptu:/app/impromptu
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8008/api/v1/common/health').status==200 else 1)\""]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 30s
+
+volumes:
+  db-data:
+  redis-data:
