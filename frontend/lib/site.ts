@@ -28,3 +28,15 @@ export function absolute(path: string): string {
   if (/^https?:\/\//i.test(path)) return path;
   return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
 }
+
+/* Who owns the site, as opposed to what it is called. The two are different
+   words on purpose: the site name is the product a visitor came for, and
+   this is the name beside the copyright that would be read out in a
+   dispute. Empty falls back to the site name, which is the honest answer
+   for anyone running this from a checkout: there is no company behind it
+   yet. Both are env because they are identity and an address. */
+export const OWNER = process.env.NEXT_PUBLIC_COMPANY_NAME || SITE_NAME;
+
+/* The one address anyone is invited to write to: the contact page, the
+   legal documents and the footer of every page. */
+export const CONTACT_EMAIL = process.env.NEXT_PUBLIC_COMPANY_EMAIL || "hello@impromptu.talk";

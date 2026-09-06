@@ -64,6 +64,11 @@
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
+/* Camera mode: the run engine sets `filming` on the body during prep and
+   speak, and everything that is not the topic and the clock gets out of the
+   way, because the frame is a laptop screen shot from across a room. */
+@custom-variant filming (&:where(.filming *));
+
 /* Dark is a state on <html data-theme>, set by the pre-paint script from a
    stored choice, with the system preference as the fallback when nothing
    was chosen. The variant covers both routes, so a `dark:` utility is right
@@ -118,6 +123,12 @@
   /* The sticky notes a speaker jots during prep. */
   --note: oklch(0.93 0.13 118);
   --note-ink: oklch(0.32 0.06 120);
+
+  /* The header's true rendered height: 40px controls and 10px each side.
+     The tool page fills the rest of the viewport so the footer lands just
+     below the fold, present for anyone who looks and absent from a
+     filmed frame, so this must not lie. */
+  --header-h: 60px;
 }
 
 /* The dark values appear twice below, once for a stored choice and once for
@@ -226,6 +237,9 @@
   --text-topic--letter-spacing: -0.035em;
   --text-topic-mid: clamp(1.6rem, 4.4vw, 3.1rem);
   --text-topic-mid--line-height: 1.1;
+  --text-headline: clamp(2rem, 6.5vw, 4rem);
+  --text-headline--line-height: 1.05;
+  --text-headline--letter-spacing: -0.03em;
 
   --radius-card: 14px;
 }

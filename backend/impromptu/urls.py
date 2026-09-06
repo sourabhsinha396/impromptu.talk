@@ -3,12 +3,14 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.urls import path
 from ninja import NinjaAPI
 
+from apps.authentication.apis import api as auth_api
 from apps.common import ratelimit
 from apps.common.apis import api as common_api
 
 api = NinjaAPI(title="impromptu", docs_decorator=staff_member_required)
 
 api.add_router("v1/common", common_api)
+api.add_router("v1/auth", auth_api)
 
 
 @api.exception_handler(ratelimit.RateLimited)

@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400;12..96,75..100,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* The share card, at the site's own tokens. Dark ground, because that is
+     what the tool looks like mid-round and what the mark was cut for.
+     Rendered once by headless Chrome; nothing here ships to a browser. */
+  :root {
+    --surface: #080808;
+    --card2: #101010;
+    --ink: #f5f5f4;
+    --muted: #a8a29e;
+    --line: #292524;
+    --accent: oklch(0.796 0.128 120);
+    --font-sans: "Plus Jakarta Sans", sans-serif;
+    --font-display: "Bricolage Grotesque", sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1200px; height: 630px; }
+  body {
+    background: var(--surface);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 66px 72px;
+    overflow: hidden;
+  }
+
+  .wordmark {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 32px;
+    letter-spacing: -0.02em;
+  }
+  .wordmark span { color: var(--muted); font-weight: 400; }
+  .wordmark .mark { width: 38px; height: 38px; color: var(--accent); }
+
+  .middle { display: flex; align-items: center; gap: 56px; }
+
+  /* The face, weight and tracking the topic itself wears mid-round, accent and
+     all, so the card is the product rather than a poster about it. */
+  .headline {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 86px;
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    font-variation-settings: "wdth" 96;
+    color: var(--accent);
+    flex: 1;
+  }
+
+  .ring-wrap { display: grid; place-items: center; flex: none; width: 268px; height: 268px; }
+  .ring { width: 100%; height: 100%; transform: rotate(-90deg); grid-area: 1 / 1; }
+  .ring-track { fill: none; stroke: var(--line); stroke-width: 5; }
+  .ring-fill {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 5;
+    stroke-linecap: round;
+    stroke-dasharray: 578.05;
+    stroke-dashoffset: 127.2;
+  }
+  .clock {
+    grid-area: 1 / 1;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 62px;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* The terms sit up beside the mark rather than under the tagline: the
+     bottom line is the pitch and reads best whole, on one line. */
+  .top { display: flex; align-items: center; justify-content: space-between; gap: 32px; }
+  .terms { font-size: 23px; color: var(--muted); white-space: nowrap; }
+  .tagline {
+    font-size: 31px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.012em;
+    white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+
+<div class="top">
+<div class="wordmark">
+  <svg class="mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+    <g stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M16 4.6 26.4 10.6 26.4 21.4 16 27.4 5.6 21.4 5.6 10.6z"/>
+      <path d="M5.6 10.6 16 16 26.4 10.6M16 16v11.4"/>
+    </g>
+    <g fill="currentColor">
+      <circle cx="16" cy="10.45" r="1.5"/>
+      <circle cx="8.9" cy="15.55" r="1.5"/>
+      <circle cx="12.71" cy="22.15" r="1.5"/>
+      <circle cx="21.2" cy="18.85" r="1.5"/>
+      <circle cx="23.11" cy="15.55" r="1.5"/>
+      <circle cx="19.29" cy="22.15" r="1.5"/>
+    </g>
+  </svg>
+  impromptu<span>.talk</span>
+</div>
+<p class="terms">800 topics · free · no account</p>
+</div>
+
+<div class="middle">
+  <!-- Broken by hand: left to itself the line splits between "2" and
+       "minutes", which reads as a mistake at this size. -->
+  <p class="headline">Random topic,<br>2 minutes</p>
+  <div class="ring-wrap">
+    <svg class="ring" viewBox="0 0 200 200" aria-hidden="true">
+      <circle class="ring-track" cx="100" cy="100" r="92"></circle>
+      <circle class="ring-fill" cx="100" cy="100" r="92"></circle>
+    </svg>
+    <span class="clock">0:47</span>
+  </div>
+</div>
+
+<p class="tagline">A minute to think. A minute to talk.</p>
+
+</body>
+</html>
