@@ -124,6 +124,10 @@
   --note: oklch(0.93 0.13 118);
   --note-ink: oklch(0.32 0.06 120);
 
+  /* The ring in its last ten seconds: warm, and the only place the site
+     goes near red, so it means one thing. */
+  --warn: oklch(0.62 0.2 30);
+
   /* The header's true rendered height: 40px controls and 10px each side.
      The tool page fills the rest of the viewport so the footer lands just
      below the fold, present for anyone who looks and absent from a
@@ -154,6 +158,7 @@
 
   --note: oklch(0.86 0.15 120);
   --note-ink: oklch(0.2 0.04 120);
+  --warn: oklch(0.75 0.19 30);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -177,6 +182,7 @@
 
     --note: oklch(0.86 0.15 120);
     --note-ink: oklch(0.2 0.04 120);
+    --warn: oklch(0.75 0.19 30);
   }
 }
 
@@ -224,6 +230,7 @@
   --color-btn-strong: var(--btn-strong);
   --color-note: var(--note);
   --color-note-ink: var(--note-ink);
+  --color-warn: var(--warn);
 
   --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;

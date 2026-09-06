@@ -1,12 +1,20 @@
-import { Idle } from "@/components/round/idle";
+import { Round } from "@/components/round/round";
+import { currentUser } from "@/lib/api";
 import { fetchBank } from "@/lib/bank";
+import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/site";
+import { jsonLd, webApplication } from "@/lib/structured-data";
 
 /* The page is the tool. The bank arrives with it, whole, so a respin costs
-   no round trip; the engine (card 10) and the phases (card 12) take it
-   from here. Until the settings sheet lands, the round is a minute each
-   way and the picker starts on the first genre. */
+   no round trip, and the round takes it from there. */
 export default async function Home() {
-  const bank = await fetchBank();
-  const genre = bank.genres[0] ?? { slug: "general", name: "General", icon: "dices", blurb: "" };
-  return <Idle genre={genre} speakSeconds={60} />;
+  const [bank, user] = await Promise.all([fetchBank(), currentUser()]);
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLd(webApplication(SITE_NAME, SITE_DESCRIPTION)) }}
+      />
+      <Round bank={bank} signedIn={user !== null} />
+    </>
+  );
 }

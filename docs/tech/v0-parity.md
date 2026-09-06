@@ -2,14 +2,14 @@
 
 The acceptance list for the board. Every route and every behaviour v0 had, with the v1 card that carries it and a tick once it has landed on `main`. Nothing on this list may be quietly dropped; a line that v1 changes on purpose says so and points at `DECISIONS.md`.
 
-Ticked as of 2026-09-06, after cards 01 to 10.
+Ticked as of 2026-09-06, after cards 01 to 12.
 
 ## Routes
 
 | v0 | v1 | Card | Done |
 |---|---|---|---|
 | `GET /healthz` | `GET /api/v1/common/health` | 01 | [x] |
-| `GET /` (the tool) | `/` | 08, 12 | [ ] idle screen from the approved mock, inert until 12 and 13 |
+| `GET /` (the tool) | `/` | 08, 12 | [x] the round; the sheets on 13 |
 | `GET /genres` | `/genres` | 09 | [x] |
 | `GET /genre/{slug}` | `/genre/[slug]` | 09 | [x] |
 | `GET /topic/{slug}` answers 404 | same, by having no route | 09 | [x] pinned |
@@ -72,7 +72,7 @@ Ticked as of 2026-09-06, after cards 01 to 10.
 - [x] Account menu holds destinations by sign-in state; Administration for superusers only; Get Pro unless Pro; theme as three stops (05)
 - [x] Footer: brand column with the owner, Product, Company, Legal; bottom line by sign-in state, both halves pinned (05)
 - [x] "Proudly made in India" only when the visitor is placed in India; the country ladder (05)
-- [x] Chrome hides while filming (05: the variant; 12: the engine sets it)
+- [x] Chrome hides while filming (05, 12)
 - [ ] The Crisp bubble hides with it and is off on the home page (14)
 - [x] Error pages route back into the tool (05)
 - [x] Per-page title, description, canonical, OG and Twitter cards from one helper; one OG image (05)
@@ -89,23 +89,23 @@ Ticked as of 2026-09-06, after cards 01 to 10.
 - [x] Shuffled in the browser; no-repeat pool; tiered decoys (10)
 - [x] `/genres` hub with all ten; every topic's text on its genre page, pinned by test (09)
 - [x] No `/topic/` pages (09)
-- [ ] `/?topic=` deep link skips the spinner (12)
+- [x] `/?topic=` deep link skips the spinner (12)
 - [x] Genre pages carry JSON-LD and the blurb (09)
 
 ### The round
 
-- [ ] Six phases: idle, spin, topic, prep, speak, done (12)
-- [ ] The reel: decoys, overshoot ease, reduced motion skips it, settle backed by a timeout (11)
-- [ ] Sounds: reel ticks spaced by the reel's own ease, settle ding, metronome, end chime (11)
-- [ ] Prep: three sticky notes, 80 characters, tilted; "Speak now" skips prep (12)
-- [ ] Speak: ring timer, tabular numerals, notes echoed as chips; "Done" stops early and records (12)
-- [ ] Done: day N, topics, minutes (12)
+- [x] Six phases: idle, spin, topic, prep, speak, done (12)
+- [x] The reel: decoys, overshoot ease, reduced motion skips it, settle backed by a timeout (11)
+- [x] Sounds: reel ticks spaced by the reel's own ease, settle ding, metronome, end chime (11)
+- [x] Prep: three sticky notes, 80 characters, tilted; "Speak now" skips prep (12)
+- [x] Speak: ring timer, tabular numerals, notes echoed as chips; "Done" stops early and records (12)
+- [x] Done: day N, topics, minutes (12; the numbers arrive with 15)
 - [x] Wall-clock countdown; pause (10)
-- [ ] Back arrow in prep, speak and topic, one step back, keeps topic and notes; Escape does the same and is read before the textarea guard; `round_left` with `left_from` and `spoken_seconds` (12)
-- [ ] Space starts and pauses, N gives a new topic (12)
+- [x] Reset (the approved mock's word for v0's back arrow) in prep, speak and topic, one step back, keeps topic and notes; Escape does the same and is read before the textarea guard; `round_left` with `left_from` and `spoken_seconds` (12)
+- [x] Space starts and pauses, N gives a new topic (12)
 - [ ] Settings sheet: prep 0 to 30 min, speak 1 to 10 min, sounds; persisted; vanishes mid-round (13)
 - [ ] Genre sheet: ten genres by role option, Yours as a link, first with Pro and last without (13)
-- [ ] Staged topic per browser, read and cleared by the next draw, spin intact (12, 32)
+- [x] Staged topic per browser, read and cleared by the next draw, spin intact (12; the tool that writes it is 32)
 - [ ] Finished run posted once, per-device limit 120 per hour (15)
 - [x] Engine as a pure TypeScript module with fake-timer tests (10)
 

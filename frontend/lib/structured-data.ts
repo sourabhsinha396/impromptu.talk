@@ -34,3 +34,19 @@ export function itemList(name: string, description: string, path: string, items:
 export function jsonLd(data: object): string {
   return JSON.stringify(data).replace(/</g, "\\u003c");
 }
+
+/* The tool itself, said to a crawler the way a page about it would say it,
+   and free, which is the claim the whole free tier rests on. */
+export function webApplication(name: string, description: string) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name,
+    description,
+    url: absolute("/"),
+    applicationCategory: "EducationalApplication",
+    operatingSystem: "Any",
+    isAccessibleForFree: true,
+    offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+  };
+}

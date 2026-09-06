@@ -30,8 +30,10 @@ import {
   Music,
   NotebookPen,
   Palette,
+  Pause,
   PawPrint,
   Pencil,
+  Play,
   Plane,
   Plus,
   Rocket,
@@ -90,6 +92,8 @@ export const PlusIcon = icon(Plus);
 export const CheckIcon = icon(Check);
 export const CloseIcon = icon(X);
 export const SignOutIcon = icon(LogOut);
+export const PauseIcon = icon(Pause);
+export const PlayIcon = icon(Play);
 
 /* The glyphs a genre may wear, keyed by lucide's own slug so the stored
    value reads as what it draws. The seeder writes one for each built-in
