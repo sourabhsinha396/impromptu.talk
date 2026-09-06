@@ -1,3 +1,5 @@
+import { existsSync } from "node:fs";
+import path from "node:path";
 import { describe, expect, it } from "vitest";
 
 import robots from "@/app/robots";
@@ -21,6 +23,9 @@ describe("what crawlers read", () => {
     expect(urls.some((path) => path.startsWith("/s/"))).toBe(false);
     expect(urls.some((path) => path.includes("admin"))).toBe(false);
     expect(urls[0]).toBe("/");
+    /* Not a redirect, not a page: a topic route would be 800 thin pages
+       again, and the genre page is where a topic is readable. */
+    expect(existsSync(path.resolve(import.meta.dirname, "../../app/topic"))).toBe(false);
   });
 
   it("keeps crawlers off the pages that say nothing to them and points them at the sitemap", () => {

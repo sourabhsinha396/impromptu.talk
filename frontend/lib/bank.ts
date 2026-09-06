@@ -23,3 +23,28 @@ export async function fetchBank(): Promise<Bank> {
     return EMPTY_BANK;
   }
 }
+
+export function genreBySlug(bank: Bank, slug: string): Genre | undefined {
+  return bank.genres.find((genre) => genre.slug === slug);
+}
+
+export function topicsOf(bank: Bank, slug: string): Topic[] {
+  return bank.topics.filter((topic) => topic.genre === slug);
+}
+
+export function topicCounts(bank: Bank): Record<string, number> {
+  const counts: Record<string, number> = {};
+  for (const topic of bank.topics) counts[topic.genre] = (counts[topic.genre] ?? 0) + 1;
+  return counts;
+}
+
+/* A genre's topics grouped under the styles the bank offers, in the bank's
+   order, skipping Surprise me (it is a filter, not a style) and any style
+   the genre happens not to hold. */
+export function topicsByStyle(bank: Bank, slug: string): { style: Style; topics: Topic[] }[] {
+  const topics = topicsOf(bank, slug);
+  return bank.styles
+    .filter((style) => style.key !== "surprise")
+    .map((style) => ({ style, topics: topics.filter((topic) => topic.style === style.key) }))
+    .filter((group) => group.topics.length > 0);
+}
