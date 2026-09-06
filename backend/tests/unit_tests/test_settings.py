@@ -69,3 +69,11 @@ def test_the_app_itself_runs_on_postgres(monkeypatch):
 def test_session_cookie_is_prefixed_and_lax():
     assert settings.SESSION_COOKIE_NAME == "impromptu_session"
     assert settings.SESSION_COOKIE_SAMESITE == "Lax"
+
+
+def test_rate_limit_counters_stay_in_memory_under_test():
+    assert settings.RATELIMIT_STORAGE_URI == "memory://"
+
+
+def test_exactly_one_proxy_hop_is_trusted():
+    assert settings.RATELIMIT_TRUSTED_PROXY_HOPS == 1

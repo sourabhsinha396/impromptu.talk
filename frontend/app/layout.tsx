@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+import { timezoneInit } from "@/lib/cookies";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/site";
 
 /* `title.template` rather than a per-page string: every page sets its own
@@ -31,6 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
+        <script dangerouslySetInnerHTML={{ __html: timezoneInit }} />
       </head>
       <body className="bg-surface font-sans text-ink antialiased">
         <div className="flex min-h-screen flex-col">{children}</div>

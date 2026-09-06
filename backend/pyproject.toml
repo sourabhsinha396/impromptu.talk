@@ -9,6 +9,7 @@ dependencies = [
     "python-dotenv>=1.0",
     "argon2-cffi>=23.1",
     "pydantic[email]>=2.9",
+    "limits[redis]>=5.8",
 ]
 
 [dependency-groups]

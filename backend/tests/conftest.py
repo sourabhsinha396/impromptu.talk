@@ -8,10 +8,15 @@ import pytest
 from django.core.cache import cache
 from django.test import Client
 
+from apps.common import ratelimit
+
 
 @pytest.fixture(autouse=True)
 def _isolate_state():
     cache.clear()
+    # Counters persist in process memory, so without this a suite that
+    # signs in ten times would trip the limit for the eleventh test.
+    ratelimit.reset()
     yield
 
 

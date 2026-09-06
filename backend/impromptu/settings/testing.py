@@ -22,3 +22,7 @@ DATABASES = {
 
 PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
+
+# Pinned to memory so a developer's .env can never point a test run at a
+# real counter store.
+RATELIMIT_STORAGE_URI = "memory://"

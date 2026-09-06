@@ -44,6 +44,8 @@ Ports are 3008 and 8008. algoholic keeps 3007/8007 and v0 keeps 8078, so all thr
 - **Production refuses to boot misconfigured.** A missing SECRET_KEY, ALLOWED_HOSTS or POSTGRES_HOST raises at startup, pinned by tests.
 - **Tests hold no credentials by construction.** Testing settings blank every provider key; a developer's `.env` cannot leak a live key into a run.
 - **Sessions, not JWT.** The cookie is `impromptu_session`, HttpOnly, SameSite Lax, prefixed so localhost ports do not share sessions with neighbouring apps.
+- **Four cookies, all prefixed.** `impromptu_session` and the signed `impromptu_device` are the backend's (`apps/common/devices.py` writes the device one on every API response); `impromptu_ref` and `impromptu_tz` are the frontend's (`frontend/lib/cookies.ts`, set by `proxy.ts` and an inline script). Nothing else is stored in the browser except the theme.
+- **Rate limits are declared beside their routes** with `apps.common.ratelimit.throttle`; the ninja surface is csrf-exempt and the admin is not. Neither lives in env.
 - **The browser never calls the backend directly.** Every browser request rides the `/api` rewrite in `frontend/app/api/[...path]/route.ts`. Server components call the backend origin with forwarded cookies.
 - **Design tokens live in `globals.css` only.** Components use token utilities, never raw hex. The accent colours what you read; the primary button is ink and its colour never moves.
 - **Icons are lucide, mapped by meaning in `components/site/icons.tsx`.** Nothing on the site is an emoji.

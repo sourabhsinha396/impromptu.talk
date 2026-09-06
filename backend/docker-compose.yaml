@@ -24,8 +24,8 @@ services:
       timeout: 3s
       retries: 10
 
-  # Rate-limit counters, once the proxy card wires them. Published on
-  # loopback for the same host-process reason as the database.
+  # Rate-limit counters, shared across API workers. Published on loopback
+  # for the same host-process reason as the database.
   redis:
     image: redis:8-alpine
     volumes:
@@ -45,6 +45,7 @@ services:
       # Compose network names, not the host loopback ones .env holds.
       POSTGRES_HOST: db
       POSTGRES_PORT: 5432
+      RATELIMIT_STORAGE_URI: redis://redis:6379/0
       PYTHONUNBUFFERED: "1"
     command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8008"
     ports:

@@ -36,6 +36,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "apps.common.devices.DeviceCookieMiddleware",
 ]
 
 ROOT_URLCONF = "impromptu.urls"
@@ -92,6 +93,18 @@ PASSWORD_HASHERS = [
 SESSION_COOKIE_NAME = "impromptu_session"
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 30
 SESSION_COOKIE_SAMESITE = "Lax"
+
+# Where rate limit counters live. An address, so env: memory serves one
+# process, and anything with more than one needs the shared store compose
+# provides. `or` because dotenv renders a blank line as "", which must
+# still mean memory.
+RATELIMIT_STORAGE_URI = os.environ.get("RATELIMIT_STORAGE_URI") or "memory://"
+
+# How many proxies stand between the client and this process. The
+# frontend rewrite is the one trusted hop; X-Forwarded-For entries the
+# client sent itself must never get to pick the bucket. Topology, not an
+# address, so it is code.
+RATELIMIT_TRUSTED_PROXY_HOPS = 1
 
 # Where the frontend answers: mail links and checkout returns are built
 # from it. An address, so env; the default is the dev server.
