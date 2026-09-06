@@ -6,14 +6,16 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["dev"],
       "cwd": "frontend",
-      "port": 3008
+      "port": 3008,
+      "autoPort": false
     },
     {
       "name": "backend",
-      "runtimeExecutable": "uv",
-      "runtimeArgs": ["run", "python", "manage.py", "runserver", "8008", "--settings=impromptu.settings.local"],
+      "runtimeExecutable": "docker",
+      "runtimeArgs": ["compose", "up", "--build", "api"],
       "cwd": "backend",
-      "port": 8008
+      "port": 8008,
+      "autoPort": false
     }
   ]
 }

@@ -6,21 +6,19 @@ Two apps in one repo: `frontend/` (Next.js, port 3008) and `backend/` (Django + 
 
 ## Run
 
-Databases, from the repo root (Postgres 17 and Redis 8, on loopback):
+Backend, from `backend/`. Copy `.env.example` to `.env` once, then:
 
 ```bash
-docker compose up -d db redis
+docker compose up --build
 ```
 
-Backend, from `backend/` (copy `.env.example` to `.env` once):
+That is Postgres 17, Redis 8 and the API on http://localhost:8008, migrated on boot. `apps/` and `impromptu/` are mounted into the container, so code edits reload without a rebuild; a dependency change needs `--build` again. Stop it with `Ctrl+C`, or `docker compose down` from another terminal.
+
+Management commands run inside the container:
 
 ```bash
-uv sync
-uv run python manage.py migrate --settings=impromptu.settings.local
-uv run python manage.py runserver 8008 --settings=impromptu.settings.local
+docker compose exec api python manage.py createsuperuser
 ```
-
-Or run the whole backend stack in containers instead, from the repo root: `docker compose up --build`.
 
 Frontend, from `frontend/`:
 
@@ -33,10 +31,16 @@ Then http://localhost:3008. The frontend forwards `/api/*` to the backend, so `h
 
 ## Tests and lint
 
+On the host, no Docker needed (tests run on in-memory SQLite):
+
 ```bash
-cd backend && uv run pytest && uv run ruff check .
+cd backend && uv sync && uv run pytest && uv run ruff check .
 ```
 
 ```bash
 cd frontend && pnpm test && pnpm lint
 ```
+
+## Admin
+
+http://localhost:8008/re-admin/ with the superuser made above. Every table, editable.

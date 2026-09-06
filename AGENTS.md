@@ -21,16 +21,17 @@ Frontend, from `frontend/`:
 
 - `pnpm dev` serves on 3008. `pnpm build` for production. `pnpm test` runs vitest once, `pnpm test:watch` keeps it running. `pnpm lint` typechecks.
 
-Databases, from the repo root:
+Backend, from `backend/`:
 
-- `docker compose up -d db redis` runs Postgres 17 and Redis 8, published on loopback only, so a backend run on the host and the `api` container reach the same database. `docker compose up --build` runs the whole backend stack in containers on 8008 instead.
+- `docker compose up --build` is how the backend runs: Postgres 17, Redis 8 and the API on 8008, migrated on boot. `apps/` and `impromptu/` are bind-mounted and reload on edit; a dependency change needs `--build` again. Copy `.env.example` to `.env` first.
+- Management commands run in the container: `docker compose exec api python manage.py <cmd>`.
+- The database and Redis are published on loopback only, so a host process (psql, a GUI, `uv run manage.py` in a pinch) reaches the same database the container uses.
 - The app is on Postgres everywhere it runs. The only SQLite in the project is the in-memory one tests use, pinned by test.
 
-Backend, from `backend/`:
+Tests and lint, from `backend/` on the host:
 
 - `uv run pytest` runs the suite against in-memory SQLite; no Docker, no credentials.
 - `uv run ruff check .` lints; line length is 120.
-- `uv run python manage.py <cmd> --settings=impromptu.settings.local` for dev commands, against the compose Postgres. Copy `.env.example` to `.env` first.
 - `manage.py` defaults to production settings on purpose: a host that forgot its `.env` gets the settings that refuse to boot, not DEBUG.
 - `.env` is add-only: a session may add a key (mirrored in `.env.example`), never change or remove an existing value.
 

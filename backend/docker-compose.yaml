@@ -9,10 +9,10 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-impromptu}
     volumes:
       - db-data:/var/lib/postgresql/data
-    # Published so a backend run straight on the host (runserver, psql, a
-    # GUI) reaches the same database the container uses. Bound to loopback
-    # on purpose: a development database with a development password has no
-    # business being reachable from the network.
+    # Published so a host process (psql, a GUI, manage.py in a pinch) reaches
+    # the same database the container uses. Bound to loopback on purpose: a
+    # development database with a development password has no business
+    # being reachable from the network.
     ports:
       - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
     healthcheck:
@@ -25,7 +25,7 @@ services:
       retries: 10
 
   # Rate-limit counters, once the proxy card wires them. Published on
-  # loopback for the same host-run reason as the database.
+  # loopback for the same host-process reason as the database.
   redis:
     image: redis:8-alpine
     volumes:
@@ -39,8 +39,8 @@ services:
       retries: 10
 
   api:
-    build: ./backend
-    env_file: ./backend/.env
+    build: .
+    env_file: .env
     environment:
       # Compose network names, not the host loopback ones .env holds.
       POSTGRES_HOST: db
@@ -50,8 +50,8 @@ services:
     ports:
       - "${WEB_PORT:-8008}:8008"
     volumes:
-      - ./backend/apps:/app/apps
-      - ./backend/impromptu:/app/impromptu
+      - ./apps:/app/apps
+      - ./impromptu:/app/impromptu
     depends_on:
       db:
         condition: service_healthy
