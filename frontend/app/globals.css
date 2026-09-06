@@ -1,24 +1,104 @@
 @import "tailwindcss";
 
+/* impromptu.talk
+ *
+ * Warm stone neutrals and one accent at hue 120 throughout. Light keeps the
+ * olive, which is the legible value on paper; dark moves up the same ramp to
+ * a lime that survives on near-black. Only lightness changes across themes,
+ * never hue.
+ *
+ * Bricolage Grotesque for display (narrowed to wdth 96 so a long topic loses
+ * width before it drops a size), Plus Jakarta Sans for everything you read.
+ *
+ * The governing constraint: people film this. A laptop sits across the room
+ * from a phone, and the topic has to be legible in that frame. Every display
+ * size here is larger than a normal web page would justify, on purpose.
+ *
+ * Every token lives here and nowhere else. Components use the utilities
+ * Tailwind makes of them, never raw hex.
+ */
+
+/* The two families, served from this origin: one variable file per family
+   per subset, where a hosted stylesheet would fetch six static cuts. The
+   latin files are preloaded from the layout; the latin-ext files are fetched
+   only when a page needs a glyph in their range.
+
+   Both families span every weight that is actually drawn, which is not the
+   same as every weight a rule names: the ".talk" in the wordmark is the
+   display face at 400, and narrowing this range would silently thicken it,
+   because a browser matches the nearest face it has and will not synthesise
+   a lighter one.
+
+   Both are SIL OFL 1.1. `swap` because the topic is the largest thing on the
+   page and must never wait on a font to be readable. */
+@font-face {
+  font-family: "Bricolage Grotesque";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/bricolage-grotesque-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Bricolage Grotesque";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/bricolage-grotesque-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/plus-jakarta-sans-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/plus-jakarta-sans-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
 /* Dark is a state on <html data-theme>, set by the pre-paint script from a
    stored choice, with the system preference as the fallback when nothing
-   was chosen. The tokens below are the skeleton's; the design-system card
-   ports the full set from v0's app.css. */
-@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+   was chosen. The variant covers both routes, so a `dark:` utility is right
+   whether the visitor chose dark or merely runs it. */
+@custom-variant dark {
+  &:where([data-theme="dark"], [data-theme="dark"] *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-theme="light"]), :root:not([data-theme="light"]) *) {
+      @slot;
+    }
+  }
+}
 
 :root {
+  color-scheme: light;
+
   --surface: #ffffff;
   --card: #ffffff;
   --card2: oklch(0.965 0.008 120);
   --ink: #1c1917;
   --muted: #57534e;
   --line: #e7e5e4;
+  /* `--line` is the hairline between rows in a list; asking it to draw the
+     edge of a control gives 1.3:1 against the page, a border nobody can see.
+     A control has to look pressable, so it gets its own token at the 3:1
+     WCAG asks of non-text UI. */
   --line-strong: #918b87;
 
-  /* A colour is a hue and a chroma; the theme owns the lightness. That is
-     what lets a brand accent land on the largest thing on screen and stay
-     readable in both themes: the number that governs contrast is never the
-     part a person chooses. */
+  /* The accent is a hue and a chroma the theme does not touch, plus a
+     lightness only it does. That split is what lets six brand colours and
+     two themes be six numbers and two numbers rather than twelve pairs, and
+     it is why picking a colour cannot make the topic unreadable: the
+     lightness that governs contrast is never the part a person chooses. */
   --accent-h: 120;
   --accent-c: 0.12;
   --accent-l: 0.5;
@@ -26,48 +106,96 @@
   --accent: oklch(var(--accent-l) var(--accent-c) var(--accent-h));
   --accent-strong: oklch(var(--accent-l-strong) var(--accent-c) var(--accent-h));
 
-  /* The primary button is ink, never the accent. The accent belongs to the
-     topic, and a colour that is on the biggest thing on screen cannot also
-     be what marks the smallest one as pressable. */
+  /* The primary button is ink, not accent. The accent belongs to the topic,
+     and a colour that is on the biggest thing on screen cannot also be what
+     marks the smallest one as pressable. Keeping the button on ink also
+     means it is the one control whose colour never moves: not between idle
+     and mid-round, and not when somebody picks a different accent. */
   --btn: #1c1917;
   --btn-ink: #ffffff;
   --btn-strong: #000000;
+
+  /* The sticky notes a speaker jots during prep. */
+  --note: oklch(0.93 0.13 118);
+  --note-ink: oklch(0.32 0.06 120);
 }
 
-[data-theme="dark"] {
-  --surface: #0c0b0a;
-  --card: #171513;
-  --card2: #121110;
+/* The dark values appear twice below, once for a stored choice and once for
+   a system preference, because a media query cannot join a selector list.
+   The palette test pins the two copies to the same lightness. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --surface: #080808;
+  --card: #161616;
+  --card2: #101010;
   --ink: #f5f5f4;
   --muted: #a8a29e;
   --line: #292524;
   --line-strong: #6b6560;
 
-  --accent-l: 0.8;
+  --accent-l: 0.796;
   --accent-l-strong: 0.86;
 
   --btn: #f5f5f4;
-  --btn-ink: #1c1917;
+  --btn-ink: #111110;
   --btn-strong: #ffffff;
+
+  --note: oklch(0.86 0.15 120);
+  --note-ink: oklch(0.2 0.04 120);
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --surface: #0c0b0a;
-    --card: #171513;
-    --card2: #121110;
+    color-scheme: dark;
+
+    --surface: #080808;
+    --card: #161616;
+    --card2: #101010;
     --ink: #f5f5f4;
     --muted: #a8a29e;
     --line: #292524;
     --line-strong: #6b6560;
 
-    --accent-l: 0.8;
+    --accent-l: 0.796;
     --accent-l-strong: 0.86;
 
     --btn: #f5f5f4;
-    --btn-ink: #1c1917;
+    --btn-ink: #111110;
     --btn-strong: #ffffff;
+
+    --note: oklch(0.86 0.15 120);
+    --note-ink: oklch(0.2 0.04 120);
   }
+}
+
+/* The six accents somebody can pick. A hue and a chroma each, never a
+   lightness: the theme owns that, so no choice can make the topic
+   unreadable. lib/palette.test.ts reads these values and checks every one
+   against both pages. */
+[data-accent="lime"] {
+  --accent-h: 120;
+  --accent-c: 0.12;
+}
+[data-accent="amber"] {
+  --accent-h: 75;
+  --accent-c: 0.106;
+}
+[data-accent="coral"] {
+  --accent-h: 32;
+  --accent-c: 0.118;
+}
+[data-accent="magenta"] {
+  --accent-h: 350;
+  --accent-c: 0.13;
+}
+[data-accent="violet"] {
+  --accent-h: 285;
+  --accent-c: 0.106;
+}
+[data-accent="cyan"] {
+  --accent-h: 210;
+  --accent-c: 0.086;
 }
 
 @theme inline {
@@ -83,21 +211,52 @@
   --color-btn: var(--btn);
   --color-btn-ink: var(--btn-ink);
   --color-btn-strong: var(--btn-strong);
+  --color-note: var(--note);
+  --color-note-ink: var(--note-ink);
 
-  --font-sans: ui-sans-serif, system-ui, sans-serif;
-  --font-display: ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+
+  /* The topic: the single most important element on the site, sized for a
+     phone filming a laptop from across a room. Mid-round it steps back so
+     the clock can lead, but stays far larger than body copy, because you
+     still have to read it from the sofa. */
+  --text-topic: clamp(2.6rem, 11vw, 8.5rem);
+  --text-topic--line-height: 1.02;
+  --text-topic--letter-spacing: -0.035em;
+  --text-topic-mid: clamp(1.6rem, 4.4vw, 3.1rem);
+  --text-topic-mid--line-height: 1.1;
+
+  --radius-card: 14px;
 }
 
-html {
-  color-scheme: light;
-}
+@layer base {
+  body {
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
 
-[data-theme="dark"] {
-  color-scheme: dark;
-}
+  h1,
+  h2 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    color-scheme: dark;
+  /* The display face is asked for narrowed wherever it is used, so a long
+     topic loses width before it drops a size. */
+  h1,
+  h2,
+  .font-display {
+    font-variation-settings: "wdth" 96;
+  }
+
+  /* The accent colours what you read and where your focus is. Controls that
+     sit on the accent themselves (the notes) set their own ring. */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
   }
 }

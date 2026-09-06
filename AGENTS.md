@@ -47,10 +47,10 @@ Ports are 3009 and 8009. algoholic keeps 3007/8007 and v0 keeps 8078, so all thr
 - **Four cookies, all prefixed.** `impromptu_session` and the signed `impromptu_device` are the backend's (`apps/common/devices.py` writes the device one on every API response); `impromptu_ref` and `impromptu_tz` are the frontend's (`frontend/lib/cookies.ts`, set by `proxy.ts` and an inline script). Nothing else is stored in the browser except the theme.
 - **Rate limits are declared beside their routes** with `apps.common.ratelimit.throttle`; the ninja surface is csrf-exempt and the admin is not. Neither lives in env.
 - **The browser never calls the backend directly.** Every browser request rides the `/api` rewrite in `frontend/app/api/[...path]/route.ts`. Server components call the backend origin with forwarded cookies.
-- **Design tokens live in `globals.css` only.** Components use token utilities, never raw hex. The accent colours what you read; the primary button is ink and its colour never moves.
+- **Design tokens live in `globals.css` only, and little else does.** It holds the tokens, the four `@font-face` rules and a short base layer; everything else is Tailwind utilities, shadcn copied in, and Magic UI on marketing surfaces. Components use token utilities, never raw hex. The accent colours what you read; the primary button is ink and its colour never moves.
 - **Icons are lucide, mapped by meaning in `components/site/icons.tsx`.** Nothing on the site is an emoji.
 - **shadcn is copied in, not depended on.** Never run `shadcn init`; on Tailwind v4 it rewrites `globals.css`. `components.json` is hand-written. The button is ours (`components/site/button.tsx`), not the registry's.
-- **Backend tests are centralized, frontend tests are colocated.** `backend/tests/unit_tests/<app>/` mirrors the apps; frontend tests sit beside their subject as `*.test.tsx`. Test names read as sentences.
+- **Tests are centralized on both sides and few.** `backend/tests/unit_tests/<app>/` mirrors the apps; `frontend/tests/` mirrors `app/`, `lib/` and `components/`. A test pins a decision or a behaviour that would break silently (a contrast floor, a cookie flag, a fallback); it does not check that markup renders. Test names read as sentences.
 - **Comments carry only the non-obvious why**, ideally with the named failure that motivated them.
 - **One branch, one feature at a time.** Everything lands directly on `main`; no feature branches, no worktrees. One board card is in doing at any moment, and it is committed and moved to done before the next one starts.
 

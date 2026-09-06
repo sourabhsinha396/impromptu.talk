@@ -3,6 +3,7 @@ import "./globals.css";
 
 import { timezoneInit } from "@/lib/cookies";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/site";
+import { themeInit } from "@/lib/theme";
 
 /* `title.template` rather than a per-page string: every page sets its own
    title, and without a template each one prints alone with no way of telling
@@ -22,15 +23,18 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image", title: SITE_NAME, description: SITE_DESCRIPTION },
 };
 
-/* Sets the stored theme before first paint, so a dark-mode visitor never
-   gets a white flash. Inline and synchronous on purpose. Same key as v0, so
-   a returning visitor keeps their choice across the rebuild. */
-const themeInit = `try{var t=localStorage.getItem("impromptu.theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t}catch(e){}`;
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        {/* The two latin font files are wanted on every page, for the body
+            and for the topic, and the browser would not discover them until
+            it had parsed the stylesheet. `crossOrigin` is required even
+            same-origin: fonts are fetched in CORS mode, and a preload without
+            it is a second, wasted download. The latin-ext files are left to
+            `unicode-range`, which fetches them only if a page needs them. */}
+        <link rel="preload" href="/fonts/plus-jakarta-sans-latin.woff2" as="font" type="font/woff2" crossOrigin="" />
+        <link rel="preload" href="/fonts/bricolage-grotesque-latin.woff2" as="font" type="font/woff2" crossOrigin="" />
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
         <script dangerouslySetInnerHTML={{ __html: timezoneInit }} />
       </head>

@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import Home from "./page";
+import Home from "@/app/page";
 
 describe("home", () => {
   it("asks the one question and keeps the h1 for crawlers", () => {
