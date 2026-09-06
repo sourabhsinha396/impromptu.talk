@@ -36,28 +36,32 @@ main{flex:1;display:flex;flex-direction:column;align-items:center;justify-conten
 .btn{font:inherit;font-weight:600;border-radius:999px;border:1px solid transparent;padding:12px 24px;cursor:pointer;line-height:1;display:inline-flex;align-items:center;gap:8px;text-decoration:none}
 .btn-primary{background:var(--btn);color:var(--btn-ink)}.btn-ghost{background:none;color:var(--muted);border-color:var(--line-strong)}
 .btn-xl{font-size:18px;padding:17px 46px}.btn-icon{padding:12px;min-width:54px;justify-content:center}
-.row{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}.row .btn{min-height:54px}
+.row{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap}.row .btn{min-height:54px}
+.row .btn-ghost{padding-inline:22px}.die-btn{width:18px;height:18px;color:currentColor}
+.reset{display:inline-block;margin-top:22px;font-size:13.5px;font-weight:600;color:var(--muted);text-decoration:none;border-bottom:1px solid transparent;padding-bottom:1px}
+.reset:hover{color:var(--ink);border-color:var(--line-strong)}
+.filming .reset{visibility:visible}
 .kbd{margin-top:18px;font-size:12.5px;color:var(--muted)}.kbd kbd{font:inherit;border:1px solid var(--line-strong);border-radius:6px;padding:1px 6px;margin:0 2px}
 .phone .kbd{display:none}
-.hint{font-size:14px;color:var(--muted);margin:14px 0 0;max-width:44ch}
+.hint{font-size:14px;color:var(--muted);margin:26px 0 0;max-width:44ch}
 .label{display:inline-flex;gap:14px;align-items:center;font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.02em}
 .label .ico{color:var(--accent)}
-.topic{font-family:var(--display);font-weight:600;letter-spacing:-.035em;font-variation-settings:"wdth" 96;line-height:1.02;color:var(--accent);text-wrap:balance;margin:18px 0 34px;font-size:clamp(2.6rem,11vw,8.5rem)}
-.topic-mid{font-size:clamp(1.6rem,4.4vw,3.1rem);line-height:1.1;margin:0 0 18px}
-.clock{position:relative;width:min(56vw,300px);aspect-ratio:1;margin:8px auto 22px}.phone .clock{width:230px}
+.topic{font-family:var(--display);font-weight:600;letter-spacing:-.035em;font-variation-settings:"wdth" 96;line-height:1.02;color:var(--accent);text-wrap:balance;margin:22px 0 44px;font-size:clamp(2.6rem,11vw,8.5rem)}
+.topic-mid{font-size:clamp(1.6rem,4.4vw,3.1rem);line-height:1.1;margin:0 0 30px}
+.clock{position:relative;width:min(56vw,300px);aspect-ratio:1;margin:4px auto 30px}.phone .clock{width:230px}
 .clock svg{width:100%;height:100%;transform:rotate(-90deg)}.clock .track{stroke:var(--line);stroke-width:8;fill:none}
 .clock .arc{stroke:var(--accent);stroke-width:8;fill:none;stroke-linecap:round;stroke-dasharray:283;stroke-dashoffset:120}
 .clock.ending .arc{stroke:var(--warn)}
 .clock .time{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--display);font-weight:600;font-size:clamp(3rem,10vw,5.6rem);letter-spacing:-.04em;font-variant-numeric:tabular-nums;line-height:1}
 .clock .what{position:absolute;left:0;right:0;bottom:22%;font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
-.notes-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:6px 0 26px}
+.notes-row{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin:6px 0 34px}
 .note{width:190px;height:150px;background:var(--note);color:var(--note-ink);border-radius:3px;padding:14px 14px;font:600 17px/1.3 var(--sans);text-align:left;box-shadow:0 8px 24px rgb(0 0 0/.12);position:relative}
 .note:nth-child(1){transform:rotate(-1.2deg)}.note:nth-child(2){transform:rotate(.9deg)}.note:nth-child(3){transform:rotate(-.6deg)}
 .note .ph{opacity:.5}.note .cnt{position:absolute;right:10px;bottom:8px;font-size:11px;font-weight:600;opacity:.55}
 .phone .note{width:100%;height:auto;min-height:64px}
-.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:0 0 26px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:0 0 34px}
 .nchip{background:var(--note);color:var(--note-ink);border-radius:3px;padding:7px 11px;font-size:13px;font-weight:600}
-.stats{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:26px 0 30px}
+.stats{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:30px 0 36px}
 .stat{min-width:150px;padding:18px 22px;border:1px solid var(--line);border-radius:14px;background:var(--card);text-align:center}
 .stat .n{font-family:var(--display);font-weight:600;font-size:44px;letter-spacing:-.03em;line-height:1;display:inline-flex;align-items:center;gap:6px}
 .stat .n .ico{color:var(--accent)}.stat .l{margin-top:6px;font-size:13px;color:var(--muted);font-weight:600}
@@ -95,7 +99,9 @@ main.page{display:block;text-align:left;justify-content:flex-start;max-width:960
 <li><b>The clock is one ring in both timed phases.</b> Same size, same place, the word THINK or SPEAK under the digits, so the eye lands in the same spot when the phase changes. The ring turns warm in the last ten seconds.</li>
 <li><b>The notes travel.</b> Three stickies in prep with a live character count (80 cap); the same words as chips under the clock in speak, read-only. Placeholder says the rule: three words.</li>
 <li><b>Done is three numbers.</b> Day of streak with the flame, topics, minutes, as tiles; "Spin again" leads; "Same topic" beside it for the people who film retakes; one quiet line for strangers about where their streak lives.</li>
-<li><b>Chrome is untouched during prep and speak</b> (header, footer and hint hidden; the frame is a laptop filmed from across the room), and the back arrow leads every button row, as v0 settled.</li>
+<li><b>Reset is a word under the buttons, not an arrow in the row.</b> v0 led every row with a back arrow; here the row holds only what moves you forward (the primary button, then Pause or Speak now), and a quiet "Reset" underneath leaves and keeps nothing. From the topic it goes back to the start; from thinking or speaking it goes back to the topic with the notes intact, as v0's arrow did.</li>
+<li><b>Spin is a button with the die on it, not a rotate icon.</b> The rotate glyph read as "reload"; the die is the site's own mark and the word is the same one the first screen uses, so a new topic is always "Spin".</li>
+<li><b>Chrome is untouched during thinking and speaking</b> (header, footer hidden; the frame is a laptop filmed from across the room), and the spacing between the topic, the clock, the notes and the buttons is opened up so nothing crowds the ring.</li>
 <li><b>Kept from v0:</b> one question, one button, the topic in the accent and the button in ink, the flame pill as the only door to the streak, everything else behind the account button.</li>
 </ul></div>
 <div class="frame">
@@ -112,24 +118,27 @@ main.page{display:block;text-align:left;justify-content:flex-start;max-width:960
 <section data-phase="topic" hidden><main>
 <div class="label"><span><svg class="ico " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg> Career &amp; work</span><span><svg class="ico " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z"/></svg> Hot take</span></div>
 <p class="topic">Meetings should be optional.</p>
-<div class="row"><a class="btn btn-ghost btn-icon" href="#" aria-label="Back"><svg class="ico " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></a><a class="btn btn-primary btn-xl" href="#">Think for a minute</a><a class="btn btn-ghost" href="#">Speak now</a><a class="btn btn-ghost btn-icon" href="#" aria-label="New topic"><svg class="ico " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg></a></div></main></section>
+<div class="row"><a class="btn btn-primary btn-xl" href="#">Think for a minute</a><a class="btn btn-ghost" href="#">Speak now</a><a class="btn btn-ghost" href="#"><svg class="ico die-btn" viewBox="0 0 32 32" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4.6 26.4 10.6 26.4 21.4 16 27.4 5.6 21.4 5.6 10.6z"/><path d="M5.6 10.6 16 16 26.4 10.6M16 16v11.4"/></g><g fill="currentColor"><circle cx="16" cy="10.45" r="1.5"/><circle cx="8.9" cy="15.55" r="1.5"/><circle cx="12.71" cy="22.15" r="1.5"/><circle cx="21.2" cy="18.85" r="1.5"/><circle cx="23.11" cy="15.55" r="1.5"/><circle cx="19.29" cy="22.15" r="1.5"/></g></svg>Spin</a></div>
+<a class="reset" href="#">Reset</a></main></section>
 <section data-phase="prep" hidden><main>
 <p class="topic topic-mid">Meetings should be optional.</p>
 <div class="clock"><svg viewBox="0 0 100 100"><circle class="track" cx="50" cy="50" r="45"/><circle class="arc" cx="50" cy="50" r="45" style="stroke-dashoffset:120"/></svg>
 <div class="time">0:47</div><div class="what">Think</div></div>
 <div class="notes-row"><div class="note">Nobody reads<span class="cnt">12/80</span></div><div class="note">Async first<span class="cnt">11/80</span></div><div class="note"><span class="ph">Three words</span><span class="cnt">0/80</span></div></div>
-<div class="row"><a class="btn btn-ghost btn-icon" href="#" aria-label="Back"><svg class="ico " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></a><a class="btn btn-ghost" href="#"><svg class="ico " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="14" y="3" width="5" height="18" rx="1"/><rect x="5" y="3" width="5" height="18" rx="1"/></svg> Pause</a><a class="btn btn-primary btn-xl" href="#">Speak now</a></div>
+<div class="row"><a class="btn btn-primary btn-xl" href="#">Speak now</a><a class="btn btn-ghost" href="#"><svg class="ico " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="14" y="3" width="5" height="18" rx="1"/><rect x="5" y="3" width="5" height="18" rx="1"/></svg> Pause</a></div>
+<a class="reset" href="#">Reset</a>
 <p class="hint">Three words per note. Don't write sentences - you'll read them.</p></main></section>
 <section data-phase="speak" hidden><main>
 <p class="topic topic-mid">Meetings should be optional.</p>
 <div class="clock ending"><svg viewBox="0 0 100 100"><circle class="track" cx="50" cy="50" r="45"/><circle class="arc" cx="50" cy="50" r="45" style="stroke-dashoffset:240"/></svg>
 <div class="time">0:09</div><div class="what">Speak</div></div>
 <div class="chips"><span class="nchip">Nobody reads</span><span class="nchip">Async first</span></div>
-<div class="row"><a class="btn btn-ghost btn-icon" href="#" aria-label="Leave, keep nothing"><svg class="ico " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></a><a class="btn btn-ghost" href="#"><svg class="ico " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="14" y="3" width="5" height="18" rx="1"/><rect x="5" y="3" width="5" height="18" rx="1"/></svg> Pause</a><a class="btn btn-primary btn-xl" href="#">Done</a></div></main></section>
+<div class="row"><a class="btn btn-primary btn-xl" href="#">Done</a><a class="btn btn-ghost" href="#"><svg class="ico " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="14" y="3" width="5" height="18" rx="1"/><rect x="5" y="3" width="5" height="18" rx="1"/></svg> Pause</a></div>
+<a class="reset" href="#">Reset</a></main></section>
 <section data-phase="done" hidden><main>
 <p class="q">That's a minute.</p>
 <div class="stats"><div class="stat"><div class="n"><svg class="ico " width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"/></svg>7</div><div class="l">day streak</div></div><div class="stat"><div class="n">23</div><div class="l">topics</div></div><div class="stat"><div class="n">24</div><div class="l">minutes spoken</div></div></div>
-<div class="row"><a class="btn btn-primary btn-xl" href="#">Spin again</a><a class="btn btn-ghost" href="#">Same topic</a></div>
+<div class="row"><a class="btn btn-primary btn-xl" href="#"><svg class="ico die-btn" viewBox="0 0 32 32" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4.6 26.4 10.6 26.4 21.4 16 27.4 5.6 21.4 5.6 10.6z"/><path d="M5.6 10.6 16 16 26.4 10.6M16 16v11.4"/></g><g fill="currentColor"><circle cx="16" cy="10.45" r="1.5"/><circle cx="8.9" cy="15.55" r="1.5"/><circle cx="12.71" cy="22.15" r="1.5"/><circle cx="21.2" cy="18.85" r="1.5"/><circle cx="23.11" cy="15.55" r="1.5"/><circle cx="19.29" cy="22.15" r="1.5"/></g></svg>Spin again</a><a class="btn btn-ghost" href="#">Same topic</a></div>
 <p class="hint">Your streak lives in this browser. <a href="#" style="color:var(--accent-strong)">Create an account</a> to keep it on your phone.</p></main></section>
 <footer class="foot"><div class="foot-grid">
 <div><span class="wordmark"><svg class="die" viewBox="0 0 32 32" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4.6 26.4 10.6 26.4 21.4 16 27.4 5.6 21.4 5.6 10.6z"/><path d="M5.6 10.6 16 16 26.4 10.6M16 16v11.4"/></g><g fill="currentColor"><circle cx="16" cy="10.45" r="1.5"/><circle cx="8.9" cy="15.55" r="1.5"/><circle cx="12.71" cy="22.15" r="1.5"/><circle cx="21.2" cy="18.85" r="1.5"/><circle cx="23.11" cy="15.55" r="1.5"/><circle cx="19.29" cy="22.15" r="1.5"/></g></svg><span class="name">impromptu<span>.talk</span></span></span><p style="margin:10px 0 6px;max-width:32ch">A random topic, a minute to think, a minute to talk.</p><p style="margin:0;font-size:12px">&copy; 2026 impromptu.talk</p></div>
