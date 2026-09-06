@@ -2,14 +2,14 @@
 
 The acceptance list for the board. Every route and every behaviour v0 had, with the v1 card that carries it and a tick once it has landed on `main`. Nothing on this list may be quietly dropped; a line that v1 changes on purpose says so and points at `DECISIONS.md`.
 
-Ticked as of 2026-09-06, after cards 01 to 07.
+Ticked as of 2026-09-06, after cards 01 to 08.
 
 ## Routes
 
 | v0 | v1 | Card | Done |
 |---|---|---|---|
 | `GET /healthz` | `GET /api/v1/common/health` | 01 | [x] |
-| `GET /` (the tool) | `/` | 12 | [ ] placeholder only |
+| `GET /` (the tool) | `/` | 08, 12 | [ ] idle screen from the approved mock, inert until 12 and 13 |
 | `GET /genres` | `/genres` | 09 | [ ] |
 | `GET /genre/{slug}` | `/genre/[slug]` | 09 | [ ] |
 | `GET /topic/{slug}` answers 404 | same, by having no route | 09 | [ ] |
@@ -85,7 +85,8 @@ Ticked as of 2026-09-06, after cards 01 to 07.
 - [x] Ten genres, one flat list, the merge map; 1000 topics (v0 had 800; 200 added for v1); every style in every built-in genre (07)
 - [x] Seeder as a one-off management command, never on boot; idempotent, never deletes a topic, deletes an emptied built-in genre, deactivates one still owning topics, never touches an owned genre (07)
 - [x] Style (v0 format) as a tag, four values plus Surprise me (07)
-- [ ] The bank ships with the home page and is shuffled in the browser; no-repeat pool; tiered decoys (08, 10)
+- [x] The bank ships with the home page as one public, hour-cached endpoint; 24.7KB gzipped for 1000 topics (08)
+- [ ] Shuffled in the browser; no-repeat pool; tiered decoys (10)
 - [ ] `/genres` hub with all ten; every topic's text on its genre page, pinned by test (09)
 - [ ] No `/topic/` pages; `/?topic=` deep link skips the spinner (09, 12)
 - [ ] Genre pages carry JSON-LD and the blurb (09)

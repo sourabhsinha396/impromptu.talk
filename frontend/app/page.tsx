@@ -1,14 +1,12 @@
-/* The page is the tool. The h1 is for crawlers and screen readers; every
-   word a visitor sees belongs to the round itself. The round arrives with
-   the run-engine cards; until then the page asks the one question. */
-export default function Home() {
-  return (
-    <main className="flex min-h-[calc(100dvh-var(--header-h))] flex-1 flex-col items-center justify-center px-6 py-16 text-center">
-      <h1 className="sr-only">Impromptu speaking practice, a free random topic generator and timer</h1>
-      <p className="font-display text-4xl font-semibold leading-tight text-balance sm:text-5xl">
-        Can you talk for a minute?
-      </p>
-      <p className="mt-6 text-muted">The round is on its way.</p>
-    </main>
-  );
+import { Idle } from "@/components/round/idle";
+import { fetchBank } from "@/lib/bank";
+
+/* The page is the tool. The bank arrives with it, whole, so a respin costs
+   no round trip; the engine (card 10) and the phases (card 12) take it
+   from here. Until the settings sheet lands, the round is a minute each
+   way and the picker starts on the first genre. */
+export default async function Home() {
+  const bank = await fetchBank();
+  const genre = bank.genres[0] ?? { slug: "general", name: "General", icon: "dices", blurb: "" };
+  return <Idle genre={genre} speakSeconds={60} />;
 }

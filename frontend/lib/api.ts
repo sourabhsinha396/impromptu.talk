@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 
-const BACKEND_ORIGIN = process.env.BACKEND_ORIGIN ?? "http://127.0.0.1:8009";
+export const BACKEND_ORIGIN = process.env.BACKEND_ORIGIN ?? "http://127.0.0.1:8009";
 
 /* Server components call the backend origin directly (the rewrite is for
    the browser) and forward the incoming cookies so the session holds. */
