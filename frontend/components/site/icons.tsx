@@ -53,7 +53,7 @@ import {
 } from "lucide-react";
 
 /* lucide only, mapped by meaning. Nothing on the site is an emoji: every
-   one v0 drew (ten genres, five formats, the pack badges, the operator tool
+   one v0 drew (ten genres, five styles, the pack badges, the operator tool
    cards, the chrome glyphs) is a glyph here, drawn on the same 24-unit grid
    at the same 2-unit stroke, so they weigh the same beside each other.
 
@@ -111,10 +111,10 @@ export function GenreIcon({ slug, ...rest }: IconProps & { slug: string }) {
   return <Glyph {...rest} />;
 }
 
-/* One glyph per category, the kind of talk a prompt asks for (v0 called it
-   the format). Hot take is a bolt rather than a flame, because the flame is
-   the streak's mark and a header with two flames says nothing. */
-export const CATEGORY_ICONS: Record<string, Glyph> = {
+/* One glyph per style, how a prompt asks you to talk (v0 called it the
+   format). Hot take is a bolt rather than a flame, because the flame is the
+   streak's mark and a header with two flames says nothing. */
+export const STYLE_ICONS: Record<string, Glyph> = {
   surprise: Shuffle,
   "just-talk": MessageCircle,
   "hot-take": Zap,
@@ -122,8 +122,8 @@ export const CATEGORY_ICONS: Record<string, Glyph> = {
   story: BookOpen,
 };
 
-export function CategoryIcon({ category, ...rest }: IconProps & { category: string }) {
-  const Glyph = icon(CATEGORY_ICONS[category] ?? Shuffle);
+export function StyleIcon({ style, ...rest }: IconProps & { style: string }) {
+  const Glyph = icon(STYLE_ICONS[style] ?? Shuffle);
   return <Glyph {...rest} />;
 }
 

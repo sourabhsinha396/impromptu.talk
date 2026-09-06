@@ -62,7 +62,7 @@ Ticked as of 2026-09-06, after cards 01 to 06.
 - [x] Fonts self-hosted, one variable file per family per subset, latin preloaded, latin-ext by unicode-range (04)
 - [x] Display face at wdth 96; ".talk" at 400 (04, 05)
 - [x] Theme system, light, dark on `<html data-theme>`, pre-paint script, v0's storage key (04)
-- [x] Every v0 emoji is a lucide glyph: ten genres, five categories, 24 badges, four tool cards, the chrome (04)
+- [x] Every v0 emoji is a lucide glyph: ten genres, five styles, 24 badges, four tool cards, the chrome (04)
 - [x] The die mark, favicon, apple icon (04)
 - [x] Topic sized for a phone filming a laptop (04: tokens; 12: the page)
 
@@ -82,9 +82,9 @@ Ticked as of 2026-09-06, after cards 01 to 06.
 
 ### Content
 
-- [ ] Ten genres, one flat list, the merge map; 800 topics; every category in every built-in genre (07)
-- [ ] Seeder idempotent, never deletes a topic, deletes an emptied built-in genre, deactivates one still owning topics, never touches an owned genre (07)
-- [ ] Category (v0 format) as a tag, four values plus Surprise me (07)
+- [ ] Ten genres, one flat list, the merge map; 800 topics; every style in every built-in genre (07)
+- [ ] Seeder as a one-off management command, never on boot; idempotent, never deletes a topic, deletes an emptied built-in genre, deactivates one still owning topics, never touches an owned genre (07)
+- [ ] Style (v0 format) as a tag, four values plus Surprise me (07)
 - [ ] The bank ships with the home page and is shuffled in the browser; no-repeat pool; tiered decoys (08, 10)
 - [ ] `/genres` hub with all ten; every topic's text on its genre page, pinned by test (09)
 - [ ] No `/topic/` pages; `/?topic=` deep link skips the spinner (09, 12)
@@ -142,7 +142,7 @@ Ticked as of 2026-09-06, after cards 01 to 06.
 ### Owned genres (v0 packs)
 
 - [ ] Genre rows with an owner; slug unique per owner; icon from the 24; caps 10 and 200 (29, confirm at start)
-- [ ] Coined category: as typed, max 24, only in owned genres, built-in name gets the built-in, paste cannot coin (29)
+- [ ] Coined style: as typed, max 24, only in owned genres, built-in name gets the built-in, paste cannot coin (29)
 - [ ] Editor: paste, inline edit, delete, share on and off, delete genre; `/packs` list; Pro required section (29)
 - [ ] Sharing: `/g/[token]`, noindex, "Practise this" into the picker (29, 08, 13)
 - [ ] Generate five from a prompt, five a month from rows, failed call spends one, off without a key (30)

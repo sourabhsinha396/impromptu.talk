@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   DEFAULT_PACK_ICON,
-  CATEGORY_ICONS,
+  STYLE_ICONS,
   GENRE_ICONS,
   GenreIcon,
   PACK_ICONS,
@@ -12,7 +12,7 @@ import {
   validPackIcon,
 } from "@/components/site/icons";
 
-/* The ten genres and five categories v0 seeds (its formats), the four operator tools, and
+/* The ten genres and five styles v0 seeds (its formats), the four operator tools, and
    the 24 badges its pack picker offered. Every emoji among them is a glyph
    now, and a slug without one here is a swatch that draws nothing. */
 const GENRES = [
@@ -27,7 +27,7 @@ const GENRES = [
   "philosophy",
   "culture",
 ];
-const CATEGORIES = ["surprise", "just-talk", "hot-take", "explain", "story"];
+const STYLES = ["surprise", "just-talk", "hot-take", "explain", "story"];
 const TOOLS = ["staged-topic", "pro", "payouts", "outreach"];
 
 const drawn = (element: React.ReactElement) => render(element).container.querySelector("svg")?.innerHTML ?? "";
@@ -35,7 +35,7 @@ const drawn = (element: React.ReactElement) => render(element).container.querySe
 describe("icons", () => {
   it("covers every emoji v0 drew, each genre with its own silhouette", () => {
     expect(Object.keys(GENRE_ICONS).sort()).toEqual([...GENRES].sort());
-    expect(Object.keys(CATEGORY_ICONS).sort()).toEqual([...CATEGORIES].sort());
+    expect(Object.keys(STYLE_ICONS).sort()).toEqual([...STYLES].sort());
     expect(Object.keys(TOOL_ICONS).sort()).toEqual([...TOOLS].sort());
     expect(Object.keys(PACK_ICONS)).toHaveLength(24);
 

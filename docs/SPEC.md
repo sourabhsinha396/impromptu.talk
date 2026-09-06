@@ -40,7 +40,7 @@ Decisions that changed with the rebuild, each with its reason in `DECISIONS.md`:
 
 - **Stack and ports.** Django 5.2 with django-ninja on 8009, Next 16 with React 19 and Tailwind v4 on 3009, Postgres everywhere the app runs, Redis for rate-limit counters only. The browser never calls the backend directly; every request rides the `/api` rewrite.
 - **Icons, not emoji.** Every emoji v0 drew is a lucide glyph mapped by meaning in `frontend/components/site/icons.tsx`. Genres have no icon column: the glyph follows the slug. Owned genres keep an icon slug from a fixed set of 24.
-- **Format is category.** The kind of talk a prompt asks for is `Topic.category`; v0 called it format. Same four values, same rules.
+- **Format is style.** How a prompt asks you to talk is `Topic.style`; v0 called it format, and "category" was tried for an afternoon and dropped because a stranger cannot tell a category from a genre. Same four values, same rules.
 - **Owned genres are genre rows** (v0: packs in their own tables) and can be shared by link. §8.
 - **Fewer tables and columns.** No `Genre.category` grouping, no `Topic.difficulty`, no `Session.topic_id`, no separate affiliates table, no login-session or password-reset tables of our own, static exchange rates.
 - **Crawlable pages stay server-rendered.** The growth plan is the ten genre pages, so they are rendered on the server with every topic in the HTML, as v0's were.
@@ -54,9 +54,9 @@ Decisions that changed with the rebuild, each with its reason in `DECISIONS.md`:
 A topic is a sentence with two labels:
 
 - **Genre**: what it is about. The visible picker.
-- **Category**: how you are asked to talk about it. In settings, defaulting to "Surprise me".
+- **Style**: how you are asked to talk about it. In settings, defaulting to "Surprise me".
 
-Category is a tag on a topic, never a transformation of one. "Tipping should end" is stored as a hot take; "Low tide" as just-talk. Filtering narrows the bank; nothing rewrites a prompt.
+Style is a tag on a topic, never a transformation of one. "Tipping should end" is stored as a hot take; "Low tide" as just-talk. Filtering narrows the bank; nothing rewrites a prompt.
 
 ### Ten genres, one flat list
 
@@ -68,17 +68,17 @@ Shipped as twenty in v0 and cut to ten on 5 September 2026. A flat scroll list s
 
 Removing a built-in genre from the seeder's list deletes its row once its topics have moved off it; one that still owns topics is deactivated, never deleted with them. `Session.genre_slug` on finished runs is a plain string with no foreign key, so history stays readable through a merge.
 
-### Four categories, and Surprise me
+### Four styles, and Surprise me
 
-Surprise me (the default, and not a category: it means no filter), Just talk, Hot take, Explain it simply, Tell a story.
+Surprise me (the default, and not a style: it means no filter), Just talk, Hot take, Explain it simply, Tell a story.
 
-Cut from twelve on 5 September 2026. The four are four modes - open, argue, teach, tell - and that is the test a fifth has to pass. Anything naming an occasion (an interview, an exam, a club) is a context, and a context is a genre or somebody's own genre. The topics that carried a removed category were retagged, never deleted. **Every built-in category appears in every built-in genre**, or it is a chip that silently does nothing; the seeder test holds that.
+Cut from twelve on 5 September 2026. The four are four modes - open, argue, teach, tell - and that is the test a fifth has to pass. Anything naming an occasion (an interview, an exam, a club) is a context, and a context is a genre or somebody's own genre. The topics that carried a removed style were retagged, never deleted. **Every built-in style appears in every built-in genre**, or it is a chip that silently does nothing; the seeder test holds that.
 
-A coined category exists only under an owned genre (§8).
+A coined style exists only under an owned genre (§8).
 
 ### The bank
 
-800 topics across the ten genres, one JSON file per genre in the backend, loaded by an idempotent seeder that owns every column it touches on built-in rows, upserts by text, never deletes a topic (`is_active` off instead) and never reads past `owner IS NULL`. It is a management command, not a boot step. Text and slug are unique per genre, not globally, because two owners may both write the same sentence.
+800 topics across the ten genres, one JSON file per genre in the backend, loaded by an idempotent seeder that owns every column it touches on built-in rows, upserts by text, never deletes a topic (`is_active` off instead) and never reads past `owner IS NULL`. It is a management command run once by hand, never a boot step: nothing seeds itself, and compose only migrates. Text and slug are unique per genre, not globally, because two owners may both write the same sentence.
 
 Written global-first. Every "new topic" click is instant because the whole bank ships with the page and is shuffled in the browser; the no-repeat pool hands nothing back until it is exhausted, and a thin filter still gets a full spin by borrowing decoys from the genre and then the bank.
 
@@ -109,7 +109,7 @@ Six phases on the home page: **idle** (the one question and the one button), **s
 - **Keys**: space starts and pauses, N gives a new topic (the first letter of the thing it does, and R is what every browser has already given to reload).
 - **Camera mode**: during prep and speak the header, footer, hints and the support bubble are hidden. The frame is a laptop screen shot from across the room.
 - **The staged topic** is per browser, not per account: a genre and the words under one localStorage key, read and cleared by the next draw, with the spin left intact so only the winner is fixed. Two people filming off one login do not stage over each other, and a rigged reel is never written down beside anybody's real runs. It is written by the operator tool and read by the engine; a key one of them cannot read is a button that looks like it worked.
-- **A finished run is one POST** with the topic text, the genre slug, the category, the prep and speak lengths, how long was actually spoken and the browser's UTC offset. Rate limited per device, not per address: a classroom behind one address is many speakers, and nothing may stand in front of the practice loop.
+- **A finished run is one POST** with the topic text, the genre slug, the style, the prep and speak lengths, how long was actually spoken and the browser's UTC offset. Rate limited per device, not per address: a classroom behind one address is many speakers, and nothing may stand in front of the practice loop.
 
 The engine is a pure TypeScript module with no DOM in it, tested with fake timers; the page renders its state.
 
@@ -156,11 +156,11 @@ Where a stranger feels "these do not fit me" is while choosing a genre, so the w
 **In v1 an owned genre is a `Genre` row with an owner and its topics are `Topic` rows.** v0 kept packs in tables of their own because the bank is public and the seeder must not learn to skip rows; sharing makes an owned genre public by intent, and the seeder's rule is one `owner IS NULL` clause pinned by test. This removes a second table pair, the `pack:` namespace and a second picker row shape. Recommended on 6 September 2026; the owner confirms when card 29 starts.
 
 - Name, slug unique per owner (so two people can both have "work" and nobody can shadow a built-in), an icon from the fixed set of 24, `is_active`, a share token. Ten per account, 200 topics each, because the bank ships inline.
-- **A coined category** exists only here. `Topic.category` holds a built-in slug or the words typed, at most 24 characters, stored as typed and never slugified, because "IELTS style" read back from a slug is "Ielts style" and a tag that restyles itself is a tag nobody trusts. Typing a built-in's name gets the built-in. A paste cannot coin one, or every comma in a sentence would. It is filterable only inside the genre that coined it; leaving the genre drops the filter back to Surprise me; analytics records "custom", never the words.
-- **Editor**: add topics by paste (a category tag parsed off each line), edit text and category inline, delete a topic, share on and off with the link to copy, delete the genre.
+- **A coined style** exists only here. `Topic.style` holds a built-in slug or the words typed, at most 24 characters, stored as typed and never slugified, because "IELTS style" read back from a slug is "Ielts style" and a tag that restyles itself is a tag nobody trusts. Typing a built-in's name gets the built-in. A paste cannot coin one, or every comma in a sentence would. It is filterable only inside the genre that coined it; leaving the genre drops the filter back to Surprise me; analytics records "custom", never the words.
+- **Editor**: add topics by paste (a style tag parsed off each line), edit text and style inline, delete a topic, share on and off with the link to copy, delete the genre.
 - **Generate** five topics at a time from a prompt with a model, behind a monthly allowance counted from rows (§6 of `PRICING.md`). Off entirely without a key; the rest of the editor works without it.
-- **Sharing** (new in v1): "Share" mints the token once; "Stop sharing" clears it and the old link dies. `/g/<token>` is `noindex`, needs no account, shows the icon, name, owner's name (never the email), every topic with its category, and "Practise this", which puts the genre in the picker for that visit. Viewing is free, making is Pro, nothing is copied: a link always shows the current list.
-- **Anything a person picks is a fixed set with a validator in front of it**: the accent, an icon, a category. Offer a list and turn anything unrecognised into the default rather than raising, because these values end up in an attribute on `<html>`, in the picker and in a filter, and the one thing they must never be is whatever was posted.
+- **Sharing** (new in v1): "Share" mints the token once; "Stop sharing" clears it and the old link dies. `/g/<token>` is `noindex`, needs no account, shows the icon, name, owner's name (never the email), every topic with its style, and "Practise this", which puts the genre in the picker for that visit. Viewing is free, making is Pro, nothing is copied: a link always shows the current list.
+- **Anything a person picks is a fixed set with a validator in front of it**: the accent, an icon, a style. Offer a list and turn anything unrecognised into the default rather than raising, because these values end up in an attribute on `<html>`, in the picker and in a filter, and the one thing they must never be is whatever was posted.
 
 ---
 
