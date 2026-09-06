@@ -316,6 +316,14 @@ export class Engine {
     this.changed();
   }
 
+  /** The thumb is moving: the headline and the button follow it, and
+      nothing is written or counted until it is let go. */
+  previewLength(which: "prep" | "speak", seconds: number): void {
+    const [low, high] = which === "prep" ? PREP_RANGE : SPEAK_RANGE;
+    this.prefs[which] = Math.min(high, Math.max(low, Math.round(seconds)));
+    this.changed();
+  }
+
   setLength(which: "prep" | "speak", seconds: number): void {
     const [low, high] = which === "prep" ? PREP_RANGE : SPEAK_RANGE;
     this.prefs[which] = Math.min(high, Math.max(low, Math.round(seconds)));

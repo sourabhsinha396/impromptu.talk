@@ -2,14 +2,14 @@
 
 The acceptance list for the board. Every route and every behaviour v0 had, with the v1 card that carries it and a tick once it has landed on `main`. Nothing on this list may be quietly dropped; a line that v1 changes on purpose says so and points at `DECISIONS.md`.
 
-Ticked as of 2026-09-06, after cards 01 to 12.
+Ticked as of 2026-09-06, after cards 01 to 13.
 
 ## Routes
 
 | v0 | v1 | Card | Done |
 |---|---|---|---|
 | `GET /healthz` | `GET /api/v1/common/health` | 01 | [x] |
-| `GET /` (the tool) | `/` | 08, 12 | [x] the round; the sheets on 13 |
+| `GET /` (the tool) | `/` | 08, 12, 13 | [x] |
 | `GET /genres` | `/genres` | 09 | [x] |
 | `GET /genre/{slug}` | `/genre/[slug]` | 09 | [x] |
 | `GET /topic/{slug}` answers 404 | same, by having no route | 09 | [x] pinned |
@@ -103,8 +103,8 @@ Ticked as of 2026-09-06, after cards 01 to 12.
 - [x] Wall-clock countdown; pause (10)
 - [x] Reset (the approved mock's word for v0's back arrow) in prep, speak and topic, one step back, keeps topic and notes; Escape does the same and is read before the textarea guard; `round_left` with `left_from` and `spoken_seconds` (12)
 - [x] Space starts and pauses, N gives a new topic (12)
-- [ ] Settings sheet: prep 0 to 30 min, speak 1 to 10 min, sounds; persisted; vanishes mid-round (13)
-- [ ] Genre sheet: ten genres by role option, Yours as a link, first with Pro and last without (13)
+- [x] Settings sheet: prep 0 to 30 min, speak 1 to 10 min, sounds; persisted; vanishes mid-round (13)
+- [x] Genre sheet: ten genres by role option, Yours as a link, first with Pro and last without (13; own genres fill it on 29)
 - [x] Staged topic per browser, read and cleared by the next draw, spin intact (12; the tool that writes it is 32)
 - [ ] Finished run posted once, per-device limit 120 per hour (15)
 - [x] Engine as a pure TypeScript module with fake-timer tests (10)
@@ -148,7 +148,7 @@ Ticked as of 2026-09-06, after cards 01 to 12.
 - [ ] Editor: paste, inline edit, delete, share on and off, delete genre; `/packs` list; Pro required section (29)
 - [ ] Sharing: `/g/[token]`, noindex, "Practise this" into the picker (29, 08, 13)
 - [ ] Generate five from a prompt, five a month from rows, failed call spends one, off without a key (30)
-- [ ] Yours in the picker first with Pro, last without, never removed; lapsed subscriber keeps genres (13, 29)
+- [x] Yours in the picker first with Pro, last without, never removed (13); lapsed subscriber keeps genres (29)
 
 ### Affiliates
 

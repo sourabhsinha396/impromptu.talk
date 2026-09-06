@@ -2,9 +2,11 @@
 
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 
+import { GenreSheet } from "@/components/round/genre-sheet";
 import { Idle } from "@/components/round/idle";
 import { DonePhase, PrepPhase, SpeakPhase, TopicPhase, type Summary } from "@/components/round/phases";
 import { Reel } from "@/components/round/reel";
+import { SettingsSheet } from "@/components/round/settings-sheet";
 import type { Bank } from "@/lib/bank";
 import { Engine, type Effect } from "@/lib/round/engine";
 import { Sound } from "@/lib/round/sound";
@@ -46,10 +48,11 @@ async function record(payload: Extract<Effect, { type: "record" }>["payload"]): 
 
 const noop = () => () => {};
 
-export function Round({ bank, signedIn }: { bank: Bank; signedIn: boolean }) {
+export function Round({ bank, signedIn, isPro = false }: { bank: Bank; signedIn: boolean; isPro?: boolean }) {
   const [engine, setEngine] = useState<Engine | null>(null);
   const [sound, setSound] = useState<Sound | null>(null);
   const [summary, setSummary] = useState<Summary | null>(null);
+  const [sheet, setSheet] = useState<"genre" | "settings" | null>(null);
 
   useEffect(() => {
     const made = new Engine({
@@ -119,7 +122,42 @@ export function Round({ bank, signedIn }: { bank: Bank; signedIn: boolean }) {
   const prefs = engine?.prefs ?? { genre: genre.slug, prep: 60, speak: 60, style: "surprise", sound: true };
 
   if (!engine || engine.phase === "idle") {
-    return <Idle genre={genre} speakSeconds={prefs.speak} onSpin={engine ? armed(() => engine.spin()) : undefined} />;
+    return (
+      <>
+        <Idle
+          genre={genre}
+          speakSeconds={prefs.speak}
+          onSpin={engine ? armed(() => engine.spin()) : undefined}
+          onGenre={engine ? () => setSheet("genre") : undefined}
+          onSettings={engine ? () => setSheet("settings") : undefined}
+        />
+        {engine && (
+          <>
+            <GenreSheet
+              open={sheet === "genre"}
+              onOpenChange={(open) => setSheet(open ? "genre" : null)}
+              bank={bank}
+              current={prefs.genre}
+              isPro={isPro}
+              onChoose={(slug) => {
+                engine.chooseGenre(slug);
+                setSheet(null);
+              }}
+            />
+            <SettingsSheet
+              open={sheet === "settings"}
+              onOpenChange={(open) => setSheet(open ? "settings" : null)}
+              bank={bank}
+              prefs={prefs}
+              onPreview={(which, seconds) => engine.previewLength(which, seconds)}
+              onLength={(which, seconds) => engine.setLength(which, seconds)}
+              onStyle={(key) => engine.chooseStyle(key)}
+              onSound={(on) => engine.setSound(on)}
+            />
+          </>
+        )}
+      </>
+    );
   }
 
   const clock = {
