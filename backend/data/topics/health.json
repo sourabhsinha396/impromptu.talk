@@ -1,0 +1,485 @@
+{
+  "genre": "Health & mind",
+  "topics": [
+    {
+      "text": "Walking",
+      "format": "just-talk"
+    },
+    {
+      "text": "Starting again",
+      "format": "just-talk"
+    },
+    {
+      "text": "Gyms",
+      "format": "just-talk"
+    },
+    {
+      "text": "Running",
+      "format": "just-talk"
+    },
+    {
+      "text": "Rest days",
+      "format": "just-talk"
+    },
+    {
+      "text": "Team sport",
+      "format": "just-talk"
+    },
+    {
+      "text": "Being bad at something new",
+      "format": "just-talk"
+    },
+    {
+      "text": "Stretching",
+      "format": "just-talk"
+    },
+    {
+      "text": "Nobody needs a gym membership",
+      "format": "hot-take"
+    },
+    {
+      "text": "Step counts are meaningless",
+      "format": "hot-take"
+    },
+    {
+      "text": "Fitness culture is mostly marketing",
+      "format": "hot-take"
+    },
+    {
+      "text": "Competitive sport harms children",
+      "format": "hot-take"
+    },
+    {
+      "text": "Sports salaries are indefensible",
+      "format": "hot-take"
+    },
+    {
+      "text": "The day you kept going",
+      "format": "story"
+    },
+    {
+      "text": "An injury that taught you something",
+      "format": "story"
+    },
+    {
+      "text": "The first time you enjoyed exercise",
+      "format": "story"
+    },
+    {
+      "text": "A goal you gave up on",
+      "format": "story"
+    },
+    {
+      "text": "Explain why muscles get sore",
+      "format": "explain"
+    },
+    {
+      "text": "Explain what fitness actually means",
+      "format": "explain"
+    },
+    {
+      "text": "Explain a sport you do not understand",
+      "format": "explain"
+    },
+    {
+      "text": "Explain warming up to someone who skips it",
+      "format": "explain"
+    },
+    {
+      "text": "Argue against exercise goals",
+      "format": "hot-take"
+    },
+    {
+      "text": "Argue that walking beats the gym",
+      "format": "hot-take"
+    },
+    {
+      "text": "Argue that tracking ruins the activity",
+      "format": "hot-take"
+    },
+    {
+      "text": "PE should be optional in schools",
+      "format": "hot-take"
+    },
+    {
+      "text": "Doping should be allowed in professional sport",
+      "format": "hot-take"
+    },
+    {
+      "text": "Sport should be publicly funded",
+      "format": "hot-take"
+    },
+    {
+      "text": "What does being healthy actually mean?",
+      "format": "just-talk"
+    },
+    {
+      "text": "Is discipline learned or given?",
+      "format": "just-talk"
+    },
+    {
+      "text": "What excuse do you use most?",
+      "format": "just-talk"
+    },
+    {
+      "text": "Would you rather be strong or fast?",
+      "format": "just-talk"
+    },
+    {
+      "text": "Describe a sport you enjoy watching",
+      "format": "just-talk"
+    },
+    {
+      "text": "Describe a time you achieved something physical",
+      "format": "just-talk"
+    },
+    {
+      "text": "Describe a healthy habit you have",
+      "format": "just-talk"
+    },
+    {
+      "text": "Sell me a sport nobody watches",
+      "format": "hot-take"
+    },
+    {
+      "text": "Sell me a rest day",
+      "format": "hot-take"
+    },
+    {
+      "text": "Commentate on someone making tea",
+      "format": "story"
+    },
+    {
+      "text": "Why you would lose a fight with a goose",
+      "format": "story"
+    },
+    {
+      "text": "Invent a new Olympic event",
+      "format": "story"
+    },
+    {
+      "text": "Tell me about a goal you set and met",
+      "format": "explain"
+    },
+    {
+      "text": "Rest",
+      "format": "just-talk"
+    },
+    {
+      "text": "Worry",
+      "format": "just-talk"
+    },
+    {
+      "text": "Being busy",
+      "format": "just-talk"
+    },
+    {
+      "text": "Quiet",
+      "format": "just-talk"
+    },
+    {
+      "text": "Asking for help",
+      "format": "just-talk"
+    },
+    {
+      "text": "Sleep",
+      "format": "just-talk"
+    },
+    {
+      "text": "Comparison",
+      "format": "just-talk"
+    },
+    {
+      "text": "Loneliness",
+      "format": "just-talk"
+    },
+    {
+      "text": "Sunday evening",
+      "format": "just-talk"
+    },
+    {
+      "text": "Everyone should have a hobby that is not monetised",
+      "format": "hot-take"
+    },
+    {
+      "text": "Self-care has been sold back to us",
+      "format": "hot-take"
+    },
+    {
+      "text": "Mental health days should be normal sick days",
+      "format": "hot-take"
+    },
+    {
+      "text": "Social media should carry health warnings",
+      "format": "hot-take"
+    },
+    {
+      "text": "A time you were kind to yourself",
+      "format": "story"
+    },
+    {
+      "text": "Something that helped more than you expected",
+      "format": "story"
+    },
+    {
+      "text": "When you asked for help",
+      "format": "story"
+    },
+    {
+      "text": "Explain burnout to someone who has not had it",
+      "format": "explain"
+    },
+    {
+      "text": "Explain why sleep matters",
+      "format": "explain"
+    },
+    {
+      "text": "Explain anxiety without clinical words",
+      "format": "explain"
+    },
+    {
+      "text": "Explain the difference between stress and pressure",
+      "format": "explain"
+    },
+    {
+      "text": "What restores you fastest?",
+      "format": "just-talk"
+    },
+    {
+      "text": "What are you nostalgic for?",
+      "format": "just-talk"
+    },
+    {
+      "text": "What would you say to yourself at sixteen?",
+      "format": "just-talk"
+    },
+    {
+      "text": "Is being busy a way of hiding?",
+      "format": "just-talk"
+    },
+    {
+      "text": "What is rest, exactly?",
+      "format": "just-talk"
+    },
+    {
+      "text": "What do you need more of?",
+      "format": "just-talk"
+    },
+    {
+      "text": "Argue that we talk about feelings too much",
+      "format": "hot-take"
+    },
+    {
+      "text": "Argue that stress is useful",
+      "format": "hot-take"
+    },
+    {
+      "text": "Argue against optimism",
+      "format": "hot-take"
+    },
+    {
+      "text": "Argue that solitude is underrated",
+      "format": "hot-take"
+    },
+    {
+      "text": "Employers should fund therapy",
+      "format": "hot-take"
+    },
+    {
+      "text": "Schools should teach emotional skills",
+      "format": "hot-take"
+    },
+    {
+      "text": "Phones should be banned in schools",
+      "format": "hot-take"
+    },
+    {
+      "text": "Describe something you do to relax",
+      "format": "just-talk"
+    },
+    {
+      "text": "Describe a time you felt proud",
+      "format": "just-talk"
+    },
+    {
+      "text": "Describe a person who helped you",
+      "format": "just-talk"
+    },
+    {
+      "text": "Sell me an afternoon with nothing planned",
+      "format": "hot-take"
+    },
+    {
+      "text": "Sell me a walk",
+      "format": "hot-take"
+    },
+    {
+      "text": "Complain about your own advice",
+      "format": "story"
+    },
+    {
+      "text": "Tell me how you handle a stressful week",
+      "format": "explain"
+    },
+    {
+      "text": "Habits",
+      "format": "just-talk"
+    },
+    {
+      "text": "Attention",
+      "format": "just-talk"
+    },
+    {
+      "text": "Memory",
+      "format": "just-talk"
+    },
+    {
+      "text": "Motivation",
+      "format": "just-talk"
+    },
+    {
+      "text": "Procrastination",
+      "format": "just-talk"
+    },
+    {
+      "text": "Confidence",
+      "format": "just-talk"
+    },
+    {
+      "text": "Why we like routine",
+      "format": "just-talk"
+    },
+    {
+      "text": "Fear",
+      "format": "just-talk"
+    },
+    {
+      "text": "Curiosity",
+      "format": "just-talk"
+    },
+    {
+      "text": "Being watched",
+      "format": "just-talk"
+    },
+    {
+      "text": "Personality tests are astrology for offices",
+      "format": "hot-take"
+    },
+    {
+      "text": "Willpower does not exist",
+      "format": "hot-take"
+    },
+    {
+      "text": "Most advice is just autobiography",
+      "format": "hot-take"
+    },
+    {
+      "text": "People are bad at knowing what they want",
+      "format": "hot-take"
+    },
+    {
+      "text": "A time you surprised yourself",
+      "format": "story"
+    },
+    {
+      "text": "Something you feared as a child",
+      "format": "story"
+    },
+    {
+      "text": "The moment a habit stuck",
+      "format": "story"
+    },
+    {
+      "text": "A time you misread someone",
+      "format": "story"
+    },
+    {
+      "text": "Explain confirmation bias",
+      "format": "explain"
+    },
+    {
+      "text": "Explain why we procrastinate",
+      "format": "explain"
+    },
+    {
+      "text": "Explain how memory actually works",
+      "format": "explain"
+    },
+    {
+      "text": "Explain the placebo effect",
+      "format": "explain"
+    },
+    {
+      "text": "Explain why groups make worse decisions",
+      "format": "explain"
+    },
+    {
+      "text": "What do you do that no one sees?",
+      "format": "just-talk"
+    },
+    {
+      "text": "How do you spend attention?",
+      "format": "just-talk"
+    },
+    {
+      "text": "What are you unreasonably confident about?",
+      "format": "just-talk"
+    },
+    {
+      "text": "What makes someone change?",
+      "format": "just-talk"
+    },
+    {
+      "text": "Argue that self-improvement makes people worse",
+      "format": "hot-take"
+    },
+    {
+      "text": "Argue that we should trust our gut less",
+      "format": "hot-take"
+    },
+    {
+      "text": "Argue that therapy is over-prescribed",
+      "format": "hot-take"
+    },
+    {
+      "text": "Personality is fixed by adulthood",
+      "format": "hot-take"
+    },
+    {
+      "text": "Schools should teach psychology to everyone",
+      "format": "hot-take"
+    },
+    {
+      "text": "Describe a habit you would like to change",
+      "format": "just-talk"
+    },
+    {
+      "text": "Describe someone you find interesting",
+      "format": "just-talk"
+    },
+    {
+      "text": "Sell me a bad habit",
+      "format": "hot-take"
+    },
+    {
+      "text": "Sell me an hour of doing nothing",
+      "format": "hot-take"
+    },
+    {
+      "text": "Your villain origin story",
+      "format": "story"
+    },
+    {
+      "text": "Diagnose your houseplant",
+      "format": "story"
+    },
+    {
+      "text": "Tell me about a time you handled pressure",
+      "format": "explain"
+    },
+    {
+      "text": "What is the best feedback you ever received?",
+      "format": "explain"
+    }
+  ]
+}

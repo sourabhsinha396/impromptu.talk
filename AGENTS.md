@@ -24,7 +24,7 @@ Frontend, from `frontend/`:
 Backend, from `backend/`:
 
 - `docker compose up --build` is how the backend runs: Postgres 17, Redis 8 and the API on 8009, migrated on boot. `apps/` and `impromptu/` are bind-mounted and reload on edit; a dependency change needs `--build` again. Copy `.env.example` to `.env` first.
-- Management commands run in the container: `docker compose exec api python manage.py <cmd>`.
+- Management commands run in the container: `docker compose exec api python manage.py <cmd>`. The bank is seeded once by hand with `seed_topics`, and again only after editing `backend/data/topics/` or the genre list; nothing seeds on boot.
 - The database and Redis are not published on the host, so their ports never collide with the neighbouring stacks. Reach them through the container: `docker compose exec db psql -U impromptu impromptu`.
 - The app is on Postgres everywhere it runs. The only SQLite in the project is the in-memory one tests use, pinned by test.
 

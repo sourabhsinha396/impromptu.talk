@@ -6,6 +6,7 @@ import factory
 from factory.django import DjangoModelFactory
 
 from apps.authentication.models import User
+from apps.topics.models import Genre, Topic
 
 PASSWORD = "correct horse battery"
 
@@ -27,5 +28,24 @@ class UserFactory(DjangoModelFactory):
             obj.save()
 
 
+class GenreFactory(DjangoModelFactory):
+    class Meta:
+        model = Genre
+
+    slug = factory.Sequence(lambda n: f"genre-{n}")
+    name = factory.Sequence(lambda n: f"Genre {n}")
+    icon = "sparkles"
+
+
+class TopicFactory(DjangoModelFactory):
+    class Meta:
+        model = Topic
+
+    genre = factory.SubFactory(GenreFactory)
+    text = factory.Sequence(lambda n: f"Topic {n}")
+    slug = factory.LazyAttribute(lambda t: t.text.lower().replace(" ", "-"))
+    style = "just-talk"
+
+
 def all_factories():
-    return [UserFactory]
+    return [UserFactory, GenreFactory, TopicFactory]

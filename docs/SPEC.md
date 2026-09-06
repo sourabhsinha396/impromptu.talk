@@ -39,7 +39,7 @@ v1 is v0 rebuilt on Next.js and Django Ninja, in the shape of `../algoholic`, so
 Decisions that changed with the rebuild, each with its reason in `DECISIONS.md`:
 
 - **Stack and ports.** Django 5.2 with django-ninja on 8009, Next 16 with React 19 and Tailwind v4 on 3009, Postgres everywhere the app runs, Redis for rate-limit counters only. The browser never calls the backend directly; every request rides the `/api` rewrite.
-- **Icons, not emoji.** Every emoji v0 drew is a lucide glyph mapped by meaning in `frontend/components/site/icons.tsx`. Genres have no icon column: the glyph follows the slug. Owned genres keep an icon slug from a fixed set of 24.
+- **Icons, not emoji.** Every emoji v0 drew is a lucide glyph mapped by meaning in `frontend/components/site/icons.tsx`. A genre carries an icon slug from a fixed set of 26; the seeder writes the built-ins' and a person picks their own genre's.
 - **Format is style.** How a prompt asks you to talk is `Topic.style`; v0 called it format, and "category" was tried for an afternoon and dropped because a stranger cannot tell a category from a genre. Same four values, same rules.
 - **Owned genres are genre rows** (v0: packs in their own tables) and can be shared by link. §8.
 - **Fewer tables and columns.** No `Genre.category` grouping, no `Topic.difficulty`, no `Session.topic_id`, no separate affiliates table, no login-session or password-reset tables of our own, static exchange rates.

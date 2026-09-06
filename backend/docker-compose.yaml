@@ -44,6 +44,8 @@ services:
     volumes:
       - ./apps:/app/apps
       - ./impromptu:/app/impromptu
+      # The bank, so editing a file and running seed_topics needs no rebuild.
+      - ./data:/app/data
     depends_on:
       db:
         condition: service_healthy

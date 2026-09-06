@@ -2,7 +2,7 @@
 
 The acceptance list for the board. Every route and every behaviour v0 had, with the v1 card that carries it and a tick once it has landed on `main`. Nothing on this list may be quietly dropped; a line that v1 changes on purpose says so and points at `DECISIONS.md`.
 
-Ticked as of 2026-09-06, after cards 01 to 06.
+Ticked as of 2026-09-06, after cards 01 to 07.
 
 ## Routes
 
@@ -32,7 +32,7 @@ Ticked as of 2026-09-06, after cards 01 to 06.
 | (new) share an owned genre, `/g/[token]` | | 29 | [ ] |
 | `GET /affiliate`, `GET /affiliate/referrals`, `POST /affiliate/paypal` | same | 31 | [ ] |
 | `GET /administration`, `/staged-topic`, `GET`/`POST /pro`, `POST /pro/revoke`, `GET`/`POST /payouts`, `GET`/`POST /outreach` | same paths | 32 | [ ] |
-| `/admin` (sqladmin, env password) | `/re-admin/` (Django admin, `is_staff`) | 01, 28 | [x] mounted; models per card |
+| `/admin` (sqladmin, env password) | `/re-admin/` (Django admin, `is_staff`) | 01, 28 | [x] mounted; User, Genre, Topic registered; the rest per card |
 | `/about`, `/contact`, `/privacy`, `/terms`, `/refunds` | same | 33 | [ ] |
 | `GET /robots.txt`, `GET /sitemap.xml` | `robots.ts`, `sitemap.ts` | 05 | [x] |
 | 404, 405, 422, 500 as pages outside `/api` | `not-found.tsx`, `error.tsx`; forms re-render with a sentence | 05, 19 | [x] 404 and 500; forms per card |
@@ -82,9 +82,9 @@ Ticked as of 2026-09-06, after cards 01 to 06.
 
 ### Content
 
-- [ ] Ten genres, one flat list, the merge map; 800 topics; every style in every built-in genre (07)
-- [ ] Seeder as a one-off management command, never on boot; idempotent, never deletes a topic, deletes an emptied built-in genre, deactivates one still owning topics, never touches an owned genre (07)
-- [ ] Style (v0 format) as a tag, four values plus Surprise me (07)
+- [x] Ten genres, one flat list, the merge map; 800 topics; every style in every built-in genre (07)
+- [x] Seeder as a one-off management command, never on boot; idempotent, never deletes a topic, deletes an emptied built-in genre, deactivates one still owning topics, never touches an owned genre (07)
+- [x] Style (v0 format) as a tag, four values plus Surprise me (07)
 - [ ] The bank ships with the home page and is shuffled in the browser; no-repeat pool; tiered decoys (08, 10)
 - [ ] `/genres` hub with all ten; every topic's text on its genre page, pinned by test (09)
 - [ ] No `/topic/` pages; `/?topic=` deep link skips the spinner (09, 12)

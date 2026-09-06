@@ -14,7 +14,11 @@ docker compose up --build
 
 That is Postgres 17, Redis 8 and the API on http://localhost:8009, migrated on boot. `apps/` and `impromptu/` are mounted into the container, so code edits reload without a rebuild; a dependency change needs `--build` again. Stop it with `Ctrl+C`, or `docker compose down` from another terminal.
 
-Management commands run inside the container:
+Management commands run inside the container. Seed the topic bank once (idempotent, run again only after editing `data/topics/`), and make yourself a superuser:
+
+```bash
+docker compose exec api python manage.py seed_topics
+```
 
 ```bash
 docker compose exec api python manage.py createsuperuser

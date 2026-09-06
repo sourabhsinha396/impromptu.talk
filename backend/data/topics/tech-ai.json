@@ -1,0 +1,165 @@
+{
+  "genre": "Tech & AI",
+  "topics": [
+    {
+      "text": "Phones",
+      "format": "just-talk"
+    },
+    {
+      "text": "Passwords",
+      "format": "just-talk"
+    },
+    {
+      "text": "Software updates",
+      "format": "just-talk"
+    },
+    {
+      "text": "The first computer you used",
+      "format": "just-talk"
+    },
+    {
+      "text": "Autocomplete",
+      "format": "just-talk"
+    },
+    {
+      "text": "Screens",
+      "format": "just-talk"
+    },
+    {
+      "text": "Open source",
+      "format": "just-talk"
+    },
+    {
+      "text": "Automation",
+      "format": "just-talk"
+    },
+    {
+      "text": "AI should be taught in every school",
+      "format": "hot-take"
+    },
+    {
+      "text": "Most software is worse than it was ten years ago",
+      "format": "hot-take"
+    },
+    {
+      "text": "Nobody reads the terms and conditions, and that is fine",
+      "format": "hot-take"
+    },
+    {
+      "text": "Self-driving cars will arrive later than promised",
+      "format": "hot-take"
+    },
+    {
+      "text": "Chatbots have made customer service worse",
+      "format": "hot-take"
+    },
+    {
+      "text": "Every company claiming to use AI is exaggerating",
+      "format": "hot-take"
+    },
+    {
+      "text": "The first time technology genuinely helped you",
+      "format": "story"
+    },
+    {
+      "text": "A gadget you regret buying",
+      "format": "story"
+    },
+    {
+      "text": "The time the system went down",
+      "format": "story"
+    },
+    {
+      "text": "Explain what a large language model actually does",
+      "format": "explain"
+    },
+    {
+      "text": "Explain what an algorithm is",
+      "format": "explain"
+    },
+    {
+      "text": "Explain encryption without maths",
+      "format": "explain"
+    },
+    {
+      "text": "Explain why software has bugs",
+      "format": "explain"
+    },
+    {
+      "text": "Explain cloud computing to your grandparent",
+      "format": "explain"
+    },
+    {
+      "text": "Argue that AI is overrated",
+      "format": "hot-take"
+    },
+    {
+      "text": "Argue for less automation, not more",
+      "format": "hot-take"
+    },
+    {
+      "text": "Argue that we should slow down technology",
+      "format": "hot-take"
+    },
+    {
+      "text": "Argue that privacy is already lost",
+      "format": "hot-take"
+    },
+    {
+      "text": "Social media needs an age limit",
+      "format": "hot-take"
+    },
+    {
+      "text": "AI-generated work should be labelled by law",
+      "format": "hot-take"
+    },
+    {
+      "text": "Big tech should be broken up",
+      "format": "hot-take"
+    },
+    {
+      "text": "Facial recognition should be banned in public",
+      "format": "hot-take"
+    },
+    {
+      "text": "What should technology never be used for?",
+      "format": "just-talk"
+    },
+    {
+      "text": "What has technology made worse?",
+      "format": "just-talk"
+    },
+    {
+      "text": "Would you give up your phone for a year?",
+      "format": "just-talk"
+    },
+    {
+      "text": "What will feel old-fashioned in ten years?",
+      "format": "just-talk"
+    },
+    {
+      "text": "Describe a piece of technology you rely on",
+      "format": "just-talk"
+    },
+    {
+      "text": "Describe a website or app you like",
+      "format": "just-talk"
+    },
+    {
+      "text": "Sell me a phone with no apps",
+      "format": "hot-take"
+    },
+    {
+      "text": "Sell me a fax machine in 2026",
+      "format": "hot-take"
+    },
+    {
+      "text": "Explain the internet to a Victorian",
+      "format": "story"
+    },
+    {
+      "text": "Why you would be a bad hacker",
+      "format": "story"
+    }
+  ]
+}

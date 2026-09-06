@@ -1,0 +1,485 @@
+{
+  "genre": "Culture",
+  "topics": [
+    {
+      "text": "The year you were born",
+      "format": "just-talk"
+    },
+    {
+      "text": "Old photographs",
+      "format": "just-talk"
+    },
+    {
+      "text": "Empires",
+      "format": "just-talk"
+    },
+    {
+      "text": "Maps",
+      "format": "just-talk"
+    },
+    {
+      "text": "Monuments",
+      "format": "just-talk"
+    },
+    {
+      "text": "Letters",
+      "format": "just-talk"
+    },
+    {
+      "text": "Things people used to believe",
+      "format": "just-talk"
+    },
+    {
+      "text": "What gets forgotten",
+      "format": "just-talk"
+    },
+    {
+      "text": "History is written by the winners, and that is fine",
+      "format": "hot-take"
+    },
+    {
+      "text": "Statues belong in museums",
+      "format": "hot-take"
+    },
+    {
+      "text": "Nostalgia is a political tool",
+      "format": "hot-take"
+    },
+    {
+      "text": "We overrate individuals and underrate systems",
+      "format": "hot-take"
+    },
+    {
+      "text": "School history is too narrow",
+      "format": "hot-take"
+    },
+    {
+      "text": "A historical moment you would witness",
+      "format": "story"
+    },
+    {
+      "text": "Something your grandparents told you",
+      "format": "story"
+    },
+    {
+      "text": "An object with a history",
+      "format": "story"
+    },
+    {
+      "text": "Explain an event you find fascinating",
+      "format": "explain"
+    },
+    {
+      "text": "Explain why an empire collapsed",
+      "format": "explain"
+    },
+    {
+      "text": "Explain the printing press to someone with a phone",
+      "format": "explain"
+    },
+    {
+      "text": "Explain how historians know anything",
+      "format": "explain"
+    },
+    {
+      "text": "Explain a revolution in sixty seconds",
+      "format": "explain"
+    },
+    {
+      "text": "Argue that the past was better",
+      "format": "hot-take"
+    },
+    {
+      "text": "Argue that history teaches us nothing",
+      "format": "hot-take"
+    },
+    {
+      "text": "Argue against preserving old buildings",
+      "format": "hot-take"
+    },
+    {
+      "text": "We should judge historical figures by modern standards",
+      "format": "hot-take"
+    },
+    {
+      "text": "Museums should return what they hold",
+      "format": "hot-take"
+    },
+    {
+      "text": "History should be compulsory until eighteen",
+      "format": "hot-take"
+    },
+    {
+      "text": "Should we judge the past by today's standards?",
+      "format": "just-talk"
+    },
+    {
+      "text": "Which decade would you live in?",
+      "format": "just-talk"
+    },
+    {
+      "text": "What will we be judged for?",
+      "format": "just-talk"
+    },
+    {
+      "text": "Does anyone learn from history?",
+      "format": "just-talk"
+    },
+    {
+      "text": "What is worth preserving?",
+      "format": "just-talk"
+    },
+    {
+      "text": "Describe a historical place you visited",
+      "format": "just-talk"
+    },
+    {
+      "text": "Describe a person from history you admire",
+      "format": "just-talk"
+    },
+    {
+      "text": "Describe an old object you have seen",
+      "format": "just-talk"
+    },
+    {
+      "text": "Sell me a history book",
+      "format": "hot-take"
+    },
+    {
+      "text": "Sell me a museum on a rainy day",
+      "format": "hot-take"
+    },
+    {
+      "text": "Explain the internet to a medieval monk",
+      "format": "story"
+    },
+    {
+      "text": "Defend the worst emperor",
+      "format": "story"
+    },
+    {
+      "text": "A day in the life of a castle guard",
+      "format": "story"
+    },
+    {
+      "text": "Opening scenes",
+      "format": "just-talk"
+    },
+    {
+      "text": "Endings",
+      "format": "just-talk"
+    },
+    {
+      "text": "Subtitles",
+      "format": "just-talk"
+    },
+    {
+      "text": "Watching alone",
+      "format": "just-talk"
+    },
+    {
+      "text": "Cinemas",
+      "format": "just-talk"
+    },
+    {
+      "text": "Rewatching",
+      "format": "just-talk"
+    },
+    {
+      "text": "Soundtracks",
+      "format": "just-talk"
+    },
+    {
+      "text": "A film that confused you",
+      "format": "just-talk"
+    },
+    {
+      "text": "Reality TV does more good than harm",
+      "format": "hot-take"
+    },
+    {
+      "text": "Sequels are killing cinema",
+      "format": "hot-take"
+    },
+    {
+      "text": "Streaming ruined television",
+      "format": "hot-take"
+    },
+    {
+      "text": "Spoilers do not matter",
+      "format": "hot-take"
+    },
+    {
+      "text": "Awards mean nothing",
+      "format": "hot-take"
+    },
+    {
+      "text": "The book is not always better",
+      "format": "hot-take"
+    },
+    {
+      "text": "A film you watched at the wrong age",
+      "format": "story"
+    },
+    {
+      "text": "A scene you still think about",
+      "format": "story"
+    },
+    {
+      "text": "The film you and a friend disagree about",
+      "format": "story"
+    },
+    {
+      "text": "Explain a plot you barely understood",
+      "format": "explain"
+    },
+    {
+      "text": "Explain why an ending works",
+      "format": "explain"
+    },
+    {
+      "text": "Explain what a director actually does",
+      "format": "explain"
+    },
+    {
+      "text": "Argue against your favourite film",
+      "format": "hot-take"
+    },
+    {
+      "text": "Argue that television is better than film",
+      "format": "hot-take"
+    },
+    {
+      "text": "Argue for watching everything at double speed",
+      "format": "hot-take"
+    },
+    {
+      "text": "Streaming services should fund local film",
+      "format": "hot-take"
+    },
+    {
+      "text": "Films should carry accuracy warnings",
+      "format": "hot-take"
+    },
+    {
+      "text": "What makes a story satisfying?",
+      "format": "just-talk"
+    },
+    {
+      "text": "Which character would you be?",
+      "format": "just-talk"
+    },
+    {
+      "text": "What film should everyone see?",
+      "format": "just-talk"
+    },
+    {
+      "text": "Is a bad ending unforgivable?",
+      "format": "just-talk"
+    },
+    {
+      "text": "Describe a film you enjoyed",
+      "format": "just-talk"
+    },
+    {
+      "text": "Describe a TV programme you watch",
+      "format": "just-talk"
+    },
+    {
+      "text": "Describe a character you like",
+      "format": "just-talk"
+    },
+    {
+      "text": "Sell me a film you hated",
+      "format": "hot-take"
+    },
+    {
+      "text": "Sell me a three-hour subtitled drama",
+      "format": "hot-take"
+    },
+    {
+      "text": "Pitch a terrible sequel",
+      "format": "story"
+    },
+    {
+      "text": "Recap a film badly",
+      "format": "story"
+    },
+    {
+      "text": "Give a villain a redemption arc in one minute",
+      "format": "story"
+    },
+    {
+      "text": "Review the last thing you watched in ten words",
+      "format": "story"
+    },
+    {
+      "text": "Cast your life as a film",
+      "format": "story"
+    },
+    {
+      "text": "Defend a film everyone hates",
+      "format": "story"
+    },
+    {
+      "text": "The first anime you finished",
+      "format": "just-talk"
+    },
+    {
+      "text": "Filler episodes",
+      "format": "just-talk"
+    },
+    {
+      "text": "Opening themes",
+      "format": "just-talk"
+    },
+    {
+      "text": "Reading manga versus watching",
+      "format": "just-talk"
+    },
+    {
+      "text": "Long-running series",
+      "format": "just-talk"
+    },
+    {
+      "text": "Slice of life",
+      "format": "just-talk"
+    },
+    {
+      "text": "Studio animation styles",
+      "format": "just-talk"
+    },
+    {
+      "text": "Dubbed or subbed",
+      "format": "just-talk"
+    },
+    {
+      "text": "Subs are always better than dubs",
+      "format": "hot-take"
+    },
+    {
+      "text": "Long-running shonen should end sooner",
+      "format": "hot-take"
+    },
+    {
+      "text": "Power scaling ruins good stories",
+      "format": "hot-take"
+    },
+    {
+      "text": "The manga is almost always better",
+      "format": "hot-take"
+    },
+    {
+      "text": "Anime adaptations should not be live-action",
+      "format": "hot-take"
+    },
+    {
+      "text": "Filler episodes are underrated",
+      "format": "hot-take"
+    },
+    {
+      "text": "The series that got you into anime",
+      "format": "story"
+    },
+    {
+      "text": "An ending that disappointed you",
+      "format": "story"
+    },
+    {
+      "text": "A character you related to too much",
+      "format": "story"
+    },
+    {
+      "text": "Explain your favourite series to someone who has never watched anime",
+      "format": "explain"
+    },
+    {
+      "text": "Explain a complicated power system simply",
+      "format": "explain"
+    },
+    {
+      "text": "Explain why an art style works",
+      "format": "explain"
+    },
+    {
+      "text": "Explain a genre to a beginner",
+      "format": "explain"
+    },
+    {
+      "text": "Argue that your favourite character is wrong",
+      "format": "hot-take"
+    },
+    {
+      "text": "Argue that the villain was right",
+      "format": "hot-take"
+    },
+    {
+      "text": "Argue against a beloved ending",
+      "format": "hot-take"
+    },
+    {
+      "text": "Argue that shorter series are better",
+      "format": "hot-take"
+    },
+    {
+      "text": "Rank the strongest characters you know",
+      "format": "just-talk"
+    },
+    {
+      "text": "Which anime world would you live in?",
+      "format": "just-talk"
+    },
+    {
+      "text": "What makes a good protagonist?",
+      "format": "just-talk"
+    },
+    {
+      "text": "Is the journey or the ending more important?",
+      "format": "just-talk"
+    },
+    {
+      "text": "Which side character deserved more?",
+      "format": "just-talk"
+    },
+    {
+      "text": "Describe a story you would recommend",
+      "format": "just-talk"
+    },
+    {
+      "text": "Describe a character you admire",
+      "format": "just-talk"
+    },
+    {
+      "text": "Sell me a series with a slow start",
+      "format": "hot-take"
+    },
+    {
+      "text": "Sell me a genre you dislike",
+      "format": "hot-take"
+    },
+    {
+      "text": "Pitch a crossover nobody asked for",
+      "format": "story"
+    },
+    {
+      "text": "Narrate your morning as a battle scene",
+      "format": "story"
+    },
+    {
+      "text": "Give a training arc for doing laundry",
+      "format": "story"
+    },
+    {
+      "text": "Defend the worst arc",
+      "format": "story"
+    },
+    {
+      "text": "Explain a tournament arc to your parents",
+      "format": "story"
+    },
+    {
+      "text": "Rewrite a tragic backstory as a sitcom",
+      "format": "story"
+    }
+  ]
+}

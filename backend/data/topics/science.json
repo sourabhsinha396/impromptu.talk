@@ -1,0 +1,325 @@
+{
+  "genre": "Science & climate",
+  "topics": [
+    {
+      "text": "Being proved wrong",
+      "format": "just-talk"
+    },
+    {
+      "text": "Being wrong in public",
+      "format": "just-talk"
+    },
+    {
+      "text": "Measurement",
+      "format": "just-talk"
+    },
+    {
+      "text": "The scientific method",
+      "format": "just-talk"
+    },
+    {
+      "text": "Experiments",
+      "format": "just-talk"
+    },
+    {
+      "text": "Evidence",
+      "format": "just-talk"
+    },
+    {
+      "text": "Coincidence",
+      "format": "just-talk"
+    },
+    {
+      "text": "Very small things",
+      "format": "just-talk"
+    },
+    {
+      "text": "Explain why the sky is blue",
+      "format": "explain"
+    },
+    {
+      "text": "Explain gravity to a child",
+      "format": "explain"
+    },
+    {
+      "text": "Explain evolution in sixty seconds",
+      "format": "explain"
+    },
+    {
+      "text": "Explain how vaccines work",
+      "format": "explain"
+    },
+    {
+      "text": "Explain what a black hole is",
+      "format": "explain"
+    },
+    {
+      "text": "Explain why ice floats",
+      "format": "explain"
+    },
+    {
+      "text": "Explain how a plane stays up",
+      "format": "explain"
+    },
+    {
+      "text": "Explain electricity without diagrams",
+      "format": "explain"
+    },
+    {
+      "text": "Explain DNA to someone who failed biology",
+      "format": "explain"
+    },
+    {
+      "text": "Science communication is failing",
+      "format": "hot-take"
+    },
+    {
+      "text": "Most published research is unreliable",
+      "format": "hot-take"
+    },
+    {
+      "text": "School science kills curiosity",
+      "format": "hot-take"
+    },
+    {
+      "text": "Space exploration is worth the money",
+      "format": "hot-take"
+    },
+    {
+      "text": "Peer review is broken",
+      "format": "hot-take"
+    },
+    {
+      "text": "A time you were curious about something useless",
+      "format": "story"
+    },
+    {
+      "text": "The first experiment you remember",
+      "format": "story"
+    },
+    {
+      "text": "Something you believed that turned out to be false",
+      "format": "story"
+    },
+    {
+      "text": "Argue that we should fund less basic research",
+      "format": "hot-take"
+    },
+    {
+      "text": "Argue that certainty is unscientific",
+      "format": "hot-take"
+    },
+    {
+      "text": "Argue against sending humans to Mars",
+      "format": "hot-take"
+    },
+    {
+      "text": "Gene editing in humans should be allowed",
+      "format": "hot-take"
+    },
+    {
+      "text": "Animal testing should end",
+      "format": "hot-take"
+    },
+    {
+      "text": "Science funding should be decided by the public",
+      "format": "hot-take"
+    },
+    {
+      "text": "What scientific idea should everyone know?",
+      "format": "just-talk"
+    },
+    {
+      "text": "What do we still not understand?",
+      "format": "just-talk"
+    },
+    {
+      "text": "Is science a belief system?",
+      "format": "just-talk"
+    },
+    {
+      "text": "What question would you most like answered?",
+      "format": "just-talk"
+    },
+    {
+      "text": "Describe a discovery that interests you",
+      "format": "just-talk"
+    },
+    {
+      "text": "Describe a subject you enjoyed at school",
+      "format": "just-talk"
+    },
+    {
+      "text": "Sell me a science museum ticket",
+      "format": "hot-take"
+    },
+    {
+      "text": "Argue that birds are not real",
+      "format": "story"
+    },
+    {
+      "text": "Explain jazz to a dog",
+      "format": "story"
+    },
+    {
+      "text": "Weather you remember",
+      "format": "just-talk"
+    },
+    {
+      "text": "Recycling",
+      "format": "just-talk"
+    },
+    {
+      "text": "Cities and heat",
+      "format": "just-talk"
+    },
+    {
+      "text": "Water",
+      "format": "just-talk"
+    },
+    {
+      "text": "Winters",
+      "format": "just-talk"
+    },
+    {
+      "text": "Air",
+      "format": "just-talk"
+    },
+    {
+      "text": "Trees",
+      "format": "just-talk"
+    },
+    {
+      "text": "The sea",
+      "format": "just-talk"
+    },
+    {
+      "text": "Nuclear power is the answer",
+      "format": "hot-take"
+    },
+    {
+      "text": "Individual action is a distraction",
+      "format": "hot-take"
+    },
+    {
+      "text": "Fast fashion should be taxed",
+      "format": "hot-take"
+    },
+    {
+      "text": "Cars should be banned from city centres",
+      "format": "hot-take"
+    },
+    {
+      "text": "Carbon offsets are mostly theatre",
+      "format": "hot-take"
+    },
+    {
+      "text": "Cities should be built for children, not cars",
+      "format": "hot-take"
+    },
+    {
+      "text": "A place that changed in your lifetime",
+      "format": "story"
+    },
+    {
+      "text": "The first time you noticed the weather was odd",
+      "format": "story"
+    },
+    {
+      "text": "Something you stopped buying",
+      "format": "story"
+    },
+    {
+      "text": "Explain the greenhouse effect",
+      "format": "explain"
+    },
+    {
+      "text": "Explain why sea levels rise",
+      "format": "explain"
+    },
+    {
+      "text": "Explain a carbon footprint without numbers",
+      "format": "explain"
+    },
+    {
+      "text": "Explain why recycling is complicated",
+      "format": "explain"
+    },
+    {
+      "text": "Argue that climate optimism is dangerous",
+      "format": "hot-take"
+    },
+    {
+      "text": "Argue that we should adapt rather than prevent",
+      "format": "hot-take"
+    },
+    {
+      "text": "Argue against personal sacrifice",
+      "format": "hot-take"
+    },
+    {
+      "text": "Public transport should be free",
+      "format": "hot-take"
+    },
+    {
+      "text": "Flying should be rationed",
+      "format": "hot-take"
+    },
+    {
+      "text": "Meat should be taxed",
+      "format": "hot-take"
+    },
+    {
+      "text": "Rich countries owe climate reparations",
+      "format": "hot-take"
+    },
+    {
+      "text": "Geoengineering should be researched now",
+      "format": "hot-take"
+    },
+    {
+      "text": "Who should pay for the transition?",
+      "format": "just-talk"
+    },
+    {
+      "text": "What would you give up first?",
+      "format": "just-talk"
+    },
+    {
+      "text": "Is optimism useful here?",
+      "format": "just-talk"
+    },
+    {
+      "text": "What will your generation be blamed for?",
+      "format": "just-talk"
+    },
+    {
+      "text": "Describe a place in nature you like",
+      "format": "just-talk"
+    },
+    {
+      "text": "Describe an environmental problem where you live",
+      "format": "just-talk"
+    },
+    {
+      "text": "Describe a change you made to your habits",
+      "format": "just-talk"
+    },
+    {
+      "text": "Sell me a bicycle",
+      "format": "hot-take"
+    },
+    {
+      "text": "Sell me a second-hand coat",
+      "format": "hot-take"
+    },
+    {
+      "text": "Complain about the weather for a minute",
+      "format": "story"
+    },
+    {
+      "text": "A eulogy for the last plastic straw",
+      "format": "story"
+    }
+  ]
+}
