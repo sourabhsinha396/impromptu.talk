@@ -2,7 +2,7 @@
 
 The acceptance list for the board. Every route and every behaviour v0 had, with the v1 card that carries it and a tick once it has landed on `main`. Nothing on this list may be quietly dropped; a line that v1 changes on purpose says so and points at `DECISIONS.md`.
 
-Ticked as of 2026-09-06, after cards 01 to 09.
+Ticked as of 2026-09-06, after cards 01 to 10.
 
 ## Routes
 
@@ -86,7 +86,7 @@ Ticked as of 2026-09-06, after cards 01 to 09.
 - [x] Seeder as a one-off management command, never on boot; idempotent, never deletes a topic, deletes an emptied built-in genre, deactivates one still owning topics, never touches an owned genre (07)
 - [x] Style (v0 format) as a tag, four values plus Surprise me (07)
 - [x] The bank ships with the home page as one public, hour-cached endpoint; 24.7KB gzipped for 1000 topics (08)
-- [ ] Shuffled in the browser; no-repeat pool; tiered decoys (10)
+- [x] Shuffled in the browser; no-repeat pool; tiered decoys (10)
 - [x] `/genres` hub with all ten; every topic's text on its genre page, pinned by test (09)
 - [x] No `/topic/` pages (09)
 - [ ] `/?topic=` deep link skips the spinner (12)
@@ -100,14 +100,14 @@ Ticked as of 2026-09-06, after cards 01 to 09.
 - [ ] Prep: three sticky notes, 80 characters, tilted; "Speak now" skips prep (12)
 - [ ] Speak: ring timer, tabular numerals, notes echoed as chips; "Done" stops early and records (12)
 - [ ] Done: day N, topics, minutes (12)
-- [ ] Wall-clock countdown; pause (10)
+- [x] Wall-clock countdown; pause (10)
 - [ ] Back arrow in prep, speak and topic, one step back, keeps topic and notes; Escape does the same and is read before the textarea guard; `round_left` with `left_from` and `spoken_seconds` (12)
 - [ ] Space starts and pauses, N gives a new topic (12)
 - [ ] Settings sheet: prep 0 to 30 min, speak 1 to 10 min, sounds; persisted; vanishes mid-round (13)
 - [ ] Genre sheet: ten genres by role option, Yours as a link, first with Pro and last without (13)
 - [ ] Staged topic per browser, read and cleared by the next draw, spin intact (12, 32)
 - [ ] Finished run posted once, per-device limit 120 per hour (15)
-- [ ] Engine as a pure TypeScript module with fake-timer tests (10)
+- [x] Engine as a pure TypeScript module with fake-timer tests (10)
 
 ### Streak
 
