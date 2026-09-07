@@ -50,6 +50,33 @@ class RecentOut(Schema):
     at: str
 
 
+class PointOut(Schema):
+    at: str
+    stall: float
+    gap: float
+    fillers: float | None = None
+
+
+class MinuteOut(Schema):
+    at: str
+    seconds: int
+    segments: list
+
+
+class ProgressOut(Schema):
+    """Whether somebody is getting better. Absent until there are enough
+    rounds to mean anything, which is stated as a number of rounds still
+    needed rather than drawn as a line through two points."""
+
+    enough: bool
+    needed: int
+    counted: int
+    points: list[PointOut] = []
+    first: MinuteOut | None = None
+    latest: MinuteOut | None = None
+
+
+
 class HistoryOut(Schema):
     """The streak page's whole answer: the numbers, a calendar as long as
     the plan tracks, the newest runs up to the plan's cap, and the caps
@@ -67,6 +94,9 @@ class HistoryOut(Schema):
     # The signed-in owner's share token, so the streak page can show the
     # link or offer to make one; null for a stranger and before it is made.
     share_token: str | None = None
+    # Rides on the same answer as the calendar, so the page cannot draw a
+    # trend that disagrees with the streak beside it.
+    progress: ProgressOut
 
 
 class ShareOut(Schema):

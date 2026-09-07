@@ -5,7 +5,7 @@ vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
 
 import { StreakPage } from "@/components/streak/streak-page";
 import type { Bank } from "@/lib/bank";
-import { EMPTY_HISTORY, type History } from "@/lib/practice";
+import { EMPTY_HISTORY, type History, EMPTY_PROGRESS } from "@/lib/practice";
 
 const bank: Bank = {
   genres: [{ slug: "career", name: "Career & work", icon: "briefcase", blurb: "" }],
@@ -34,6 +34,7 @@ const free: History = {
   runs_kept: 25,
   calendar: days(5, [0, 1, 2]),
   recent: [{ topic_text: "Saying no at work", genre_slug: "career", at: "2026-09-07T10:00:00Z" }],
+  progress: EMPTY_PROGRESS,
 };
 
 describe("the streak page", () => {

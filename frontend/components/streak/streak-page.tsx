@@ -6,6 +6,7 @@ import { FlameIcon, GenreIcon } from "@/components/site/icons";
 import { Share } from "@/components/streak/share";
 import type { SessionUser } from "@/lib/api";
 import type { Bank } from "@/lib/bank";
+import { ProgressSection } from "@/components/streak/progress";
 import { type Day, type History, heatmapLayout, isStrip, isWide, timeAgo, weekdayName, windowLabel } from "@/lib/practice";
 import { absolute } from "@/lib/site";
 
@@ -62,6 +63,18 @@ export function StreakPage({
               <RecentList history={history} bank={bank} now={now} />
             </Section>
           </TwoColumns>
+
+          {/* Under the calendar, because the calendar answers "did I turn
+              up" and this answers "am I getting better", which is the
+              harder question and the one worth paying for. */}
+          <div className="mt-9">
+            <Section
+              title="Progress"
+              aside={pro ? null : <>Free draws {history.days} days. <PitchLink>Pro draws the year</PitchLink></>}
+            >
+              <ProgressSection progress={history.progress} />
+            </Section>
+          </div>
 
           <div className="mt-9">
             <Button href="/" size="xl">

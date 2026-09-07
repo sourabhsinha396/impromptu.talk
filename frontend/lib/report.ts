@@ -288,3 +288,51 @@ export function at(value: number, [low, high]: [number, number]): number {
   if (high <= low) return 0;
   return Math.max(0, Math.min(100, ((value - low) / (high - low)) * 100));
 }
+
+/* ---------------------------------------------------------- the progress */
+
+export type Point = { at: string; stall: number; gap: number; fillers: number | null };
+export type Minute = { at: string; seconds: number; segments: number[][] };
+export type Progress = {
+  enough: boolean;
+  needed: number;
+  counted: number;
+  points: Point[];
+  first: Minute | null;
+  latest: Minute | null;
+};
+
+/** The same bar the done screen draws, from raw segments rather than a
+    whole report, so the first minute and the latest can be put one above
+    the other at the same scale. Nothing here needs a transcript. */
+export function minuteBlocks(segments: number[][], length: number): Block[] {
+  if (!segments.length || length <= 0) return [];
+  const out: Block[] = [];
+  const push = (from: number, to: number, kind: Kind) => {
+    const seconds = to - from;
+    if (seconds <= 0) return;
+    out.push({
+      at: (from / length) * 100,
+      width: (seconds / length) * 100,
+      kind: kind === "breath" && seconds >= AWKWARD ? "gap" : kind,
+      seconds: Math.round(seconds * 10) / 10,
+    });
+  };
+  let cursor = 0;
+  for (const [start, end] of segments) {
+    push(cursor, start, cursor === 0 ? "breath" : "breath");
+    push(start, Math.min(end, length), "talking");
+    cursor = Math.min(end, length);
+  }
+  // Whatever is left is having finished, not a hole.
+  if (cursor < length) push(cursor, length, "after");
+  return out;
+}
+
+/** How a metric moved between the first reading and the last. Negative is
+    better for all three: less stalling, shorter gaps, fewer ums. */
+export function movement(points: Point[], pick: (p: Point) => number | null): { from: number; to: number } | null {
+  const seen = points.map(pick).filter((v): v is number => v !== null);
+  if (seen.length < 2) return null;
+  return { from: seen[0], to: seen[seen.length - 1] };
+}

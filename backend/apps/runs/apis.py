@@ -9,6 +9,7 @@ from apps.common.devices import device_id
 from apps.common.ratelimit import throttle
 from apps.payments import services as payments
 from apps.runs import history, reports, services, sharing, streaks
+from apps.runs import progress as progress_of
 from apps.runs.models import Run
 from apps.runs.schemas import HistoryOut, RecordedOut, ReportOut, RunIn, SharedOut, ShareOut, SummaryOut
 
@@ -76,7 +77,29 @@ def practice(request, response: HttpResponse):
             {"topic_text": r.topic_text, "genre_slug": r.genre_slug, "at": r.at.isoformat()} for r in shown.recent
         ],
         "share_token": user.share_token if user else None,
+        "progress": _progress(did, user, _rule(user)),
     }
+
+
+def _progress(did, user, rule) -> dict:
+    """The trend, under the same window rule as the calendar beside it."""
+    shown = progress_of.progress(did, user, rule)
+    return {
+        "enough": shown.enough,
+        "needed": shown.needed,
+        "counted": shown.counted,
+        "points": [
+            {"at": p.at.isoformat(), "stall": p.stall, "gap": p.gap, "fillers": p.fillers} for p in shown.points
+        ],
+        "first": _minute(shown.first),
+        "latest": _minute(shown.latest),
+    }
+
+
+def _minute(minute) -> dict | None:
+    if minute is None:
+        return None
+    return {"at": minute.at.isoformat(), "seconds": minute.seconds, "segments": minute.segments}
 
 
 @api.post("/share", auth=session_auth, response=ShareOut)

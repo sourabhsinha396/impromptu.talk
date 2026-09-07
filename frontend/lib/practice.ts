@@ -3,6 +3,8 @@
    dates into a grid lives here, with no DOM in it, so it is a table of
    tests rather than a page nobody can check. */
 
+import type { Progress } from "@/lib/report";
+
 export type Day = { date: string; count: number; frozen: boolean };
 export type Recent = { topic_text: string; genre_slug: string; at: string };
 export type History = {
@@ -16,6 +18,7 @@ export type History = {
   calendar: Day[];
   recent: Recent[];
   share_token?: string | null;
+  progress: Progress;
 };
 
 /** One person's practice as a stranger may see it. */
@@ -35,6 +38,8 @@ export function isWide(days: number): boolean {
   return days > 91;
 }
 
+export const EMPTY_PROGRESS: Progress = { enough: false, needed: 5, counted: 0, points: [], first: null, latest: null };
+
 export const EMPTY_HISTORY: History = {
   streak: 0,
   longest: 0,
@@ -45,6 +50,7 @@ export const EMPTY_HISTORY: History = {
   runs_kept: 25,
   calendar: [],
   recent: [],
+  progress: EMPTY_PROGRESS,
 };
 
 /** The heading over the calendar is the plan's number, never a fixed word,
