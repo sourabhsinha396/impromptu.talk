@@ -161,8 +161,8 @@ Ticked as of 2026-09-07, after cards 01 to 26.
 
 ### Administration
 
-- [ ] 404 gate for everybody but superusers (32)
-- [ ] Grid of tool cards: staged topic, Pro by hand (comp plans, revoke refuses paid rows), payouts, outreach with the rate pinned (32)
+- [x] 404 gate for everybody but superusers, on the pages and on the routes behind them (32). `SuperuserAuth` raises before the body is parsed, so a 422 cannot confirm the path either
+- [x] Grid of tool cards: staged topic, Pro by hand (comp plans, revoke refuses paid rows), payouts, outreach with the rate pinned (32). Giving Pro is `apps/payments/gifts.py`, outreach is one table in `apps/administration/`, and the staged key never reaches the server
 
 ### Analytics and support
 
