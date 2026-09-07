@@ -17,6 +17,8 @@ import {
   type Compared,
   type Skill,
 } from "@/lib/progress";
+import { CaseCards, SampleCards } from "@/components/streak/case";
+import { readRounds } from "@/lib/case";
 import { clock, minuteBlocks, movement, waveform, type Point, type Progress } from "@/lib/report";
 import type { Bank } from "@/lib/bank";
 
@@ -55,6 +57,24 @@ export function ProgressSection({ progress, pro, bank }: { progress: Progress; p
         <WorkOnNext progress={progress} />
         <Floor progress={progress} pro={pro} />
       </div>
+
+      {/* Above the lines, as on the round page: what you said comes
+          before how it sounded. Free sees the same two cards drawn from
+          one fixed sample, because no model ever read a free round and
+          there is nothing of theirs to blur. */}
+      {pro ? (
+        readRounds(rounds).length > 0 && (
+          <>
+            <Sub>What you said</Sub>
+            <CaseCards rounds={rounds} />
+          </>
+        )
+      ) : (
+        <>
+          <Sub aside="a sample">What you said</Sub>
+          <SampleCards />
+        </>
+      )}
 
       <Sub aside={pro ? "over the last year" : `over the last ${rounds.length} round${rounds.length === 1 ? "" : "s"}`}>
         The three that matter

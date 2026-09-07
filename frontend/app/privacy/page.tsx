@@ -99,6 +99,13 @@ export default function PrivacyRoute() {
         information about your account is sent, and the feature runs only when you use it.
       </p>
 
+      <h2>Reading a round back</h2>
+      <p>
+        With Pro, what you said in a round is sent once to a model provider, which answers with whether you did what the
+        topic asked and one thing to try next time. That answer is stored with the round. Nothing about your account is
+        sent with it, and it happens only for rounds you record.
+      </p>
+
       <h2>Analytics</h2>
       <p>
         We use <A href="https://posthog.com/">PostHog</A> to measure how many people complete a round and how many

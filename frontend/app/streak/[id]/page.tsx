@@ -27,5 +27,5 @@ export default async function RoundRoute({ params }: { params: Promise<{ id: str
      same way, so an id cannot be probed by the shape of the refusal. */
   if (!report) notFound();
 
-  return <PastRound report={report} bank={bank} signedIn={Boolean(user)} />;
+  return <PastRound report={report} bank={bank} signedIn={Boolean(user)} pro={Boolean(user?.is_pro)} />;
 }

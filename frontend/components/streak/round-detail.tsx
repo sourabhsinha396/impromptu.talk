@@ -21,6 +21,7 @@ import {
 } from "recharts";
 
 import { Bands, Headline, MinuteBar, Transcript } from "@/components/round/report";
+import { CaseRead, SampleRead } from "@/components/streak/case";
 import {
   RUN_ON,
   axes,
@@ -55,7 +56,7 @@ import {
    sentence columns and the tiles stay hand-drawn, as on the done screen,
    because a track and a marker is not a chart. */
 
-export function RoundDetail({ report, length }: { report: Report; length: number }) {
+export function RoundDetail({ report, length, pro }: { report: Report; length: number; pro: boolean }) {
   if (!report.heard) {
     return <p className="text-sm text-muted">We could not hear you. Check your microphone.</p>;
   }
@@ -68,6 +69,21 @@ export function RoundDetail({ report, length }: { report: Report; length: number
       <MinuteBar report={report} length={length} ticks={report.filler_times} />
       <BarKey fillers={report.filler_times.length > 0} />
       <Headline report={report} />
+
+      {/* First, and above the pace: the topic asked for something, and
+          whether it was given comes before how it sounded. Free sees the
+          same section drawn from one fixed round, blurred. */}
+      {report.case ? (
+        <Section title="The case you made">
+          <CaseRead read={report.case} sentences={report.sentences} length={length} />
+        </Section>
+      ) : (
+        !pro && (
+          <Section title="The case you made" aside="a sample">
+            <SampleRead />
+          </Section>
+        )
+      )}
 
       {timed && (
         <Section

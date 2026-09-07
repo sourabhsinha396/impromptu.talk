@@ -83,7 +83,7 @@ const PRO: Report = {
 
 describe("RoundDetail", () => {
   it("opens the read-back and counts every word said, fillers included, in the donut", () => {
-    render(<RoundDetail report={PRO} length={58} />);
+    render(<RoundDetail report={PRO} length={58} pro />);
     // No click: the page is the record, so the words are on it, with the
     // fillers marked where they were said.
     expect(screen.getByText("Um,")).toBeInTheDocument();
@@ -92,7 +92,7 @@ describe("RoundDetail", () => {
   });
 
   it("says how many measures landed and which is furthest out", () => {
-    render(<RoundDetail report={PRO} length={58} />);
+    render(<RoundDetail report={PRO} length={58} pro />);
     expect(screen.getByText("4 of 5 in the comfortable range · furthest out: longest sentence")).toBeInTheDocument();
     expect(screen.getByText("last word, on a full stop")).toBeInTheDocument();
   });
@@ -111,7 +111,7 @@ describe("RoundDetail", () => {
       restarts: [{ quote: "I said, I said", at: 3 }],
       usual: null,
     };
-    render(<RoundDetail report={free} length={58} />);
+    render(<RoundDetail report={free} length={58} pro={false} />);
     expect(screen.getByText("Pace through the minute")).toBeInTheDocument();
     expect(screen.getByText(/Pro counts them/)).toBeInTheDocument();
     expect(screen.queryByText("Fillers")).not.toBeInTheDocument();

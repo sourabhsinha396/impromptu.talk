@@ -103,6 +103,7 @@ Six phases on the home page: **idle** (the one question and the one button), **s
 - **Prep**: a countdown and three sticky notes, because that is what the reference creators physically did. Notes are capped at 80 characters so they hold keywords, not sentences, and are tilted so they do not read as buttons. "Speak now" skips prep entirely.
 - **Speak**: the ring timer is the centrepiece, large, with tabular numerals. The notes are echoed read-only as chips. "Done" stops early and still records the run: finishing early is data, not a failure.
 - **Done** says what the round was worth: day N of the streak, topics, minutes. That is the whole retention loop, and it is free to compute.
+- **The report** is the round read back, on the done screen as a moment and in full at `/streak/[id]`. The delivery half is measured, free and never a model's: the minute as a wave, pace through it, the shape of the round, the words you leaned on, the sentences. **The case you made** is the one part a model writes and it is Pro's: whether the topic was answered, a role for every sentence drawn on the minute, where the point landed, and one thing to do next time. It is asked for once when the round is transcribed and stored, so a round read back in a year says what it said on the day. Never a score, never a rewrite of a sentence, never a paragraph. Free sees the same section drawn from one fixed sample round, blurred.
 - **Settings**: prep from 0 to 30 minutes and speak from 1 to 10 minutes, in one-minute steps, both defaulting to a minute; a long prep is how "deep research" is covered without a mode. Sounds: decelerating reel ticks spaced by inverting the reel's own ease, a settle ding, a metronome tick per second while speaking, an end chime. Settings persist in the browser. The settings sheet vanishes mid-round: a settings panel is exactly the escape hatch a nervous speaker would take.
 - **The clock is wall-clock**, never tick-counting, so a throttled background tab cannot gift extra time.
 - **A round that hides its chrome owes you a way out**, and it sits in the row with everything else you can press. A back arrow leads the button row in prep and speak and again in topic. It goes back one step, never to idle: the topic and the notes survive and the header returns. Escape does the same and is read before the textarea guard, because prep is where somebody is typing. The arrow leaves and keeps nothing; Done keeps the run; the two sit a tap apart in speak and the arrow's label says so there. The mark is drawn, not typed: no font on the site has a "<-".
@@ -147,7 +148,7 @@ The engine is a pure TypeScript module with no DOM in it, tested with fake timer
 
 ## 7. Pro
 
-What is for sale, what stays free, what was rejected and why are in [`PRICING.md`](PRICING.md). The short version: four plans (monthly, annual, a thirty-day pass, lifetime), two shapes; the streak, unlimited runs and every built-in genre are free forever; Pro keeps the full history, makes owned genres, and gets the freeze rule and the colour.
+What is for sale, what stays free, what was rejected and why are in [`PRICING.md`](PRICING.md). The short version: four plans (monthly, annual, a thirty-day pass, lifetime), two shapes; the streak, unlimited runs and every built-in genre are free forever; Pro keeps the full history, has a model read the case it made, makes owned genres, and gets the freeze rule and the colour.
 
 ---
 
@@ -213,6 +214,8 @@ Two consoles, and they are not the same thing. **`/re-admin/`** is Django's admi
 
 ## 14. Deferred, and never
 
-Once the gate is passed, roughly in this order, and each earns its place only if the loop is retaining: the microphone and the deterministic delivery report (pace, fillers, pauses, energy and trail-off, structure, focus, one transparent score; free, no model, multilingual-ready from day one); model-based critique of the argument (paid, via OpenRouter, fed the deterministic report so it never contradicts the score); share cards; framework beats across the speaking clock; a follow row so a shared genre stays in your picker and a public index of shared genres; a studio for coaches; rooms.
+The microphone, the delivery report and the model-based critique of the case (Pro, via OpenRouter, fed the delivery report so it never contradicts a number) have landed; §4 has them. One thing this section had wrong is worth keeping: it wanted "one transparent score", and the report has none. A score would have to average seconds against words a minute, which is a number with nothing behind it.
+
+What is still ahead, roughly in this order, and each earns its place only if the loop is retaining: share cards; framework beats across the speaking clock; a follow row so a shared genre stays in your picker and a public index of shared genres; a studio for coaches; rooms.
 
 Never: camera recording, video export, leaderboards, a social feed, audio storage.

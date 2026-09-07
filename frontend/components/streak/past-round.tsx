@@ -15,7 +15,17 @@ import type { Report } from "@/lib/report";
 
    The topic is the headline, because that is what somebody is looking for
    when they come back: they remember the prompt, not the date. */
-export function PastRound({ report, bank, signedIn }: { report: Report; bank: Bank; signedIn: boolean }) {
+export function PastRound({
+  report,
+  bank,
+  signedIn,
+  pro,
+}: {
+  report: Report;
+  bank: Bank;
+  signedIn: boolean;
+  pro: boolean;
+}) {
   const genre = bank.genres.find((candidate) => candidate.slug === report.genre_slug);
   const when = new Date(report.at);
 
@@ -40,7 +50,11 @@ export function PastRound({ report, bank, signedIn }: { report: Report; bank: Ba
       <h1 className="font-display text-[clamp(1.6rem,4vw,2.2rem)] font-semibold tracking-[-0.03em]">{report.topic}</h1>
 
       <div className="mt-8">
-        <RoundDetail report={report} length={Math.max(1, Math.round(report.speaking_seconds + totalGaps(report)))} />
+        <RoundDetail
+          report={report}
+          length={Math.max(1, Math.round(report.speaking_seconds + totalGaps(report)))}
+          pro={pro}
+        />
       </div>
 
       <div className="mt-10 flex flex-wrap gap-3">

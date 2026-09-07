@@ -175,6 +175,10 @@ Ticked as of 2026-09-07, after cards 01 to 26.
 
 - [x] About, contact (a mailto and the chat bubble, no form), privacy (the five cookies, the replay masking, the model prompts), terms (the affiliate rate read from the backend), refunds (33)
 
+### Beyond parity
+
+- [x] The case you made: a model reads whether the round did what the topic asked, once, stored; the roles on the minute, the point's clock, the two progress cards; free sees a blurred sample (36)
+
 ### Launch
 
 - [ ] Parity audit of this list; weight; data migration from v0 (users, sessions, purchases, packs to owned genres); cutover (34)

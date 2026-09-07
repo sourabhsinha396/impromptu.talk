@@ -24,7 +24,9 @@ The difference between the shapes is what it takes to believe somebody has Pro. 
 - **Two more plans are given, not sold**: complimentary forever and a complimentary month, what an operator hands out at `/administration/pro`. They are plans rather than a lifetime row priced at nothing, because the plan is what an account page prints and what revenue is counted off, and a gift filed as a sale is a number somebody has to correct by hand. Neither has a product id, which is the same thing that switches a real plan off, so neither can reach a checkout.
 - **A plan is on sale only when both the provider key and its product id are set.** Missing either leaves the card reading "not open yet" rather than half-working. With no key at all, Pro is not linked from the menu or the footer.
 
-**Pro is**: the full practice history, the streak tracked for as long as the plan lasts with the freeze rule, owned genres and their sharing, the colour, the model-generated topics allowance.
+**Pro is**: the full practice history, the case you made read back by a model, the streak tracked for as long as the plan lasts with the freeze rule, owned genres and their sharing, the colour, the model-generated topics allowance.
+
+**The case you made costs on every use and is not metered on its own.** It needs a transcript, transcripts are already metered in minutes, and two hours of them is the month's ceiling; at the model's rate the whole of that ceiling is a few cents. A second counter for a feature that cannot run without the first one would be bookkeeping, not a ceiling. The cap that holds if this is ever wrong is on the key in the provider's dashboard, as it is for topics.
 
 ---
 
