@@ -66,6 +66,13 @@ const MIN_SPEECH_MS = 120;
 
 export type Segment = [number, number];
 
+/** The monotonic clock, which a system clock change cannot move. Falls
+    back where `performance` is missing, which is server rendering rather
+    than any browser this runs in. */
+function clock(): number {
+  return typeof performance !== "undefined" ? performance.now() : Date.now();
+}
+
 /** Root mean square of one frame of samples: how loud it was, in the same
     units the thresholds are ratios of. */
 export function level(frame: Float32Array): number {
@@ -221,6 +228,13 @@ export class Listener {
   private type = "";
   /** The microphone being asked for, while it is. */
   private opening: Promise<boolean> | null = null;
+  /** When the speaking minute began, on the monotonic clock. */
+  private markedAt: number | null = null;
+  /** While the round is paused, when it was paused; and how long it has
+      spent paused so far. Time the clock did not count is time the
+      speaker was not being measured on. */
+  private pausedAt: number | null = null;
+  private pausedFor = 0;
 
   /** Opens the microphone, once. Calling this while it is open, or still
       being asked for, is the same call and not a second microphone.
@@ -263,6 +277,7 @@ export class Listener {
       source.connect(analyser);
       const frame = new Float32Array(analyser.fftSize);
       this.ticker = setInterval(() => {
+        if (this.pausedAt !== null) return;
         analyser.getFloatTimeDomainData(frame);
         this.levels.push(level(frame));
       }, 1000 / SAMPLE_HZ);
@@ -289,6 +304,9 @@ export class Listener {
   mark(): void {
     this.levels = [];
     this.chunks = [];
+    this.markedAt = clock();
+    this.pausedAt = null;
+    this.pausedFor = 0;
     this.type = pickType();
     if (!this.stream || !this.type) return;
     try {
@@ -300,6 +318,24 @@ export class Listener {
     } catch {
       this.recorder = null;
     }
+  }
+
+  /** The round is paused, so the recording and the timeline pause with
+      it. Camera mode lets somebody stop the clock mid-round with the
+      space bar; without this the microphone kept listening through it and
+      the round came back with a hole the speaker never left, of exactly
+      the length of their pause. Both are safe to call twice. */
+  pause(): void {
+    if (this.markedAt === null || this.pausedAt !== null) return;
+    this.pausedAt = clock();
+    if (this.recorder?.state === "recording") this.recorder.pause();
+  }
+
+  resume(): void {
+    if (this.pausedAt === null) return;
+    this.pausedFor += clock() - this.pausedAt;
+    this.pausedAt = null;
+    if (this.recorder?.state === "paused") this.recorder.resume();
   }
 
   /** Stops everything and hands back what was heard. Safe to call twice
@@ -320,9 +356,37 @@ export class Listener {
     this.stream = null;
     this.context = null;
 
-    const segments = segmentsFrom(this.levels);
+    const segments = segmentsFrom(this.levels, this.rate());
     this.levels = [];
+    this.markedAt = null;
+    this.pausedAt = null;
+    this.pausedFor = 0;
     return { segments, audio, filename: filenameFor(this.type), settings };
+  }
+
+  /** How often the ticker actually fired, which is not what it was asked
+      for.
+
+      `setInterval` fires at most every twenty milliseconds and less often
+      under load, on a busy main thread or in a tab the browser has
+      throttled. Dividing sample indices by a nominal fifty therefore read
+      the whole round short: a minute arriving as fifty seconds of it,
+      with the opening stall, every pause and the trail-off compressed by
+      the same factor, and the drawn wave stopping before the end of a
+      round somebody spoke to the bell.
+
+      Measured against the clock instead, the timeline ends where the
+      round ends whatever the browser did with the ticker. */
+  private rate(): number {
+    if (this.markedAt === null || !this.levels.length) return SAMPLE_HZ;
+    // The round's own running time: what the clock counted, which is what
+    // the backend is told the round was.
+    const upTo = this.pausedAt ?? clock();
+    const elapsed = (upTo - this.markedAt - this.pausedFor) / 1000;
+    if (elapsed <= 0) return SAMPLE_HZ;
+    // A ticker cannot fire faster than it was asked to, so anything above
+    // the nominal rate is a clock nobody should trust.
+    return Math.min(this.levels.length / elapsed, SAMPLE_HZ);
   }
 
   private finish(): Promise<Blob | null> {

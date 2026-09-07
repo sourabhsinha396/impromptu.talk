@@ -472,10 +472,20 @@ export function minuteBlocks(segments: number[][], length: number): Block[] {
       seconds: Math.round(seconds * 10) / 10,
     });
   };
+  /* Nothing is drawn past the end of the round, whatever the timeline
+     says. A stored timeline can overrun its own round - a leaked ticker
+     measured one 58 second round out to 226 seconds before `voice.ts`
+     was fixed, and those rows are still here - and the silence before a
+     segment was the one edge that was not clipped, so a round like that
+     painted a red line clean across the page and out of the column.
+     Caught on the live streak page. A picture of one minute cannot show
+     what happened after it. */
   let cursor = 0;
   for (const [start, end] of segments) {
-    push(cursor, start, cursor === 0 ? "breath" : "breath");
-    push(start, Math.min(end, length), "talking");
+    if (cursor >= length) break;
+    const from = Math.min(start, length);
+    push(cursor, from, "breath");
+    push(from, Math.min(end, length), "talking");
     cursor = Math.min(end, length);
   }
   // Whatever is left is having finished, not a hole.

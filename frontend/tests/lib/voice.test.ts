@@ -169,6 +169,45 @@ describe("Listener", () => {
     expect(heard.segments).toEqual([[0, 2]]);
   });
 
+  it("places the timeline on the clock, not on the number of ticks", async () => {
+    /* `setInterval` fires at most every twenty milliseconds and less
+       often under load or in a throttled tab, so a two second round can
+       arrive as one second of samples. Dividing by a nominal fifty read
+       the whole round short and compressed every pause with it, and the
+       wave stopped before the end of a round somebody spoke to the bell. */
+    vi.useFakeTimers();
+    fakeMicrophone();
+    const ears = new Listener();
+    await ears.start();
+    const began = performance.now();
+    ears.mark();
+    // One second of ticks, but two seconds on the clock: the ticker was
+    // given half of what it asked for.
+    vi.advanceTimersByTime(1000);
+    vi.spyOn(performance, "now").mockReturnValue(began + 2000);
+    const heard = await ears.stop();
+    expect(heard.segments).toEqual([[0, 2]]);
+  });
+
+  it("a pause stops the timeline with the clock, so the round has no hole in it", async () => {
+    /* Camera mode pauses mid-round with the space bar. The microphone
+       kept listening through it, so a thirty second pause came back as a
+       thirty second hole the speaker never left. */
+    vi.useFakeTimers();
+    fakeMicrophone();
+    const ears = new Listener();
+    await ears.start();
+    ears.mark();
+    vi.advanceTimersByTime(1000);
+    ears.pause();
+    vi.advanceTimersByTime(5000);
+    ears.resume();
+    vi.advanceTimersByTime(1000);
+    const heard = await ears.stop();
+    // Two seconds of talking, and not a five second gap between them.
+    expect(heard.segments).toEqual([[0, 2]]);
+  });
+
   it("a stop that lands while the microphone is still being asked for closes it when it arrives", async () => {
     // Reset to idle inside the permission moment. The first version's stop
     // found no stream to close, and the one that arrived a beat later was

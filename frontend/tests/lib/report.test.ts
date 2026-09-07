@@ -13,6 +13,7 @@ import {
   fit,
   headline,
   marked,
+  minuteBlocks,
   paceCaption,
   saidCount,
   sentenceCaption,
@@ -390,5 +391,33 @@ describe("clock", () => {
     expect(clock(7)).toBe("0:07");
     expect(clock(65)).toBe("1:05");
     expect(clock(-3)).toBe("0:00");
+  });
+});
+
+describe("minuteBlocks", () => {
+  it("draws nothing past the end of the round, whatever the timeline says", () => {
+    /* A leaked ticker measured one 58 second round out to 226 seconds
+       before voice.ts was fixed, and those rows are still stored. The
+       silence before a segment was the one edge that was not clipped, so
+       a round like that painted a red line across the whole page. Caught
+       on the live streak page. */
+    const overrun = minuteBlocks(
+      [
+        [2, 20],
+        [70, 90],
+        [200, 226],
+      ],
+      58,
+    );
+    for (const block of overrun) {
+      expect(block.at).toBeGreaterThanOrEqual(0);
+      expect(block.at + block.width).toBeLessThanOrEqual(100.001);
+    }
+  });
+
+  it("fills the round to its end when the voice stops early", () => {
+    const short = minuteBlocks([[0, 30]], 60);
+    expect(short.at(-1)).toMatchObject({ kind: "after" });
+    expect(short.at(-1)!.at + short.at(-1)!.width).toBeCloseTo(100);
   });
 });

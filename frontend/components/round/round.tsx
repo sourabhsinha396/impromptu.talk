@@ -153,6 +153,18 @@ export function Round({
     else if (phase === "idle") void ears.stop();
   }, [phase, mic]);
 
+  /* Pausing stops the clock, so it stops the microphone with it. Camera
+     mode lets somebody pause mid-round with the space bar, and a
+     microphone that kept listening through it handed back a hole the
+     speaker never left. */
+  const paused = engine?.timer.paused ?? false;
+  useEffect(() => {
+    const ears = listener.current;
+    if (!ears || phase !== "speak") return;
+    if (paused) ears.pause();
+    else ears.resume();
+  }, [paused, phase]);
+
   /* Leaving the page with the microphone open is the one thing here that
      outlives the round. */
   useEffect(() => () => void listener.current?.stop(), []);
