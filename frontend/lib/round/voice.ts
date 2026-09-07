@@ -219,8 +219,31 @@ export class Listener {
   private levels: number[] = [];
   private ticker: ReturnType<typeof setInterval> | null = null;
   private type = "";
+  /** The microphone being asked for, while it is. */
+  private opening: Promise<boolean> | null = null;
 
+  /** Opens the microphone, once. Calling this while it is open, or still
+      being asked for, is the same call and not a second microphone.
+
+      The topic screen calls it on every landing, and every respin and
+      every reset back from prep or speak lands there again. The first
+      version opened another stream, another context and another ticker
+      each time and closed none of them, so every leaked ticker kept
+      pushing into the same timeline at fifty a second and after N spins
+      the round was measured N times fast: run 30 was a 58 second round
+      whose sound ended at 226 seconds. The microphone also stayed open
+      behind the leaked streams. */
   async start(): Promise<boolean> {
+    if (this.stream) return true;
+    if (!this.opening) {
+      this.opening = this.open().finally(() => {
+        this.opening = null;
+      });
+    }
+    return this.opening;
+  }
+
+  private async open(): Promise<boolean> {
     if (typeof navigator === "undefined" || !navigator.mediaDevices?.getUserMedia) return false;
     try {
       this.stream = await navigator.mediaDevices.getUserMedia({ audio: CONSTRAINTS });
@@ -282,6 +305,10 @@ export class Listener {
   /** Stops everything and hands back what was heard. Safe to call twice
       and safe to call after a failed start. */
   async stop(): Promise<Heard> {
+    // A reset that lands while the microphone is still being asked for
+    // waits for the answer, so the stream that arrives a moment later is
+    // closed here rather than left open under the idle screen.
+    if (this.opening) await this.opening;
     if (this.ticker) clearInterval(this.ticker);
     this.ticker = null;
 

@@ -40,6 +40,16 @@ FREE_MINUTES = 5
 # buyer maxing it every month takes over a decade to spend what they paid.
 PRO_MINUTES = 120
 
+# How far the browser's timeline may run past the round before it is a
+# fault rather than rounding. The ticker stops a beat after the bell, so a
+# fraction of a second over is normal; seconds over is the browser's clock
+# running fast, which is what a leaked ticker does. Run 30 was a 58 second
+# round whose sound ended at 226 seconds, with an opening stall of 7 where
+# the transcriber heard the first word at 2. `analysis._clean` clips the
+# overrun in silence and reports a stall and a pause map wrong by the same
+# factor, so it is worth a line in the log while it is happening.
+CLOCK_SLACK = 1.0
+
 
 def _month_start(now: dt.datetime | None = None) -> dt.datetime:
     return (now or dt.datetime.now(dt.UTC)).replace(day=1, hour=0, minute=0, second=0, microsecond=0)
@@ -86,6 +96,7 @@ def make(
     report and never an error in front of somebody who has just finished
     speaking.
     """
+    _check_clock(run, segments)
     measured = analysis.timing(segments, run.spoken_seconds)
     row = Report(
         run=run,
@@ -123,6 +134,17 @@ def make(
 
     row.save()
     return row
+
+
+def _check_clock(run: Run, segments: list) -> None:
+    """The browser's clock against the round it says it measured. A warning
+    and nothing more: the backend cannot know the factor, and the fix
+    belongs in the browser that measured it."""
+    ends = [float(end) for _, end in segments]
+    if ends and max(ends) > run.spoken_seconds + CLOCK_SLACK:
+        logger.warning(
+            "timeline overruns run %s: sound ends at %.2fs in a %ss round", run.pk, max(ends), run.spoken_seconds
+        )
 
 
 def _may_spend(run: Run, pro: bool) -> bool:

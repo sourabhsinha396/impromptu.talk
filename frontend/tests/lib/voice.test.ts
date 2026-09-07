@@ -1,6 +1,6 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { SAMPLE_HZ, filenameFor, level, segmentsFrom } from "@/lib/round/voice";
+import { Listener, SAMPLE_HZ, filenameFor, level, segmentsFrom } from "@/lib/round/voice";
 
 /* Turning loudness into "when there was a voice" is the whole free report:
    the pause map, the opening stall and trail-off are all read off these
@@ -100,5 +100,86 @@ describe("filenameFor", () => {
     expect(filenameFor("audio/ogg;codecs=opus")).toBe("round.ogg");
     expect(filenameFor("audio/mp4")).toBe("round.mp4");
     expect(filenameFor("")).toBe("round.webm");
+  });
+});
+
+/* Enough of the browser to open a microphone: a stream with one track, and
+   a Web Audio context whose analyser always hears the same loud level. One
+   level throughout is somebody who never stops, which segmentsFrom reports
+   as a single segment the length of the timeline, so the segment's end is
+   the clock the ticker kept.
+
+   A held microphone answers only when the test says so, which is what a
+   real permission prompt does and what an instantly resolved fake cannot
+   reproduce: the leak being pinned lives in that gap. */
+function fakeMicrophone({ hold = false } = {}) {
+  const track = { readyState: "live", stop: vi.fn(), getSettings: () => ({}) };
+  const stream = { getAudioTracks: () => [track], getTracks: () => [track] };
+  let answer = () => {};
+  const getUserMedia = vi.fn(
+    () =>
+      new Promise<typeof stream>((resolve) => {
+        answer = () => resolve(stream);
+        if (!hold) answer();
+      }),
+  );
+  Object.defineProperty(navigator, "mediaDevices", { value: { getUserMedia }, configurable: true });
+  vi.stubGlobal(
+    "AudioContext",
+    class {
+      createMediaStreamSource() {
+        return { connect() {} };
+      }
+      createAnalyser() {
+        return {
+          fftSize: 0,
+          getFloatTimeDomainData(frame: Float32Array) {
+            frame.fill(LOUD);
+          },
+        };
+      }
+      async close() {}
+    },
+  );
+  return { getUserMedia, track, answer: () => answer() };
+}
+
+describe("Listener", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
+    delete (navigator as { mediaDevices?: unknown }).mediaDevices;
+  });
+
+  it("starting twice does not double the sample rate", async () => {
+    // The topic screen starts the listener on every landing, and a respin
+    // or a reset from prep or speak lands there again. Each of those once
+    // opened another ticker into the same timeline, so a round after three
+    // spins was measured three times fast.
+    vi.useFakeTimers();
+    const mic = fakeMicrophone();
+    const ears = new Listener();
+    expect(await ears.start()).toBe(true);
+    expect(await ears.start()).toBe(true);
+    expect(await ears.start()).toBe(true);
+    ears.mark();
+    vi.advanceTimersByTime(2000);
+    const heard = await ears.stop();
+    expect(mic.getUserMedia).toHaveBeenCalledTimes(1);
+    expect(heard.segments).toEqual([[0, 2]]);
+  });
+
+  it("a stop that lands while the microphone is still being asked for closes it when it arrives", async () => {
+    // Reset to idle inside the permission moment. The first version's stop
+    // found no stream to close, and the one that arrived a beat later was
+    // left open under the idle screen.
+    const mic = fakeMicrophone({ hold: true });
+    const ears = new Listener();
+    const opening = ears.start();
+    const stopped = ears.stop();
+    mic.answer();
+    await stopped;
+    expect(await opening).toBe(true);
+    expect(mic.track.stop).toHaveBeenCalledTimes(1);
   });
 });

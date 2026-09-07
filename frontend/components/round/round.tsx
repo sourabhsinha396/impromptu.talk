@@ -133,7 +133,11 @@ export function Round({
      for the site: nothing in this code can ask again, and the person would
      have to find their browser's site settings to undo it. So the rule is
      that the browser's prompt may only ever appear inside a press on a
-     control of ours that said it would. */
+     control of ours that said it would.
+
+     The topic lands again on every respin and on every reset back from
+     prep or speak, so `start` runs more than once a round. It is
+     idempotent, and the one open microphone is reused. */
   const phase = engine?.phase;
   const mic = engine?.prefs.mic ?? "ask";
   useEffect(() => {

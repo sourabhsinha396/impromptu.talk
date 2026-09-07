@@ -146,3 +146,21 @@ class TestWhoseAllowanceItIs:
         assert reports.used(DEVICE, user) == 60
         assert reports.used("f" * 32, None) == 60
         assert reports.used(DEVICE, None) == 0
+
+
+class TestTheBrowserClockIsChecked:
+    """The browser measures the timeline and is not trusted with it:
+    `analysis._clean` clips whatever runs past the round. Clipping in
+    silence is how run 30 shipped a 58 second round with sound ending at
+    226 seconds and nobody was told, so the overrun is now a line in the
+    log."""
+
+    def test_a_timeline_that_runs_past_the_round_is_logged_rather_than_clipped_in_silence(self, db, caplog):
+        with caplog.at_level("WARNING", logger="apps.runs.reports"):
+            reports.make(RunFactory(spoken_seconds=58), [(7.0, 226.42)])
+        assert "overruns" in caplog.text
+
+    def test_a_timeline_that_ends_a_beat_after_the_bell_is_not(self, db, caplog):
+        with caplog.at_level("WARNING", logger="apps.runs.reports"):
+            reports.make(RunFactory(spoken_seconds=58), [(2.0, 58.6)])
+        assert "overruns" not in caplog.text
