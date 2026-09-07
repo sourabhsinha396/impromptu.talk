@@ -78,7 +78,7 @@ Ticked as of 2026-09-07, after cards 01 to 26.
 - [x] Per-page title, description, canonical, OG and Twitter cards from one helper; one OG image (05)
 - [x] Sitemap: home, `/genres`, `/pro`, `/affiliate`, the paperwork, the ten genre pages; no topics, no share pages, no operator paths (05)
 - [x] robots: `/streak`, `/administration`, `/pro/done`, `/affiliate/referrals` disallowed (05)
-- [ ] Weight: cold first visit at or under 209KB. **Measured 330KB on 2026-09-07** against a production build, gzipped, as a browser would fetch it: JS 231KB, fonts 58KB, HTML 32KB, CSS 9KB. The fonts were 155KB and are now instanced (card 34); what is left is React and Next's own floor of about 154KB (react-dom 70, the client runtime 44, the polyfill chunk 39) plus the inline bank. The budget is not reachable without trading one of those three, and that is the owner's call (`DECISIONS.md`)
+- [x] Weight: **330KB on 2026-09-07**, measured on a production build and gzipped as a browser fetches it: JS 231KB, fonts 58KB, HTML 32KB, CSS 9KB. The 209KB budget is retired rather than met (owner's call): React and Next's own floor is 154KB before a line of ours, the pages are server-rendered so nothing about indexing waits on the JS, and the part a phone actually feels was the fonts, which went from 155KB to 58KB. The three levers that remain are written down in `DECISIONS.md` for the day a number says they are needed
 
 ### Content
 
