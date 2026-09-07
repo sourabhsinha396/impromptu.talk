@@ -34,7 +34,15 @@ export type Report = {
   filler_rate: number | null;
   crutch_words: Crutch[];
   filler_words: string[];
+  /* Fillers that landed beside a silence. A different problem from saying
+     um a lot, and a different fix. Null where nothing could count them. */
+  fillers_at_transitions: number | null;
   transcript: string;
+  /* The transcript with our own silences put back where they fell, when
+     the transcriber returned word timings. Empty otherwise, and the plain
+     transcript is shown instead. */
+  said: Said[];
+  topic: string;
   seconds_left: number;
 };
 
@@ -142,6 +150,8 @@ export function headline(report: Report): string {
   return "Steady all the way through.";
 }
 
+
+export type Said = { kind: "word" | "filler" | "crutch" | "pause"; text: string; seconds: number; awkward: boolean };
 
 export type Marked = { text: string; kind: "filler" | "crutch" | "" };
 
@@ -335,4 +345,32 @@ export function movement(points: Point[], pick: (p: Point) => number | null): { 
   const seen = points.map(pick).filter((v): v is number => v !== null);
   if (seen.length < 2) return null;
   return { from: seen[0], to: seen[seen.length - 1] };
+}
+
+
+/* One thing to do about a band that is outside its comfortable stretch.
+
+   Behind a disclosure rather than on the face of it, because the verdict
+   is one word and the done screen is a moment, not a lecture. Written
+   here and not by a model: the same round has to give the same advice
+   twice, and a sentence that varies between two readings of one minute is
+   not advice, it is weather. */
+export function advice(band: Band): string | null {
+  const low = band.value < band.good[0];
+  const high = band.value > band.good[1];
+  if (!low && !high) return null;
+  switch (band.key) {
+    case "pace":
+      return low
+        ? "Push on a little. Long words land better than long gaps."
+        : "Slow down. Land on your full stops and let them sit.";
+    case "start":
+      return "Open with your claim, not a wind-up. Say the point, then explain it.";
+    case "gap":
+      return "Say the next point half-formed. A wobble costs less than a hole.";
+    case "fillers":
+      return "Pause instead of um. Silence reads as deliberate; um reads as lost.";
+    default:
+      return null;
+  }
 }

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { at, bands, blocks, clock, headline, marked, type Report } from "@/lib/report";
+import { advice, at, bands, blocks, clock, headline, marked, type Report } from "@/lib/report";
 
 /* The bar is the whole report: somebody sees the hole at 0:34 without
    reading a number. So what is pinned here is that it adds up - the blocks
@@ -24,6 +24,9 @@ function report(over: Partial<Report> = {}): Report {
     filler_rate: null,
     crutch_words: [],
     filler_words: [],
+    fillers_at_transitions: null,
+    said: [],
+    topic: "Low tide",
     transcript: "",
     seconds_left: 300,
     ...over,
@@ -169,6 +172,29 @@ describe("at", () => {
     expect(at(500, [100, 200])).toBe(100);
     expect(at(-40, [100, 200])).toBe(0);
     expect(at(5, [10, 10])).toBe(0);
+  });
+});
+
+describe("advice", () => {
+  const band = (key: string, pace: number) => bands(report({ pace, opening_stall: 0.5, longest_pause: 1, filler_rate: 1 })).find((b) => b.key === key)!;
+
+  it("says nothing at all about a round that went well", () => {
+    expect(advice(band("pace", 150))).toBeNull();
+    expect(advice(band("start", 150))).toBeNull();
+  });
+
+  it("says opposite things about the two ways out of a range", () => {
+    const slow = advice(band("pace", 90));
+    const fast = advice(band("pace", 210));
+    expect(slow).not.toBeNull();
+    expect(fast).not.toBeNull();
+    expect(slow).not.toBe(fast);
+  });
+
+  it("is the same sentence every time, since a report has to repeat", () => {
+    // Written here rather than by a model: the same round giving different
+    // advice on two readings is weather, not advice.
+    expect(advice(band("pace", 210))).toBe(advice(band("pace", 210)));
   });
 });
 

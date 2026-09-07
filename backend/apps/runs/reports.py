@@ -111,6 +111,8 @@ def make(
         else:
             row.provider = answer.provider
             row.transcript = answer.text
+            row.words_at = [list(word) for word in answer.words]
+            row.fillers_at_transitions = analysis.at_transitions(list(answer.words), measured.pauses)
             if spoken := analysis.words(answer.text, measured.speaking_seconds):
                 row.words = spoken.count
                 row.pace = spoken.pace
@@ -171,5 +173,14 @@ def render(row: Report, *, pro: bool = False) -> dict:
         # a clean round rather than an uncounted one.
         "filler_words": row.filler_words if row.provider == transcribe.ASSEMBLYAI else [],
         "transcript": row.transcript,
+        # The transcript with our own silences put back where they fell,
+        # which is the one place a pause stops being a number.
+        "said": [
+            {"kind": part.kind, "text": part.text, "seconds": part.seconds, "awkward": part.awkward}
+            for part in analysis.read_back(row.words_at, measured.pauses)
+        ],
+        "fillers_at_transitions": row.fillers_at_transitions if row.provider == transcribe.ASSEMBLYAI else None,
+        # So the read-back can say what it was an answer to, months later.
+        "topic": row.run.topic_text,
         "seconds_left": left(row.run.device_id, row.run.user, pro),
     }

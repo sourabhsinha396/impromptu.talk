@@ -5,7 +5,18 @@ what pace is measured over, and which words are faults and which are
 merely leaned on. No database, no clock, no network.
 """
 
-from apps.runs.analysis import AWKWARD_PAUSE, CRUTCHES_NAMED, MIN_PAUSE, report, timing, words
+import pytest
+
+from apps.runs.analysis import (
+    AWKWARD_PAUSE,
+    CRUTCHES_NAMED,
+    MIN_PAUSE,
+    at_transitions,
+    read_back,
+    report,
+    timing,
+    words,
+)
 
 
 class TestHearing:
@@ -124,3 +135,43 @@ class TestReport:
         free = report(segments, 60)
         assert free.timing == full.timing
         assert free.words is None
+
+
+class TestReadBack:
+    """The transcript with the silences put back where they fell, which is
+    the one place a pause stops being a number and becomes the hole in the
+    middle of your own sentence."""
+
+    def spoke(self):
+        # "I think ... it works", with a hole between the two halves.
+        return [("I", 0.0, 0.2), ("think", 0.3, 0.7), ("it", 7.0, 7.2), ("works", 7.3, 7.8)]
+
+    def test_a_silence_lands_between_the_words_it_interrupted(self):
+        measured = timing([(0.0, 0.7), (7.0, 7.8)], 10)
+        parts = read_back(self.spoke(), measured.pauses)
+        kinds = [part.kind for part in parts]
+        assert kinds == ["word", "word", "pause", "word", "word"]
+        assert parts[2].seconds == pytest.approx(6.3, abs=0.05)
+        assert parts[2].awkward is True
+
+    def test_a_filler_is_named_where_it_was_said(self):
+        parts = read_back([("um", 0.0, 0.3), ("right", 0.4, 0.8), ("tide", 0.9, 1.2)], ())
+        assert [part.kind for part in parts] == ["filler", "crutch", "word"]
+
+    def test_no_words_is_nothing_rather_than_a_row_of_silences(self):
+        measured = timing([(0.0, 5.0), (8.0, 10.0)], 10)
+        assert read_back([], measured.pauses) == ()
+
+
+class TestAtTransitions:
+    def test_an_um_beside_a_silence_is_counted_and_one_mid_sentence_is_not(self):
+        measured = timing([(0.0, 5.0), (9.0, 12.0)], 12)
+        # One um right after the hole, one early and far from it.
+        beside = at_transitions([("um", 9.1, 9.4)], measured.pauses)
+        inside = at_transitions([("um", 1.0, 1.3)], measured.pauses)
+        assert beside == 1
+        assert inside == 0
+
+    def test_nothing_to_count_without_pauses_or_words(self):
+        assert at_transitions([], ()) == 0
+        assert at_transitions([("um", 1.0, 1.2)], ()) == 0

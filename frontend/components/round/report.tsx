@@ -1,6 +1,6 @@
 import { Button } from "@/components/site/button";
 import { MicIcon } from "@/components/site/icons";
-import { at, bands, blocks, clock, headline, marked, type Band, type Kind, type Report } from "@/lib/report";
+import { advice, at, bands, blocks, clock, headline, marked, type Band, type Kind, type Report } from "@/lib/report";
 
 /* The minute you just spoke, drawn.
 
@@ -61,6 +61,14 @@ export function RoundReport({ report, length }: { report: Report | "off" | null;
 
       <p className="mt-2 text-[12.5px] tabular-nums text-muted">{numbers(report).join("  ·  ")}</p>
 
+      {report.fillers !== null && report.fillers_at_transitions !== null && report.fillers > 0 && (
+        <p className="mt-1 text-[12.5px] text-muted">
+          {report.fillers_at_transitions === 0
+            ? "None of them at a gap, so it is a habit rather than hunting."
+            : `${report.fillers_at_transitions} of them beside a gap, where the next point was not ready.`}
+        </p>
+      )}
+
       {report.crutch_words.length > 0 && (
         <p className="mt-1 text-[12.5px] text-muted">
           You leaned on {report.crutch_words.map((crutch) => `${crutch.word} ${crutch.count}`).join(", ")}
@@ -82,31 +90,27 @@ export function RoundReport({ report, length }: { report: Report | "off" | null;
    thing you can hear yourself doing. */
 function Transcript({ report }: { report: Report }) {
   const parts = marked(report);
-  if (!parts.length) return null;
+  if (!parts.length && !report.said.length) return null;
   return (
     <details className="group mt-5 text-left">
       <summary className="cursor-pointer list-none text-center text-[12.5px] font-semibold text-muted underline underline-offset-4 hover:text-ink">
         <span className="group-open:hidden">Read it back</span>
         <span className="hidden group-open:inline">Hide</span>
       </summary>
-      <p className="mt-3 rounded-card border border-line bg-card2 px-4 py-3.5 text-[13.5px] leading-relaxed text-muted">
-        {parts.map((part, index) =>
-          part.kind ? (
-            <mark
-              key={index}
-              className={
-                part.kind === "filler"
-                  ? "rounded-[3px] bg-warn/20 px-0.5 font-semibold text-ink"
-                  : "rounded-[3px] bg-accent/15 px-0.5 font-semibold text-ink"
-              }
-            >
-              {part.text}
-            </mark>
-          ) : (
-            <span key={index}>{part.text}</span>
-          ),
-        )}
-      </p>
+      <div className="mt-3 rounded-card border border-line bg-card2 px-4 py-3.5">
+        <div className="flex items-baseline justify-between gap-3 border-b border-line pb-2.5">
+          {/* The topic, so the read-back says what it was an answer to.
+              Months later a transcript on its own is a paragraph nobody
+              can place. */}
+          <p className="text-[12.5px] font-semibold">{report.topic}</p>
+          {report.words !== null && (
+            <span className="shrink-0 text-[11.5px] tabular-nums text-muted">{report.words} words</span>
+          )}
+        </div>
+        <p className="mt-2.5 text-[13.5px] leading-relaxed text-muted">
+          {report.said.length ? <Timed report={report} /> : <Flat parts={parts} />}
+        </p>
+      </div>
     </details>
   );
 }
@@ -218,6 +222,7 @@ function BandRow({ band }: { band: Band }) {
   const width = at(band.good[1], band.scale) - start;
   const mark = at(band.value, band.scale);
   const inside = band.value >= band.good[0] && band.value <= band.good[1];
+  const todo = advice(band);
 
   return (
     <div>
@@ -243,6 +248,82 @@ function BandRow({ band }: { band: Band }) {
         <span className={`font-semibold ${inside ? "text-accent-strong" : "text-ink"}`}>{band.verdict}</span>
         <span>{band.ends[1]}</span>
       </div>
+      {/* One thing to do, and only where there is something to do. Behind
+          a disclosure because the verdict is a word and the done screen is
+          a moment, not a lecture. */}
+      {todo && (
+        <details className="group mt-1.5">
+          <summary className="cursor-pointer list-none text-[11.5px] font-semibold text-muted underline underline-offset-4 hover:text-ink">
+            <span className="group-open:hidden">What to do</span>
+            <span className="hidden group-open:inline">Hide</span>
+          </summary>
+          <p className="mt-1.5 text-[12px] leading-relaxed text-muted">{todo}</p>
+        </details>
+      )}
     </div>
+  );
+}
+
+
+/* The silences drawn where they fell.
+
+   A six-second hole reported as "longest gap 6s" is a number. The same
+   hole sitting inside the sentence it interrupted tells you where you
+   stalled, which is the thing you can actually fix. The words and their
+   clock come from the transcriber; the silence is our own, measured off
+   the envelope, which is the more exact of the two. */
+function Timed({ report }: { report: Report }) {
+  return (
+    <>
+      {report.said.map((part, index) => {
+        if (part.kind === "pause") {
+          return (
+            <span
+              key={index}
+              className={`mx-1 inline-block rounded-[4px] px-1 align-middle text-[11px] font-semibold tabular-nums ${
+                part.awkward ? "bg-warn/25 text-ink" : "bg-line text-muted"
+              }`}
+              title={part.awkward ? "Long enough to notice" : "A breath"}
+            >
+              {part.seconds}s
+            </span>
+          );
+        }
+        if (part.kind === "word") return <span key={index}>{part.text} </span>;
+        return (
+          <mark
+            key={index}
+            className={`rounded-[3px] px-0.5 font-semibold text-ink ${
+              part.kind === "filler" ? "bg-warn/20" : "bg-accent/15"
+            }`}
+          >
+            {part.text}{" "}
+          </mark>
+        );
+      })}
+    </>
+  );
+}
+
+/* Where the transcriber sent no word timings, the words still get marked;
+   only the silences cannot be placed. */
+function Flat({ parts }: { parts: ReturnType<typeof marked> }) {
+  return (
+    <>
+      {parts.map((part, index) =>
+        part.kind ? (
+          <mark
+            key={index}
+            className={`rounded-[3px] px-0.5 font-semibold text-ink ${
+              part.kind === "filler" ? "bg-warn/20" : "bg-accent/15"
+            }`}
+          >
+            {part.text}
+          </mark>
+        ) : (
+          <span key={index}>{part.text}</span>
+        ),
+      )}
+    </>
   );
 }

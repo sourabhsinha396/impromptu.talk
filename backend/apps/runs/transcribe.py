@@ -67,6 +67,11 @@ class TranscribeError(Exception):
 class Transcript:
     text: str
     provider: str
+    # (word, start, end) in seconds. AssemblyAI returns these on every
+    # response and we were dropping them; they are what lets a pause be
+    # drawn inside the sentence it interrupted rather than reported as a
+    # number beside it. Empty from a provider that does not send them.
+    words: tuple[tuple[str, float, float], ...] = ()
 
 
 def _multipart(fields: dict[str, str], filename: str, blob: bytes) -> tuple[bytes, str]:
@@ -165,12 +170,25 @@ class AssemblyAIGateway:
                 text = (answer.get("text") or "").strip()
                 if not text:
                     raise TranscribeError("the transcriber heard nothing")
-                return Transcript(text=text, provider=ASSEMBLYAI)
+                return Transcript(text=text, provider=ASSEMBLYAI, words=_timed(answer.get("words")))
             if status == "error":
                 raise TranscribeError(str(answer.get("error") or "the transcriber failed"))
             if time.monotonic() >= deadline:
                 raise TranscribeError("the transcriber did not finish in time")
             time.sleep(POLL_EVERY)
+
+
+def _timed(words) -> tuple[tuple[str, float, float], ...]:
+    """Milliseconds to seconds, and nothing that cannot be placed. A word
+    with no timing is still in the transcript text; it simply cannot be
+    drawn on the clock."""
+    out = []
+    for word in words or []:
+        text = (word.get("text") or "").strip()
+        start, end = word.get("start"), word.get("end")
+        if text and start is not None and end is not None:
+            out.append((text, round(start / 1000, 2), round(end / 1000, 2)))
+    return tuple(out)
 
 
 @dataclass
@@ -179,6 +197,7 @@ class RecordingGateway:
 
     text: str = "um so we should probably like begin"
     provider: str = GROQ
+    words: tuple[tuple[str, float, float], ...] = ()
     calls: list[dict] = field(default_factory=list)
     error: Exception | None = None
 
@@ -188,7 +207,7 @@ class RecordingGateway:
         self.calls.append({"bytes": len(blob), "filename": filename})
         if self.error:
             raise self.error
-        return Transcript(text=self.text, provider=self.provider)
+        return Transcript(text=self.text, provider=self.provider, words=self.words)
 
 
 def enabled(pro: bool) -> bool:

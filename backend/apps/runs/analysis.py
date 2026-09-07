@@ -282,3 +282,71 @@ def report(segments: list[tuple[float, float]], length: float, transcript: str =
     if not measured.heard:
         return Report(timing=measured, words=None)
     return Report(timing=measured, words=words(transcript, measured.speaking_seconds))
+
+
+@dataclass(frozen=True)
+class Said:
+    """One thing in the read-back: a word, or the silence before it."""
+
+    kind: str
+    text: str
+    seconds: float = 0.0
+    awkward: bool = False
+
+
+# A filler this close to a silence is a transition filler: the sound of
+# looking for the next point rather than a verbal tic inside one. The two
+# have different fixes, which is why the count alone was never enough.
+BESIDE_A_PAUSE = 1.5
+
+
+def read_back(words: list[tuple[str, float, float]], pauses: tuple[Pause, ...]) -> tuple[Said, ...]:
+    """The transcript with the silences put back where they fell.
+
+    The best idea in this whole market and it costs nothing: a six-second
+    hole reported as "longest gap 6s" is a number, and the same hole drawn
+    inside the sentence it interrupted tells you *where* you stalled. The
+    words and their clock come from the transcriber; the pauses come from
+    the browser's own envelope, which is the more exact of the two, so the
+    silence drawn here is ours and only its position is theirs.
+    """
+    if not words:
+        return ()
+    out: list[Said] = []
+    left = list(pauses)
+    previous_end = 0.0
+    for text, start, end in words:
+        # Every silence that closed before this word began belongs in front
+        # of it. More than one can, when a word is missing from the timing.
+        while left and left[0].at < start and left[0].at >= previous_end - 0.01:
+            gap = left.pop(0)
+            out.append(Said(kind="pause", text="", seconds=gap.seconds, awkward=gap.awkward))
+        while left and left[0].at < start:
+            left.pop(0)
+        word = text.strip()
+        bare = _WORD.findall(word.lower())
+        first = bare[0] if bare else ""
+        kind = "filler" if first in FILLERS else "crutch" if first in CRUTCHES else "word"
+        out.append(Said(kind=kind, text=word, seconds=round(end - start, 2)))
+        previous_end = end
+    return tuple(out)
+
+
+def at_transitions(words: list[tuple[str, float, float]], pauses: tuple[Pause, ...]) -> int:
+    """How many of the fillers landed beside a silence.
+
+    Six ums spread through a minute is a tic. Six ums each sitting against
+    a pause means the next point was not ready, which is a different
+    problem with a different fix, and no count on its own can tell them
+    apart."""
+    if not words or not pauses:
+        return 0
+    edges = [(p.at, p.at + p.seconds) for p in pauses]
+    beside = 0
+    for text, start, end in words:
+        bare = _WORD.findall(text.lower())
+        if not bare or bare[0] not in FILLERS:
+            continue
+        if any(start - close <= BESIDE_A_PAUSE and opens - end <= BESIDE_A_PAUSE for opens, close in edges):
+            beside += 1
+    return beside

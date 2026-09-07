@@ -105,6 +105,13 @@ class Report(models.Model):
     filler_rate = models.FloatField(default=0)
     crutch_words = models.JSONField(default=list)
     filler_words = models.JSONField(default=list)
+    # [[word, start, end], ...] in seconds. Returned by the transcriber on
+    # every response and once thrown away; kept so a pause can be drawn
+    # inside the sentence it interrupted.
+    words_at = models.JSONField(default=list)
+    # Fillers that landed beside a silence, which is a different problem
+    # from saying um a lot and has a different fix.
+    fillers_at_transitions = models.PositiveIntegerField(default=0)
 
     created_at = models.DateTimeField(default=timezone.now, db_index=True)
 

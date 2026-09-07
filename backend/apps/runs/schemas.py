@@ -133,6 +133,13 @@ class CrutchOut(Schema):
     count: int
 
 
+class SaidOut(Schema):
+    kind: str
+    text: str
+    seconds: float = 0.0
+    awkward: bool = False
+
+
 class ReportOut(Schema):
     """What the done screen draws. The timing half is always here and the
     word half is null when nothing transcribed the round, so a page can
@@ -157,7 +164,10 @@ class ReportOut(Schema):
     filler_rate: float | None = None
     crutch_words: list[CrutchOut] = []
     filler_words: list[str] = []
+    fillers_at_transitions: int | None = None
     transcript: str = ""
+    said: list[SaidOut] = []
+    topic: str = ""
 
     # Seconds of transcription left this calendar month, so the page can
     # say what is left rather than let somebody discover it by finishing a
