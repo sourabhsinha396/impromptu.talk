@@ -1,6 +1,6 @@
 import { Button } from "@/components/site/button";
 import { MicIcon } from "@/components/site/icons";
-import { blocks, clock, headline, marked, type Kind, type Report } from "@/lib/report";
+import { at, bands, blocks, clock, headline, marked, type Band, type Kind, type Report } from "@/lib/report";
 
 /* The minute you just spoke, drawn.
 
@@ -66,6 +66,8 @@ export function RoundReport({ report, length }: { report: Report | "off" | null;
           You leaned on {report.crutch_words.map((crutch) => `${crutch.word} ${crutch.count}`).join(", ")}
         </p>
       )}
+
+      <Bands report={report} />
 
       <Transcript report={report} />
     </div>
@@ -182,6 +184,64 @@ export function ReportInvitation({ onYes, onNo }: { onYes: () => void; onNo: () 
         >
           Not now
         </button>
+      </div>
+    </div>
+  );
+}
+
+
+/* Every number against a comfortable range.
+
+   This is what stops a first round being a page of orphaned facts. "166
+   wpm" says nothing to somebody who has never seen the number before;
+   "166, and comfortable is 130 to 170" says it in one look, with no
+   history behind it and nothing to compare against but the range itself.
+
+   Drawn by hand rather than by a chart library. A track, a band and a
+   marker is not a chart, and the alternative would put a hundred kilobytes
+   of charting on the home page, where the first paint is measured. The
+   progress view is where axes and hover start to earn a library. */
+function Bands({ report }: { report: Report }) {
+  const rows = bands(report);
+  if (!rows.length) return null;
+  return (
+    <div className="mt-6 grid gap-4 text-left sm:grid-cols-2">
+      {rows.map((row) => (
+        <BandRow key={row.key} band={row} />
+      ))}
+    </div>
+  );
+}
+
+function BandRow({ band }: { band: Band }) {
+  const start = at(band.good[0], band.scale);
+  const width = at(band.good[1], band.scale) - start;
+  const mark = at(band.value, band.scale);
+  const inside = band.value >= band.good[0] && band.value <= band.good[1];
+
+  return (
+    <div>
+      <div className="flex items-baseline justify-between gap-2">
+        <span className="text-[12.5px] font-semibold">{band.label}</span>
+        <span className="text-[12.5px] tabular-nums text-muted">{band.shown}</span>
+      </div>
+      <div className="relative mt-2 h-1.5 w-full rounded-full bg-line">
+        {/* The comfortable stretch, and then where you landed on it. */}
+        <span
+          className="absolute inset-y-0 rounded-full bg-accent/30"
+          style={{ left: `${start}%`, width: `${width}%` }}
+        />
+        <span
+          className={`absolute -top-1 size-3.5 -translate-x-1/2 rounded-full border-2 border-surface ${
+            inside ? "bg-accent" : "bg-warn"
+          }`}
+          style={{ left: `${mark}%` }}
+        />
+      </div>
+      <div className="mt-1.5 flex items-baseline justify-between gap-2 text-[11px] text-muted">
+        <span>{band.ends[0]}</span>
+        <span className={`font-semibold ${inside ? "text-accent-strong" : "text-ink"}`}>{band.verdict}</span>
+        <span>{band.ends[1]}</span>
       </div>
     </div>
   );

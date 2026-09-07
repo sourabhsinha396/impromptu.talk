@@ -225,12 +225,6 @@ export function DonePhase({
   return (
     <>
       <p className="font-display text-headline font-semibold">{headline}</p>
-      {/* The minute comes before the tiles. The streak is already in the
-          header pill on every page; the done screen's own job is to say
-          something about the sixty seconds that just happened. */}
-      <div className="mx-auto mt-8 w-full max-w-[640px]">
-        <RoundReport report={report} length={spokenSeconds} />
-      </div>
       {summary && (
         <div className="mx-auto mt-8 mb-9 w-full max-w-[640px]">
           <Stats streak={summary.streak} topics={summary.topics} minutes={summary.minutes} />

@@ -169,3 +169,122 @@ export function marked(report: Report): Marked[] {
     return [{ text: part, kind: "" }];
   });
 }
+
+/* ------------------------------------------------------------- the bands */
+
+/* Where a number sits against a comfortable range, which is what makes it
+   mean anything on a first round.
+
+   "166 wpm" is a fact about physics. "166 wpm, and comfortable is 130 to
+   170" is a fact about you, and it needs no history at all, which is the
+   whole point: the baseline from your own past rounds is Pro's, and this
+   is what free gets on the very first minute.
+
+   **These edges are editorial and they are meant to move.** Speaking pace
+   is the only one with much behind it: ordinary clear speech and most
+   recorded talks sit around 130 to 170 words a minute, so that is the
+   band. The rest are judgement, set where a listener starts to notice,
+   and they should be revisited against real rounds rather than defended.
+   Nothing here is presented as a score, and no round is ever called
+   wrong; the words are "rushed" and "slow", never "bad". */
+
+export type Band = {
+  key: string;
+  label: string;
+  value: number;
+  /** What is written on the marker. */
+  shown: string;
+  /** The whole scale drawn, low to high. */
+  scale: [number, number];
+  /** The comfortable stretch inside it. */
+  good: [number, number];
+  /** One word for where they landed. */
+  verdict: string;
+  /** The ends of the scale, named, so the picture reads without a legend. */
+  ends: [string, string];
+};
+
+function band(
+  key: string,
+  label: string,
+  value: number,
+  shown: string,
+  scale: [number, number],
+  good: [number, number],
+  words: [string, string, string],
+  ends: [string, string],
+): Band {
+  const verdict = value < good[0] ? words[0] : value > good[1] ? words[2] : words[1];
+  return { key, label, value, shown, scale, good, verdict, ends };
+}
+
+export function bands(report: Report): Band[] {
+  const out: Band[] = [];
+
+  if (report.pace !== null && report.pace > 0) {
+    out.push(
+      band(
+        "pace",
+        "Pace",
+        report.pace,
+        `${report.pace} wpm`,
+        [80, 220],
+        [130, 170],
+        ["Slow", "Good pace", "Rushed"],
+        ["slow", "rushed"],
+      ),
+    );
+  }
+
+  // Lower is better, so the comfortable stretch starts at nothing and the
+  // scale runs out to the right.
+  out.push(
+    band(
+      "start",
+      "Time to start",
+      report.opening_stall,
+      clock(report.opening_stall),
+      [0, 8],
+      [0, 2],
+      ["", "Straight in", "Slow to start"],
+      ["at once", "8s"],
+    ),
+  );
+
+  out.push(
+    band(
+      "gap",
+      "Longest gap",
+      report.longest_pause,
+      `${report.longest_pause}s`,
+      [0, 8],
+      [0, 2],
+      ["", "No holes", "Long hole"],
+      ["none", "8s"],
+    ),
+  );
+
+  if (report.filler_rate !== null) {
+    out.push(
+      band(
+        "fillers",
+        "Ums a minute",
+        report.filler_rate,
+        `${report.filler_rate}`,
+        [0, 12],
+        [0, 4],
+        ["", "Clean", "Heavy"],
+        ["none", "12"],
+      ),
+    );
+  }
+
+  return out;
+}
+
+/** Where a value falls across the scale, as a percentage, clamped so a
+    wild number still draws a marker on the track instead of off it. */
+export function at(value: number, [low, high]: [number, number]): number {
+  if (high <= low) return 0;
+  return Math.max(0, Math.min(100, ((value - low) / (high - low)) * 100));
+}

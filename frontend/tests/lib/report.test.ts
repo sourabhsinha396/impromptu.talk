@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { blocks, clock, headline, marked, type Report } from "@/lib/report";
+import { at, bands, blocks, clock, headline, marked, type Report } from "@/lib/report";
 
 /* The bar is the whole report: somebody sees the hole at 0:34 without
    reading a number. So what is pinned here is that it adds up - the blocks
@@ -126,6 +126,49 @@ describe("marked", () => {
     // must not imply a clean round by marking none.
     const parts = marked(report({ transcript: "um so we begin", filler_words: [], crutch_words: [] }));
     expect(parts.every((p) => p.kind === "")).toBe(true);
+  });
+});
+
+describe("bands", () => {
+  it("calls a comfortable pace comfortable and names both ways out of it", () => {
+    const verdict = (pace: number) => bands(report({ pace })).find((b) => b.key === "pace")?.verdict;
+    expect(verdict(150)).toBe("Good pace");
+    expect(verdict(100)).toBe("Slow");
+    expect(verdict(200)).toBe("Rushed");
+  });
+
+  it("never shows a pace band when nothing counted the words", () => {
+    expect(bands(report({ pace: null })).some((b) => b.key === "pace")).toBe(false);
+    expect(bands(report({ pace: 0 })).some((b) => b.key === "pace")).toBe(false);
+  });
+
+  it("shows the ums only where a transcriber could count them", () => {
+    expect(bands(report({ filler_rate: 2 })).some((b) => b.key === "fillers")).toBe(true);
+    expect(bands(report({ filler_rate: null })).some((b) => b.key === "fillers")).toBe(false);
+  });
+
+  it("always shows the two the browser can prove on its own", () => {
+    const keys = bands(report()).map((b) => b.key);
+    expect(keys).toContain("start");
+    expect(keys).toContain("gap");
+  });
+
+  it("says nothing is wrong with a round that went well", () => {
+    const good = bands(report({ opening_stall: 0.5, longest_pause: 1, pace: 150, filler_rate: 1 }));
+    expect(good.map((b) => b.verdict)).toEqual(["Good pace", "Straight in", "No holes", "Clean"]);
+  });
+});
+
+describe("at", () => {
+  it("places a value across the scale as a percentage", () => {
+    expect(at(150, [100, 200])).toBe(50);
+    expect(at(100, [100, 200])).toBe(0);
+  });
+
+  it("keeps a wild number on the track rather than off it", () => {
+    expect(at(500, [100, 200])).toBe(100);
+    expect(at(-40, [100, 200])).toBe(0);
+    expect(at(5, [10, 10])).toBe(0);
   });
 });
 
