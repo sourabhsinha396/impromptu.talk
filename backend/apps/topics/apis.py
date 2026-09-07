@@ -3,10 +3,11 @@ from ninja import Router, Status
 from ninja.errors import HttpError
 
 from apps.authentication.security import session_auth
+from apps.common import openrouter
 from apps.common.ratelimit import throttle
 from apps.payments import services as payments
 from apps.topics import generate as generation
-from apps.topics import openrouter, owned
+from apps.topics import owned
 from apps.topics.bank import STYLES
 from apps.topics.models import Genre, Topic
 from apps.topics.schemas import (

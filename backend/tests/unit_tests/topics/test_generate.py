@@ -12,7 +12,8 @@ import pytest
 from django.test import Client, override_settings
 from django.utils import timezone
 
-from apps.topics import generate, openrouter
+from apps.common import openrouter
+from apps.topics import generate
 from apps.topics.models import Generation, Topic
 from tests.unit_tests import factories
 

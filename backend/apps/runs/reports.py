@@ -24,7 +24,7 @@ retry a failure for free has no ceiling at all.
 import datetime as dt
 import logging
 
-from apps.runs import analysis, transcribe
+from apps.runs import analysis, argument, transcribe
 from apps.runs.models import Report, Run
 from apps.runs.services import owned_by
 
@@ -132,8 +132,40 @@ def make(
                 row.crutch_words = [list(pair) for pair in spoken.crutch_words]
                 row.filler_words = list(spoken.filler_words)
 
+    # What the topic asked for, and whether it was given. Pro's, and only
+    # where words came back: the call needs sentences to read, and those
+    # are already paid for in transcribed minutes, so nothing new is
+    # counted here.
+    if pro and row.transcript:
+        _read_case(row, run, measured)
+
     row.save()
     return row
+
+
+def _read_case(row: Report, run: Run, measured: analysis.Timing) -> None:
+    """The one model call in this app. It never raises and never blocks
+    the row: a section that does not arrive is a smaller page, where a
+    round that failed to save is somebody's lost minute."""
+    case = argument.read(
+        run.topic_text,
+        analysis.sentences(row.transcript),
+        argument.Delivery(
+            stall=measured.opening_stall,
+            # Nought a minute means nobody counted, and a prompt that said
+            # so would have the model explaining a pace that was never
+            # measured.
+            pace=row.pace or None,
+            longest_pause=measured.longest_pause,
+            ended_clean=analysis.ended_clean(row.transcript),
+        ),
+    )
+    if case is None:
+        return
+    row.answered = case.answered
+    row.roles = list(case.roles)
+    row.verdict = case.verdict
+    row.advice = case.advice
 
 
 def _check_clock(run: Run, segments: list) -> None:
@@ -218,6 +250,22 @@ def usual(row: Report, *, pro: bool) -> dict | None:
     }
 
 
+def _sentences(row: Report, words_at: list) -> list[dict]:
+    lines = analysis.sentences(row.transcript)
+    spans = analysis.sentence_spans(words_at, lines)
+    roles = list(row.roles)
+    return [
+        {
+            "text": line.text,
+            "words": line.words,
+            "role": roles[index] if index < len(roles) else "",
+            "at": spans[index].start if spans[index] else None,
+            "end": spans[index].end if spans[index] else None,
+        }
+        for index, line in enumerate(lines)
+    ]
+
+
 def render(row: Report, *, pro: bool = False) -> dict:
     """A stored report as the done screen and the round's own page read it.
 
@@ -258,7 +306,17 @@ def render(row: Report, *, pro: bool = False) -> dict:
         "repeats": [
             {"phrase": p, "count": c} for p, c in analysis.repeats(row.transcript, tuple(r.quote for r in found))
         ],
-        "sentences": [{"text": s.text, "words": s.words} for s in analysis.sentences(row.transcript)],
+        # Each sentence with what it was doing and when it was said. The
+        # role is the model's and is empty on a round nothing read; the
+        # span is arithmetic over the word clock and is there for any round
+        # that carries one.
+        "sentences": _sentences(row, words_at),
+        # The one part of this report a model wrote, stored on the row and
+        # returned to whoever owns the round, Pro today or not: a judgement
+        # somebody earned is not withdrawn when a plan lapses.
+        "case": (
+            {"answered": row.answered, "verdict": row.verdict, "advice": row.advice} if row.read_back else None
+        ),
         "ended_clean": analysis.ended_clean(row.transcript) if row.transcript else False,
         "usual": usual(row, pro=pro),
         "heard": measured.heard,

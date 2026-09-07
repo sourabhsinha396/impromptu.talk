@@ -113,6 +113,23 @@ class Report(models.Model):
     # from saying um a lot and has a different fix.
     fillers_at_transitions = models.PositiveIntegerField(default=0)
 
+    # What the topic asked for, and whether it was given: the one part of
+    # this table a model wrote (`apps/runs/argument.py`), asked for once
+    # when the round was transcribed and never asked for again. Storage is
+    # what makes a judgement repeatable, since temperature does not, and it
+    # is why a round read back in a year says what it said on the day.
+    # Blank and empty on every round nothing read: free rounds, rounds from
+    # before the feature, and any call that came back in the wrong shape.
+    # "yes", "half" or "no".
+    answered = models.CharField(max_length=8, blank=True)
+    # One of `argument.ROLES` per sentence, in the order `analysis.sentences`
+    # splits them. A list as long as that one or empty; never ragged.
+    roles = models.JSONField(default=list)
+    # Two sentences, each refused past `argument.MOST_WORDS`. The only prose
+    # anywhere in this report, and it is capped so it stays two sentences.
+    verdict = models.TextField(blank=True)
+    advice = models.TextField(blank=True)
+
     created_at = models.DateTimeField(default=timezone.now, db_index=True)
 
     class Meta:
@@ -121,6 +138,12 @@ class Report(models.Model):
 
     def __str__(self) -> str:
         return f"report on {self.run_id}"
+
+    @property
+    def read_back(self) -> bool:
+        """Whether a model read what was said. The columns move together:
+        an answer is stored whole or not at all."""
+        return bool(self.answered)
 
     @property
     def transcribed(self) -> bool:

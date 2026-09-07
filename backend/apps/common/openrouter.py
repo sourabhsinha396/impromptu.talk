@@ -6,9 +6,15 @@ developer's `.env` holds a real key, and a suite that could reach it is one
 loop away from a few hundred billed generations. Every test runs against
 `RecordingGateway`.
 
-Spend is capped twice over: by an allowance per account per calendar month
-(`apps/topics/generate.py`), and again on the key itself in the provider's
-dashboard, which is the one that holds if the first has a bug.
+Here in `common/` because two apps call it: `apps/topics/generate.py`
+writes topics from a prompt, and `apps/runs/argument.py` reads back what
+somebody said about one. One client, one seam, one place a key is used.
+
+Spend is capped twice over: by an allowance counted per account per
+calendar month, and again on the key itself in the provider's dashboard,
+which is the one that holds if the first has a bug. Both callers ride an
+allowance they already have - generations for topics, transcribed minutes
+for a report - so neither adds a counter of its own.
 
 Plain `urllib` rather than the `openai` SDK the card named. The request is
 one JSON POST to an OpenAI-shaped endpoint, which is what `mail.py`,
@@ -27,7 +33,8 @@ from django.conf import settings
 logger = logging.getLogger(__name__)
 
 # Long enough for a slow first token, short enough that a hung provider does
-# not hold a worker for a minute. The job is twenty short lines.
+# not hold a worker for a minute. The job is twenty short lines. A caller
+# with somebody waiting on the other end passes its own, shorter one.
 TIMEOUT = 45
 
 # The same lesson as the payment provider's edge: name the client, or a
@@ -53,7 +60,16 @@ class OpenRouterGateway:
     api_key: str
     base_url: str
 
-    def complete(self, *, system: str, prompt: str, model: str, max_tokens: int, temperature: float) -> Completion:
+    def complete(
+        self,
+        *,
+        system: str,
+        prompt: str,
+        model: str,
+        max_tokens: int,
+        temperature: float,
+        timeout: int = TIMEOUT,
+    ) -> Completion:
         body = {
             "model": model,
             "messages": [{"role": "system", "content": system}, {"role": "user", "content": prompt}],
@@ -71,7 +87,7 @@ class OpenRouterGateway:
             method="POST",
         )
         try:
-            with urllib.request.urlopen(request, timeout=TIMEOUT) as response:  # noqa: S310
+            with urllib.request.urlopen(request, timeout=timeout) as response:  # noqa: S310
                 answer = json.loads(response.read())
         except (urllib.error.URLError, OSError, ValueError) as exc:
             # The status or the class, never the exception's own text: an
@@ -123,6 +139,12 @@ def enabled() -> bool:
     return bool(settings.OPENROUTER_API_KEY)
 
 
+def model() -> str:
+    """Read at the call and not at import, so a test may override it and
+    a deployment may change it without a restart."""
+    return settings.OPENROUTER_MODEL
+
+
 _gateway = None
 
 
@@ -130,7 +152,7 @@ def gateway():
     global _gateway
     if _gateway is None:
         if not enabled():
-            raise ModelError("generating topics is not configured")
+            raise ModelError("the model is not configured")
         _gateway = OpenRouterGateway(settings.OPENROUTER_API_KEY, settings.OPENROUTER_BASE_URL)
     return _gateway
 

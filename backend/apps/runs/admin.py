@@ -29,8 +29,8 @@ class ReportAdmin(admin.ModelAdmin):
     edited here moves somebody's allowance.
     """
 
-    list_display = ("created_at", "run", "provider", "audio_seconds", "words", "fillers", "opening_stall")
-    list_filter = ("provider",)
+    list_display = ("created_at", "run", "provider", "audio_seconds", "words", "fillers", "answered")
+    list_filter = ("provider", "answered")
     search_fields = ("transcript", "run__device_id", "run__user__email")
     raw_id_fields = ("run",)
     date_hierarchy = "created_at"

@@ -17,7 +17,8 @@ either way an account that can retry a failure for free has no ceiling.
 import datetime as dt
 import logging
 
-from apps.topics import openrouter, owned
+from apps.common import openrouter
+from apps.topics import owned
 from apps.topics.models import Generation, Genre
 
 logger = logging.getLogger(__name__)
@@ -100,7 +101,7 @@ def generate(user, genre: Genre, prompt: str) -> tuple[int, int]:
         answer = openrouter.gateway().complete(
             system=SYSTEM,
             prompt=f"Topics about: {asked}",
-            model=openrouter_model(),
+            model=openrouter.model(),
             max_tokens=MAX_TOKENS,
             temperature=TEMPERATURE,
         )
@@ -121,12 +122,6 @@ def generate(user, genre: Genre, prompt: str) -> tuple[int, int]:
     row.topics = added
     row.save()
     return added, left(user)
-
-
-def openrouter_model() -> str:
-    from django.conf import settings
-
-    return settings.OPENROUTER_MODEL
 
 
 def clean(text: str) -> str:

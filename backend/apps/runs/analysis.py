@@ -587,6 +587,51 @@ def sentences(transcript: str) -> tuple[Sentence, ...]:
     return tuple(out)
 
 
+@dataclass(frozen=True)
+class Span:
+    start: float
+    end: float
+
+
+def sentence_spans(words: list[tuple[str, float, float]], said: tuple[Sentence, ...]) -> tuple[Span | None, ...]:
+    """When each sentence was spoken, off the same word clock the pauses
+    and the pace already come from.
+
+    The transcript and the word timings are one provider's answer to one
+    minute, so the sentences are walked in order and words taken off the
+    front until the countable ones match what the sentence holds. Counted
+    the way `sentences` counts, fillers left out, or a token with no
+    letters in it ("a 2 rupee penny") would leave every later sentence off
+    by one and the drawing would drift down the round.
+
+    None where the words ran out, which a page draws as nothing rather
+    than as a sentence at nought seconds."""
+    timed = _timed_words(words)
+    out: list[Span | None] = []
+    cursor = 0
+    for sentence in said:
+        counted = 0
+        start = end = None
+        while cursor < len(timed) and counted < sentence.words:
+            bare, _, at, until = timed[cursor]
+            if start is None:
+                start = at
+            end = until
+            if bare and bare not in FILLERS:
+                counted += 1
+            cursor += 1
+        found = counted == sentence.words and start is not None and end is not None
+        out.append(Span(start=round(start, 2), end=round(end, 2)) if found else None)
+    return tuple(out)
+
+
+def distinct_words(transcript: str) -> int:
+    """How many different words, fillers left out. Sixty different words
+    in a hundred and twenty-five is a fact about range that nothing else
+    in the report carries."""
+    return len({token for token in _WORD.findall((transcript or "").lower()) if token not in FILLERS})
+
+
 def ended_clean(transcript: str) -> bool:
     """Whether the last thing said was a finished sentence, as the
     transcriber punctuated it. A transcript that trails off without a full

@@ -10,7 +10,7 @@ can. On non-native English the measured detection rates are AssemblyAI
 0.987, Speechmatics 0.841, Deepgram Nova-3 0.713; Deepgram was the first
 pick and is out on both accuracy and price.
 
-The seam is `apps/topics/openrouter.py`'s and for the same reason: a
+The seam is `apps/common/openrouter.py`'s and for the same reason: a
 developer's `.env` holds a real key and a suite that could reach it is one
 loop away from a bill. Every test runs against `RecordingGateway`.
 
