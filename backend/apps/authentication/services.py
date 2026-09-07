@@ -95,6 +95,39 @@ def authenticate(request, *, email: str, password: str) -> User:
     return user
 
 
+def google_login(*, sub: str, email: str, name: str, referral_code: str = "") -> User:
+    """The account a Google identity opens: matched by `sub` first, because
+    it survives a change of address where the address does not survive a
+    change of owner; else an existing row's normalized email, which links
+    it rather than making a second row, since a verified Google address is
+    proof enough to add a second way in; else a brand new row with no
+    password at all. Only a genuinely new row gets the referral cookie, as
+    `signup` does; a linked row already has whatever it had.
+    """
+    address = normalize_email(email)
+    user = User.objects.filter(google_sub=sub).first()
+    if user is not None:
+        return user
+    user = User.objects.filter(email=address).first()
+    if user is not None:
+        if user.google_sub != sub:
+            user.google_sub = sub
+            user.save(update_fields=["google_sub"])
+        return user
+    try:
+        with transaction.atomic():
+            user = User.objects.create_user(address, None, name=tidy_name(name), google_sub=sub)
+    except IntegrityError:
+        # Two tabs finishing the same sign-in at once: the row that landed
+        # first is the account, matched by whichever key it landed under.
+        user = User.objects.filter(google_sub=sub).first() or User.objects.filter(email=address).first()
+        if user is None:
+            raise
+        return user
+    attribute_referral(user, referral_code)
+    return user
+
+
 def end_all_sessions(user: User) -> int:
     """Every signed-in browser this account has, ended, this one included.
 

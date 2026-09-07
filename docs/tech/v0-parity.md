@@ -2,7 +2,7 @@
 
 The acceptance list for the board. Every route and every behaviour v0 had, with the v1 card that carries it and a tick once it has landed on `main`. Nothing on this list may be quietly dropped; a line that v1 changes on purpose says so and points at `DECISIONS.md`.
 
-Ticked as of 2026-09-07, after cards 01 to 20.
+Ticked as of 2026-09-07, after cards 01 to 21.
 
 ## Routes
 
@@ -21,7 +21,7 @@ Ticked as of 2026-09-07, after cards 01 to 20.
 | `GET`/`POST /signup` | `/signup`, `POST /api/v1/auth/signup` | 19 | [x] |
 | `GET`/`POST /login`, `POST /logout` | `/login`, `POST /api/v1/auth/login`, `POST /api/v1/auth/logout` | 19 | [x] |
 | (none: page context) | `GET /api/v1/auth/me` | 05 | [x] |
-| `GET /login/google`, callback | same | 21 | [ ] |
+| `GET /login/google`, callback | same | 21 | [x] |
 | `GET`/`POST /forgot`, `GET`/`POST /reset/{token}` | `/forgot`, `/reset/[token]`, `POST /api/v1/auth/forgot`, `GET`/`POST /api/v1/auth/reset` | 20 | [x] |
 | `GET /account`, `POST /account/name`, `/password`, `/sessions`, `/accent` | `/account`, `/account/additional`, `PATCH`/`POST` under `v1/auth` | 23 | [ ] `POST /api/v1/auth/logout/everywhere` landed with 19; the pages and the rest per 23 |
 | `POST /account/billing` (portal) | `/api/v1/payments/portal` | 26 | [ ] |
@@ -51,7 +51,7 @@ Ticked as of 2026-09-07, after cards 01 to 20.
 - [x] CSRF: API exempt behind the first-party rewrite, admin protected, pinned by strict client (03)
 - [x] `/account`, `/packs`, `/affiliate/referrals` gated on the cookie by the proxy; `/administration` left to 404 (03)
 - [ ] reCAPTCHA fails open (22)
-- [ ] Google sign-in fails closed (21)
+- [x] Google sign-in fails closed (21)
 - [ ] Slack logs instead of posting without a webhook (27)
 
 ### Design system
@@ -127,7 +127,7 @@ Ticked as of 2026-09-07, after cards 01 to 20.
 - [x] Referral attributed at signup and frozen (19); the code is minted on 31
 - [ ] Slack `signup` after commit (19, 27)
 - [x] Password reset: one hour, ends every session; mail via the provider, console elsewhere (20). Every link in the hour works until one is used, `DECISIONS.md`
-- [ ] Google: second door, fails closed, links a verified address, `google_sub` first, no placeholder password, `?next=` in the signed state (21)
+- [x] Google: second door, fails closed, links a verified address, `google_sub` first, no placeholder password, `?next=` in the signed state (21)
 - [ ] reCAPTCHA v2 on signup, login, forgot; public key only when both keys are set (22)
 - [ ] `/account` sections: account, email, subscription; `/account/additional`: accent (Pro), sessions (23)
 - [x] Nothing on the site raises `is_staff` or `is_superuser`, pinned (19)

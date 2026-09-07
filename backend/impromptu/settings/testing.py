@@ -29,3 +29,8 @@ EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 # Pinned to memory so a developer's .env can never point a test run at a
 # real counter store.
 RATELIMIT_STORAGE_URI = "memory://"
+
+# Blank, so Google sign-in is off and its routes 404 whatever a
+# developer's .env holds.
+GOOGLE_CLIENT_ID = ""
+GOOGLE_CLIENT_SECRET = ""

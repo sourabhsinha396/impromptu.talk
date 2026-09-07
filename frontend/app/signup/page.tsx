@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { AccountPage, DoorLink, OtherDoor } from "@/components/auth/form";
+import { GoogleButton } from "@/components/auth/google-button";
 import { SignupForm } from "@/components/auth/signup-form";
 import { currentUser } from "@/lib/api";
 import { authHref, safeNext } from "@/lib/auth";
@@ -22,6 +23,7 @@ export default async function SignupPage({ searchParams }: Props) {
 
   return (
     <AccountPage title="Create an account" lede="Keep your streak on any device.">
+      <GoogleButton next={to} />
       <SignupForm next={to} />
       <OtherDoor>
         Already have one? <DoorLink href={authHref("/login", to)}>Sign in</DoorLink>.

@@ -1,8 +1,11 @@
+from django.conf import settings
 from django.contrib.auth import login as dj_login
 from django.contrib.auth import logout as dj_logout
+from django.http import Http404, HttpResponseRedirect
 from ninja import Router, Status
 from ninja.errors import HttpError
 
+from apps.authentication import google as google_auth
 from apps.authentication import services
 from apps.authentication.schemas import ForgotIn, LoginIn, MeOut, ResetIn, SignupIn
 from apps.authentication.security import session_auth
@@ -11,6 +14,9 @@ from apps.common.ratelimit import throttle
 from apps.common.referrals import referral_code
 
 api = Router(tags=["auth"])
+
+OAUTH_COOKIE = "impromptu_oauth"
+OAUTH_COOKIE_AGE = 600
 
 
 @api.get("/me", auth=session_auth, response=MeOut)
@@ -71,6 +77,55 @@ def logout_everywhere(request):
     dj_logout(request)
     rotate_device(request)
     return Status(204, None)
+
+
+# Google: the second door. Both routes 404 when either key is unset,
+# rather than answering something a caller could mistake for "try later" -
+# a route that does not exist is the same lie every other unbuilt path on
+# the site already tells. `next` is validated here, before it is signed
+# into the state; the callback trusts what its own signature says.
+
+
+@api.get("/google")
+def google_start(request, next: str = "/"):
+    if not google_auth.enabled():
+        raise Http404
+    safe_next = next if next.startswith("/") and not next.startswith("//") else "/"
+    url, nonce = google_auth.authorize_redirect(safe_next)
+    response = HttpResponseRedirect(url)
+    response.set_signed_cookie(
+        OAUTH_COOKIE,
+        nonce,
+        max_age=OAUTH_COOKIE_AGE,
+        httponly=True,
+        samesite="Lax",
+        secure=settings.SESSION_COOKIE_SECURE,
+    )
+    return response
+
+
+@api.get("/google/callback")
+def google_callback(request, code: str = "", state: str = "", error: str = ""):
+    if not google_auth.enabled():
+        raise Http404
+    nonce = request.get_signed_cookie(OAUTH_COOKIE, default="", max_age=OAUTH_COOKIE_AGE)
+    next_path = None if error else google_auth.unpack_state(state, nonce)
+    if next_path is not None:
+        try:
+            identity = google_auth.account(code)
+        except google_auth.GoogleAuthFailed:
+            next_path = None
+        else:
+            user = services.google_login(
+                sub=identity["sub"],
+                email=identity["email"],
+                name=identity["name"],
+                referral_code=referral_code(request),
+            )
+            dj_login(request, user)
+    response = HttpResponseRedirect(next_path if next_path is not None else "/login?google_error=1")
+    response.delete_cookie(OAUTH_COOKIE)
+    return response
 
 
 # Password reset. The asking route answers 204 whatever it found, because

@@ -127,6 +127,14 @@ EMAIL_BACKEND = (
 )
 DEFAULT_FROM_EMAIL = f"{SITE_NAME} <{os.environ.get('MAIL_FROM_ADDRESS') or 'no-reply@impromptu.talk'}>"
 
+# Google sign-in. Both empty is the supported off state, not a
+# misconfiguration: `apps/authentication/google.py` 404s its own routes
+# rather than raising here, so a host that never sets these boots fine and
+# a stranger typing the URL by hand gets the same 404 as any other route
+# that does not exist.
+GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", "").strip()
+GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", "").strip()
+
 # A reset link lives an hour. Django's token needs no table: it is signed
 # over the password hash and the last sign-in, so it dies the moment
 # either changes, which is what a reset does.
