@@ -7,6 +7,7 @@ from apps.authentication.models import User
 class UserAdmin(admin.ModelAdmin):
     list_display = ("email", "name", "is_staff", "is_superuser", "is_active", "share_token", "created_at")
     list_filter = ("is_staff", "is_superuser", "is_active")
-    search_fields = ("email", "name")
+    search_fields = ("email", "name", "affiliate_code")
+    raw_id_fields = ("referred_by",)
     ordering = ("-created_at",)
     readonly_fields = ("created_at", "last_login")

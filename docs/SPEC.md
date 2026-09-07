@@ -133,7 +133,7 @@ The engine is a pure TypeScript module with no DOM in it, tested with fake timer
 
 ## 6. Accounts
 
-- **Email and password**, minimum eight characters and no other rule. Django's own user, sessions (30 days, HttpOnly, SameSite Lax, cookie `impromptu_session`) and Argon2 hashing. A form that refuses re-renders with one sentence and the typing intact, never a bare 422; only a value no person could have typed is refused at the edge.
+- **Email and password**, minimum eight characters and no other rule. A name is optional at signup and can be set later in settings. Django's own user, sessions (30 days, HttpOnly, SameSite Lax, cookie `impromptu_session`) and Argon2 hashing. A form that refuses re-renders with one sentence and the typing intact, never a bare 422; only a value no person could have typed is refused at the edge.
 - **The anonymous device is claimed** at every sign-in, through the login signal so no door can forget: every run carrying the current device id and no user gets the user set. A device with anonymous history signing into an account with its own history keeps both. Signing out rotates the device cookie so nothing is left behind.
 - **`?next=` is honoured** after sign-in, for our own paths only.
 - **Password reset** sends one link, valid for an hour; only the newest works; a successful reset ends every session. Mail goes through the transactional provider, and every non-production environment prints it to the console instead.

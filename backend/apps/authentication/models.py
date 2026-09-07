@@ -2,9 +2,9 @@
 
 Declared in the skeleton rather than on the accounts card because
 AUTH_USER_MODEL has to be set before the first migration runs: swapping
-the user model later means rewriting every foreign key to it. Only the
-columns Django needs are here; the accounts card adds the rest (accent,
-google_sub, referred_by, share_token, affiliate_code, paypal_email).
+the user model later means rewriting every foreign key to it. The
+columns each later card reads landed with it (share token on 18, the
+rest on 19), so the table is whole before the doors open.
 """
 
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
@@ -56,6 +56,27 @@ class User(AbstractBaseUser, PermissionsMixin):
     # otherwise. Minted once on the streak page, cleared from the account's
     # additional settings or by hand in the admin for somebody who writes in.
     share_token = models.CharField(max_length=32, null=True, blank=True, unique=True)
+    # One of the six in the palette, applied only while Pro is live; blank
+    # is the default lime. On the account rather than in the browser,
+    # unlike the theme, because it is a thing somebody chose about their
+    # impromptu and choosing it again on a phone would make it a setting.
+    accent = models.CharField(max_length=20, blank=True)
+    # Google's own subject id, matched before the address because it
+    # survives a change of address and the address does not survive a
+    # change of owner. Unique, so two rows can never claim one Google
+    # account; NULL for everybody else, and NULLs do not collide.
+    google_sub = models.CharField(max_length=255, null=True, blank=True, unique=True)
+    # The account whose link brought this one in, written once at signup
+    # off the referral cookie and never overwritten: the affiliate who did
+    # the work keeps them. SET_NULL because deleting an affiliate deletes
+    # the affiliate, not the accounts they sent.
+    referred_by = models.ForeignKey("self", null=True, blank=True, on_delete=models.SET_NULL, related_name="referrals")
+    # The code in this account's own link, minted on the first look at
+    # /account or /affiliate (card 31) and never changed. Read here at
+    # signup to attribute the cookie.
+    affiliate_code = models.CharField(max_length=24, null=True, blank=True, unique=True)
+    # Where a payout goes. Blank until the affiliate gives one.
+    paypal_email = models.EmailField(blank=True)
 
     objects = UserManager()
 

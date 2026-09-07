@@ -1,0 +1,246 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mock: account pages</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..600&family=Plus+Jakarta+Sans:wght@400..700&display=swap" rel="stylesheet"><style>
+:root{color-scheme:light;--surface:#fff;--card:#fff;--card2:oklch(.965 .008 120);--ink:#1c1917;--muted:#57534e;--line:#e7e5e4;--line-strong:#918b87;
+--accent-h:120;--accent-c:.12;--accent-l:.5;--accent-l-strong:.42;--accent:oklch(var(--accent-l) var(--accent-c) var(--accent-h));--accent-strong:oklch(var(--accent-l-strong) var(--accent-c) var(--accent-h));
+--btn:#1c1917;--btn-ink:#fff;--btn-strong:#000;--note:oklch(.93 .13 118);--note-ink:oklch(.32 .06 120);--warn:oklch(.62 .2 30);
+--sans:"Plus Jakarta Sans",ui-sans-serif,system-ui,sans-serif;--display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;--header-h:60px}
+[data-theme=dark]{color-scheme:dark;--surface:#080808;--card:#161616;--card2:#101010;--ink:#f5f5f4;--muted:#a8a29e;--line:#292524;--line-strong:#6b6560;
+--accent-l:.796;--accent-l-strong:.86;--btn:#f5f5f4;--btn-ink:#111110;--btn-strong:#fff;--note:oklch(.86 .15 120);--note-ink:oklch(.2 .04 120);--warn:oklch(.75 .19 30)}
+*{box-sizing:border-box}html,body{margin:0}body{background:#3f3d3a;font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased}
+.mockbar{position:sticky;top:0;z-index:50;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:10px 16px;background:#26241f;color:#d6d3d1;font:600 12px/1 var(--sans);letter-spacing:.02em}
+.mockbar b{color:#fff;font-weight:700;margin-right:6px}.mockbar .seg{display:inline-flex;border:1px solid #57534e;border-radius:999px;overflow:hidden}
+.mockbar button{all:unset;cursor:pointer;padding:7px 12px;color:#d6d3d1}.mockbar button.on{background:#f5f5f4;color:#1c1917}
+.frame{margin:18px auto;max-width:1280px;min-height:calc(100vh - 80px);background:var(--surface);color:var(--ink);box-shadow:0 20px 60px rgb(0 0 0/.35);display:flex;flex-direction:column;position:relative;overflow:hidden}
+.phone .frame{max-width:390px;min-height:780px}
+.notes{max-width:1280px;margin:0 auto 40px;background:#fffbea;color:#3b2f0b;border-radius:14px;padding:18px 22px;font-size:14px;line-height:1.55}
+.notes h2{margin:0 0 8px;font:600 15px var(--sans)}.notes ul{margin:0;padding-left:18px}.notes li{margin:4px 0}.notes[hidden]{display:none}
+.ico{flex:none}
+/* chrome */
+.topbar{height:var(--header-h);display:flex;padding:10px clamp(14px,4vw,28px);border-bottom:1px solid var(--accent);flex:none}
+.topbar-in{flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:80rem;margin-inline:auto}
+.wordmark{display:inline-flex;align-items:center;gap:8px;font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:-.02em;color:var(--ink);text-decoration:none;font-variation-settings:"wdth" 96}
+.wordmark span span{color:var(--muted);font-weight:400}.die{width:21px;height:21px;color:var(--accent)}
+.phone .wordmark .name{display:none}.wordmark .short{display:none}.phone .wordmark .short{display:inline}
+.right{display:flex;align-items:center;gap:6px}
+.pill{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line-strong);background:var(--card2);border-radius:999px;padding:5px 11px 5px 9px;font-size:13.5px;font-weight:600;color:var(--ink);text-decoration:none}
+.pill .ico{color:var(--accent)}.pill b{color:var(--accent);font-weight:700}
+.iconbtn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border:1px solid var(--line-strong);background:var(--card2);color:var(--muted);border-radius:999px}
+.filming .topbar,.filming .foot,.filming .hint,.filming .kbd{visibility:hidden}
+/* stage */
+main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px clamp(16px,4vw,32px);min-height:calc(100dvh - var(--header-h))}
+.phone main{min-height:640px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.q{font-family:var(--display);font-weight:600;letter-spacing:-.03em;font-variation-settings:"wdth" 96;font-size:clamp(2rem,6.5vw,4rem);line-height:1.05;margin:0;text-wrap:balance}
+.tools{display:flex;justify-content:center;align-items:center;gap:8px;margin:0 0 26px}.q.accent{color:var(--accent);margin-bottom:34px}
+.chip{display:inline-flex;align-items:center;gap:7px;height:40px;padding:0 14px 0 12px;border:1px solid var(--line-strong);background:var(--card2);border-radius:999px;font-size:14px;font-weight:600;color:var(--ink);cursor:pointer}
+.chip .ico{color:var(--accent)}.chip .cv{color:var(--muted);margin-left:-3px}
+.btn{font:inherit;font-weight:600;border-radius:999px;border:1px solid transparent;padding:12px 24px;cursor:pointer;line-height:1;display:inline-flex;align-items:center;gap:8px;text-decoration:none}
+.btn-primary{background:var(--btn);color:var(--btn-ink)}.btn-ghost{background:none;color:var(--muted);border-color:var(--line-strong)}
+.btn-xl{font-size:18px;padding:17px 46px}.btn-icon{padding:12px;min-width:54px;justify-content:center}
+.row{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap}
+.row .btn{font-size:17px;padding:16px 28px}.row .btn-xl{font-size:18px;padding:17px 46px}.die-btn{width:18px;height:18px;color:currentColor}
+.reset{display:inline-block;margin-top:22px;font-size:13.5px;font-weight:600;color:var(--muted);text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--line-strong)}
+.reset:hover{color:var(--ink);text-decoration-color:var(--ink)}
+.filming .reset{visibility:visible}
+.kbd{margin-top:18px;font-size:12.5px;color:var(--muted)}.kbd kbd{font:inherit;border:1px solid var(--line-strong);border-radius:6px;padding:1px 6px;margin:0 2px}
+.phone .kbd{display:none}
+.hint{font-size:14px;color:var(--muted);margin:26px 0 0;max-width:44ch}
+.label{display:inline-flex;gap:14px;align-items:center;font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.02em}
+.label .ico{color:var(--accent)}
+.topic{font-family:var(--display);font-weight:600;letter-spacing:-.035em;font-variation-settings:"wdth" 96;line-height:1.02;color:var(--accent);text-wrap:balance;margin:22px 0 44px;font-size:clamp(2.6rem,11vw,8.5rem)}
+.topic-mid{font-size:clamp(1.6rem,4.4vw,3.1rem);line-height:1.1;margin:0 0 30px}
+.clock{position:relative;width:min(56vw,300px);aspect-ratio:1;margin:4px auto 30px}.phone .clock{width:230px}
+.clock svg{width:100%;height:100%;transform:rotate(-90deg)}.clock .track{stroke:var(--line);stroke-width:8;fill:none}
+.clock .arc{stroke:var(--accent);stroke-width:8;fill:none;stroke-linecap:round;stroke-dasharray:283;stroke-dashoffset:120}
+.clock.ending .arc{stroke:var(--warn)}
+.clock .time{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--display);font-weight:600;font-size:clamp(3rem,10vw,5.6rem);letter-spacing:-.04em;font-variant-numeric:tabular-nums;line-height:1}
+.clock .what{position:absolute;left:0;right:0;bottom:22%;font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.notes-row{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin:6px 0 34px}
+.note{width:190px;height:150px;background:var(--note);color:var(--note-ink);border-radius:3px;padding:14px 14px;font:600 17px/1.3 var(--sans);text-align:left;box-shadow:0 8px 24px rgb(0 0 0/.12);position:relative}
+.note:nth-child(1){transform:rotate(-1.2deg)}.note:nth-child(2){transform:rotate(.9deg)}.note:nth-child(3){transform:rotate(-.6deg)}
+.note .ph{opacity:.5}.note .cnt{position:absolute;right:10px;bottom:8px;font-size:11px;font-weight:600;opacity:.55}
+.phone .note{width:100%;height:auto;min-height:64px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:0 0 34px}
+.nchip{background:var(--note);color:var(--note-ink);border-radius:3px;padding:7px 11px;font-size:13px;font-weight:600}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;width:100%;max-width:560px;margin:30px auto 36px}
+.stat{min-width:0;padding:16px 12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--card);text-align:center}
+.stat .n{font-family:var(--display);font-weight:600;font-size:40px;letter-spacing:-.03em;line-height:1;display:flex;justify-content:center;align-items:center;gap:6px}
+.stat .n .ico{color:var(--accent)}.stat .l{margin-top:6px;font-size:12.5px;color:var(--muted);font-weight:600}
+.phone .stat{padding:12px 6px 10px}.phone .stat .n{font-size:28px}.phone .stat .l{font-size:11.5px}
+/* footer */
+.foot{flex:none;border-top:1px solid var(--line);padding:34px clamp(16px,4vw,32px) 40px;font-size:13.5px;color:var(--muted)}
+.foot-grid{max-width:80rem;margin:0 auto;display:grid;gap:32px;grid-template-columns:1.6fr 1fr 1fr 1fr}.phone .foot-grid{grid-template-columns:1fr 1fr}
+.foot-col{display:flex;flex-direction:column;gap:8px}.foot-col b{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink)}
+.foot a{color:inherit;text-decoration:none}.foot-bottom{max-width:80rem;margin:32px auto 0;padding-top:20px;border-top:1px solid var(--line);font-size:12px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+/* pages */
+main.page{display:block;text-align:left;justify-content:flex-start;max-width:960px;width:100%;margin:0 auto;padding:28px clamp(16px,4vw,32px) 64px;min-height:0}
+.crumb{font-size:13px;color:var(--muted);font-weight:600;margin-bottom:14px}.crumb a{color:inherit;text-decoration:none}
+.lede{font-size:17px;color:var(--muted);max-width:60ch;margin:12px 0 22px}
+.cards{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));margin-top:26px}.phone .cards{grid-template-columns:1fr}
+.card{display:block;padding:18px 18px 16px;border:1px solid var(--line);border-radius:14px;background:var(--card);color:inherit;text-decoration:none}
+.card .ico{color:var(--accent)}.card .cn{display:block;font-weight:600;margin-top:10px;font-size:16px}.card .cb{display:block;font-size:13px;color:var(--muted);margin-top:4px;line-height:1.45}.card .cc{display:block;font-size:12px;color:var(--muted);margin-top:10px;font-weight:600}
+.style-h{display:flex;align-items:center;gap:10px;margin:34px 0 10px;font:600 15px var(--sans)}.style-h .ico{color:var(--accent)}.style-h .c{color:var(--muted);font-weight:600;font-size:13px}
+.tlist{list-style:none;margin:0;padding:0;columns:2;column-gap:32px}.phone .tlist{columns:1}
+.tlist li{padding:9px 2px;border-bottom:1px solid var(--line);font-size:15.5px;break-inside:avoid}
+.more{display:flex;flex-wrap:wrap;gap:8px;margin-top:36px}
+.overlay{position:absolute;inset:0;background:rgb(0 0 0/.45);z-index:6}
+.sheet{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:7;width:min(420px,calc(100% - 32px));max-height:88%;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;text-align:left;box-shadow:0 24px 60px rgb(0 0 0/.35)}
+.phone .sheet{left:0;top:auto;bottom:0;transform:none;width:100%;border-radius:14px 14px 0 0}
+.sheet h2{margin:0;font:600 20px var(--display);letter-spacing:-.02em}.sheet .sub{margin:4px 0 16px;font-size:14px;color:var(--muted)}
+.opts{display:flex;flex-direction:column}.opt{display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border:0;border-radius:10px;background:none;font:600 15px var(--sans);color:var(--ink);text-align:left;cursor:pointer;text-decoration:none}
+.opt .ico{color:var(--accent)}.opt span{flex:1}.opt.on{background:var(--card2)}.opt:hover{background:var(--card2)}
+.yours{margin:8px 0;padding:8px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.yl{margin:0;padding:0 12px 4px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.sheet-foot{display:flex;justify-content:flex-end;margin-top:20px}
+.field{margin-bottom:20px}.fh{display:flex;justify-content:space-between;font-size:14px;font-weight:600;margin-bottom:6px}.fh span{color:var(--muted)}.fl{display:block;font-size:14px;font-weight:600;margin-bottom:6px}
+.field input[type=range]{width:100%;accent-color:var(--accent)}.field select{width:100%;padding:10px 12px;border:1px solid var(--line-strong);border-radius:10px;background:var(--card2);color:var(--ink);font:600 15px var(--sans)}
+.hintline{margin:6px 0 0;font-size:13px;color:var(--muted)}.hintline kbd{font:inherit;border:1px solid var(--line-strong);border-radius:6px;padding:1px 6px;margin:0 3px 0 0}
+.check{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;margin:0 0 16px}.check input{accent-color:var(--accent)}
+.acct{position:absolute;right:clamp(14px,4vw,28px);top:56px;z-index:5;min-width:232px;padding:6px;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 16px 40px rgb(0 0 0/.18);text-align:left;font-size:14px}
+.acct a{display:block;padding:9px 12px;border-radius:10px;color:var(--ink);text-decoration:none}.acct a:hover{background:var(--card2);color:var(--accent-strong)}
+.acct .theme{margin-top:4px;border-top:1px solid var(--line);padding:8px 12px 10px}.acct .theme b{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+.seg3{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;padding:2px;background:var(--card2);border:1px solid var(--line);border-radius:10px}
+.seg3 span{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 4px 6px;border-radius:8px;font-size:11.5px;font-weight:600;color:var(--muted)}.seg3 span.on{background:var(--card);color:var(--accent-strong);box-shadow:0 1px 2px rgb(0 0 0/.1)}
+[hidden]{display:none!important}
+
+/* streak page */
+.intro .label{display:block;margin:0 0 6px}
+.headline{font-family:var(--display);font-weight:600;letter-spacing:-.03em;font-variation-settings:"wdth" 96;font-size:clamp(2.2rem,7vw,4.4rem);line-height:1.05;margin:0;display:flex;align-items:center;gap:.18em}
+.headline .ico{color:var(--accent);width:.8em;height:.8em}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;max-width:760px;margin:26px 0 8px}
+.stat .i{display:block;margin:0 auto 10px;color:var(--accent)}.phone .stat .i{display:none}
+.two{display:grid;grid-template-columns:1fr 1fr;column-gap:48px}.phone .two{grid-template-columns:1fr}
+.cal-scroll{container-type:inline-size}.cal{--cell:clamp(9px,calc((100cqw - (var(--cols) - 1) * var(--gap)) / var(--cols)),34px);--gap:4px}.cal-wd{margin-top:calc(14px + var(--gap))}
+.stat{min-width:0;padding:16px 12px 14px}.stat .n{display:flex;justify-content:center;align-items:center;gap:6px;font-size:40px}.stat .l{font-size:12.5px;margin-top:6px}
+.phone .stat{padding:12px 6px 10px}.phone .stat .n{font-size:28px}.phone .stat .l{font-size:11.5px}
+.sect{margin-top:40px}.sect-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:0 0 12px;flex-wrap:wrap}
+.sect-h h2{margin:0;font:600 15px var(--sans)}.sect-h .c{font-size:13px;color:var(--muted);font-weight:600}.sect-h .c a{color:inherit}
+.strip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;max-width:520px}
+.day{border:1px solid var(--line);border-radius:12px;background:var(--card);padding:12px 8px 10px;text-align:center}
+.day b{display:block;font:600 11px var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.day span{display:block;margin:6px auto 0;width:28px;height:28px;border-radius:8px;background:var(--card2);border:1px solid var(--line)}
+/* account pages */
+main.auth{max-width:440px;padding-top:44px}
+.auth h1{font-family:var(--display);font-weight:600;letter-spacing:-.03em;font-variation-settings:"wdth" 96;font-size:clamp(1.9rem,5vw,2.5rem);line-height:1.05;margin:0}
+.auth .lede{font-size:15.5px;margin:10px 0 0}
+.auth form{margin-top:26px;display:flex;flex-direction:column;gap:18px}
+.auth .field{margin:0}
+.auth .fh{margin-bottom:7px}.auth .fh label,.auth .fl{font-size:14px;font-weight:600}.auth .fh span{font-weight:500;font-size:13px}.auth .fh a{color:var(--muted);font-weight:600;font-size:13px;text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--line-strong)}
+.auth .fh a:hover{color:var(--ink);text-decoration-color:var(--ink)}
+.auth input[type=text],.auth input[type=email],.auth input[type=password]{width:100%;padding:12px 14px;border:1px solid var(--line-strong);border-radius:10px;background:var(--card2);color:var(--ink);font:500 15.5px var(--sans);outline:none}
+.auth input:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--accent)}
+.auth .btn-primary{font-size:17px;padding:16px 28px;justify-content:center}
+.alert{margin:0;padding:11px 14px;border:1px solid var(--line);border-left:3px solid var(--ink);border-radius:10px;background:var(--card2);font-size:14.5px;font-weight:600;line-height:1.45}
+.alert.notice{border-left-color:var(--accent)}
+.alt{margin:22px 0 0;font-size:14px;color:var(--muted)}.alt a{color:var(--ink);font-weight:600}
+.google{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:13px 20px;border:1px solid var(--line-strong);border-radius:999px;background:none;color:var(--ink);font:600 15.5px var(--sans);cursor:pointer;text-decoration:none;margin-top:26px}
+.google svg{width:18px;height:18px}
+.or{display:flex;align-items:center;gap:12px;margin:18px 0 -6px;font-size:12.5px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
+.captcha{width:100%;max-width:304px;height:74px;border:1px solid var(--line-strong);border-radius:6px;background:var(--card2);display:flex;align-items:center;gap:12px;padding:0 14px;font:500 14px var(--sans);color:var(--ink)}
+.captcha i{width:26px;height:26px;border:2px solid var(--line-strong);border-radius:3px;background:var(--card);flex:none}
+.captcha small{margin-left:auto;font-size:10px;color:var(--muted);line-height:1.2;text-align:right}
+</style></head><body>
+<div class="mockbar"><b>Mock</b><span class="seg"><button data-tab="signup" class="on">Sign up</button><button data-tab="login">Sign in</button><button data-tab="wrong">Sign in, wrong password</button><button data-tab="forgot">Forgot</button><button data-tab="sent">Forgot, sent</button><button data-tab="reset">Reset</button></span>
+<span class="seg"><button data-theme-set="light">Light</button><button data-theme-set="dark">Dark</button></span>
+<span class="seg"><button data-width="desktop" class="on">Desktop</button><button data-width="phone">Phone</button></span>
+<span class="seg"><button data-notes class="on">Notes</button></span></div>
+<div class="notes"><h2>Account pages: what changes from v0, and why</h2><ul>
+<li><b>One narrow column.</b> 440px, the headline in the display face, one sentence under it, the form, one line out. Nothing else on the page.</li>
+<li><b>The fields look like the settings sheet's.</b> Same border, same fill, same radius. A page and a sheet should not have two kinds of input.</li>
+<li><b>The way out sits on the label row.</b> "Forgotten?" beside Password on sign in, "8 or more characters" beside Password on sign up. Where the person is looking when they need it.</li>
+<li><b>A refusal is one sentence above the form and the typing stays.</b> Never a bare error code. The sentence has an ink edge; a notice ("a link is on its way") has an accent edge. The warm colour stays the clock's.</li>
+<li><b>Name is optional.</b> v0 refused a blank name. The rule is email and a password of eight characters and nothing else (SPEC §6). A name can be set later in settings.</li>
+<li><b>One button, full width, ink.</b> Our button at the row size. It never wears the accent.</li>
+<li><b>Google and the captcha are drawn where they will land</b> (cards 21 and 22). Neither is on the page until both of its keys are set. Google sits above the form on sign up and sign in only, never on the home page or in the menu.</li>
+<li><b>Forgot and reset</b> (card 20) share the frame. The forgot page answers the same sentence whether or not the address exists.</li>
+<li><b>Short sentences everywhere.</b> Simple words, one idea per line.</li>
+</ul></div>
+<div class="frame">
+<header class="topbar"><div class="topbar-in"><a class="wordmark" href="#"><svg class="die" viewBox="0 0 32 32" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4.6 26.4 10.6 26.4 21.4 16 27.4 5.6 21.4 5.6 10.6z"/><path d="M5.6 10.6 16 16 26.4 10.6M16 16v11.4"/></g><g fill="currentColor"><circle cx="16" cy="10.45" r="1.5"/><circle cx="8.9" cy="15.55" r="1.5"/><circle cx="12.71" cy="22.15" r="1.5"/><circle cx="21.2" cy="18.85" r="1.5"/><circle cx="23.11" cy="15.55" r="1.5"/><circle cx="19.29" cy="22.15" r="1.5"/></g></svg><span class="name">impromptu<span>.talk</span></span><span class="short">i<span>.</span>t</span></a><div class="right"><a class="pill" href="#"><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg><b>3</b></a><button class="iconbtn" aria-label="Account"><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button></div></div></header>
+
+<section data-phase="signup"><main class="page auth">
+<h1>Create an account</h1>
+<p class="lede">Keep your streak on any device.</p>
+<a class="google" href="#"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5a5.6 5.6 0 0 1-2.4 3.7v3h3.9c2.3-2.1 3.5-5.2 3.5-8.9z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-2.9l-3.9-3a7.2 7.2 0 0 1-10.8-3.8H1.3v3.1A12 12 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.3 14.3a7.2 7.2 0 0 1 0-4.6V6.6H1.3a12 12 0 0 0 0 10.8l4-3.1z"/><path fill="#EA4335" d="M12 4.8c1.8 0 3.4.6 4.6 1.8l3.5-3.5A12 12 0 0 0 1.3 6.6l4 3.1A7.2 7.2 0 0 1 12 4.8z"/></svg>Continue with Google</a>
+<p class="or">or</p>
+<form>
+<div class="field"><div class="fh"><label for="s-name">Name</label><span>Optional</span></div><input id="s-name" type="text" autocomplete="name" maxlength="80" placeholder=""></div>
+<div class="field"><div class="fh"><label for="s-email">Email</label></div><input id="s-email" type="email" autocomplete="email"></div>
+<div class="field"><div class="fh"><label for="s-pass">Password</label><span>8 or more characters</span></div><input id="s-pass" type="password" autocomplete="new-password"></div>
+<div class="captcha"><i></i>I'm not a robot<small>reCAPTCHA<br>Privacy - Terms</small></div>
+<button class="btn btn-primary" type="button">Create account</button>
+</form>
+<p class="alt">Already have one? <a href="#">Sign in</a>.</p>
+</main></section>
+
+<section data-phase="login" hidden><main class="page auth">
+<h1>Sign in</h1>
+<p class="lede">Pick your streak up where you left it.</p>
+<a class="google" href="#"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5a5.6 5.6 0 0 1-2.4 3.7v3h3.9c2.3-2.1 3.5-5.2 3.5-8.9z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-2.9l-3.9-3a7.2 7.2 0 0 1-10.8-3.8H1.3v3.1A12 12 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.3 14.3a7.2 7.2 0 0 1 0-4.6V6.6H1.3a12 12 0 0 0 0 10.8l4-3.1z"/><path fill="#EA4335" d="M12 4.8c1.8 0 3.4.6 4.6 1.8l3.5-3.5A12 12 0 0 0 1.3 6.6l4 3.1A7.2 7.2 0 0 1 12 4.8z"/></svg>Continue with Google</a>
+<p class="or">or</p>
+<form>
+<div class="field"><div class="fh"><label for="l-email">Email</label></div><input id="l-email" type="email" autocomplete="email"></div>
+<div class="field"><div class="fh"><label for="l-pass">Password</label><a href="#">Forgotten?</a></div><input id="l-pass" type="password" autocomplete="current-password"></div>
+<div class="captcha"><i></i>I'm not a robot<small>reCAPTCHA<br>Privacy - Terms</small></div>
+<button class="btn btn-primary" type="button">Sign in</button>
+</form>
+<p class="alt">No account yet? <a href="#">Create an account</a>.</p>
+</main></section>
+
+<section data-phase="wrong" hidden><main class="page auth">
+<h1>Sign in</h1>
+<p class="lede">Pick your streak up where you left it.</p>
+<a class="google" href="#"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5a5.6 5.6 0 0 1-2.4 3.7v3h3.9c2.3-2.1 3.5-5.2 3.5-8.9z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-2.9l-3.9-3a7.2 7.2 0 0 1-10.8-3.8H1.3v3.1A12 12 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.3 14.3a7.2 7.2 0 0 1 0-4.6V6.6H1.3a12 12 0 0 0 0 10.8l4-3.1z"/><path fill="#EA4335" d="M12 4.8c1.8 0 3.4.6 4.6 1.8l3.5-3.5A12 12 0 0 0 1.3 6.6l4 3.1A7.2 7.2 0 0 1 12 4.8z"/></svg>Continue with Google</a>
+<p class="or">or</p>
+<form>
+<p class="alert" role="alert">That email and password do not match.</p>
+<div class="field"><div class="fh"><label for="w-email">Email</label></div><input id="w-email" type="email" autocomplete="email" value="priya@example.com"></div>
+<div class="field"><div class="fh"><label for="w-pass">Password</label><a href="#">Forgotten?</a></div><input id="w-pass" type="password" autocomplete="current-password" value="notquiteit"></div>
+<div class="captcha"><i></i>I'm not a robot<small>reCAPTCHA<br>Privacy - Terms</small></div>
+<button class="btn btn-primary" type="button">Sign in</button>
+</form>
+<p class="alt">No account yet? <a href="#">Create an account</a>.</p>
+</main></section>
+
+<section data-phase="forgot" hidden><main class="page auth">
+<h1>Forgotten your password?</h1>
+<p class="lede">Type your email. We will send a link.</p>
+<form>
+<div class="field"><div class="fh"><label for="f-email">Email</label></div><input id="f-email" type="email" autocomplete="email"></div>
+<div class="captcha"><i></i>I'm not a robot<small>reCAPTCHA<br>Privacy - Terms</small></div>
+<button class="btn btn-primary" type="button">Send the link</button>
+</form>
+<p class="alt">Remembered it? <a href="#">Sign in</a>.</p>
+</main></section>
+
+<section data-phase="sent" hidden><main class="page auth">
+<h1>Forgotten your password?</h1>
+<p class="lede">Type your email. We will send a link.</p>
+<form>
+<p class="alert notice" role="status">If that address has an account, a link is on its way. Check your spam folder too.</p>
+<div class="field"><div class="fh"><label for="t-email">Email</label></div><input id="t-email" type="email" autocomplete="email" value="priya@example.com"></div>
+<div class="captcha"><i></i>I'm not a robot<small>reCAPTCHA<br>Privacy - Terms</small></div>
+<button class="btn btn-primary" type="button">Send the link</button>
+</form>
+<p class="alt">Remembered it? <a href="#">Sign in</a>.</p>
+</main></section>
+
+<section data-phase="reset" hidden><main class="page auth">
+<h1>Choose a new password</h1>
+<p class="lede">The link works once, for an hour.</p>
+<form>
+<div class="field"><div class="fh"><label for="r-pass">New password</label><span>8 or more characters</span></div><input id="r-pass" type="password" autocomplete="new-password"></div>
+<button class="btn btn-primary" type="button">Save and sign in</button>
+</form>
+</main></section>
+
+<footer class="foot"><div class="foot-grid"><div><span class="wordmark"><svg class="die" viewBox="0 0 32 32" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4.6 26.4 10.6 26.4 21.4 16 27.4 5.6 21.4 5.6 10.6z"/><path d="M5.6 10.6 16 16 26.4 10.6M16 16v11.4"/></g><g fill="currentColor"><circle cx="16" cy="10.45" r="1.5"/><circle cx="8.9" cy="15.55" r="1.5"/><circle cx="12.71" cy="22.15" r="1.5"/><circle cx="21.2" cy="18.85" r="1.5"/><circle cx="23.11" cy="15.55" r="1.5"/><circle cx="19.29" cy="22.15" r="1.5"/></g></svg><span class="name">impromptu<span>.talk</span></span></span><p style="margin:10px 0 6px;max-width:32ch">A random topic, a minute to think, a minute to talk.</p><p style="margin:0;font-size:12px">&copy; 2026 impromptu.talk</p></div><div class="foot-col"><b>Product</b><a href="#">All genres</a><a href="#">Your streak</a><a href="#">Pro</a></div><div class="foot-col"><b>Company</b><a href="#">About us</a><a href="#">Contact us</a><a href="#">Affiliates</a><a href="#">hello@impromptu.talk</a></div><div class="foot-col"><b>Legal</b><a href="#">Privacy policy</a><a href="#">Terms and conditions</a><a href="#">Refund policy</a></div></div><div class="foot-bottom"><span>No account needed - your streak lives in this browser.</span><span>Proudly made in India</span></div></footer>
+</div>
+<script>
+const root=document.documentElement;
+function show(id){document.querySelectorAll('[data-phase]').forEach(s=>s.hidden=s.dataset.phase!==id);document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('on',b.dataset.tab===id));}
+function theme(t){root.dataset.theme=t;document.querySelectorAll('[data-theme-set]').forEach(b=>b.classList.toggle('on',b.dataset.themeSet===t));}
+function width(w){document.body.classList.toggle('phone',w==='phone');document.querySelectorAll('[data-width]').forEach(b=>b.classList.toggle('on',b.dataset.width===w));}
+function notes(){const n=document.querySelector('.notes');n.hidden=!n.hidden;document.querySelector('[data-notes]').classList.toggle('on',!n.hidden);}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-tab],[data-theme-set],[data-width],[data-notes]');if(!t)return;
+if(t.dataset.tab)show(t.dataset.tab);if(t.dataset.themeSet)theme(t.dataset.themeSet);if(t.dataset.width)width(t.dataset.width);if(t.hasAttribute('data-notes'))notes();});
+theme(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+</script></body></html>

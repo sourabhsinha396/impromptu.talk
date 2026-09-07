@@ -2,7 +2,7 @@
 
 The acceptance list for the board. Every route and every behaviour v0 had, with the v1 card that carries it and a tick once it has landed on `main`. Nothing on this list may be quietly dropped; a line that v1 changes on purpose says so and points at `DECISIONS.md`.
 
-Ticked as of 2026-09-06, after cards 01 to 13.
+Ticked as of 2026-09-07, after cards 01 to 19.
 
 ## Routes
 
@@ -18,12 +18,12 @@ Ticked as of 2026-09-06, after cards 01 to 13.
 | `GET /streak` | `/streak` | 17 | [x] |
 | `POST /streak/share` | `POST /api/v1/runs/share` | 18 | [x] |
 | `GET /s/{token}` | `/s/[token]` | 18 | [x] |
-| `GET`/`POST /signup` | `/signup`, `POST /api/v1/auth/signup` | 19 | [ ] |
-| `GET`/`POST /login`, `POST /logout` | `/login`, `POST /api/v1/auth/login`, `POST /api/v1/auth/logout` | 19 | [ ] |
+| `GET`/`POST /signup` | `/signup`, `POST /api/v1/auth/signup` | 19 | [x] |
+| `GET`/`POST /login`, `POST /logout` | `/login`, `POST /api/v1/auth/login`, `POST /api/v1/auth/logout` | 19 | [x] |
 | (none: page context) | `GET /api/v1/auth/me` | 05 | [x] |
 | `GET /login/google`, callback | same | 21 | [ ] |
 | `GET`/`POST /forgot`, `GET`/`POST /reset/{token}` | `/forgot`, `/reset/[token]` and their endpoints | 20 | [ ] |
-| `GET /account`, `POST /account/name`, `/password`, `/sessions`, `/accent` | `/account`, `/account/additional`, `PATCH`/`POST` under `v1/auth` | 23 | [ ] |
+| `GET /account`, `POST /account/name`, `/password`, `/sessions`, `/accent` | `/account`, `/account/additional`, `PATCH`/`POST` under `v1/auth` | 23 | [ ] `POST /api/v1/auth/logout/everywhere` landed with 19; the pages and the rest per 23 |
 | `POST /account/billing` (portal) | `/api/v1/payments/portal` | 26 | [ ] |
 | `GET /pro`, `POST /pro` (currency) | `/pro` | 25 | [ ] |
 | `POST /pro/checkout`, `GET /pro/done` | `/api/v1/payments/checkout`, `/pro/done` | 26 | [ ] |
@@ -35,7 +35,7 @@ Ticked as of 2026-09-06, after cards 01 to 13.
 | `/admin` (sqladmin, env password) | `/re-admin/` (Django admin, `is_staff`) | 01, 28 | [x] mounted; User, Genre, Topic registered; the rest per card |
 | `/about`, `/contact`, `/privacy`, `/terms`, `/refunds` | same | 33 | [ ] |
 | `GET /robots.txt`, `GET /sitemap.xml` | `robots.ts`, `sitemap.ts` | 05 | [x] |
-| 404, 405, 422, 500 as pages outside `/api` | `not-found.tsx`, `error.tsx`; forms re-render with a sentence | 05, 19 | [x] 404 and 500; forms per card |
+| 404, 405, 422, 500 as pages outside `/api` | `not-found.tsx`, `error.tsx`; forms re-render with a sentence | 05, 19 | [x] 404 and 500; sign up and sign in forms (19); the rest per card |
 
 ## Behaviours
 
@@ -44,7 +44,7 @@ Ticked as of 2026-09-06, after cards 01 to 13.
 - [x] Production refuses to boot without `SECRET_KEY`, `ALLOWED_HOSTS`, `POSTGRES_HOST` (02)
 - [x] Test settings blank every provider key; tests hold no credentials (02, and each service card adds its key)
 - [x] Session cookie `impromptu_session`, HttpOnly, Lax, 30 days, DB-backed (03)
-- [x] Device cookie `impromptu_device`, signed, two years, issued on first API contact, rotated on sign-out (03; the rotation call lands with 19)
+- [x] Device cookie `impromptu_device`, signed, two years, issued on first API contact, rotated on sign-out (03, 19)
 - [x] Timezone cookie `impromptu_tz` written before first paint (03)
 - [x] Referral cookie `impromptu_ref` from `?ref=` on any GET, sixty days, last click wins (03)
 - [x] Rate limiting, sliding window, keyed by address behind one trusted hop and by identity, 429 with Retry-After (03; per-route rates land with 15, 19, 20, 26)
@@ -121,16 +121,16 @@ Ticked as of 2026-09-06, after cards 01 to 13.
 
 ### Accounts
 
-- [ ] Email and password, minimum eight; forms re-render with one sentence, never a bare 422 (19)
-- [ ] Django sessions; `?next=` honoured for own paths; sign out rotates the device; "sign out everywhere" (19, 23)
-- [x] Device claim on every door through the login signal; the collision case keeps both histories (15); the doors themselves land on 19
-- [ ] Referral attributed at signup and frozen (19, 31)
+- [x] Email and password, minimum eight; forms re-render with one sentence, never a bare 422 (19). Name optional, `DECISIONS.md`
+- [x] Django sessions; `?next=` honoured for own paths; sign out rotates the device; "sign out everywhere" (19; its button is 23)
+- [x] Device claim on every door through the login signal; the collision case keeps both histories (15, 19)
+- [x] Referral attributed at signup and frozen (19); the code is minted on 31
 - [ ] Slack `signup` after commit (19, 27)
 - [ ] Password reset: one hour, newest only, ends every session; mail via the provider, console elsewhere (20)
 - [ ] Google: second door, fails closed, links a verified address, `google_sub` first, no placeholder password, `?next=` in the signed state (21)
 - [ ] reCAPTCHA v2 on signup, login, forgot; public key only when both keys are set (22)
 - [ ] `/account` sections: account, email, subscription; `/account/additional`: accent (Pro), sessions (23)
-- [ ] Nothing on the site raises `is_staff` or `is_superuser`, pinned (19)
+- [x] Nothing on the site raises `is_staff` or `is_superuser`, pinned (19)
 
 ### Pro
 
