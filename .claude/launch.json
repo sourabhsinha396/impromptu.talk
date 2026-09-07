@@ -12,7 +12,7 @@
     {
       "name": "backend",
       "runtimeExecutable": "docker",
-      "runtimeArgs": ["compose", "up", "--build", "api"],
+      "runtimeArgs": ["compose", "up", "--build", "web"],
       "cwd": "backend",
       "port": 8009,
       "autoPort": false

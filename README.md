@@ -17,11 +17,11 @@ That is Postgres 17, Redis 8 and the API on http://localhost:8009, migrated on b
 Management commands run inside the container. Seed the topic bank once (idempotent, run again only after editing `data/topics/`), and make yourself a superuser:
 
 ```bash
-docker compose exec api python manage.py seed_topics
+docker compose exec web python manage.py seed_topics
 ```
 
 ```bash
-docker compose exec api python manage.py createsuperuser
+docker compose exec web python manage.py createsuperuser
 ```
 
 Frontend, from `frontend/`:
