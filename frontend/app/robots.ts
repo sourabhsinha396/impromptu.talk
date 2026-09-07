@@ -10,7 +10,7 @@ import { SITE_URL } from "@/lib/site";
    from spending its budget on pages that say nothing to it. */
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: { userAgent: "*", allow: "/", disallow: ["/streak", "/administration", "/re-admin", "/pro/done", "/affiliate/referrals", "/reset"] },
+    rules: { userAgent: "*", allow: "/", disallow: ["/streak", "/administration", "/re-admin", "/pro/done", "/affiliate/referrals", "/reset", "/genres/yours", "/g"] },
     sitemap: `${SITE_URL}/sitemap.xml`,
   };
 }

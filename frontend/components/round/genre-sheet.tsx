@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 
    Yours leads the list on Pro and sits last otherwise, and it is never
    removed, signed out included: a stranger discovers making their own
-   the same way, and /packs is the honest place to ask them to sign in. */
+   the same way, and /genres/yours is the honest place to ask them to sign in. */
 export function GenreSheet({
   open,
   onOpenChange,
@@ -39,7 +39,7 @@ export function GenreSheet({
       {own.map((genre) => (
         <Option key={genre.slug} genre={genre} selected={genre.slug === current} onChoose={onChoose} className={row} />
       ))}
-      <a href="/packs" className={row}>
+      <a href="/genres/yours" className={row}>
         <PlusIcon className="text-accent" />
         Make your own genre
       </a>

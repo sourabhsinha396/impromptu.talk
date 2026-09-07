@@ -27,7 +27,7 @@ Ticked as of 2026-09-07, after cards 01 to 26.
 | `POST /account/billing` (portal) | `/api/v1/payments/portal` | 26 | [x] |
 | `GET /pro`, `POST /pro` (currency) | `/pro` | 25 | [ ] |
 | `POST /pro/checkout`, `GET /pro/done` | `/api/v1/payments/checkout`, `/api/v1/payments/settle`, `/pro/done` | 26 | [x] The overlay is a dialog over the page, with the hosted checkout as the fallback on every failure |
-| `GET`/`POST /packs`, `GET /packs/{slug}`, topics add/edit/delete, `/delete` | `/packs`, `/packs/[slug]`, `v1/topics` owned-genre endpoints | 29 | [ ] |
+| `GET`/`POST /packs`, `GET /packs/{slug}`, topics add/edit/delete, `/delete` | `/genres/yours`, `/genres/yours/[slug]`, `v1/topics/mine` endpoints | 29 | [x] |
 | `POST /packs/{slug}/generate` | `/api/v1/topics/.../generate` | 30 | [ ] |
 | (new) share an owned genre, `/g/[token]` | | 29 | [ ] |
 | `GET /affiliate`, `GET /affiliate/referrals`, `POST /affiliate/paypal` | same | 31 | [ ] |
@@ -49,7 +49,7 @@ Ticked as of 2026-09-07, after cards 01 to 26.
 - [x] Referral cookie `impromptu_ref` from `?ref=` on any GET, sixty days, last click wins (03)
 - [x] Rate limiting, sliding window, keyed by address behind one trusted hop and by identity, 429 with Retry-After (03; per-route rates land with 15, 19, 20, 26)
 - [x] CSRF: API exempt behind the first-party rewrite, admin protected, pinned by strict client (03)
-- [x] `/account`, `/packs`, `/affiliate/referrals` gated on the cookie by the proxy; `/administration` left to 404 (03)
+- [x] `/account`, `/genres/yours`, `/affiliate/referrals` gated on the cookie by the proxy; `/administration` left to 404 (03)
 - [x] reCAPTCHA fails open (22)
 - [x] Google sign-in fails closed (21)
 - [x] Slack logs instead of posting without a webhook (27)
@@ -146,10 +146,10 @@ Ticked as of 2026-09-07, after cards 01 to 26.
 
 ### Owned genres (v0 packs)
 
-- [ ] Genre rows with an owner; slug unique per owner; icon from the 24; caps 10 and 200 (29, confirm at start)
-- [ ] Coined style: as typed, max 24, only in owned genres, built-in name gets the built-in, paste cannot coin (29)
-- [ ] Editor: paste, inline edit, delete, share on and off, delete genre; `/packs` list; Pro required section (29)
-- [ ] Sharing: `/g/[token]`, noindex, "Practise this" into the picker (29, 08, 13)
+- [x] Genre rows with an owner; slug unique per owner; icon from the 26; caps 10 and 200 (29; the one-table shape confirmed by the owner 2026-09-07)
+- [x] Coined style: as typed, max 24, only in owned genres, built-in name gets the built-in, paste cannot coin (29). The paste gains a default style for untagged lines, which v0 had no equivalent of
+- [x] Editor: paste, inline edit, delete, share on and off, delete genre; the list is `/genres/yours`, not `/packs`; Pro required section (29). Adding is one card with a segment, the second half of which lands on 30
+- [x] Sharing: `/g/[token]`, noindex, "Practise this" into the picker for that visit, nothing copied and nothing written down (29, 08, 13)
 - [ ] Generate five from a prompt, five a month from rows, failed call spends one, off without a key (30)
 - [x] Yours in the picker first with Pro, last without, never removed (13); lapsed subscriber keeps genres (29)
 

@@ -1,0 +1,123 @@
+import { backendFetch } from "@/lib/api";
+import type { Bank, Genre } from "@/lib/bank";
+
+/* The genres somebody wrote for themselves. One shape for the list page,
+   the editor and the picker, because on the backend they are one table
+   with the built-in bank: a genre with an owner, and topics under it. */
+export type OwnedTopic = { id: number; text: string; style: string; style_label: string };
+export type OwnedGenre = {
+  slug: string;
+  name: string;
+  icon: string;
+  topic_count: number;
+  /** The link, or null for a genre nobody else can see. */
+  share_token: string | null;
+  topics: OwnedTopic[];
+  /** The styles this genre coined, so the second topic to use one picks
+      it from a list instead of retyping it into existence. */
+  own_styles: string[];
+};
+export type Mine = { genres: OwnedGenre[]; max_genres: number; max_topics: number };
+export type SharedGenre = {
+  name: string;
+  icon: string;
+  /** The owner's name if they gave one, never their address. */
+  owner_name: string;
+  token: string;
+  topics: OwnedTopic[];
+};
+
+export const NO_GENRES: Mine = { genres: [], max_genres: 10, max_topics: 200 };
+
+/** Every genre this account owns. Empty for a stranger and for a backend
+    that is not answering, so the page draws rather than fails. */
+export async function fetchMine(): Promise<Mine> {
+  try {
+    const response = await backendFetch("/api/v1/topics/mine");
+    if (!response.ok) return NO_GENRES;
+    return (await response.json()) as Mine;
+  } catch {
+    return NO_GENRES;
+  }
+}
+
+/** One of this account's genres, or null, which the page turns into a
+    404: a slug somebody else holds is not this account's business. */
+export async function fetchOwned(slug: string): Promise<OwnedGenre | null> {
+  try {
+    const response = await backendFetch(`/api/v1/topics/mine/${encodeURIComponent(slug)}`);
+    if (!response.ok) return null;
+    return (await response.json()) as OwnedGenre;
+  } catch {
+    return null;
+  }
+}
+
+/** The genre behind a share link, to anybody holding it. Null for a token
+    nobody holds, which includes one whose owner turned sharing off. */
+export async function fetchSharedGenre(token: string): Promise<SharedGenre | null> {
+  try {
+    const response = await backendFetch(`/api/v1/topics/shared/${encodeURIComponent(token)}`);
+    if (!response.ok) return null;
+    return (await response.json()) as SharedGenre;
+  } catch {
+    return null;
+  }
+}
+
+/* The slug an owned genre wears inside the bank. Prefixed, because the
+   built-in slugs are a flat namespace the picker, the reel and
+   `/genre/<slug>` all key on, and "career" the built-in and "career" of
+   somebody's own must never be the same row. v0 used `pack:`; the shape
+   is the same and the word is not, since these are genres. */
+export const OWN_PREFIX = "yours:";
+
+export function ownSlug(slug: string): string {
+  return `${OWN_PREFIX}${slug}`;
+}
+
+export function isOwnSlug(slug: string): boolean {
+  return slug.startsWith(OWN_PREFIX);
+}
+
+/** The bank with somebody's own genres folded in, which is what the
+    picker and the reel read. One payload, one row shape: a topic of
+    theirs is a topic, and the round cannot tell the difference. */
+export function withOwn(bank: Bank, genres: OwnedGenre[]): Bank {
+  if (genres.length === 0) return bank;
+  const own: Genre[] = genres.map((genre) => ({
+    slug: ownSlug(genre.slug),
+    name: genre.name,
+    icon: genre.icon,
+    blurb: `${genre.topic_count} of your own`,
+    own: true,
+  }));
+  const topics = genres.flatMap((genre) =>
+    genre.topics.map((topic) => ({
+      text: topic.text,
+      genre: ownSlug(genre.slug),
+      style: topic.style,
+      slug: "",
+    })),
+  );
+  return { ...bank, genres: [...bank.genres, ...own], topics: [...bank.topics, ...topics] };
+}
+
+/** A shared genre folded in the same way, for a visit carrying
+    `?genre=<token>`. It is somebody else's list, so it is not "yours":
+    it rides for this visit and is never written down. */
+export function withShared(bank: Bank, shared: SharedGenre): Bank {
+  /* The token is the slug, because the link is `/?genre=<token>` and the
+     engine picks a genre by finding that slug in the bank. Nothing is
+     written down: this genre rides for one visit. */
+  const slug = shared.token;
+  const genre: Genre = {
+    slug,
+    name: shared.name,
+    icon: shared.icon,
+    blurb: shared.owner_name ? `Shared by ${shared.owner_name}` : "Shared with you",
+    own: true,
+  };
+  const topics = shared.topics.map((topic) => ({ text: topic.text, genre: slug, style: topic.style, slug: "" }));
+  return { ...bank, genres: [...bank.genres, genre], topics: [...bank.topics, ...topics] };
+}

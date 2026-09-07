@@ -46,14 +46,19 @@ class OwnedTopicOut(Schema):
 
 
 class OwnedGenreOut(Schema):
+    """One genre somebody owns, topics included.
+
+    One shape for the list, the editor and the picker rather than three.
+    The topics ride along because home ships the whole bank inline so
+    that another topic costs no round trip, and these are part of that
+    bank; the caps are what keep that payload bounded.
+    """
+
     slug: str
     name: str
     icon: str
     topic_count: int
     share_token: str | None
-
-
-class OwnedGenreDetailOut(OwnedGenreOut):
     topics: list[OwnedTopicOut]
     own_styles: list[str]
 

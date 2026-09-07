@@ -47,7 +47,7 @@ describe("the sheets", () => {
     const dialog = screen.getByRole("dialog");
     const own = within(dialog).getByRole("option", { name: "Standups" });
     expect(own.compareDocumentPosition(list) & Node.DOCUMENT_POSITION_PRECEDING).toBeTruthy();
-    expect(within(dialog).getByRole("link", { name: "Make your own genre" })).toHaveAttribute("href", "/packs");
+    expect(within(dialog).getByRole("link", { name: "Make your own genre" })).toHaveAttribute("href", "/genres/yours");
 
     await user.click(within(list).getByRole("option", { name: "Career & work" }));
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();

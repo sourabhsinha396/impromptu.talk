@@ -12,7 +12,6 @@ from apps.topics.schemas import (
     BankOut,
     GenreIn,
     MineOut,
-    OwnedGenreDetailOut,
     OwnedGenreOut,
     PasteIn,
     SharedGenreOut,
@@ -57,12 +56,15 @@ def _writer(request) -> None:
 
 
 def _genre(genre) -> dict:
+    topics = _topics(genre)
     return {
         "slug": genre.slug,
         "name": genre.name,
         "icon": genre.icon,
-        "topic_count": getattr(genre, "topic_count", genre.topics.filter(is_active=True).count()),
+        "topic_count": len(topics),
         "share_token": genre.share_token,
+        "topics": topics,
+        "own_styles": owned.own_styles(genre),
     }
 
 
@@ -71,10 +73,6 @@ def _topics(genre) -> list[dict]:
         {"id": t.id, "text": t.text, "style": t.style, "style_label": owned.label_for(t.style)}
         for t in owned.topics_of(genre)
     ]
-
-
-def _detail(genre) -> dict:
-    return {**_genre(genre), "topics": _topics(genre), "own_styles": owned.own_styles(genre)}
 
 
 @api.get("/mine", auth=session_auth, response=MineOut)
@@ -99,10 +97,10 @@ def create(request, payload: GenreIn):
     return Status(201, _genre(genre))
 
 
-@api.get("/mine/{slug}", auth=session_auth, response=OwnedGenreDetailOut)
+@api.get("/mine/{slug}", auth=session_auth, response=OwnedGenreOut)
 def one(request, slug: str, response: HttpResponse):
     response["Cache-Control"] = "private, no-store"
-    return _detail(owned.by_slug(request.user, slug))
+    return _genre(owned.by_slug(request.user, slug))
 
 
 @api.delete("/mine/{slug}", auth=session_auth, response={204: None})
@@ -112,7 +110,7 @@ def remove(request, slug: str):
     return Status(204, None)
 
 
-@api.post("/mine/{slug}/topics", auth=session_auth, response=OwnedGenreDetailOut)
+@api.post("/mine/{slug}/topics", auth=session_auth, response=OwnedGenreOut)
 # The one route here that can write two hundred rows at a time. Keyed on
 # the account, since a paste is a person deciding, not a page loading.
 @throttle("genre-topics", "60/hour")
@@ -120,22 +118,22 @@ def paste(request, slug: str, payload: PasteIn):
     _writer(request)
     genre = owned.by_slug(request.user, slug)
     owned.add_topics(genre, payload.text, payload.default_style)
-    return _detail(genre)
+    return _genre(genre)
 
 
-@api.patch("/mine/{slug}/topics/{topic_id}", auth=session_auth, response=OwnedGenreDetailOut)
+@api.patch("/mine/{slug}/topics/{topic_id}", auth=session_auth, response=OwnedGenreOut)
 def edit(request, slug: str, topic_id: int, payload: TopicIn):
     _writer(request)
     genre = owned.by_slug(request.user, slug)
     owned.edit_topic(genre, topic_id, payload.text, payload.style)
-    return _detail(genre)
+    return _genre(genre)
 
 
-@api.delete("/mine/{slug}/topics/{topic_id}", auth=session_auth, response=OwnedGenreDetailOut)
+@api.delete("/mine/{slug}/topics/{topic_id}", auth=session_auth, response=OwnedGenreOut)
 def drop(request, slug: str, topic_id: int):
     genre = owned.by_slug(request.user, slug)
     owned.remove_topic(genre, topic_id)
-    return _detail(genre)
+    return _genre(genre)
 
 
 @api.post("/mine/{slug}/share", auth=session_auth, response=ShareOut)

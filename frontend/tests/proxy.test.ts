@@ -16,7 +16,7 @@ describe("proxy", () => {
   });
 
   it("gates everything under a signed-in page", () => {
-    expect(proxy(requestFor("/packs/new")).headers.get("location")).toContain("/login");
+    expect(proxy(requestFor("/genres/yours/mine")).headers.get("location")).toContain("/login");
     expect(proxy(requestFor("/affiliate/referrals")).headers.get("location")).toContain("/login");
   });
 

@@ -16,7 +16,7 @@ import { currencyCode } from "@/lib/geo";
 
    /administration is not here on purpose. It answers 404 to strangers, and
    a sign-in prompt would be a page confirming that the path exists. */
-const SIGNED_IN = ["/account", "/packs", "/affiliate/referrals"];
+const SIGNED_IN = ["/account", "/genres/yours", "/affiliate/referrals"];
 
 export default function proxy(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
