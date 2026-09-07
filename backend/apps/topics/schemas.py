@@ -1,4 +1,6 @@
-from ninja import Schema
+from ninja import Field, Schema
+
+from apps.topics.owned import MAX_STYLE
 
 
 class GenreOut(Schema):
@@ -29,3 +31,72 @@ class BankOut(Schema):
     genres: list[GenreOut]
     topics: list[TopicOut]
     styles: list[StyleOut]
+
+
+class OwnedTopicOut(Schema):
+    """A topic in a genre somebody owns. The id is here and nowhere else
+    in this app: a bank topic is addressed by its text, and one of these
+    is edited and deleted by hand, which needs a name that survives the
+    text being rewritten."""
+
+    id: int
+    text: str
+    style: str
+    style_label: str
+
+
+class OwnedGenreOut(Schema):
+    slug: str
+    name: str
+    icon: str
+    topic_count: int
+    share_token: str | None
+
+
+class OwnedGenreDetailOut(OwnedGenreOut):
+    topics: list[OwnedTopicOut]
+    own_styles: list[str]
+
+
+class MineOut(Schema):
+    """Every genre this account owns, with the caps beside them so the
+    page can say "3 of 10" without holding a second copy of the rule."""
+
+    genres: list[OwnedGenreOut]
+    max_genres: int
+    max_topics: int
+
+
+class SharedGenreOut(Schema):
+    """A shared genre as a stranger sees it. The owner's name if they
+    gave one, never their address, and no ids: nothing on this page is
+    editable, and an id here would only be an invitation to try."""
+
+    name: str
+    icon: str
+    owner_name: str
+    token: str
+    topics: list[OwnedTopicOut]
+
+
+class GenreIn(Schema):
+    name: str = Field(max_length=60)
+    icon: str = ""
+
+
+class PasteIn(Schema):
+    """A whole paste in one field, and the style an untagged line gets.
+    Sized for the cap: 200 topics of 200 characters, with room for the
+    tails and the newlines."""
+
+    text: str = Field(max_length=60000)
+    default_style: str = ""
+
+
+class TopicIn(Schema):
+    text: str = Field(max_length=200)
+    style: str = Field(default="", max_length=MAX_STYLE)
+
+
+class ShareOut(Schema):
+    token: str | None
