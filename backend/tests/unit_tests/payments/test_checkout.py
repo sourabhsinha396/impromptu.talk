@@ -345,3 +345,31 @@ def test_the_customer_id_is_backfilled_on_a_row_written_before_it_was_known(buye
 
 def test_an_account_that_never_paid_has_no_portal_to_open(buyer, gateway, user):
     assert buyer.post(PORTAL, content_type=JSON).status_code == 502
+
+
+def test_every_call_names_itself(monkeypatch):
+    """Their edge is Cloudflare, and it answers 1010 to `Python-urllib`
+    before the request reaches them. The header is the whole fix."""
+    seen = {}
+
+    class Answer:
+        status = 200
+
+        def read(self):
+            return b"{}"
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            return False
+
+    def capture(request, timeout=None):
+        seen["headers"] = dict(request.header_items())
+        return Answer()
+
+    monkeypatch.setattr("urllib.request.urlopen", capture)
+    dodo.DodoGateway("key", "https://test.invalid").payment("pay_1")
+    agent = seen["headers"].get("User-agent", "")
+    assert agent == dodo.USER_AGENT
+    assert "urllib" not in agent

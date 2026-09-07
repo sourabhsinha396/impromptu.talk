@@ -19,6 +19,7 @@ from django.conf import settings
 logger = logging.getLogger(__name__)
 
 TIMEOUT = 20
+USER_AGENT = "impromptu.talk (+https://impromptu.talk)"
 
 # The provider's own vocabulary, kept verbatim rather than translated at
 # the edge: a status nobody has seen before should read strangely in a log
@@ -143,7 +144,14 @@ class DodoGateway:
             url,
             data=data,
             method=method,
-            headers={"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"},
+            headers={
+                "Authorization": f"Bearer {self.api_key}",
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                # Named, because their edge answers Cloudflare 1010 to
+                # `Python-urllib/3.x` before the request ever reaches them.
+                "User-Agent": USER_AGENT,
+            },
         )
         try:
             with urllib.request.urlopen(request, timeout=TIMEOUT) as response:  # noqa: S310
