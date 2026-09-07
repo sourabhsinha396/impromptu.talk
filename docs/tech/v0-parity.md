@@ -52,7 +52,7 @@ Ticked as of 2026-09-07, after cards 01 to 26.
 - [x] `/account`, `/packs`, `/affiliate/referrals` gated on the cookie by the proxy; `/administration` left to 404 (03)
 - [x] reCAPTCHA fails open (22)
 - [x] Google sign-in fails closed (21)
-- [ ] Slack logs instead of posting without a webhook (27)
+- [x] Slack logs instead of posting without a webhook (27)
 
 ### Design system
 
@@ -125,7 +125,7 @@ Ticked as of 2026-09-07, after cards 01 to 26.
 - [x] Django sessions; `?next=` honoured for own paths; sign out rotates the device; "sign out everywhere" (19; its button is 23)
 - [x] Device claim on every door through the login signal; the collision case keeps both histories (15, 19)
 - [x] Referral attributed at signup and frozen (19); the code is minted on 31
-- [ ] Slack `signup` after commit (19, 27)
+- [x] Slack `signup` after commit (19, 27). Both doors, from `services.announce`, so a row made by Google is announced too
 - [x] Password reset: one hour, ends every session; mail via the provider, console elsewhere (20). Every link in the hour works until one is used, `DECISIONS.md`
 - [x] Google: second door, fails closed, links a verified address, `google_sub` first, no placeholder password, `?next=` in the signed state (21)
 - [x] reCAPTCHA v2 on signup, login, forgot; public key only when both keys are set (22)
@@ -141,7 +141,7 @@ Ticked as of 2026-09-07, after cards 01 to 26.
 - [x] `/pro` two cards with pills, priced by `GET /api/v1/payments/plans`, the currency picker, the questions, the refusal in place of a button, "not open yet" without a key (25). The overlay and the checkout it opens land together on 26, which owns the route: an SDK wired to a checkout that does not exist yet could not be tested through
 - [x] Checkout writes a pending row; settlement re-reads the payment; binding by reference and session; price as a log line; receipts by mail (26). No webhook endpoint anywhere, by design
 - [x] Subscriptions: lazy refresh after expiry and on return from the portal; portal not a cancel button; cancel keeps the period; cancel flag separate from status; customer id backfilled lazily (26)
-- [ ] Slack's six events, never raising, cancellation as the flip (27)
+- [x] Slack's six events, never raising, cancellation as the flip (27). The refund's call sits in `checkout.announce_refund` for the admin edit on 28; a charge in a currency we never quoted is a log line and not a mismatch, `DECISIONS.md`
 - [ ] Django admin as the owner console over every table; refunds recorded there (28)
 
 ### Owned genres (v0 packs)

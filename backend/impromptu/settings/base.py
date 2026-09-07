@@ -161,6 +161,14 @@ DODO_PRODUCTS = {
     "lifetime": os.environ.get("DODO_PRODUCT_LIFETIME", "").strip(),
 }
 
+# A Slack incoming webhook, for the handful of events somebody would act
+# on today; `apps/common/slack.py` holds the list and the test a seventh
+# has to pass. Empty is the supported off state and logs the line instead
+# of posting, which is the sensible default for a checkout that has never
+# opened a Slack workspace. The URL is the credential and the channel at
+# once, so it never reaches a log.
+SLACK_WEBHOOK_URL = os.environ.get("SLACK_WEBHOOK_URL", "").strip()
+
 # A reset link lives an hour. Django's token needs no table: it is signed
 # over the password hash and the last sign-in, so it dies the moment
 # either changes, which is what a reset does.

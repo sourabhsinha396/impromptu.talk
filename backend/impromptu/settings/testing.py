@@ -47,3 +47,10 @@ RECAPTCHA_SECRET_KEY = ""
 DODO_API_KEY = ""
 DODO_PRODUCTS = {"monthly": "", "annual": "", "pass": "", "lifetime": ""}
 DODO_BASE_URL = "https://test.invalid"
+
+# Blank, so no test can post whatever a developer's .env holds. This is
+# the one key that costs nothing to reach: a run that found a real webhook
+# would pass while filling the channel somebody watches for real signups
+# with several hundred invented ones. `tests/conftest.py` records what was
+# sent on top of this, and `test_slack.py` asserts both halves.
+SLACK_WEBHOOK_URL = ""

@@ -108,3 +108,18 @@ def test_the_sixth_signup_from_one_address_in_an_hour_is_refused(client, db):
     assert response.status_code == 429
     assert int(response["Retry-After"]) >= 1
     assert not User.objects.filter(email="speaker6@example.com").exists()
+
+
+def test_a_new_account_is_announced_and_a_refused_one_is_not(client, db, channel):
+    """The row is committed by the time this fires, and `slack.notify`
+    never raises, so an account is never lost to a webhook having a bad
+    minute. A sign-in is not a signup and neither is a refusal."""
+    assert signup(client).status_code == 201
+    assert channel.headlines == ["New signup"]
+    assert "who: speaker@example.com" in channel.posted[0]
+    assert "via: email" in channel.posted[0]
+
+    assert signup(client).status_code == 400
+    client.post("/api/v1/auth/login", {"email": "speaker@example.com", "password": "correct horse battery"},
+                content_type="application/json")
+    assert channel.headlines == ["New signup"]

@@ -19,7 +19,7 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from ninja.errors import HttpError
 
 from apps.authentication.models import User
-from apps.common import mail
+from apps.common import mail, slack
 
 MIN_PASSWORD = 8
 
@@ -64,7 +64,20 @@ def signup(*, email: str, password: str, name: str = "", referral_code: str = ""
         # said a moment earlier.
         raise HttpError(400, TAKEN) from exc
     attribute_referral(user, referral_code)
+    announce(user, "email")
     return user
+
+
+def announce(user: User, how: str) -> None:
+    """Tell the channel a new account exists.
+
+    Here rather than in the route because there are two ways in and only
+    one of them is a form; a row made by Google is as much a signup as a
+    row made by a password. Both call sites sit after the row is
+    committed, and `slack.notify` never raises, so an account is never
+    lost to a webhook having a bad minute.
+    """
+    slack.notify("New signup", who=user.email, name=user.name or "", via=how)
 
 
 def attribute_referral(user: User, code: str) -> None:
@@ -128,6 +141,7 @@ def google_login(*, sub: str, email: str, name: str, referral_code: str = "") ->
             raise
         return user
     attribute_referral(user, referral_code)
+    announce(user, "google")
     return user
 
 

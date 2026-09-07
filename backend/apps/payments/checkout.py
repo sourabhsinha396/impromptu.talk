@@ -13,7 +13,7 @@ import uuid
 
 from django.conf import settings
 
-from apps.common import mail
+from apps.common import mail, slack
 from apps.payments import plans, pricing, services
 from apps.payments.dodo import DEAD, SUBSCRIPTION_OVER, SUCCEEDED, DodoError, gateway
 from apps.payments.models import Purchase
@@ -122,8 +122,9 @@ def _settle_payment(row: Purchase, plan: plans.Plan, payment_id: str, subscripti
     row.subscription_id = payment.subscription_id or subscription_id or None
     _remember_customer(row, payment.customer_id)
 
+    drifted = False
     if payment.status == SUCCEEDED:
-        _record_charge(row, payment.amounts)
+        drifted = _record_charge(row, payment.amounts)
         row.status = Purchase.PAID
         row.verified_at = dt.datetime.now(dt.UTC)
         row.expires_at = _grant_until(row, plan)
@@ -131,15 +132,28 @@ def _settle_payment(row: Purchase, plan: plans.Plan, payment_id: str, subscripti
         row.status = Purchase.FAILED
     row.save()
 
+    # Both announcements sit here, after the save and never in front of
+    # it: what is being reported is a row that exists.
     if row.status == Purchase.PAID:
+        if drifted:
+            _announce_drift(row)
         # A recurring plan's expiry is the provider's billing date and
         # not ours to compute. The first charge has just handed us the
         # subscription id, so the first read is now.
         if plan.recurring and row.subscription_id:
             row = refresh(row)
         _receipt(row)
-    # The Slack lines for both outcomes land with card 27, after the row
-    # is committed and never in front of it.
+        _announce_paid(row)
+    elif row.status == Purchase.FAILED:
+        # Somebody tried to hand us money and could not, which is the
+        # whole test for what earns a line: they can be written to.
+        slack.notify(
+            "Payment failed",
+            reference=row.reference,
+            who=row.user.email,
+            plan=row.plan,
+            reason=payment.status,
+        )
     return row
 
 
@@ -167,16 +181,20 @@ def _settle_subscription(row: Purchase, subscription_id: str) -> Purchase:
     # recurring amount is the product's pre-tax figure in the product's
     # own currency, and neither of those is anybody's bank statement.
     charge = gateway().subscription_payment(subscription_id)
+    drifted = False
     if charge is not None:
         row.payment_id = charge.payment_id
-        _record_charge(row, charge.amounts)
+        drifted = _record_charge(row, charge.amounts)
         _remember_customer(row, charge.customer_id)
     row.status = Purchase.PAID
     row.verified_at = dt.datetime.now(dt.UTC)
     row.expires_at = _expiry_from(live)
     row.checked_at = dt.datetime.now(dt.UTC)
     row.save()
+    if drifted:
+        _announce_drift(row)
     _receipt(row)
+    _announce_paid(row)
     return row
 
 
@@ -198,6 +216,7 @@ def refresh(row: Purchase) -> Purchase:
         row.save(update_fields=["checked_at"])
         return row
 
+    stopping = _now_stopping(row, live)
     row.subscription_status = live.status
     row.cancel_at_next_billing_date = live.cancel_at_next_billing_date
     _remember_customer(row, live.customer_id)
@@ -212,7 +231,29 @@ def refresh(row: Purchase) -> Purchase:
         # grace window rather than cutting somebody off on a missing date.
         row.expires_at = now + services.GRACE
     row.save()
+    if stopping:
+        slack.notify(
+            "Subscription cancelled",
+            reference=row.reference,
+            who=row.user.email,
+            plan=row.plan,
+            status=live.status,
+            until=row.expires_at.date().isoformat() if row.expires_at else "",
+        )
     return row
+
+
+def _now_stopping(row: Purchase, live) -> bool:
+    """Whether this read is the moment a subscription stopped renewing.
+
+    The event is the flip and not the state, or the portal would announce
+    the same cancellation on every trip home from it. Two ways to flip and
+    the provider means the same thing by both: told to stop at the end of
+    the period, or a status that will never grant again.
+    """
+    if live.cancel_at_next_billing_date and not row.cancel_at_next_billing_date:
+        return True
+    return live.over and row.subscription_status not in SUBSCRIPTION_OVER
 
 
 def due(user) -> list[Purchase]:
@@ -279,21 +320,38 @@ def _remember_customer(row: Purchase, customer_id: str) -> None:
         row.customer_id = customer_id
 
 
-def _record_charge(row: Purchase, amounts: tuple[tuple[int, str], ...]) -> None:
+def _record_charge(row: Purchase, amounts: tuple[tuple[int, str], ...]) -> bool:
     """What was actually taken, beside what was quoted.
 
     The provider names one charge in more than one currency (the card's
     and the settlement's), and either can be the one we quoted, so the
-    quote is looked for in all of them. Finding it is the ordinary case
-    and nothing is said. Not finding it is written down and left alone:
-    the money has moved, so this is an operator's problem and never the
-    buyer's, and the Slack line for it lands with card 27.
+    quote is looked for in all of them. Finding it and the numbers
+    agreeing is the ordinary case. Finding it and the numbers disagreeing
+    is a product configured wrong at their end, which is what True means
+    here and what the caller announces once the row is saved. The money
+    has moved either way: this is an operator's problem, never the
+    buyer's, and nothing here refuses anything.
     """
     matched = next((pair for pair in amounts if pair[1] == row.currency), None)
     charged_minor, charged_currency = matched or amounts[0]
     row.charged_minor = charged_minor
     row.charged_currency = charged_currency
-    if matched is None or charged_minor != row.amount_minor:
+    if matched is None:
+        # Nothing to compare: the buyer switched in the provider's dialog
+        # and was charged in a currency we never quoted, which is ordinary
+        # and moves them to that currency's band. Written down, never
+        # announced - a channel that reports this is one that gets muted
+        # before the real mismatch arrives.
+        logger.info(
+            "purchase %s quoted %s %s and was charged %s %s",
+            row.reference,
+            row.amount_minor,
+            row.currency,
+            charged_minor,
+            charged_currency,
+        )
+        return False
+    if charged_minor != row.amount_minor:
         logger.error(
             "purchase %s quoted %s %s and was charged %s %s",
             row.reference,
@@ -302,6 +360,8 @@ def _record_charge(row: Purchase, amounts: tuple[tuple[int, str], ...]) -> None:
             charged_minor,
             charged_currency,
         )
+        return True
+    return False
 
 
 def _grant_until(row: Purchase, plan: plans.Plan) -> dt.datetime | None:
@@ -331,6 +391,53 @@ def _expiry_from(live) -> dt.datetime | None:
     return dt.datetime.now(dt.UTC) + services.GRACE
 
 
+def announce_refund(row: Purchase) -> None:
+    """Say that a refund was given. Called from the admin (card 28), which
+    is where a refund is recorded: the money goes back in the provider's
+    dashboard and the row is marked by hand, so there is no code path of
+    our own to hang this on."""
+    slack.notify(
+        "Refunded",
+        reference=row.reference,
+        who=row.user.email,
+        plan=row.plan,
+        amount=_charged(row),
+    )
+
+
+def _announce_paid(row: Purchase) -> None:
+    plan = services.plan_of(row)
+    slack.notify(
+        "Payment received",
+        reference=row.reference,
+        who=row.user.email,
+        plan=plan.name if plan else row.plan,
+        amount=_charged(row),
+    )
+
+
+def _announce_drift(row: Purchase) -> None:
+    """A product configured wrong at the provider's end. The purchase is
+    never refused for it (`docs/PRICING.md` §3), which left it a log line
+    with an audience of nobody: somebody was charged the wrong price and
+    the dashboard is still wrong for the next buyer."""
+    slack.notify(
+        "Price mismatch - a product has drifted",
+        reference=row.reference,
+        quoted=f"{row.amount_minor} {row.currency}",
+        charged=f"{row.charged_minor} {row.charged_currency}",
+    )
+
+
+def _charged(row: Purchase) -> str:
+    """What the card was actually charged, falling back to the quote on a
+    row that never got a statement back."""
+    return pricing.display(
+        row.charged_minor if row.charged_minor is not None else row.amount_minor,
+        row.charged_currency or row.currency,
+    )
+
+
 def _receipt(row: Purchase) -> None:
     """Mail the receipt after the row settles, never before, and never in
     the way of the grant: a provider having a day is a log line, not a
@@ -343,10 +450,7 @@ def _receipt(row: Purchase) -> None:
         reference=row.reference,
         plan_name=plan.name if plan else row.plan,
         recurring=plan.recurring if plan else False,
-        charged=pricing.display(
-            row.charged_minor if row.charged_minor is not None else row.amount_minor,
-            row.charged_currency or row.currency,
-        ),
+        charged=_charged(row),
         expires_at=row.expires_at,
         link=f"{settings.FRONTEND_ORIGIN}/pro/done?ref={row.reference}",
     )

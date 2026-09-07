@@ -107,3 +107,16 @@ def test_linking_an_existing_account_does_not_attribute_a_referral(db):
 
 def _state_from(location: str) -> str:
     return parse_qs(urlparse(location).query)["state"][0]
+
+
+def test_a_row_made_by_google_is_announced_and_a_linked_one_is_not(db, channel):
+    """A row made by Google is as much a signup as one made by a
+    password, which is why the announcement lives beside the row and not
+    in the form's route. Linking an existing account is not a signup."""
+    factories.UserFactory(email="speaker@example.com")
+    google_login(sub="g-6", email="speaker@example.com", name="", referral_code="")
+    assert channel.posted == []
+
+    google_login(sub="g-7", email="brand@example.com", name="New Person", referral_code="")
+    assert channel.headlines == ["New signup"]
+    assert "via: google" in channel.posted[0]

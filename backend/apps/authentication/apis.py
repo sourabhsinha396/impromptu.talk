@@ -48,8 +48,7 @@ def me(request):
 @api.post("/signup", response={201: MeOut})
 @throttle("signup", "5/hour")
 def signup(request, payload: SignupIn):
-    """One row, signed in, the referral cookie spent. The Slack signup
-    event joins here on card 27, after the row commits."""
+    """One row, signed in, the referral cookie spent."""
     if not recaptcha.human(payload.recaptcha_token):
         raise HttpError(400, services.NOT_HUMAN)
     user = services.signup(
