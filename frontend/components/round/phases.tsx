@@ -220,10 +220,8 @@ export function DonePhase({
     <>
       <p className="font-display text-headline font-semibold">{headline}</p>
       {summary && (
-        <div className="mt-8 mb-9 flex flex-wrap justify-center gap-3.5">
-          <Stat value={summary.streak} label="day streak" flame />
-          <Stat value={summary.topics} label="topics" />
-          <Stat value={summary.minutes} label="minutes spoken" />
+        <div className="mt-8 mb-9 flex w-full justify-center">
+          <Stats streak={summary.streak} topics={summary.topics} minutes={summary.minutes} />
         </div>
       )}
       <div className={`${ROW} ${summary ? "" : "mt-8"}`}>
@@ -248,14 +246,28 @@ export function DonePhase({
   );
 }
 
+/* Three tiles in one row, always: a grid, not a wrapping flex row, because
+   the third tile wrapping onto its own line read as two rows of unequal
+   things. The number sits above its label. The streak page draws the same
+   three, so the page the flame opens looks like the screen that sent you. */
+export function Stats({ streak, topics, minutes }: { streak: number; topics: number; minutes: number }) {
+  return (
+    <div className="grid w-full max-w-[560px] grid-cols-3 gap-3">
+      <Stat value={streak} label="day streak" flame />
+      <Stat value={topics} label="topics" />
+      <Stat value={minutes} label="minutes spoken" />
+    </div>
+  );
+}
+
 function Stat({ value, label, flame = false }: { value: number; label: string; flame?: boolean }) {
   return (
-    <div className="min-w-[150px] rounded-card border border-line bg-card px-5 py-4.5 text-center">
-      <div className="inline-flex items-center gap-1.5 font-display text-[44px] leading-none font-semibold tracking-[-0.03em]">
-        {flame && <FlameIcon size={30} className="text-accent" />}
+    <div className="min-w-0 rounded-card border border-line bg-card px-1.5 py-3 text-center sm:px-3 sm:py-4">
+      <div className="flex items-center justify-center gap-1.5 font-display text-[28px] leading-none font-semibold tracking-[-0.03em] sm:text-[40px]">
+        {flame && <FlameIcon className="size-[0.65em] text-accent" />}
         {value}
       </div>
-      <div className="mt-1.5 text-[13px] font-semibold text-muted">{label}</div>
+      <div className="mt-1.5 text-[11.5px] font-semibold text-muted sm:text-[12.5px]">{label}</div>
     </div>
   );
 }
