@@ -70,9 +70,28 @@ export function StreakPage({
           <div className="mt-9">
             <Section
               title="Progress"
-              aside={pro ? null : <>Free draws {history.days} days. <PitchLink>Pro draws the year</PitchLink></>}
+              aside={
+                <>
+                  {history.progress.rounds.length > 0 && (
+                    <>
+                      {history.progress.counted} round{history.progress.counted === 1 ? "" : "s"} since{" "}
+                      {new Date(history.progress.rounds[0].at).toLocaleDateString("en-GB", {
+                        day: "numeric",
+                        month: "long",
+                        timeZone: "UTC",
+                      })}
+                      {pro ? "" : ". "}
+                    </>
+                  )}
+                  {!pro && (
+                    <>
+                      Free draws {history.days} days. <PitchLink>Pro draws the year</PitchLink>
+                    </>
+                  )}
+                </>
+              }
             >
-              <ProgressSection progress={history.progress} />
+              <ProgressSection progress={history.progress} pro={pro} bank={bank} />
             </Section>
           </div>
 

@@ -100,6 +100,85 @@ class TestTheTrendDoesNotLie:
         assert shown.counted == progress_of.MOST + 6
 
 
+def timed(text: str, gap: float = 0.4) -> list:
+    out = []
+    at = 0.0
+    for token in text.split():
+        out.append([token, round(at, 2), round(at + 0.3, 2)])
+        at += gap
+    return out
+
+
+class TestTheSkillsOnEveryRound:
+    def test_a_round_is_read_as_the_skills_a_learner_is_building(self, db):
+        run = RunFactory(spoken_seconds=60, speak_seconds=60, prep_seconds=30, genre_slug="stories")
+        said = "So I said, uh, I said we begin. We begin now."
+        Report.objects.create(
+            run=run,
+            segments=[[2.0, 30.0], [33.0, 50.0]],
+            provider=transcribe.ASSEMBLYAI,
+            opening_stall=2.0,
+            awkward_pauses=1,
+            speaking_ratio=0.75,
+            words=9,
+            fillers=1,
+            transcript=said,
+            words_at=timed(said),
+        )
+        Report.objects.create(run=RunFactory(spoken_seconds=60), segments=SPOKE)
+        one = progress_of.progress(DEVICE, None, PRO).rounds[0]
+        assert (one.genre_slug, one.prep_seconds, one.setting, one.spoken) == ("stories", 30, 60, 60)
+        # Silence is the round without its voice: sixty seconds at three
+        # quarters speaking is fifteen quiet.
+        assert one.silence == 15.0
+        assert one.restarts == 1 and one.timed is True
+        assert one.ended is True
+        assert one.ums == 1
+        assert one.distinct == 6  # so i said we begin now
+        assert one.leaned == {"so": 1}
+
+    def test_a_round_nothing_transcribed_has_the_timing_and_none_of_the_rest(self, db):
+        rounds(2)
+        one = progress_of.progress(DEVICE, None, PRO).rounds[0]
+        assert one.ended is None and one.ums is None and one.distinct is None
+        assert one.timed is False and one.leaned == {}
+
+    def test_a_whisper_round_has_no_um_count_rather_than_a_clean_one(self, db):
+        Report.objects.create(
+            run=RunFactory(spoken_seconds=60), segments=SPOKE, provider="groq", words=5, transcript="we begin now"
+        )
+        rounds(1)
+        assert progress_of.progress(DEVICE, None, PRO).rounds[0].ums is None
+
+
+class TestFirsts:
+    def test_the_first_round_that_met_each_milestone_is_the_one_named(self, db):
+        base = dt.datetime(2026, 9, 1, 12, tzinfo=dt.UTC)
+        first = RunFactory(spoken_seconds=40, speak_seconds=60)
+        Report.objects.create(run=first, segments=[[5.0, 40.0]], opening_stall=5.0, awkward_pauses=2, created_at=base)
+        second = RunFactory(spoken_seconds=60, speak_seconds=60)
+        Report.objects.create(
+            run=second,
+            segments=[[1.0, 60.0]],
+            opening_stall=1.0,
+            awkward_pauses=0,
+            created_at=base + dt.timedelta(days=1),
+        )
+        firsts = progress_of.progress(DEVICE, None, PRO, now=base + dt.timedelta(days=2)).firsts
+        assert firsts["no_holes"].run_id == second.pk
+        assert firsts["full_minute"].run_id == second.pk
+        assert firsts["quick_start"].run_id == second.pk
+
+    def test_a_milestone_nobody_could_have_failed_yet_is_not_yet_met(self, db):
+        # No words carried a clock and nothing counted the ums, so a nought
+        # in restarts or ums is uncounted, not clean.
+        rounds(2)
+        firsts = progress_of.progress(DEVICE, None, PRO).firsts
+        assert firsts["no_restarts"] is None
+        assert firsts["no_ums"] is None
+        assert firsts["clean_ending"] is None
+
+
 class TestWhoseProgressItIs:
     def test_an_account_spans_devices_and_a_stranger_only_sees_its_own(self, db, user):
         for _ in range(3):

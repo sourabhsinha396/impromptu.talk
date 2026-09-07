@@ -119,6 +119,7 @@ Ticked as of 2026-09-07, after cards 01 to 26.
 - [x] `/streak`: Day N with the flame, the three tiles, the plan's calendar ending today (a strip of five named days free, the heatmap on Pro), recent runs capped by the plan with the count said, the pitch only when true, the footer line by sign-in state, one button back to the tool, noindex (17). The share section lands with card 18; the payments switch that hides the Pro links lands with card 25
 - [x] Share token minted once from the streak page, `/s/[token]` noindex, eight weeks for everybody, only bank topics named; the off switch lives in additional settings (18, 23)
 - [x] Retention report: day-2 and day-7 cohorts in UTC days, as `retention_report` (15)
+- [x] New in v1, no v0 equivalent: progress for the learner at the foot of `/streak`. Then and now (first rounds against last), work on next, the floor, three lines with the comfortable band, by genre, firsts, the first and latest minute as waves; free keeps the lines and the waves (36). Every skill is arithmetic over stored rounds, `DECISIONS.md`
 
 ### Accounts
 

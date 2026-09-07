@@ -57,12 +57,42 @@ class PointOut(Schema):
     stall: float
     gap: float
     fillers: float | None = None
+    silence: float = 0.0
+    restarts: float = 0.0
 
 
 class MinuteOut(Schema):
     at: str
     seconds: int
     segments: list
+
+
+class RoundOut(Schema):
+    """One round as the skills a learner is building. Null where a round
+    could not be measured on a skill, never nought."""
+
+    id: int
+    at: str
+    genre_slug: str
+    prep_seconds: int
+    setting: int
+    spoken: int
+    stall: float
+    silence: float
+    gaps: int
+    restarts: int
+    timed: bool
+    ended: bool | None = None
+    ums: int | None = None
+    distinct: int | None = None
+    leaned: dict[str, int] = {}
+    answered: str | None = None
+    point_at: float | None = None
+
+
+class FirstOut(Schema):
+    at: str
+    run_id: int
 
 
 class ProgressOut(Schema):
@@ -76,6 +106,11 @@ class ProgressOut(Schema):
     points: list[PointOut] = []
     first: MinuteOut | None = None
     latest: MinuteOut | None = None
+    # Every round in the window, oldest first, so the page can compare the
+    # first with the last, name a skill to work on and group by genre.
+    rounds: list[RoundOut] = []
+    # The first round that met each milestone, or null while none has.
+    firsts: dict[str, FirstOut | None] = {}
 
 
 
@@ -165,8 +200,26 @@ class RepeatOut(Schema):
 
 
 class SentenceOut(Schema):
+    """One sentence, what it was doing and when it was said. The role is
+    the model's and is empty on a round nothing read; the span is
+    arithmetic over the word clock and null where no clock came back."""
+
     text: str
     words: int
+    role: str = ""
+    at: float | None = None
+    end: float | None = None
+
+
+class CaseOut(Schema):
+    """What the topic asked for, and whether it was given. The only prose
+    in this report, and it is two capped sentences: a verdict of what
+    happened and one thing to do next time. The word is one of yes, half
+    or no; the page draws it, never a score."""
+
+    answered: str
+    verdict: str
+    advice: str
 
 
 class UsualOut(Schema):
@@ -227,6 +280,10 @@ class ReportOut(Schema):
     ended_clean: bool = False
     # Null for free and for anybody with fewer than two rounds behind them.
     usual: UsualOut | None = None
+    # What the topic asked for, and whether it was given. Null on every
+    # round nothing read: free rounds, rounds from before the feature, and
+    # any call that came back in a shape we do not take.
+    case: CaseOut | None = None
 
     # Seconds of transcription left this calendar month, so the page can
     # say what is left rather than let somebody discover it by finishing a

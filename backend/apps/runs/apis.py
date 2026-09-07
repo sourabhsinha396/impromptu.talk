@@ -96,10 +96,42 @@ def _progress(did, user, rule) -> dict:
         "needed": shown.needed,
         "counted": shown.counted,
         "points": [
-            {"at": p.at.isoformat(), "stall": p.stall, "gap": p.gap, "fillers": p.fillers} for p in shown.points
+            {
+                "at": p.at.isoformat(),
+                "stall": p.stall,
+                "gap": p.gap,
+                "fillers": p.fillers,
+                "silence": p.silence,
+                "restarts": p.restarts,
+            }
+            for p in shown.points
         ],
         "first": _minute(shown.first),
         "latest": _minute(shown.latest),
+        "rounds": [
+            {
+                "id": r.id,
+                "at": r.at.isoformat(),
+                "genre_slug": r.genre_slug,
+                "prep_seconds": r.prep_seconds,
+                "setting": r.setting,
+                "spoken": r.spoken,
+                "stall": r.stall,
+                "silence": r.silence,
+                "gaps": r.gaps,
+                "restarts": r.restarts,
+                "timed": r.timed,
+                "ended": r.ended,
+                "ums": r.ums,
+                "distinct": r.distinct,
+                "leaned": r.leaned,
+            }
+            for r in shown.rounds
+        ],
+        "firsts": {
+            key: ({"at": first.at.isoformat(), "run_id": first.run_id} if first else None)
+            for key, first in shown.firsts.items()
+        },
     }
 
 

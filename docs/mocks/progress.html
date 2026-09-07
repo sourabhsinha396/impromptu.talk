@@ -1,0 +1,443 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mock: progress on the streak page</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..600&family=Plus+Jakarta+Sans:wght@400..700&display=swap" rel="stylesheet"><style>
+:root{color-scheme:light;--surface:#fff;--card:#fff;--card2:oklch(.965 .008 120);--ink:#1c1917;--muted:#57534e;--line:#e7e5e4;--line-strong:#918b87;
+--accent-h:120;--accent-c:.12;--accent-l:.5;--accent-l-strong:.42;--accent:oklch(var(--accent-l) var(--accent-c) var(--accent-h));--accent-strong:oklch(var(--accent-l-strong) var(--accent-c) var(--accent-h));
+--btn:#1c1917;--btn-ink:#fff;--btn-strong:#000;--warn:oklch(.62 .2 30);
+--sans:"Plus Jakarta Sans",ui-sans-serif,system-ui,sans-serif;--display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;--header-h:60px}
+[data-theme=dark]{color-scheme:dark;--surface:#080808;--card:#161616;--card2:#101010;--ink:#f5f5f4;--muted:#a8a29e;--line:#292524;--line-strong:#6b6560;
+--accent-l:.796;--accent-l-strong:.86;--btn:#f5f5f4;--btn-ink:#111110;--btn-strong:#fff;--warn:oklch(.75 .19 30)}
+*{box-sizing:border-box}html,body{margin:0}body{background:#3f3d3a;font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased}
+.mockbar{position:sticky;top:0;z-index:50;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:10px 16px;background:#26241f;color:#d6d3d1;font:600 12px/1 var(--sans);letter-spacing:.02em}
+.mockbar b{color:#fff;font-weight:700;margin-right:6px}.mockbar .seg{display:inline-flex;border:1px solid #57534e;border-radius:999px;overflow:hidden}
+.mockbar button{all:unset;cursor:pointer;padding:7px 12px;color:#d6d3d1}.mockbar button.on{background:#f5f5f4;color:#1c1917}
+.frame{margin:18px auto;max-width:1100px;background:var(--surface);color:var(--ink);box-shadow:0 20px 60px rgb(0 0 0/.35);position:relative;overflow:hidden}
+.phone .frame{max-width:390px}
+.notes{max-width:1100px;margin:0 auto 40px;background:#fffbea;color:#3b2f0b;border-radius:14px;padding:18px 22px;font-size:14px;line-height:1.55}
+.notes h2{margin:0 0 8px;font:600 15px var(--sans)}.notes h3{margin:16px 0 6px;font:600 14px var(--sans)}.notes ul{margin:0;padding-left:18px}.notes li{margin:5px 0}.notes[hidden]{display:none}
+.notes code{background:#f3e9b8;padding:1px 5px;border-radius:4px;font-size:12.5px}
+.topbar{height:var(--header-h);display:flex;align-items:center;padding:10px clamp(14px,4vw,28px);border-bottom:1px solid var(--accent)}
+.topbar-in{flex:1;display:flex;align-items:center;justify-content:space-between;max-width:80rem;margin-inline:auto}
+.wordmark{display:inline-flex;align-items:center;gap:8px;font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:-.02em;font-variation-settings:"wdth" 96;color:var(--ink);text-decoration:none}
+.wordmark i{color:var(--muted);font-weight:400;font-style:normal}.die{width:19px;height:19px;color:var(--accent)}
+.right{display:flex;align-items:center;gap:6px}
+.pill{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line-strong);background:var(--card2);border-radius:999px;padding:5px 11px;font-size:13.5px;font-weight:600}
+.pill b{color:var(--accent)}.pill .ico{color:var(--accent)}
+.iconbtn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border:1px solid var(--line-strong);background:var(--card2);color:var(--muted);border-radius:999px}
+.btn{font:inherit;font-weight:600;border-radius:999px;border:1px solid transparent;padding:16px 30px;cursor:pointer;line-height:1;display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-size:18px}
+.btn-primary{background:var(--btn);color:var(--btn-ink)}
+[hidden]{display:none!important}
+a.q{color:var(--accent-strong);font-weight:600;text-decoration:underline;text-underline-offset:4px}
+
+main{max-width:960px;margin:0 auto;padding:36px clamp(16px,4vw,32px) 64px}
+.faded{opacity:.35;pointer-events:none}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.tile{border:1px solid var(--line);background:var(--card);border-radius:14px;padding:14px 12px;text-align:center}
+.tile .n{font-family:var(--display);font-size:34px;font-weight:600;letter-spacing:-.03em;line-height:1}
+.tile .l{font-size:12px;font-weight:600;color:var(--muted);margin-top:5px}
+.sect{margin:36px 0 0}
+.sect-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:0 0 12px;flex-wrap:wrap}
+.sect-h h2{font-size:15px;font-weight:600;margin:0}
+.sect-h .c{font-size:12.5px;color:var(--muted)}.sect-h .c a{color:var(--accent-strong);font-weight:600}
+.sub{margin:22px 0 10px;font-size:12.5px;font-weight:600}
+.sub span{font-weight:400;color:var(--muted)}
+.plain{font-size:13px;color:var(--muted);line-height:1.55}
+
+/* then and now */
+.tn{border:1px solid var(--line);border-radius:14px;background:var(--card);padding:6px 16px}
+.tn .r{display:grid;grid-template-columns:8.5rem minmax(0,1fr) 220px;gap:0 20px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}
+.tn .r:last-child{border-bottom:0}
+.phone .tn .r{grid-template-columns:1fr;gap:6px 0}
+.tn .k{font-size:12.5px;font-weight:600}
+.tn .s{font-size:13px;color:var(--muted)}.tn .s b{color:var(--ink);font-weight:600}
+.db{position:relative;height:22px}
+.db .track{position:absolute;left:0;right:0;top:10px;height:2px;background:var(--line)}
+.db .good{position:absolute;top:8px;height:6px;border-radius:999px;background:var(--accent);opacity:.25}
+.db .join{position:absolute;top:10px;height:2px;background:var(--line-strong)}
+.db .then{position:absolute;top:6px;width:10px;height:10px;margin-left:-5px;border-radius:999px;background:var(--surface);border:2px solid var(--line-strong)}
+.db .now{position:absolute;top:5px;width:12px;height:12px;margin-left:-6px;border-radius:999px;background:var(--accent);border:2px solid var(--surface);box-shadow:0 0 0 1px var(--accent)}
+.db .now.out{background:var(--warn);box-shadow:0 0 0 1px var(--warn)}
+.db .e{position:absolute;top:-6px;font-size:10px;color:var(--muted)}
+.db .e.l{left:0}.db .e.rgt{right:0}
+.key{display:flex;gap:14px;font-size:11.5px;color:var(--muted);margin:8px 2px 0;justify-content:flex-end}
+.key i{display:inline-block;width:9px;height:9px;border-radius:999px;vertical-align:-1px;margin-right:5px}
+.key i.t{border:2px solid var(--line-strong);background:var(--surface)}.key i.n{background:var(--accent)}.key i.g{background:var(--accent);opacity:.25;border-radius:3px;width:12px}
+
+/* pair of cards */
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.phone .pair{grid-template-columns:1fr}
+.card{border:1px solid var(--line);background:var(--card);border-radius:14px;padding:14px 16px;min-width:0}
+.card .lab{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.card h3{font-family:var(--display);font-weight:600;letter-spacing:-.02em;font-variation-settings:"wdth" 96;font-size:19px;margin:6px 0 0;line-height:1.2}
+.card p{margin:8px 0 0;font-size:13px;color:var(--muted);line-height:1.55}
+.card p b{color:var(--ink);font-weight:600}
+.floor{display:flex;gap:10px;align-items:flex-end;height:54px;margin-top:12px}
+.floor div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:4px;font-size:11px;color:var(--muted)}
+.floor i{display:block;border-radius:4px 4px 0 0;background:var(--line-strong)}.floor i.now{background:var(--accent)}
+
+/* the three lines */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px}
+.phone .cards{grid-template-columns:1fr}
+.line .h{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.line .h b{font-size:12.5px;font-weight:600}.line .h .v{font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
+.line .m{margin:3px 0 0;font-size:11.5px;color:var(--muted);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.line .m .better{color:var(--accent-strong);font-weight:600}.line .m .worse{color:var(--ink);font-weight:600}.line .m .steady{color:var(--muted);font-weight:600}
+.line .chart{margin-top:8px;position:relative}
+.line svg{display:block;width:100%;height:auto;overflow:visible}
+.line .band{fill:var(--accent);opacity:.12}.line .base{stroke:var(--line);stroke-width:1}
+.line .path{fill:none;stroke:var(--accent);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.line .area{fill:var(--accent);opacity:.1}
+.line .pt{fill:var(--accent);stroke:var(--surface);stroke-width:2}.line .pt.out{fill:var(--warn)}
+.line text{font:600 10.5px var(--sans);fill:var(--muted)}.line text.val{fill:var(--ink)}
+.line .cross{stroke:var(--line-strong);stroke-width:1;display:none}.line .hit{fill:transparent;cursor:crosshair}
+.tip{position:absolute;pointer-events:none;background:var(--card);border:1px solid var(--line-strong);border-radius:10px;padding:6px 9px;font-size:12px;line-height:1.35;box-shadow:0 8px 24px rgb(0 0 0/.14);white-space:nowrap;z-index:5;display:none;color:var(--ink)}
+.tip b{display:block;font-size:13px}.tip span{color:var(--muted)}
+
+/* genres and firsts */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px 28px;margin-top:22px}
+.phone .two{grid-template-columns:1fr}
+table.g{width:100%;border-collapse:collapse;font-size:12.5px}
+table.g th{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:left;padding:0 0 6px;border-bottom:1px solid var(--line)}
+table.g th.n,table.g td.n{text-align:right;font-variant-numeric:tabular-nums}
+table.g td{padding:7px 0;border-bottom:1px solid var(--line);color:var(--muted)}
+table.g td:first-child{color:var(--ink);font-weight:600}
+table.g tr.hard td{color:var(--ink)}table.g tr.hard td:first-child::after{content:" · hardest";color:var(--muted);font-weight:400}
+ul.firsts{list-style:none;margin:0;padding:0;font-size:12.5px}
+ul.firsts li{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--line)}
+ul.firsts li:last-child{border-bottom:0}
+ul.firsts li b{font-weight:600}ul.firsts li b a{color:inherit;text-decoration:underline;text-underline-offset:4px}
+ul.firsts li span{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+ul.firsts li.notyet b{color:var(--muted);font-weight:500}
+ul.firsts li svg{width:14px;height:14px;color:var(--accent);vertical-align:-2px;margin-right:6px}
+ul.firsts li.notyet svg{color:var(--line-strong)}
+
+/* the two minutes */
+.minutes{margin-top:26px}
+.row{display:grid;grid-template-columns:5.5rem 1fr;gap:12px;align-items:center;margin-top:6px}
+.phone .row{grid-template-columns:4.2rem 1fr}
+.row .l{font-size:11.5px;color:var(--muted);line-height:1.3}.row .l b{display:block;color:var(--ink);font-weight:600;font-size:12px}
+.row svg{display:block;width:100%;height:36px;overflow:visible}
+.keep{margin-top:32px}
+</style></head><body>
+<div class="mockbar"><b>Mock</b><span class="seg"><button data-tab="many" class="on">14 rounds, Pro</button><button data-tab="three">3 rounds, free (today's page)</button></span>
+<span class="seg"><button data-theme-set="light" class="on">Light</button><button data-theme-set="dark">Dark</button></span>
+<span class="seg"><button data-width="desk" class="on">Desktop</button><button data-width="phone">Phone</button></span>
+<span class="seg"><button data-notes class="on">Notes</button></span></div>
+
+<div class="notes"><h2>Progress, drawn for somebody trying to get better</h2>
+<p style="margin:0 0 8px">Only the bottom of the streak page changes. The tiles, the calendar and Recent stay as built and are faded here for their place. The question the block answers is the learner's: is this working, what should I work on next, and was today a relapse or a bad day. Every number below is arithmetic over what a round already stores; nothing is fetched or written that was not already there.</p>
+<h3>Top to bottom</h3>
+<ul>
+<li><b>Then and now.</b> Your first five rounds against your last five, one row per skill: speaking (seconds of the minute with a voice in them), time to start, restarts, filling the time, landing an ending on a full stop, your worst habit word, different words. A hollow dot is then, a filled dot is now, the shaded stretch is comfortable where one exists, and each row is one sentence in plain words. Sentences, not lines, because the proof reads as a sentence: "you now speak for 51 seconds of your minute; it was 36". From six rounds (first three against last three) up to ten; under that it says how many more it needs.</li>
+<li><b>One thing to work on.</b> The skill furthest from comfortable over the last five rounds, named, with the round that shows it and one thing to do. A coach does this and a dashboard never does. Next week it is either fixed or still the one.</li>
+<li><b>Your floor is rising.</b> Your worst round this week against your first week's average, on the skill a beginner feels most (silence). Improvement in impromptu speaking is mostly the bad days getting less bad, and this sentence is true weeks before any average moves.</li>
+<li><b>Three lines that matter</b>, over the window: seconds of silence in the minute, restarts a round, time to start. Topic-independent, all falling with practice, each with the comfortable stretch shaded, a dot per round while there are twelve or fewer, and "was 4.6s · better" instead of "down from". Ums a minute is gone from here: a habit word is tracked in then-and-now as whichever word you lean on most.</li>
+<li><b>By genre.</b> Rounds carry their genre, so the page can say where you are weak and where you are fine: rounds, silence and time to start per genre, the hardest named. Under it, one line on prep: how you start with none against how you start with thirty seconds.</li>
+<li><b>Firsts.</b> The first minute with no holes, the first round with no restarts, the first clean ending, the first full minute, each dated and a link to that round; the ones not yet reached sit greyed with "not yet". Honest milestones, and the thing people screenshot.</li>
+<li><b>Your first minute and your latest</b> as waves, the round page's drawing, each with its date.</li>
+</ul>
+<h3>Free and Pro</h3>
+<ul><li>Free keeps its five-day window, so the three lines and the two waves work for everybody. Then-and-now, the floor, genres and firsts need history to mean anything, and history is what the plan sells; free sees the headings with one sentence saying what Pro would show, as the calendar already does.</li></ul>
+<h3>Reversed and left out</h3>
+<ul>
+<li>This widens the "three metrics and not nine" call from earlier today. Three lines stay three; the rest are sentences, dots and small tables, not more curves.</li>
+<li>Left out: pace as a trend (topic-dependent, decided), any composite score (a number with nothing behind it), anything about the argument (that needs a model and belongs to the deferred paid critique).</li>
+<li>Restarts and the habit word need one pass over each round's stored transcript and timings. Fine for the forty rounds the window draws; firsts over a year of Pro would want a small stored column later.</li>
+</ul>
+</div>
+
+<div class="frame">
+<header class="topbar"><div class="topbar-in"><a class="wordmark" href="#"><svg class="die" viewBox="0 0 32 32" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4.6 26.4 10.6 26.4 21.4 16 27.4 5.6 21.4 5.6 10.6z"/><path d="M5.6 10.6 16 16 26.4 10.6M16 16v11.4"/></g><g fill="currentColor"><circle cx="16" cy="10.45" r="1.5"/><circle cx="8.9" cy="15.55" r="1.5"/><circle cx="12.71" cy="22.15" r="1.5"/><circle cx="21.2" cy="18.85" r="1.5"/><circle cx="23.11" cy="15.55" r="1.5"/><circle cx="19.29" cy="22.15" r="1.5"/></g></svg><span>impromptu<i>.talk</i></span></a><div class="right"><span class="pill"><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg><b id="streak">14</b></span><span class="iconbtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span></div></div></header>
+
+<main>
+<div class="faded">
+  <div class="tiles"><div class="tile"><div class="n" id="t1">14</div><div class="l">day streak</div></div><div class="tile"><div class="n" id="t2">14</div><div class="l">topics</div></div><div class="tile"><div class="n" id="t3">13</div><div class="l">minutes spoken</div></div></div>
+  <section class="sect"><div class="sect-h"><h2 id="calh">Last 30 days</h2></div><div style="height:110px;border:1px dashed var(--line);border-radius:14px;display:grid;place-items:center;font-size:12.5px;color:var(--muted)">calendar and Recent, as built</div></section>
+</div>
+
+<section class="sect">
+  <div class="sect-h"><h2>Progress</h2><span class="c" id="pc"></span></div>
+
+  <p class="sub">Then and now <span id="tnsub"></span></p>
+  <div id="tn"></div>
+
+  <div class="pair" id="pair"></div>
+
+  <p class="sub">Over the last <span id="win"></span></p>
+  <div class="cards" id="cards" style="margin-top:0"></div>
+
+  <div class="two" id="two"></div>
+
+  <div class="minutes">
+    <p class="sub">Your first minute, and your latest</p>
+    <div id="minutes"></div>
+  </div>
+</section>
+
+<div class="keep"><a class="btn btn-primary" href="#">Keep it going</a></div>
+</main>
+</div>
+<div class="tip" id="tip"></div>
+
+<script>
+const AWK = 1.5;
+/* One row per round: date, genre, prep, time to start, seconds of silence,
+   noticeable gaps, restarts, seconds spoken of the setting, ended on a full
+   stop, times "like" was said, ums, different words. Every one of these is
+   already stored or derived from the transcript and timings. */
+const R = (at, genre, prep, stall, silence, gaps, restarts, spoken, ended, like, ums, distinct) => ({ at, genre, prep, stall, silence, gaps, restarts, spoken, ended, like, ums, distinct, setting: 60 });
+const DATA = {
+  many: {
+    pro: true, days: 365, first: { at: '2026-08-25', seconds: 60, segments: [[4.6, 9.1], [13.2, 16.0], [18.9, 24.4], [28.5, 31.0], [33.7, 37.2], [41.3, 44.0], [47.9, 50.2], [53.3, 56.1]] },
+    latest: { at: '2026-09-07', seconds: 60, segments: [[1.2, 14.8], [15.3, 27.9], [28.4, 38.1], [39.4, 49.6], [50.0, 59.2]] },
+    rounds: [
+      R('2026-08-25', 'Hot takes', 60, 4.6, 27, 4, 3, 44, false, 9, 6, 58),
+      R('2026-08-26', 'General', 60, 4.1, 24, 3, 2, 47, false, 8, 5, 61),
+      R('2026-08-27', 'Stories', 60, 3.9, 21, 3, 2, 52, true, 7, 5, 66),
+      R('2026-08-28', 'Career & work', 60, 3.2, 22, 3, 3, 49, false, 6, 4, 63),
+      R('2026-08-29', 'Hot takes', 0, 4.4, 19, 2, 2, 55, false, 6, 4, 70),
+      R('2026-08-30', 'Stories', 60, 2.7, 15, 2, 1, 58, true, 5, 3, 74),
+      R('2026-08-31', 'General', 60, 2.5, 14, 2, 1, 57, true, 4, 3, 72),
+      R('2026-09-01', 'Hot takes', 60, 2.2, 16, 2, 1, 56, false, 5, 4, 75),
+      R('2026-09-02', 'Career & work', 0, 2.6, 13, 1, 1, 60, true, 3, 2, 79),
+      R('2026-09-03', 'Stories', 60, 1.7, 9, 0, 0, 59, true, 3, 2, 83),
+      R('2026-09-04', 'General', 60, 1.6, 11, 1, 1, 58, true, 4, 2, 81),
+      R('2026-09-05', 'Hot takes', 60, 1.4, 12, 1, 2, 60, true, 2, 1, 84),
+      R('2026-09-06', 'Stories', 0, 2.0, 8, 0, 0, 60, true, 2, 1, 88),
+      R('2026-09-07', 'General', 60, 1.2, 10, 1, 1, 58, true, 3, 1, 86),
+    ],
+  },
+  three: {
+    pro: false, days: 5, first: { at: '2026-09-05', seconds: 60, segments: [[0.6, 12.4], [12.9, 27.0], [27.6, 41.2], [41.5, 58.8]] },
+    latest: { at: '2026-09-07', seconds: 58, segments: [[2.13, 10.13], [12.32, 29.85], [32.5, 38.21], [39.37, 45.84], [48.16, 50.43], [52.56, 54.73]] },
+    rounds: [
+      R('2026-09-05', 'General', 60, 0, 0, 0, 0, 60, true, 1, 2, 60),
+      R('2026-09-06', 'General', 60, 1.42, 15.5, 0, 0, 60, true, 1, 1, 71),
+      R('2026-09-07', 'General', 60, 7, 27, 4, 1, 58, true, 1, 1, 60),
+    ],
+  },
+};
+
+const el = (tag, cls, html) => { const n = document.createElement(tag); if (cls) n.className = cls; if (html !== undefined) n.innerHTML = html; return n; };
+const S = (tag, attrs, text) => { const n = document.createElementNS('http://www.w3.org/2000/svg', tag); for (const a in attrs) n.setAttribute(a, attrs[a]); if (text !== undefined) n.textContent = text; return n; };
+const tip = document.getElementById('tip');
+const day = iso => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+const longday = iso => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' });
+const mean = xs => xs.reduce((a, b) => a + b, 0) / xs.length;
+const r1 = x => Math.round(x * 10) / 10;
+const clock = s => { const w = Math.max(0, Math.round(s)); return `${Math.floor(w / 60)}:${String(w % 60).padStart(2, '0')}`; };
+
+/* The skills. `good` is the comfortable stretch, `scale` the whole track.
+   Lower is better unless `up`. */
+const SKILLS = [
+  { key: 'silence', label: 'Silence', good: [0, 15], scale: [0, 40], fmt: v => `${Math.round(v)}s`, say: (a, b) => `You are quiet for <b>${Math.round(b)} seconds</b> of your minute. It was ${Math.round(a)}.` },
+  { key: 'stall', label: 'Time to start', good: [0, 2], scale: [0, 8], fmt: v => `${r1(v)}s`, say: (a, b) => `You start after <b>${r1(b)} seconds</b>. It was ${r1(a)}.` },
+  { key: 'restarts', label: 'Restarts', good: [0, 0.5], scale: [0, 4], fmt: v => `${r1(v)} a round`, say: (a, b) => `You go back for a sentence <b>${r1(b)} times a round</b>. It was ${r1(a)}.` },
+  { key: 'spoken', label: 'Filling the time', good: [55, 60], scale: [30, 60], up: true, fmt: v => clock(v), say: (a, b) => `You speak until <b>${clock(b)}</b> of 1:00. It was ${clock(a)}.` },
+  { key: 'ended', label: 'A clean ending', rate: true, fmt: (v, n) => `${v} of ${n}`, say: (a, b, n) => `You end on a full stop in <b>${b} of ${n}</b> rounds. It was ${a} of ${n}.` },
+  { key: 'like', label: 'Your word: like', good: [0, 3], scale: [0, 12], fmt: v => `${r1(v)}`, say: (a, b) => `You say "like" <b>${r1(b)} times a round</b>. It was ${r1(a)}.` },
+  { key: 'distinct', label: 'Different words', good: [80, 140], scale: [40, 140], up: true, fmt: v => `${Math.round(v)}`, say: (a, b) => `You use <b>${Math.round(b)} different words</b> in a minute. It was ${Math.round(a)}.` },
+];
+const pct = (v, [lo, hi]) => Math.max(0, Math.min(100, (v - lo) / (hi - lo) * 100));
+const inside = (sk, v) => sk.good && v >= sk.good[0] && v <= sk.good[1];
+const fitOf = (sk, v) => { if (!sk.good) return 100; if (inside(sk, v)) return 100; const over = v > sk.good[1] ? (v - sk.good[1]) / (sk.scale[1] - sk.good[1]) : (sk.good[0] - v) / (sk.good[0] - sk.scale[0]); return Math.max(0, Math.round(100 * (1 - over))); };
+
+function thenAndNow(d) {
+  const host = document.getElementById('tn'); host.replaceChildren();
+  const n = d.rounds.length; const sub = document.getElementById('tnsub');
+  if (n < 6) { sub.textContent = ''; host.appendChild(el('p', 'plain', `Do ${6 - n} more round${6 - n === 1 ? '' : 's'} and this compares your first three with your last three.`)); return; }
+  const k = Math.min(5, Math.floor(n / 2));
+  const first = d.rounds.slice(0, k), last = d.rounds.slice(-k);
+  sub.textContent = `· your first ${k} rounds against your last ${k}`;
+  const box = el('div', 'tn');
+  for (const sk of SKILLS) {
+    const row = el('div', 'r');
+    row.appendChild(el('div', 'k', sk.label));
+    let a, b;
+    if (sk.rate) { a = first.filter(r => r.ended).length; b = last.filter(r => r.ended).length; row.appendChild(el('div', 's', sk.say(a, b, k))); }
+    else { a = mean(first.map(r => r[sk.key])); b = mean(last.map(r => r[sk.key])); row.appendChild(el('div', 's', sk.say(a, b))); }
+    const db = el('div', 'db');
+    if (sk.rate) {
+      const sc = [0, k]; db.appendChild(el('div', 'track'));
+      const j = el('div', 'join'); j.style.left = pct(Math.min(a, b), sc) + '%'; j.style.width = (pct(Math.max(a, b), sc) - pct(Math.min(a, b), sc)) + '%'; db.appendChild(j);
+      const t = el('div', 'then'); t.style.left = pct(a, sc) + '%'; db.appendChild(t);
+      const nn = el('div', 'now'); nn.style.left = pct(b, sc) + '%'; db.appendChild(nn);
+      db.append(el('span', 'e l', '0'), el('span', 'e rgt', `${k} of ${k}`));
+    } else {
+      db.appendChild(el('div', 'track'));
+      const g = el('div', 'good'); g.style.left = pct(sk.good[0], sk.scale) + '%'; g.style.width = (pct(sk.good[1], sk.scale) - pct(sk.good[0], sk.scale)) + '%'; db.appendChild(g);
+      const j = el('div', 'join'); j.style.left = pct(Math.min(a, b), sk.scale) + '%'; j.style.width = (pct(Math.max(a, b), sk.scale) - pct(Math.min(a, b), sk.scale)) + '%'; db.appendChild(j);
+      const t = el('div', 'then'); t.style.left = pct(a, sk.scale) + '%'; t.title = `then ${sk.fmt(a)}`; db.appendChild(t);
+      const nn = el('div', 'now' + (inside(sk, b) ? '' : ' out')); nn.style.left = pct(b, sk.scale) + '%'; nn.title = `now ${sk.fmt(b)}`; db.appendChild(nn);
+      db.append(el('span', 'e l', sk.fmt(sk.scale[0])), el('span', 'e rgt', sk.fmt(sk.scale[1])));
+    }
+    row.appendChild(db); box.appendChild(row);
+  }
+  host.appendChild(box);
+  host.appendChild(el('div', 'key', '<span><i class="t"></i>then</span><span><i class="n"></i>now</span><span><i class="g"></i>comfortable</span>'));
+}
+
+const ADVICE = { silence: 'Say the next point half-formed. A wobble costs less than a hole.', stall: 'Open with your claim, not a wind-up. Say the point, then explain it.', restarts: 'When you lose a sentence, finish it badly rather than start it again. Nobody heard the plan.', spoken: 'Plan your last line during prep, then talk until the bell.', like: 'Pause where the word would go. Silence reads as deliberate.' };
+const NAMES = { silence: 'keeping going', stall: 'starting at once', restarts: 'holding the thread', spoken: 'filling the time', like: 'the word "like"', distinct: 'range' };
+
+function workOn(d) {
+  const host = document.getElementById('pair'); host.replaceChildren();
+  const last = d.rounds.slice(-5);
+  let worst = null;
+  for (const sk of SKILLS) { if (!sk.good || sk.rate || !ADVICE[sk.key]) continue; const v = mean(last.map(r => r[sk.key])); const f = fitOf(sk, v); if (!worst || f < worst.f) worst = { sk, v, f }; }
+  const c1 = el('div', 'card');
+  c1.appendChild(el('div', 'lab', 'Work on next'));
+  if (worst.f === 100) { c1.appendChild(el('h3', '', 'Nothing is out of range.')); c1.appendChild(el('p', '', 'Every skill sat in the comfortable stretch over your last five rounds. Try a harder genre or no prep.')); }
+  else {
+    const { sk, v } = worst;
+    const shows = last.reduce((a, r) => (sk.up ? r[sk.key] < a[sk.key] : r[sk.key] > a[sk.key]) ? r : a);
+    const count = last.filter(r => !inside(sk, r[sk.key])).length;
+    c1.appendChild(el('h3', '', NAMES[sk.key].charAt(0).toUpperCase() + NAMES[sk.key].slice(1)));
+    c1.appendChild(el('p', '', `${sk.label} was outside the comfortable range in <b>${count} of your last ${last.length}</b> rounds, ${sk.fmt(v)} on average. Worst on <a class="q" href="#">${longday(shows.at)}</a>, ${sk.fmt(shows[sk.key])}.`));
+    c1.appendChild(el('p', '', ADVICE[sk.key] || ''));
+  }
+  host.appendChild(c1);
+  const c2 = el('div', 'card');
+  c2.appendChild(el('div', 'lab', 'Your floor'));
+  if (d.rounds.length < 6) { c2.appendChild(el('h3', '', 'Not yet.')); c2.appendChild(el('p', '', 'After a week this compares your worst recent round with your first week\'s average, because getting better mostly means the bad days getting less bad.')); }
+  else {
+    const week = d.rounds.slice(-7); const firstWeek = d.rounds.slice(0, 7);
+    const worstNow = Math.max(...week.map(r => r.silence)); const avgThen = mean(firstWeek.map(r => r.silence));
+    const beats = worstNow < avgThen;
+    c2.appendChild(el('h3', '', beats ? 'Your bad days beat your old average.' : 'Your floor has not moved yet.'));
+    c2.appendChild(el('p', '', `Your quietest round this week had <b>${Math.round(worstNow)} seconds</b> of silence. Your first week averaged ${Math.round(avgThen)}. ${beats ? 'A bad day now is better than an ordinary day was.' : 'Keep going; this moves before the average does.'}`));
+    const f = el('div', 'floor');
+    const top = Math.max(worstNow, avgThen) * 1.15;
+    const b1 = el('div'); const i1 = el('i'); i1.style.height = (avgThen / top * 40) + 'px'; b1.append(i1, `first week, average ${Math.round(avgThen)}s`);
+    const b2 = el('div'); const i2 = el('i', 'now'); i2.style.height = (worstNow / top * 40) + 'px'; b2.append(i2, `this week, worst ${Math.round(worstNow)}s`);
+    f.append(b1, b2); c2.appendChild(f);
+  }
+  host.appendChild(c2);
+}
+
+const LINES = [
+  { key: 'silence', label: 'Silence in the minute', unit: 's', good: 15, floor: 40 },
+  { key: 'restarts', label: 'Restarts a round', unit: '', good: 0.5, floor: 3 },
+  { key: 'stall', label: 'Time to start', unit: 's', good: 2, floor: 6 },
+];
+const fmt = (v, unit) => `${Math.round(v * 10) / 10}${unit}`;
+function lines(d) {
+  document.getElementById('win').textContent = d.pro ? 'year' : `${d.days} days`;
+  const host = document.getElementById('cards'); host.replaceChildren();
+  for (const metric of LINES) {
+    const values = d.rounds.map(r => r[metric.key]); const from = values[0], to = values[values.length - 1];
+    const box = el('div', 'card line');
+    box.appendChild(el('div', 'h', `<b>${metric.label}</b><span class="v">${fmt(to, metric.unit)}</span>`));
+    const word = to < from ? 'better' : to > from ? 'worse' : 'steady';
+    box.appendChild(el('div', 'm', `<span>was ${fmt(from, metric.unit)} · <span class="${word}">${word}</span></span><span>comfortable under ${fmt(metric.good, metric.unit)}</span>`));
+    const chart = el('div', 'chart'); box.appendChild(chart); host.appendChild(box);
+    requestAnimationFrame(() => draw(chart, metric, d.rounds));
+  }
+}
+function draw(host, metric, points) {
+  host.replaceChildren();
+  const W = Math.max(200, host.clientWidth || 260), H = 64, padT = 12, padB = 6, padL = 4, padR = 26;
+  const values = points.map(p => p[metric.key]); const top = Math.max(metric.floor, ...values) * 1.05;
+  const x = i => padL + (points.length === 1 ? 0.5 : i / (points.length - 1)) * (W - padL - padR);
+  const y = v => padT + (1 - v / top) * (H - padT - padB);
+  const svg = S('svg', { viewBox: `0 0 ${W} ${H}` });
+  svg.appendChild(S('rect', { class: 'band', x: padL, y: y(metric.good), width: W - padL - padR, height: y(0) - y(metric.good) }));
+  svg.appendChild(S('line', { class: 'base', x1: padL, x2: W - padR, y1: y(0), y2: y(0) }));
+  const line = values.map((v, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
+  svg.appendChild(S('path', { class: 'area', d: `${line} L${x(values.length - 1).toFixed(1)},${y(0)} L${x(0).toFixed(1)},${y(0)} Z` }));
+  svg.appendChild(S('path', { class: 'path', d: line }));
+  const dots = points.length <= 12;
+  values.forEach((v, i) => { if (dots || i === values.length - 1) svg.appendChild(S('circle', { class: 'pt' + (v > metric.good ? ' out' : ''), cx: x(i), cy: y(v), r: dots ? 4 : 3.5 })); });
+  const last = values.length - 1;
+  svg.appendChild(S('text', { class: 'val', x: x(last) + 7, y: y(values[last]) + 4 }, fmt(values[last], metric.unit)));
+  const cross = S('line', { class: 'cross', y1: padT, y2: H - padB }); svg.appendChild(cross);
+  const hit = S('rect', { class: 'hit', x: 0, y: 0, width: W, height: H }); svg.appendChild(hit);
+  hit.addEventListener('pointermove', e => {
+    const r = svg.getBoundingClientRect(); const px = (e.clientX - r.left) / r.width * W;
+    let best = 0; values.forEach((_, i) => { if (Math.abs(x(i) - px) < Math.abs(x(best) - px)) best = i; });
+    cross.setAttribute('x1', x(best)); cross.setAttribute('x2', x(best)); cross.style.display = 'block';
+    tip.innerHTML = `<b>${fmt(values[best], metric.unit)}</b><span>${day(points[best].at)}</span>`; tip.style.display = 'block'; tip.style.left = (e.clientX + 12) + 'px'; tip.style.top = (e.clientY - 10) + 'px';
+  });
+  hit.addEventListener('pointerleave', () => { cross.style.display = 'none'; tip.style.display = 'none'; });
+  host.appendChild(svg);
+}
+
+const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+const RING = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/></svg>';
+function genresAndFirsts(d) {
+  const host = document.getElementById('two'); host.replaceChildren();
+  // genres
+  const g = el('div');
+  g.appendChild(el('p', 'sub', 'By genre').cloneNode(true)); g.firstChild.style.margin = '0 0 8px';
+  const groups = {}; for (const r of d.rounds) (groups[r.genre] ||= []).push(r);
+  const names = Object.keys(groups);
+  if (!d.pro) { g.appendChild(el('p', 'plain', 'Where you are weak and where you are fine, genre by genre. <a class="q" href="#">Pro keeps the rounds this needs</a>.')); }
+  else if (names.length < 2) { g.appendChild(el('p', 'plain', 'Practise a second genre and this says which one is harder for you.')); }
+  else {
+    const rows = names.map(nm => ({ nm, n: groups[nm].length, silence: mean(groups[nm].map(r => r.silence)), stall: mean(groups[nm].map(r => r.stall)) })).sort((a, b) => b.silence - a.silence);
+    const t = el('table', 'g', '<thead><tr><th>Genre</th><th class="n">Rounds</th><th class="n">Silence</th><th class="n">Start</th></tr></thead>');
+    const tb = el('tbody'); rows.forEach((r, i) => tb.appendChild(el('tr', i === 0 ? 'hard' : '', `<td>${r.nm}</td><td class="n">${r.n}</td><td class="n">${Math.round(r.silence)}s</td><td class="n">${r1(r.stall)}s</td>`))); t.appendChild(tb); g.appendChild(t);
+    const noPrep = d.rounds.filter(r => r.prep === 0), withPrep = d.rounds.filter(r => r.prep > 0);
+    if (noPrep.length && withPrep.length) g.appendChild(el('p', 'plain', `With no time to think you start after <b style="color:var(--ink)">${r1(mean(noPrep.map(r => r.stall)))}s</b>; with a minute to think, ${r1(mean(withPrep.map(r => r.stall)))}s.`)).style.marginTop = '10px';
+  }
+  host.appendChild(g);
+  // firsts
+  const f = el('div');
+  f.appendChild(el('p', 'sub', 'Firsts')); f.firstChild.style.margin = '0 0 8px';
+  if (!d.pro) { f.appendChild(el('p', 'plain', 'Your first minute with no holes, your first round with no restarts, your first clean ending, each a link to the round. <a class="q" href="#">Pro keeps them</a>.')); host.appendChild(f); return; }
+  const firsts = [
+    ['A minute with no holes', d.rounds.find(r => r.gaps === 0)],
+    ['A round with no restarts', d.rounds.find(r => r.restarts === 0)],
+    ['A clean ending', d.rounds.find(r => r.ended)],
+    ['A full minute', d.rounds.find(r => r.spoken >= r.setting)],
+    ['Starting inside two seconds', d.rounds.find(r => r.stall <= 2)],
+    ['A minute with no ums', d.rounds.find(r => r.ums === 0)],
+  ];
+  const ul = el('ul', 'firsts');
+  for (const [label, when] of firsts) ul.appendChild(el('li', when ? '' : 'notyet', when ? `<b>${CHECK}<a href="#">${label}</a></b><span>${longday(when.at)}</span>` : `<b>${RING}${label}</b><span>not yet</span>`));
+  f.appendChild(ul); host.appendChild(f);
+}
+
+/* The same wave as the round page. */
+const HEIGHTS = [0.55, 0.9, 0.7, 1, 0.6, 0.85, 0.75, 0.95];
+function wave(minute, scale) {
+  const svg = S('svg', { viewBox: '0 0 100 36', preserveAspectRatio: 'none', role: 'img' });
+  const p = s => s / scale * 100; let k = 0, cur = 0;
+  const talk = (a, b) => { const A = p(a), B = p(b), w = B - A; if (w <= 0) return; let xx = w < 1 ? A + w / 2 : A + 0.5; for (; xx < B; xx += 1) { const edge = xx - A < 1 || B - xx < 1; const h = HEIGHTS[k++ % 8] * 16 * (edge ? .5 : 1); svg.appendChild(S('line', { x1: xx, x2: xx, y1: 18 - h, y2: 18 + h, stroke: 'var(--accent)', 'stroke-width': 1.5, 'stroke-linecap': 'round', 'vector-effect': 'non-scaling-stroke' })); } };
+  const quiet = (a, b) => { if (b <= a) return; const gap = b - a >= AWK; svg.appendChild(S('line', { x1: p(a), x2: p(b), y1: 18, y2: 18, stroke: gap ? 'var(--warn)' : 'var(--line-strong)', 'stroke-width': gap ? 3 : 1.5, 'vector-effect': 'non-scaling-stroke' })); };
+  for (const [a, b] of minute.segments) { quiet(cur, a); talk(a, Math.min(b, minute.seconds)); cur = Math.min(b, minute.seconds); }
+  return svg;
+}
+function minutes(d) {
+  const host = document.getElementById('minutes'); host.replaceChildren();
+  const scale = Math.max(d.first.seconds, d.latest.seconds);
+  for (const [label, minute] of [['First', d.first], ['Latest', d.latest]]) {
+    const row = el('div', 'row'); const l = el('div', 'l'); l.append(el('b', '', label), day(minute.at)); row.append(l, wave(minute, scale)); host.appendChild(row);
+  }
+}
+
+function show(id) {
+  const d = DATA[id]; const n = d.rounds.length;
+  document.getElementById('pc').innerHTML = d.pro ? `${n} rounds since ${longday(d.rounds[0].at)}` : `${n} rounds since ${longday(d.rounds[0].at)}. Free draws ${d.days} days. <a href="#">Pro draws the year</a>`;
+  document.getElementById('streak').textContent = d.pro ? '14' : '1'; document.getElementById('t1').textContent = d.pro ? '14' : '1'; document.getElementById('t2').textContent = d.pro ? '14' : '9'; document.getElementById('t3').textContent = d.pro ? '13' : '8';
+  document.getElementById('calh').textContent = d.pro ? 'Last year' : 'Last 5 days';
+  thenAndNow(d); workOn(d); lines(d); genresAndFirsts(d); minutes(d);
+  document.querySelectorAll('[data-tab]').forEach(b => b.classList.toggle('on', b.dataset.tab === id));
+}
+let current = 'many';
+function theme(t) { document.documentElement.dataset.theme = t; document.querySelectorAll('[data-theme-set]').forEach(b => b.classList.toggle('on', b.dataset.themeSet === t)); }
+function width(w) { document.body.classList.toggle('phone', w === 'phone'); document.querySelectorAll('[data-width]').forEach(b => b.classList.toggle('on', b.dataset.width === w)); show(current); }
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-tab],[data-theme-set],[data-width],[data-notes]'); if (!t) return;
+  if (t.dataset.tab) { current = t.dataset.tab; show(current); }
+  if (t.dataset.themeSet) theme(t.dataset.themeSet);
+  if (t.dataset.width) width(t.dataset.width);
+  if (t.hasAttribute('data-notes')) { const nn = document.querySelector('.notes'); nn.hidden = !nn.hidden; t.classList.toggle('on', !nn.hidden); }
+});
+window.addEventListener('resize', () => show(current));
+const hash = new Set(location.hash.replace('#', '').split(',').filter(Boolean));
+current = hash.has('three') ? 'three' : 'many';
+show(current);
+if (hash.has('dark')) theme('dark');
+if (hash.has('phone')) width('phone');
+if (hash.has('nonotes')) { document.querySelector('.notes').hidden = true; document.querySelector('[data-notes]').classList.remove('on'); }
+</script>
+</body></html>

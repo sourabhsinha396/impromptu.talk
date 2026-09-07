@@ -38,7 +38,16 @@ export function isWide(days: number): boolean {
   return days > 91;
 }
 
-export const EMPTY_PROGRESS: Progress = { enough: false, needed: 5, counted: 0, points: [], first: null, latest: null };
+export const EMPTY_PROGRESS: Progress = {
+  enough: false,
+  needed: 2,
+  counted: 0,
+  points: [],
+  first: null,
+  latest: null,
+  rounds: [],
+  firsts: {},
+};
 
 export const EMPTY_HISTORY: History = {
   streak: 0,

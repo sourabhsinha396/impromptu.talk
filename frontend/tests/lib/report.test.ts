@@ -60,8 +60,15 @@ function report(over: Partial<Report> = {}): Report {
     sentences: [],
     ended_clean: false,
     usual: null,
+    case: null,
     ...over,
   };
+}
+
+/* A sentence nothing read: no role and no clock, which is every free
+   round and every round from before a model read them. */
+function sentence(text: string, words: number) {
+  return { text, words, role: "" as const, at: null, end: null };
 }
 
 describe("blocks", () => {
@@ -288,10 +295,7 @@ const SPOKEN = report({
     { word: "so", count: 3 },
     { word: "like", count: 2 },
   ],
-  sentences: [
-    { text: "one", words: 56 },
-    { text: "two", words: 10 },
-  ],
+  sentences: [sentence("one", 56), sentence("two", 10)],
 });
 
 describe("axes", () => {
@@ -335,7 +339,7 @@ describe("shapeCaption", () => {
   });
 
   it("says so when everything landed", () => {
-    const rows = axes(report({ ...SPOKEN, filler_rate: 2, sentences: [{ text: "x", words: 12 }] }));
+    const rows = axes(report({ ...SPOKEN, filler_rate: 2, sentences: [sentence("x", 12)] }));
     expect(shapeCaption(rows)).toBe("All 5 in the comfortable range");
   });
 });
@@ -369,7 +373,7 @@ describe("slices", () => {
 describe("sentences and words", () => {
   it("calls a sentence past the edge a run-on and a short one landed", () => {
     expect(sentenceCaption(SPOKEN)).toBe("One ran to 56 words. Land a full stop and let it sit.");
-    expect(sentenceCaption(report({ sentences: [{ text: "x", words: RUN_ON }] }))).toBe(
+    expect(sentenceCaption(report({ sentences: [sentence("x", RUN_ON)] }))).toBe(
       `Longest ${RUN_ON} words. Every one of them landed.`,
     );
   });

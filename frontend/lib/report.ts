@@ -18,7 +18,16 @@ export type PaceAt = { start: number; end: number; wpm: number };
 export type FillerAt = { word: string; at: number };
 export type Restart = { quote: string; at: number };
 export type Repeat = { phrase: string; count: number };
-export type Sentence = { text: string; words: number };
+/* What a sentence was doing, from `apps/runs/argument.py`. Empty on
+   every round nothing read, which is every free round and every round
+   from before a model read them. */
+export type Role = "" | "point" | "reason" | "example" | "setup" | "aside" | "close";
+/* One sentence, what it was doing and when it was said. The span is
+   arithmetic over the word clock and is null where no clock came back. */
+export type Sentence = { text: string; words: number; role: Role; at: number | null; end: number | null };
+/* What the topic asked for, and whether it was given. Two capped
+   sentences and one word, never a score and never a rewrite. */
+export type Case = { answered: "yes" | "half" | "no"; verdict: string; advice: string };
 /* What this person usually does, the mean of the rounds before this one.
    Pro's, and absent under two rounds; any part can be null on its own. */
 export type Usual = {
@@ -73,6 +82,9 @@ export type Report = {
   sentences: Sentence[];
   ended_clean: boolean;
   usual: Usual | null;
+  /* Null on every round nothing read: free rounds, rounds from before the
+     feature, and any call that came back in a shape we do not take. */
+  case: Case | null;
 };
 
 /** Sends the timeline and the recording. Fails quietly: the round already
@@ -398,8 +410,41 @@ export function at(value: number, [low, high]: [number, number]): number {
 
 /* ---------------------------------------------------------- the progress */
 
-export type Point = { at: string; stall: number; gap: number; fillers: number | null };
+export type Point = {
+  at: string;
+  stall: number;
+  gap: number;
+  fillers: number | null;
+  silence: number;
+  restarts: number;
+};
 export type Minute = { at: string; seconds: number; segments: number[][] };
+/* One round as the skills a learner is building. Null where a round could
+   not be measured on a skill, never nought: a round nothing transcribed
+   has no ending to judge and no words to count. */
+export type Round = {
+  id: number;
+  at: string;
+  genre_slug: string;
+  prep_seconds: number;
+  setting: number;
+  spoken: number;
+  stall: number;
+  silence: number;
+  gaps: number;
+  restarts: number;
+  timed: boolean;
+  ended: boolean | null;
+  ums: number | null;
+  distinct: number | null;
+  leaned: Record<string, number>;
+  /* Whether the topic was answered, and the second the point landed. Both
+     null on every round nothing read, which is not the same as a round
+     that answered nothing. */
+  answered: "yes" | "half" | "no" | null;
+  point_at: number | null;
+};
+export type First = { at: string; run_id: number };
 export type Progress = {
   enough: boolean;
   needed: number;
@@ -407,6 +452,8 @@ export type Progress = {
   points: Point[];
   first: Minute | null;
   latest: Minute | null;
+  rounds: Round[];
+  firsts: Record<string, First | null>;
 };
 
 /** The same bar the done screen draws, from raw segments rather than a

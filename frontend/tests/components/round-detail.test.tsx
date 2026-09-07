@@ -73,11 +73,12 @@ const PRO: Report = {
   restarts: [{ quote: "I said, uh, I said", at: 3 }],
   repeats: [],
   sentences: [
-    { text: "A good pen is essential and so on for fifty-six words.", words: 56 },
-    { text: "Um, I said, uh, I said pen fight.", words: 6 },
+    { text: "A good pen is essential and so on for fifty-six words.", words: 56, role: "", at: null, end: null },
+    { text: "Um, I said, uh, I said pen fight.", words: 6, role: "", at: null, end: null },
   ],
   ended_clean: true,
   usual: { pace: 148, stall: 3.1, gap: 2.4, fillers: 3.2, sentence: 24, rounds: 12 },
+  case: null,
 };
 
 describe("RoundDetail", () => {
