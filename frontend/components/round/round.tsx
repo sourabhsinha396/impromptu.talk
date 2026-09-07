@@ -211,6 +211,9 @@ export function Round({
           genre={genre}
           speakSeconds={prefs.speak}
           onSpin={engine ? armed(() => engine.spin()) : undefined}
+          offerMic={engine?.prefs.mic === "ask"}
+          onMicYes={() => void turnOnMic()}
+          onMicNo={() => engine?.setMic("off")}
           onGenre={engine ? () => setSheet("genre") : undefined}
           onSettings={engine ? () => setSheet("settings") : undefined}
         />
@@ -303,11 +306,6 @@ export function Round({
           summary={summary}
           report={report}
           spokenSeconds={engine.spokeFor}
-          /* Offered once nobody has decided, and never again after "Not
-             now": the settings sheet is the way back. */
-          offerMic={engine.prefs.mic === "ask"}
-          onMicYes={() => void turnOnMic()}
-          onMicNo={() => engine.setMic("off")}
           signedIn={signedIn}
           onAgain={armed(() => engine.spin())}
           onSame={() => engine.sameTopic()}

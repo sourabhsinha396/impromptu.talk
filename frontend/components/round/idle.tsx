@@ -1,3 +1,4 @@
+import { ReportInvitation } from "@/components/round/report";
 import { Button } from "@/components/site/button";
 import { ChevronDownIcon, GenreIcon, SettingsIcon } from "@/components/site/icons";
 
@@ -21,12 +22,20 @@ export function Idle({
   onSpin,
   onGenre,
   onSettings,
+  offerMic = false,
+  onMicYes,
+  onMicNo,
 }: {
   genre: { name: string; icon: string };
   speakSeconds: number;
   onSpin?: () => void;
   onGenre?: () => void;
   onSettings?: () => void;
+  /* Only while nobody has decided. "Not now" is final, and the settings
+     sheet is the way back. */
+  offerMic?: boolean;
+  onMicYes?: () => void;
+  onMicNo?: () => void;
 }) {
   return (
     <main className="flex min-h-[calc(100dvh-var(--header-h))] flex-1 flex-col items-center justify-center px-[clamp(16px,4vw,32px)] py-6 text-center">
@@ -61,6 +70,13 @@ export function Idle({
           Spin
         </Button>
       </div>
+      {/* Well below the button and quieter than it, so the eye still goes
+          chip, question, Spin, and only then finds this. */}
+      {offerMic && onMicYes && onMicNo && (
+        <div className="mt-14 w-full">
+          <ReportInvitation onYes={onMicYes} onNo={onMicNo} />
+        </div>
+      )}
     </main>
   );
 }

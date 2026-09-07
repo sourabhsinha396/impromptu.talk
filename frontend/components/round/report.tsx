@@ -90,35 +90,48 @@ function numbers(report: Report): string[] {
 
 /* The one place the microphone is ever asked for.
 
-   It sits in the slot the report will fill, after a round rather than
-   before one, so the ask lands on somebody who has just spoken and is
-   looking at what it was worth, and so enabling it puts the thing exactly
-   where the ask was. Nothing about it appears on home or during a round:
-   the ten-second rule outranks this, and an offer made while somebody is
-   trying to think is one they refuse to get rid of it.
+   On home, under the button, and not on the done screen: an offer that
+   waits is less pushy than one that appears in your face the moment you
+   finish, and turning it on before the first round means the first round
+   is the one that gets a report, which is the round where seeing your own
+   pauses lands hardest. Never on the topic screen, which competes with
+   the topic at the moment of most focus (owner's call).
+
+   Its action is a ghost button on purpose. Spin is the ink primary and
+   the primary button's colour never moves; a second ink button on the
+   same screen would be a second primary, and the ten-second rule says
+   there is exactly one.
 
    The button names what you get, not what you give up. "Turn on the mic"
-   is the cost; "Turn on feedback" is the reason, and the line under it is
-   where the microphone is admitted to, because a prompt nobody was warned
+   is the cost; "Turn on feedback" is the reason. The microphone is
+   admitted to in the line under it, because a prompt nobody was warned
    about is the thing this whole flow exists to avoid. */
 export function ReportInvitation({ onYes, onNo }: { onYes: () => void; onNo: () => void }) {
   return (
-    <div className="rounded-card border border-line bg-card2 px-5 py-5 text-center">
-      <MicIcon size={24} className="mx-auto mb-2.5 text-accent" />
-      <h3 className="font-display text-[19px] font-semibold tracking-[-0.02em]">Get feedback on every round</h3>
-      <p className="mx-auto mt-1.5 max-w-[38ch] text-sm text-muted">
-        A report on your pauses, your pace and the words you lean on.
+    <div className="mx-auto w-full max-w-[420px] rounded-card border border-line bg-card2 px-5 py-4 text-center">
+      <p className="flex items-center justify-center gap-2 text-[15px] font-semibold">
+        <MicIcon size={16} className="text-accent" />
+        Get feedback on every round
       </p>
-      <p className="mx-auto mt-1 max-w-[38ch] text-[12.5px] text-muted">
-        Needs your microphone. We never keep the audio.
+      <p className="mx-auto mt-1.5 max-w-[40ch] text-[13px] text-muted">
+        A report on your pauses, your pace and the words you lean on. Needs your microphone, and we never keep the
+        audio.
       </p>
-      <div className="mt-4 flex flex-wrap justify-center gap-2.5">
-        <Button size="sm" onClick={onYes}>
+      {/* A ghost button and a word, not two buttons. There are only two
+          variants and the primary is ink, which belongs to Spin on this
+          screen; two ghosts side by side would read as one choice made
+          twice. So the refusal is a link, the way Reset already is. */}
+      <div className="mt-3.5 flex flex-col items-center gap-2.5">
+        <Button size="sm" variant="ghost" onClick={onYes}>
           Turn on feedback
         </Button>
-        <Button size="sm" variant="ghost" onClick={onNo}>
+        <button
+          type="button"
+          onClick={onNo}
+          className="cursor-pointer text-[13px] text-muted underline underline-offset-4 hover:text-ink"
+        >
           Not now
-        </Button>
+        </button>
       </div>
     </div>
   );
