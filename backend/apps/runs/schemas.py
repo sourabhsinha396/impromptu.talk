@@ -24,3 +24,31 @@ class SummaryOut(Schema):
     streak: int
     topics: int
     minutes: int
+
+
+class DayOut(Schema):
+    date: str
+    count: int
+    frozen: bool
+
+
+class RecentOut(Schema):
+    topic_text: str
+    genre_slug: str
+    at: str
+
+
+class HistoryOut(Schema):
+    """The streak page's whole answer: the numbers, a calendar as long as
+    the plan tracks, the newest runs up to the plan's cap, and the caps
+    themselves so the page can say which window it is drawing."""
+
+    streak: int
+    longest: int
+    topics: int
+    minutes: int
+    would_be: int
+    days: int
+    runs_kept: int
+    calendar: list[DayOut]
+    recent: list[RecentOut]

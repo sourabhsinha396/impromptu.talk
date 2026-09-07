@@ -4,8 +4,8 @@ from ninja import Router
 from apps.common.clock import request_offset
 from apps.common.devices import device_id
 from apps.common.ratelimit import throttle
-from apps.runs import services, streaks
-from apps.runs.schemas import RunIn, SummaryOut
+from apps.runs import history, services, streaks
+from apps.runs.schemas import HistoryOut, RunIn, SummaryOut
 
 api = Router(tags=["runs"])
 
@@ -48,3 +48,26 @@ def summary(request, response: HttpResponse):
     did, user = _who(request)
     response["Cache-Control"] = "private, no-store"
     return _scoreboard(streaks.summary(did, request_offset(request), user, _rule(user)))
+
+
+@api.get("/history", response=HistoryOut)
+def practice(request, response: HttpResponse):
+    """Everything the streak page shows, in one answer: the calendar is as
+    long as the plan tracks and the list as long as the plan keeps. Whose
+    runs is settled by the cookies, as everywhere else."""
+    did, user = _who(request)
+    response["Cache-Control"] = "private, no-store"
+    shown = history.history(did, request_offset(request), user, _rule(user))
+    return {
+        "streak": shown.summary.streak,
+        "longest": shown.summary.longest,
+        "topics": shown.summary.topics,
+        "minutes": shown.summary.minutes,
+        "would_be": shown.summary.would_be,
+        "days": shown.days,
+        "runs_kept": shown.runs_kept,
+        "calendar": [{"date": d.date.isoformat(), "count": d.count, "frozen": d.frozen} for d in shown.calendar],
+        "recent": [
+            {"topic_text": r.topic_text, "genre_slug": r.genre_slug, "at": r.at.isoformat()} for r in shown.recent
+        ],
+    }

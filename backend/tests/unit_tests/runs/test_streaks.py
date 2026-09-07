@@ -58,9 +58,9 @@ class TestThePlanWindow:
         assert current_streak(DEVICE, rule=pro_rule(365)) == 40
 
     def test_lifetime_is_capped_at_a_year(self):
-        assert pro_rule(10_000) == Rule(days=365, freezes=True)
-        assert pro_rule(30) == Rule(days=30, freezes=True)
-        assert FREE == Rule(days=5, freezes=False)
+        assert pro_rule(10_000) == Rule(days=365, freezes=True, runs=1000)
+        assert pro_rule(30) == Rule(days=30, freezes=True, runs=1000)
+        assert FREE == Rule(days=5, freezes=False, runs=25)
 
     def test_when_pro_lapses_the_free_rule_takes_over(self, db):
         runs_on_days([0, 2, 3, 4, 5, 6, 7, 8])

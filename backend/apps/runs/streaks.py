@@ -39,23 +39,30 @@ FREEZES_PER_MONTH = 2
 FREE_DAYS = 5
 PRO_DAYS_MAX = 365
 
+# How many recent runs each tier lists. Pro lifts the cap rather than
+# removing it: a list of ten thousand rows is its own problem. The rows
+# themselves are never deleted at either cap; the view is what is gated.
+FREE_RUNS = 25
+PRO_RUNS = 1000
+
 
 @dataclass(frozen=True)
 class Rule:
-    """What a plan counts: how many days back it looks, and whether a gap
-    can be bridged."""
+    """What a plan shows of somebody's practice: how many days back the
+    streak looks, whether a gap can be bridged, how many runs are listed."""
 
     days: int
     freezes: bool
+    runs: int
 
 
-FREE = Rule(days=FREE_DAYS, freezes=False)
+FREE = Rule(days=FREE_DAYS, freezes=False, runs=FREE_RUNS)
 
 
 def pro_rule(plan_days: int) -> Rule:
     """The rule for a Pro plan that lasts `plan_days`: a month tracks
     thirty, a year 365, lifetime is capped at a year."""
-    return Rule(days=max(1, min(plan_days, PRO_DAYS_MAX)), freezes=True)
+    return Rule(days=max(1, min(plan_days, PRO_DAYS_MAX)), freezes=True, runs=PRO_RUNS)
 
 
 def local_date(when: dt.datetime, offset_minutes: int) -> dt.date:
