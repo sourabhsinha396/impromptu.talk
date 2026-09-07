@@ -50,7 +50,18 @@ async function record(payload: Extract<Effect, { type: "record" }>["payload"]): 
 
 const noop = () => () => {};
 
-export function Round({ bank, signedIn, isPro = false }: { bank: Bank; signedIn: boolean; isPro?: boolean }) {
+export function Round({
+  bank,
+  signedIn,
+  isPro = false,
+  ownCap,
+}: {
+  bank: Bank;
+  signedIn: boolean;
+  isPro?: boolean;
+  /** How many genres an account may hold, for the picker to say once. */
+  ownCap?: number;
+}) {
   const [engine, setEngine] = useState<Engine | null>(null);
   const [sound, setSound] = useState<Sound | null>(null);
   const [summary, setSummary] = useState<Summary | null>(null);
@@ -142,6 +153,7 @@ export function Round({ bank, signedIn, isPro = false }: { bank: Bank; signedIn:
               bank={bank}
               current={prefs.genre}
               isPro={isPro}
+              ownCap={ownCap}
               onChoose={(slug) => {
                 engine.chooseGenre(slug);
                 setSheet(null);

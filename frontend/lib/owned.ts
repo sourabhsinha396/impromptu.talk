@@ -1,5 +1,8 @@
 import { backendFetch } from "@/lib/api";
 import type { Bank, Genre } from "@/lib/bank";
+import { isOwnSlug, ownSlug } from "@/lib/genres";
+
+export { isOwnSlug, OWN_PREFIX, ownPath, ownSlug } from "@/lib/genres";
 
 /* The genres somebody wrote for themselves. One shape for the list page,
    the editor and the picker, because on the backend they are one table
@@ -78,21 +81,6 @@ export async function fetchSharedGenre(token: string): Promise<SharedGenre | nul
   } catch {
     return null;
   }
-}
-
-/* The slug an owned genre wears inside the bank. Prefixed, because the
-   built-in slugs are a flat namespace the picker, the reel and
-   `/genre/<slug>` all key on, and "career" the built-in and "career" of
-   somebody's own must never be the same row. v0 used `pack:`; the shape
-   is the same and the word is not, since these are genres. */
-export const OWN_PREFIX = "yours:";
-
-export function ownSlug(slug: string): string {
-  return `${OWN_PREFIX}${slug}`;
-}
-
-export function isOwnSlug(slug: string): boolean {
-  return slug.startsWith(OWN_PREFIX);
 }
 
 /** The bank with somebody's own genres folded in, which is what the

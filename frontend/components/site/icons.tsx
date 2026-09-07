@@ -9,6 +9,7 @@ import {
   Briefcase,
   Check,
   ChevronDown,
+  ChevronRight,
   Clapperboard,
   Coffee,
   Copy,
@@ -93,6 +94,8 @@ export const SunIcon = icon(Sun);
 export const MoonIcon = icon(Moon);
 export const AutoThemeIcon = icon(SunMoon);
 export const ChevronDownIcon = icon(ChevronDown);
+/* The tell on a row that leaves the page rather than picking something. */
+export const ChevronRightIcon = icon(ChevronRight);
 export const PlusIcon = icon(Plus);
 export const CheckIcon = icon(Check);
 export const CopyIcon = icon(Copy);

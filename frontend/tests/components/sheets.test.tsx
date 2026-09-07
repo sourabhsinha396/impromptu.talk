@@ -14,12 +14,12 @@ const bank: Bank = {
   genres: [
     { slug: "general", name: "General", icon: "dices", blurb: "" },
     { slug: "career", name: "Career & work", icon: "briefcase", blurb: "" },
-    { slug: "mine", name: "Standups", icon: "mic", blurb: "", own: true },
+    { slug: "yours:standups", name: "Standups", icon: "mic", blurb: "", own: true },
   ],
   topics: [
     topic("general", "Low tide"),
     topic("career", "Your first job"),
-    topic("mine", "Our standup", "IELTS style"),
+    topic("yours:standups", "Our standup", "IELTS style"),
   ],
   styles: [
     { key: "surprise", label: "Surprise me", hint: "Any style. The default." },
@@ -47,12 +47,36 @@ describe("the sheets", () => {
     const dialog = screen.getByRole("dialog");
     const own = within(dialog).getByRole("option", { name: "Standups" });
     expect(own.compareDocumentPosition(list) & Node.DOCUMENT_POSITION_PRECEDING).toBeTruthy();
-    expect(within(dialog).getByRole("link", { name: "Make your own genre" })).toHaveAttribute("href", "/genres/yours");
+    /* Three doors, and each answers a different question (the picker
+       mock, variant D): the heading edits the group, the pencil edits
+       this one genre, and the row at the foot only ever means a new one.
+       The identity glyph is never one of them. */
+    expect(within(dialog).getByRole("link", { name: "Make a new genre" })).toHaveAttribute("href", "/genres/yours");
+    expect(within(dialog).getByRole("link", { name: "Edit" })).toHaveAttribute("href", "/genres/yours");
+    expect(within(dialog).getByRole("link", { name: "Edit Standups" })).toHaveAttribute(
+      "href",
+      "/genres/yours/standups",
+    );
 
     await user.click(within(list).getByRole("option", { name: "Career & work" }));
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Career & work" })).toBeInTheDocument();
     expect(saved().genre).toBe("career");
+  });
+
+  it("never puts an action in the identity column, and says the cap once", async () => {
+    /* The complaint the picker mock was written about: a genre saved
+       with the pencil icon made the identity glyph read as an edit
+       button. An action lives at the right edge, beside the check, and
+       a built-in never carries one at all. */
+    const user = userEvent.setup();
+    render(<Round bank={bank} signedIn isPro ownCap={10} />);
+    await user.click(await screen.findByRole("button", { name: "General" }));
+    const dialog = screen.getByRole("dialog");
+
+    expect(within(dialog).getByText(/1 of 10/)).toBeInTheDocument();
+    expect(within(dialog).getAllByRole("link", { name: /^Edit / })).toHaveLength(1);
+    expect(within(dialog).queryByRole("link", { name: "Edit General" })).not.toBeInTheDocument();
   });
 
   it("changes the lengths live, writes them on release, offers a coined style only in its genre, and mutes", async () => {

@@ -32,7 +32,7 @@ export default async function Home({ searchParams }: Search) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLd(webApplication(SITE_NAME, SITE_DESCRIPTION)) }}
       />
-      <Round bank={bank} signedIn={user !== null} isPro={user?.is_pro ?? false} />
+      <Round bank={bank} signedIn={user !== null} isPro={user?.is_pro ?? false} ownCap={mine?.max_genres} />
     </>
   );
 }
