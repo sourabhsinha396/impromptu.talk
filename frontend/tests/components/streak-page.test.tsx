@@ -33,7 +33,7 @@ const free: History = {
   days: 5,
   runs_kept: 25,
   calendar: days(5, [0, 1, 2]),
-  recent: [{ topic_text: "Saying no at work", genre_slug: "career", at: "2026-09-07T10:00:00Z" }],
+  recent: [{ id: 7, topic_text: "Saying no at work", genre_slug: "career", at: "2026-09-07T10:00:00Z", has_report: true }],
   progress: EMPTY_PROGRESS,
 };
 

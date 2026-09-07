@@ -295,7 +295,16 @@ function RecentList({ history, bank, now }: { history: History; bank: Bank; now:
             key={`${run.at}-${index}`}
             className="flex items-baseline justify-between gap-4 border-b border-line px-0.5 py-2.5 text-[15.5px] last:border-b-0"
           >
-            <span>{run.topic_text}</span>
+            {/* A link only where there is something to open. A round
+                practised before the report existed, or with no microphone,
+                has none, and a link to a 404 is worse than plain text. */}
+            {run.has_report ? (
+              <a href={`/streak/${run.id}`} className="underline decoration-line-strong underline-offset-4 hover:decoration-ink">
+                {run.topic_text}
+              </a>
+            ) : (
+              <span>{run.topic_text}</span>
+            )}
             <span className="inline-flex shrink-0 gap-3 text-[12.5px] font-semibold text-muted">
               {genre && (
                 <span className="hidden items-center gap-1 sm:inline-flex">

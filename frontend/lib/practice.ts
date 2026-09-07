@@ -6,7 +6,7 @@
 import type { Progress } from "@/lib/report";
 
 export type Day = { date: string; count: number; frozen: boolean };
-export type Recent = { topic_text: string; genre_slug: string; at: string };
+export type Recent = { id: number; topic_text: string; genre_slug: string; at: string; has_report: boolean };
 export type History = {
   streak: number;
   longest: number;

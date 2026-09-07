@@ -100,3 +100,34 @@ def _clip():
     from django.core.files.uploadedfile import SimpleUploadedFile
 
     return SimpleUploadedFile("round.webm", b"not really audio", content_type="audio/webm")
+
+
+class TestReadingOneBack:
+    """A round's report was drawn once and then gone, while Pro was sold on
+    keeping it. These pin that it comes back, and only to whoever made it."""
+
+    def test_a_past_round_can_be_opened_again(self, client, db, groq):
+        run_id = a_run(client)
+        made = client.post(f"{RUNS}/{run_id}/report", {"segments": SPOKE, "audio": _clip()}).json()
+        again = client.get(f"{RUNS}/{run_id}/report")
+        assert again.status_code == 200
+        assert again.json()["said"] == made["said"]
+        assert again.json()["opening_stall"] == made["opening_stall"]
+        assert again.headers["Cache-Control"] == "private, no-store"
+
+    def test_a_round_with_no_report_is_a_404_rather_than_an_empty_one(self, client, db):
+        run_id = a_run(client)
+        assert client.get(f"{RUNS}/{run_id}/report").status_code == 404
+
+    def test_another_device_cannot_read_a_report_it_did_not_make(self, client, db, groq):
+        run_id = a_run(client)
+        client.post(f"{RUNS}/{run_id}/report", {"segments": SPOKE, "audio": _clip()})
+        assert Client().get(f"{RUNS}/{run_id}/report").status_code == 404
+
+    def test_the_recent_list_says_which_rounds_have_one_to_open(self, client, db, groq):
+        first = a_run(client)
+        client.post(f"{RUNS}/{first}/report", {"segments": SPOKE, "audio": _clip()})
+        a_run(client)
+        rows = client.get(f"{RUNS}/history").json()["recent"]
+        assert [row["has_report"] for row in rows] == [False, True]
+        assert rows[1]["id"] == first

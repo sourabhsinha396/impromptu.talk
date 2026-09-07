@@ -74,7 +74,14 @@ def practice(request, response: HttpResponse):
         "runs_kept": shown.runs_kept,
         "calendar": [{"date": d.date.isoformat(), "count": d.count, "frozen": d.frozen} for d in shown.calendar],
         "recent": [
-            {"topic_text": r.topic_text, "genre_slug": r.genre_slug, "at": r.at.isoformat()} for r in shown.recent
+            {
+                "id": r.id,
+                "topic_text": r.topic_text,
+                "genre_slug": r.genre_slug,
+                "at": r.at.isoformat(),
+                "has_report": r.has_report,
+            }
+            for r in shown.recent
         ],
         "share_token": user.share_token if user else None,
         "progress": _progress(did, user, _rule(user)),
@@ -140,6 +147,24 @@ def _is_pro(user) -> bool:
     """Pro is what picks the transcriber and the allowance. The same
     question the streak rule asks, and asked the same way."""
     return bool(payments.streak_days(user))
+
+
+@api.get("/{int:run_id}/report", response=ReportOut)
+def stored_report(request, run_id: int, response: HttpResponse):
+    """A past round's report, read back.
+
+    Everything about a round has been stored since the report shipped and
+    none of it was reachable: it was drawn once on the done screen and then
+    gone, while Pro was sold on keeping precisely that. Ownership is the
+    same rule as everywhere else, and a run somebody else made is a 404
+    rather than a 403, because whether an id exists is not their business.
+    """
+    did, user = _who(request)
+    run = Run.objects.filter(services.owned_by(did, user), pk=run_id).select_related("report").first()
+    if run is None or not hasattr(run, "report"):
+        raise Http404
+    response["Cache-Control"] = "private, no-store"
+    return reports.render(run.report, pro=_is_pro(user))
 
 
 @api.post("/{int:run_id}/report", response=ReportOut)

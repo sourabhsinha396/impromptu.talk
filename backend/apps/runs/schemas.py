@@ -45,9 +45,11 @@ class DayOut(Schema):
 
 
 class RecentOut(Schema):
+    id: int
     topic_text: str
     genre_slug: str
     at: str
+    has_report: bool = False
 
 
 class PointOut(Schema):
@@ -168,6 +170,8 @@ class ReportOut(Schema):
     transcript: str = ""
     said: list[SaidOut] = []
     topic: str = ""
+    at: str = ""
+    genre_slug: str = ""
 
     # Seconds of transcription left this calendar month, so the page can
     # say what is left rather than let somebody discover it by finishing a

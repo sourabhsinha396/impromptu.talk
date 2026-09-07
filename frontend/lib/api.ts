@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 
+import type { Report } from "@/lib/report";
 import { EMPTY_HISTORY, type History, type Shared } from "@/lib/practice";
 
 export const BACKEND_ORIGIN = process.env.BACKEND_ORIGIN ?? "http://127.0.0.1:8009";
@@ -102,6 +103,19 @@ export async function streakSummary(): Promise<StreakSummary> {
     account behind the forwarded cookies. Empty when the backend is
     unreachable, which draws the page's "Nothing yet." state rather than
     failing the one page a person came to look at. */
+/** One past round's report, or null where there is none and for a run
+    somebody else made, which the backend answers alike so an id cannot be
+    probed. */
+export async function storedReport(id: number): Promise<Report | null> {
+  try {
+    const response = await backendFetch(`/api/v1/runs/${id}/report`);
+    if (!response.ok) return null;
+    return (await response.json()) as Report;
+  } catch {
+    return null;
+  }
+}
+
 export async function practiceHistory(): Promise<History> {
   try {
     const response = await backendFetch("/api/v1/runs/history");

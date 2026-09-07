@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { advice, at, bands, blocks, clock, headline, marked, type Report } from "@/lib/report";
+import { AWKWARD, advice, at, bands, blocks, clock, headline, marked, type Report } from "@/lib/report";
 
 /* The bar is the whole report: somebody sees the hole at 0:34 without
    reading a number. So what is pinned here is that it adds up - the blocks
@@ -27,6 +27,8 @@ function report(over: Partial<Report> = {}): Report {
     fillers_at_transitions: null,
     said: [],
     topic: "Low tide",
+    at: "2026-09-07T12:00:00Z",
+    genre_slug: "general",
     transcript: "",
     seconds_left: 300,
     ...over,
@@ -154,6 +156,14 @@ describe("bands", () => {
     const keys = bands(report()).map((b) => b.key);
     expect(keys).toContain("start");
     expect(keys).toContain("gap");
+  });
+
+  it("agrees with the headline about what counts as a hole", () => {
+    // The headline calls a gap notable at AWKWARD; the band has to call
+    // the same gap a hole, or the report argues with itself.
+    const verdict = (gap: number) => bands(report({ longest_pause: gap })).find((b) => b.key === "gap")?.verdict;
+    expect(verdict(AWKWARD - 0.1)).toBe("No holes");
+    expect(verdict(AWKWARD + 0.1)).toBe("Long hole");
   });
 
   it("says nothing is wrong with a round that went well", () => {

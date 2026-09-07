@@ -43,6 +43,8 @@ export type Report = {
      transcript is shown instead. */
   said: Said[];
   topic: string;
+  at: string;
+  genre_slug: string;
   seconds_left: number;
 };
 
@@ -261,6 +263,11 @@ export function bands(report: Report): Band[] {
     ),
   );
 
+  // The comfortable edge is AWKWARD itself, and deliberately so. It was
+  // 2 while a pause became "long enough to notice" at 1.5, so a round with
+  // a 1.6-second gap had a headline calling it out and a band underneath
+  // calling it fine. A report that contradicts itself is the one thing
+  // that makes every other number on the page worth less.
   out.push(
     band(
       "gap",
@@ -268,7 +275,7 @@ export function bands(report: Report): Band[] {
       report.longest_pause,
       `${report.longest_pause}s`,
       [0, 8],
-      [0, 2],
+      [0, AWKWARD],
       ["", "No holes", "Long hole"],
       ["none", "8s"],
     ),

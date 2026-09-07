@@ -182,5 +182,7 @@ def render(row: Report, *, pro: bool = False) -> dict:
         "fillers_at_transitions": row.fillers_at_transitions if row.provider == transcribe.ASSEMBLYAI else None,
         # So the read-back can say what it was an answer to, months later.
         "topic": row.run.topic_text,
+        "at": row.created_at.isoformat(),
+        "genre_slug": row.run.genre_slug,
         "seconds_left": left(row.run.device_id, row.run.user, pro),
     }
