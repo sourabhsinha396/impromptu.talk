@@ -1,0 +1,188 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mock: affiliates</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..600&family=Plus+Jakarta+Sans:wght@400..700&display=swap" rel="stylesheet"><style>
+:root{color-scheme:light;--surface:#fff;--card:#fff;--card2:oklch(.965 .008 120);--ink:#1c1917;--muted:#57534e;--line:#e7e5e4;--line-strong:#918b87;
+--accent-h:120;--accent-c:.12;--accent-l:.5;--accent-l-strong:.42;--accent:oklch(var(--accent-l) var(--accent-c) var(--accent-h));--accent-strong:oklch(var(--accent-l-strong) var(--accent-c) var(--accent-h));
+--btn:#1c1917;--btn-ink:#fff;--note:oklch(.93 .13 118);--note-ink:oklch(.32 .06 120);--warn:oklch(.62 .2 30);
+--sans:"Plus Jakarta Sans",ui-sans-serif,system-ui,sans-serif;--display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;--header-h:60px}
+[data-theme=dark]{color-scheme:dark;--surface:#080808;--card:#161616;--card2:#101010;--ink:#f5f5f4;--muted:#a8a29e;--line:#292524;--line-strong:#6b6560;
+--accent-l:.796;--accent-l-strong:.86;--btn:#f5f5f4;--btn-ink:#111110;--note:oklch(.86 .15 120);--note-ink:oklch(.2 .04 120);--warn:oklch(.75 .19 30)}
+*{box-sizing:border-box}html,body{margin:0}body{background:#3f3d3a;font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased}
+.mockbar{position:sticky;top:0;z-index:50;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:10px 16px;background:#26241f;color:#d6d3d1;font:600 12px/1 var(--sans);letter-spacing:.02em}
+.mockbar b{color:#fff;font-weight:700;margin-right:6px}.mockbar .seg{display:inline-flex;border:1px solid #57534e;border-radius:999px;overflow:hidden}
+.mockbar button{all:unset;cursor:pointer;padding:7px 12px;color:#d6d3d1}.mockbar button.on{background:#f5f5f4;color:#1c1917}
+.frame{margin:18px auto;max-width:1280px;min-height:calc(100vh - 80px);background:var(--surface);color:var(--ink);box-shadow:0 20px 60px rgb(0 0 0/.35);display:flex;flex-direction:column;position:relative;overflow:hidden}
+.phone .frame{max-width:390px;min-height:780px}
+.notes{max-width:1280px;margin:0 auto 40px;background:#fffbea;color:#3b2f0b;border-radius:14px;padding:18px 22px;font-size:14px;line-height:1.55}
+.notes h2{margin:0 0 8px;font:600 15px var(--sans)}.notes ul{margin:0;padding-left:18px}.notes li{margin:4px 0}.notes[hidden]{display:none}
+.ico{flex:none}
+.topbar{height:var(--header-h);display:flex;padding:10px clamp(14px,4vw,28px);border-bottom:1px solid var(--accent);flex:none}
+.topbar-in{flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:80rem;margin-inline:auto}
+.wordmark{display:inline-flex;align-items:center;gap:8px;font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:-.02em;color:var(--ink);text-decoration:none}
+.wordmark span span{color:var(--muted);font-weight:400}.die{width:21px;height:21px;color:var(--accent)}
+.phone .wordmark .name{display:none}.wordmark .short{display:none}.phone .wordmark .short{display:inline}
+.right{display:flex;align-items:center;gap:6px}
+.iconbtn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border:1px solid var(--line-strong);background:var(--card2);color:var(--muted);border-radius:999px;cursor:pointer}
+main.page{display:block;max-width:960px;width:100%;margin:0 auto;padding:28px clamp(16px,4vw,32px) 64px;flex:1}
+.q{font-family:var(--display);font-weight:600;letter-spacing:-.03em;font-size:clamp(2rem,5.5vw,3.2rem);line-height:1.05;margin:0;text-wrap:balance}
+.lede{font-size:17px;color:var(--muted);max-width:58ch;margin:12px 0 22px}
+.btn{font:inherit;font-weight:600;border-radius:999px;border:1px solid transparent;padding:12px 24px;cursor:pointer;line-height:1;display:inline-flex;align-items:center;gap:8px;text-decoration:none}
+.btn-primary{background:var(--btn);color:var(--btn-ink)}.btn-ghost{background:none;color:var(--muted);border-color:var(--line-strong)}
+.btn-sm{font-size:14px;padding:9px 16px}.btn-xl{font-size:18px;padding:17px 46px}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:34px 0 8px}.phone .steps{grid-template-columns:1fr}
+.step{border:1px solid var(--line);border-radius:14px;background:var(--card);padding:18px}
+.step b{display:block;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-strong);margin-bottom:8px}
+.step p{margin:0;font-size:15px;line-height:1.5}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:22px 0 8px}
+.stat{min-width:0;padding:16px 14px 14px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+.stat .n{font-family:var(--display);font-weight:600;font-size:38px;letter-spacing:-.03em;line-height:1}
+.stat .l{margin-top:6px;font-size:12.5px;color:var(--muted);font-weight:600}
+.phone .stat{padding:12px 10px 10px}.phone .stat .n{font-size:26px}.phone .stat .l{font-size:11.5px}
+.h2{font:600 20px var(--display);letter-spacing:-.02em;margin:38px 0 10px}
+.faces{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:14px}.phone .faces{grid-template-columns:1fr}
+.face{border:1px solid var(--line);border-radius:14px;background:var(--card);padding:18px}
+.face .who{display:flex;align-items:center;gap:10px}
+.face .av{width:38px;height:38px;border-radius:999px;background:var(--card2);display:grid;place-items:center;font-weight:600;color:var(--accent-strong);font-size:14px}
+.face .nm{font-size:14.5px;font-weight:600}.face .sub{font-size:12px;color:var(--muted)}
+.face p{margin:12px 0 0;font-size:14px;line-height:1.5;color:var(--muted)}
+.sample{margin-top:14px;font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.faq{margin-top:8px;border-top:1px solid var(--line)}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{cursor:pointer;list-style:none;padding:15px 2px;font-size:15.5px;font-weight:600;display:flex;justify-content:space-between;gap:12px}
+.faq summary::-webkit-details-marker{display:none}
+.faq p{margin:0 2px 16px;font-size:15px;color:var(--muted);line-height:1.55;max-width:70ch}
+.linkfield{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:14px}
+.linkfield code{flex:1;min-width:220px;font:600 14.5px var(--sans);background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin:18px 0 0}
+.tabs a{padding:10px 2px;margin-right:18px;font-size:14.5px;font-weight:600;color:var(--muted);text-decoration:none;border-bottom:2px solid transparent}
+.tabs a.on{color:var(--ink);border-bottom-color:var(--accent)}
+.list{list-style:none;margin:14px 0 0;padding:0}
+.list li{display:flex;align-items:center;gap:12px;padding:12px 2px;border-bottom:1px solid var(--line);font-size:15px}
+.list .when{width:96px;flex:none;font-size:13px;color:var(--muted)}
+.list .what{flex:1;min-width:0}
+.list .amt{font-weight:600;font-variant-numeric:tabular-nums}
+.list .amt.minus{color:var(--warn)}
+.card{border:1px solid var(--line);border-radius:14px;background:var(--card);padding:18px;margin-top:18px}
+.card h3{margin:0 0 4px;font:600 16px var(--sans)}.card p.sub{margin:0 0 12px;font-size:13.5px;color:var(--muted)}
+input[type=email],input[type=text]{width:100%;padding:11px 13px;border:1px solid var(--line-strong);border-radius:10px;background:var(--card2);color:var(--ink);font:400 15px var(--sans)}
+.cardfoot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px}
+.cardfoot span{font-size:13px;color:var(--muted)}
+.empty{margin-top:16px;font-size:15px;color:var(--muted)}
+.foot{flex:none;border-top:1px solid var(--line);padding:30px clamp(16px,4vw,32px) 36px;font-size:13.5px;color:var(--muted)}
+.foot-grid{max-width:80rem;margin:0 auto;display:grid;gap:32px;grid-template-columns:1.6fr 1fr 1fr 1fr}.phone .foot-grid{grid-template-columns:1fr 1fr}
+.foot-col{display:flex;flex-direction:column;gap:8px}.foot-col b{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink)}
+.foot a{color:inherit;text-decoration:none}
+[hidden]{display:none!important}
+</style></head><body>
+<div class="mockbar"><b>Mock</b><span class="seg"><button data-tab="pitch" class="on">The pitch</button><button data-tab="referrals">Your referrals</button><button data-tab="empty">Nothing yet</button></span>
+<span class="seg"><button data-theme-set="light">Light</button><button data-theme-set="dark">Dark</button></span>
+<span class="seg"><button data-width="desktop" class="on">Desktop</button><button data-width="phone">Phone</button></span>
+<span class="seg"><button data-notes class="on">Notes</button></span></div>
+<div class="notes"><h2>Affiliates: what this is, and what changes from v0</h2><ul>
+<li><b>Every number on the page is read from the backend.</b> The rate, the cookie window and the minimum payout come from the same constants settlement pays under, so no page can promise a number the code does not honour. v0 printed the rate in three places and the FAQ once got it wrong.</li>
+<li><b>The pitch is three steps, not three paragraphs.</b> Share the link, somebody buys within sixty days, you get 30% of what they paid. That is the whole product, and it fits on one screen above the questions.</li>
+<li><b>The link is a field with a Copy button</b>, the same control the account page and the share switch already use. Signed out, that block is one button to make an account, because the link cannot exist without one.</li>
+<li><b>Three tiles, never two and one.</b> People, sales, balance. Earned and paid sit under them as one sentence rather than as two more tiles, because they are how the balance was reached, not separate facts.</li>
+<li><b>Nobody is named.</b> An event is "New account" or "Lifetime bought", dated, with what it did to the balance. The people on that list did not sign up to be reported on.</li>
+<li><b>A refund shows as its own line in red</b>, taking the commission back, rather than the sale quietly vanishing from the list.</li>
+<li><b>The sample faces say they are samples</b> in a line under each, not in a footnote. v0 put three testimonials on the page with the disclaimer at the bottom, which is the wrong way round.</li>
+<li><b>Payouts are a table under the address field</b>, and the field says where money goes and from what balance. Nothing on this page sends money; the operator writes the row after PayPal has moved it.</li>
+</ul></div>
+<div class="frame">
+<header class="topbar"><div class="topbar-in">
+<a class="wordmark" href="#"><svg class="die" viewBox="0 0 32 32" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4.6 26.4 10.6 26.4 21.4 16 27.4 5.6 21.4 5.6 10.6z"/><path d="M5.6 10.6 16 16 26.4 10.6M16 16v11.4"/></g><g fill="currentColor"><circle cx="16" cy="10.45" r="1.5"/><circle cx="8.9" cy="15.55" r="1.5"/><circle cx="12.71" cy="22.15" r="1.5"/><circle cx="21.2" cy="18.85" r="1.5"/><circle cx="23.11" cy="15.55" r="1.5"/><circle cx="19.29" cy="22.15" r="1.5"/></g></svg><span class="name">impromptu<span>.talk</span></span><span class="short">i<span>.</span>t</span></a>
+<div class="right"><button class="iconbtn" aria-label="Account"><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button></div></div></header>
+
+<section data-phase="pitch"><main class="page">
+<h1 class="q">Share the link, keep 30%.</h1>
+<p class="lede">Every account has a link. Somebody buys through it, you keep 30% of what they paid. No application, no minimum audience.</p>
+<div class="row"><a class="btn btn-primary btn-xl" href="#">Get your link</a></div>
+
+<div class="steps">
+<div class="step"><b>One</b><p>Send your link. It is your name after the site's, and it works from anywhere: a post, a video description, a message.</p></div>
+<div class="step"><b>Two</b><p>They practise free, then buy. The click is remembered for 60 days, so it still counts weeks later.</p></div>
+<div class="step"><b>Three</b><p>You keep 30% of what they were charged. Paid by PayPal once you are over $10.</p></div>
+</div>
+
+<h2 class="h2">Who this is for</h2>
+<div class="faces">
+<div class="face"><div class="who"><span class="av">RS</span><span><span class="nm">Coach</span><span class="sub">Speaking, interviews</span></span></div><p>Sends the link with a warm-up drill. Their students practise between sessions.</p><p class="sample">Sample, not a real person</p></div>
+<div class="face"><div class="who"><span class="av">AT</span><span><span class="nm">Teacher</span><span class="sub">A class of 30</span></span></div><p>Puts the link in the class notes. A minute of speaking is the homework.</p><p class="sample">Sample, not a real person</p></div>
+<div class="face"><div class="who"><span class="av">MK</span><span><span class="nm">Creator</span><span class="sub">Short videos</span></span></div><p>Films one round, drops the link below it. The tool is the video.</p><p class="sample">Sample, not a real person</p></div>
+</div>
+
+<h2 class="h2">Questions</h2>
+<div class="faq">
+<details open><summary>How much is it, exactly?</summary><p>30% of what the person was actually charged, in dollars. Prices differ by country, so a lifetime bought in India earns 30% of the rupee price, not of $39.</p></details>
+<details><summary>Do renewals earn?</summary><p>No. A subscription earns on its first charge only. We are told about payments when somebody comes back to the site, and a renewal happens where we never hear it.</p></details>
+<details><summary>How long does a click last?</summary><p>60 days. The last link clicked is the one that counts, and if they already had an account, whoever brought them in keeps them.</p></details>
+<details><summary>When do I get paid?</summary><p>By PayPal, once your balance is over $10. Add your PayPal address on your referrals page and we send it by hand.</p></details>
+<details><summary>What if somebody refunds?</summary><p>The commission comes off your balance. You will see the refund on your list as its own line.</p></details>
+<details><summary>Can I refer myself?</summary><p>No. Your own purchases never earn, and neither does a second account of your own.</p></details>
+</div>
+</main></section>
+
+<section data-phase="referrals" hidden><main class="page">
+<h1 class="q">Your referrals</h1>
+<div class="tabs"><a href="#" class="on">Referrals</a><a href="#">Account</a></div>
+
+<div class="linkfield"><code>impromptu.talk?ref=priya</code><button class="btn btn-ghost btn-sm">Copy</button></div>
+
+<div class="stats">
+<div class="stat"><div class="n">12</div><div class="l">People</div></div>
+<div class="stat"><div class="n">3</div><div class="l">Bought</div></div>
+<div class="stat"><div class="n">$26.10</div><div class="l">Balance</div></div>
+</div>
+<p class="empty">Earned $31.10 in all, $5.00 already paid out.</p>
+
+<h2 class="h2">Activity</h2>
+<ul class="list">
+<li><span class="when">7 Sep</span><span class="what">Lifetime bought</span><span class="amt">+$11.70</span></li>
+<li><span class="when">6 Sep</span><span class="what">New account</span><span class="amt"></span></li>
+<li><span class="when">4 Sep</span><span class="what">30 day pass, refunded</span><span class="amt minus">-$2.70</span></li>
+<li><span class="when">2 Sep</span><span class="what">Annual bought</span><span class="amt">+$8.70</span></li>
+<li><span class="when">1 Sep</span><span class="what">New account</span><span class="amt"></span></li>
+</ul>
+
+<div class="card"><h3>Where we send it</h3><p class="sub">PayPal, once your balance is over $10. We send it by hand, so allow a few days.</p>
+<input type="email" value="priya@paypal.com">
+<div class="cardfoot"><span>Only used for payouts.</span><button class="btn btn-primary btn-sm">Save</button></div></div>
+
+<h2 class="h2">Paid out</h2>
+<ul class="list">
+<li><span class="when">1 Sep</span><span class="what">PayPal &middot; ref 8KQ21P</span><span class="amt">$5.00</span></li>
+</ul>
+</main></section>
+
+<section data-phase="empty" hidden><main class="page">
+<h1 class="q">Your referrals</h1>
+<div class="tabs"><a href="#" class="on">Referrals</a><a href="#">Account</a></div>
+<div class="linkfield"><code>impromptu.talk?ref=priya</code><button class="btn btn-ghost btn-sm">Copy</button></div>
+<div class="stats">
+<div class="stat"><div class="n">0</div><div class="l">People</div></div>
+<div class="stat"><div class="n">0</div><div class="l">Bought</div></div>
+<div class="stat"><div class="n">$0.00</div><div class="l">Balance</div></div>
+</div>
+<p class="empty">Nothing yet. Send the link to one person who talks for a living.</p>
+<div class="card"><h3>Where we send it</h3><p class="sub">PayPal, once your balance is over $10. Add it whenever; nothing is sent before then.</p>
+<input type="email" placeholder="you@example.com">
+<div class="cardfoot"><span>Only used for payouts.</span><button class="btn btn-primary btn-sm">Save</button></div></div>
+</main></section>
+
+<footer class="foot"><div class="foot-grid">
+<div><span class="wordmark"><svg class="die" viewBox="0 0 32 32" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4.6 26.4 10.6 26.4 21.4 16 27.4 5.6 21.4 5.6 10.6z"/><path d="M5.6 10.6 16 16 26.4 10.6M16 16v11.4"/></g><g fill="currentColor"><circle cx="16" cy="10.45" r="1.5"/><circle cx="8.9" cy="15.55" r="1.5"/><circle cx="12.71" cy="22.15" r="1.5"/><circle cx="21.2" cy="18.85" r="1.5"/><circle cx="23.11" cy="15.55" r="1.5"/><circle cx="19.29" cy="22.15" r="1.5"/></g></svg><span class="name">impromptu<span>.talk</span></span></span><p style="margin:10px 0 6px;max-width:32ch">A random topic, a minute to think, a minute to talk.</p></div>
+<div class="foot-col"><b>Product</b><a href="#">All genres</a><a href="#">Your genres</a><a href="#">Pro</a></div>
+<div class="foot-col"><b>Company</b><a href="#">About us</a><a href="#">Contact us</a><a href="#">Affiliates</a></div>
+<div class="foot-col"><b>Legal</b><a href="#">Privacy policy</a><a href="#">Terms and conditions</a><a href="#">Refund policy</a></div></div></footer>
+</div>
+<script>
+const root=document.documentElement;
+function show(id){document.querySelectorAll('[data-phase]').forEach(s=>s.hidden=s.dataset.phase!==id);
+document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('on',b.dataset.tab===id));}
+function theme(t){root.dataset.theme=t;document.querySelectorAll('[data-theme-set]').forEach(b=>b.classList.toggle('on',b.dataset.themeSet===t));}
+function width(w){document.body.classList.toggle('phone',w==='phone');document.querySelectorAll('[data-width]').forEach(b=>b.classList.toggle('on',b.dataset.width===w));}
+function notes(){const n=document.querySelector('.notes');n.hidden=!n.hidden;document.querySelector('[data-notes]').classList.toggle('on',!n.hidden);}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-tab],[data-theme-set],[data-width],[data-notes]');if(!t)return;
+if(t.dataset.tab)show(t.dataset.tab);if(t.dataset.themeSet)theme(t.dataset.themeSet);if(t.dataset.width)width(t.dataset.width);if(t.hasAttribute('data-notes'))notes();});
+theme(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+</script>
+</body></html>
