@@ -35,6 +35,7 @@ describe("the sign-in form", () => {
     expect(JSON.parse(String(sent.mock.calls[0][1]?.body))).toEqual({
       email: "priya@example.com",
       password: "correct horse battery",
+      recaptcha_token: "",
     });
     expect(push).toHaveBeenCalledWith("/streak");
     expect(refresh).toHaveBeenCalled();
@@ -70,6 +71,7 @@ describe("the sign-up form", () => {
       name: "Priya",
       email: "priya@example.com",
       password: "correct horse battery",
+      recaptcha_token: "",
     });
     expect(push).toHaveBeenCalledWith("/pro");
   });

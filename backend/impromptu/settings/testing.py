@@ -34,3 +34,8 @@ RATELIMIT_STORAGE_URI = "memory://"
 # developer's .env holds.
 GOOGLE_CLIENT_ID = ""
 GOOGLE_CLIENT_SECRET = ""
+
+# Blank, so no test needs a captcha token whatever a developer's .env
+# holds; `recaptcha.human()` passes everything when unset.
+RECAPTCHA_SITE_KEY = ""
+RECAPTCHA_SECRET_KEY = ""

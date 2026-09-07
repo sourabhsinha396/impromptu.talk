@@ -90,6 +90,15 @@ def test_the_referral_cookie_names_who_sent_them_once_and_a_dead_code_is_ignored
     assert second.referred_by == priya
 
 
+def test_an_untipped_captcha_refuses_the_signup_and_writes_nothing(client, db, settings):
+    settings.RECAPTCHA_SITE_KEY = "site"
+    settings.RECAPTCHA_SECRET_KEY = "secret"
+    response = signup(client)
+    assert response.status_code == 400
+    assert response.json() == {"detail": "Confirm you're not a robot."}
+    assert not User.objects.exists()
+
+
 def test_the_sixth_signup_from_one_address_in_an_hour_is_refused(client, db):
     for n in range(5):
         assert signup(client, email=f"speaker{n}@example.com").status_code == 201

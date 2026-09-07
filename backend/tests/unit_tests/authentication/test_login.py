@@ -57,6 +57,15 @@ def test_the_sixth_try_on_one_account_is_refused_even_with_the_right_password(cl
     assert settings.SESSION_COOKIE_NAME not in client.cookies
 
 
+def test_an_untipped_captcha_refuses_the_login(client, user, settings):
+    settings.RECAPTCHA_SITE_KEY = "site"
+    settings.RECAPTCHA_SECRET_KEY = "secret"
+    response = login(client)
+    assert response.status_code == 400
+    assert response.json() == {"detail": "Confirm you're not a robot."}
+    assert settings.SESSION_COOKIE_NAME not in client.cookies
+
+
 def test_the_account_window_is_the_typed_address_not_the_caller(client, user):
     """Five tries on one account do not lock a neighbour out of theirs."""
     for _ in range(5):

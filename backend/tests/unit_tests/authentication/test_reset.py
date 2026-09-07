@@ -93,6 +93,15 @@ def test_a_google_only_row_gains_a_password_by_mail(client, db):
     assert signed_in.status_code == 200
 
 
+def test_an_untipped_captcha_refuses_the_ask_and_sends_no_mail(client, user, settings):
+    settings.RECAPTCHA_SITE_KEY = "site"
+    settings.RECAPTCHA_SECRET_KEY = "secret"
+    response = ask(client)
+    assert response.status_code == 400
+    assert response.json() == {"detail": "Confirm you're not a robot."}
+    assert mail.outbox == []
+
+
 def test_the_fourth_ask_for_one_address_in_an_hour_is_refused(client, user):
     for _ in range(3):
         assert ask(client).status_code == 204

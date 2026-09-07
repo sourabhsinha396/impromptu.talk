@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { type FormEvent, useState } from "react";
 
 import { Alert, Field, submit } from "@/components/auth/form";
+import { useRecaptcha } from "@/components/auth/recaptcha";
 import { Button } from "@/components/site/button";
 import { Input } from "@/components/ui/input";
 
@@ -14,6 +15,7 @@ export function SignupForm({ next }: { next: string }) {
   const router = useRouter();
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const recaptcha = useRecaptcha();
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -24,12 +26,14 @@ export function SignupForm({ next }: { next: string }) {
       name: form.get("name"),
       email: form.get("email"),
       password: form.get("password"),
+      recaptcha_token: recaptcha.token,
     });
     if (sentence === null) {
       router.push(next);
       router.refresh();
       return;
     }
+    recaptcha.reset();
     setError(sentence);
     setBusy(false);
   }
@@ -46,6 +50,7 @@ export function SignupForm({ next }: { next: string }) {
       <Field id="password" label="Password" aside="8 or more characters">
         <Input id="password" name="password" type="password" autoComplete="new-password" />
       </Field>
+      {recaptcha.widget}
       <Button type="submit" size="lg" disabled={busy} className="w-full">
         Create account
       </Button>

@@ -9,6 +9,7 @@ from apps.authentication import google as google_auth
 from apps.authentication import services
 from apps.authentication.schemas import ForgotIn, LoginIn, MeOut, ResetIn, SignupIn
 from apps.authentication.security import session_auth
+from apps.common import recaptcha
 from apps.common.devices import rotate_device
 from apps.common.ratelimit import throttle
 from apps.common.referrals import referral_code
@@ -38,6 +39,8 @@ def me(request):
 def signup(request, payload: SignupIn):
     """One row, signed in, the referral cookie spent. The Slack signup
     event joins here on card 27, after the row commits."""
+    if not recaptcha.human(payload.recaptcha_token):
+        raise HttpError(400, services.NOT_HUMAN)
     user = services.signup(
         email=payload.email, password=payload.password, name=payload.name, referral_code=referral_code(request)
     )
@@ -52,6 +55,8 @@ def signup(request, payload: SignupIn):
 @throttle("login-address", "10/15minute")
 @throttle("login-email", "5/15minute", key=lambda request, **kwargs: services.normalize_email(kwargs["payload"].email))
 def login(request, payload: LoginIn):
+    if not recaptcha.human(payload.recaptcha_token):
+        raise HttpError(400, services.NOT_HUMAN)
     user = services.authenticate(request, email=payload.email, password=payload.password)
     dj_login(request, user)
     return user
@@ -138,6 +143,8 @@ def google_callback(request, code: str = "", state: str = "", error: str = ""):
 @throttle("forgot-address", "5/hour")
 @throttle("forgot-email", "3/hour", key=lambda request, **kwargs: services.normalize_email(kwargs["payload"].email))
 def forgot(request, payload: ForgotIn):
+    if not recaptcha.human(payload.recaptcha_token):
+        raise HttpError(400, services.NOT_HUMAN)
     services.request_reset(payload.email)
     return Status(204, None)
 

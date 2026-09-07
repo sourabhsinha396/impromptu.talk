@@ -22,7 +22,7 @@ describe("the forgot form", () => {
     render(<ForgotForm />);
     await userEvent.type(screen.getByLabelText("Email"), "priya@example.com");
     await userEvent.click(screen.getByRole("button", { name: "Send the link" }));
-    expect(JSON.parse(String(sent.mock.calls[0][1]?.body))).toEqual({ email: "priya@example.com" });
+    expect(JSON.parse(String(sent.mock.calls[0][1]?.body))).toEqual({ email: "priya@example.com", recaptcha_token: "" });
     expect(await screen.findByRole("status")).toHaveTextContent("If that address has an account, a link is on its way.");
     expect(screen.getByLabelText("Email")).toHaveValue("priya@example.com");
   });

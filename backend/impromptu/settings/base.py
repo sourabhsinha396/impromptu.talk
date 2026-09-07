@@ -135,6 +135,14 @@ DEFAULT_FROM_EMAIL = f"{SITE_NAME} <{os.environ.get('MAIL_FROM_ADDRESS') or 'no-
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", "").strip()
 GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", "").strip()
 
+# reCAPTCHA v2, on the open forms (signup, login, forgot). Fails open,
+# unlike Google above: an unreachable verifier degrades to the site as it
+# was before the captcha existed, rather than refusing every signup
+# because Google is having a day. Both empty is the supported off state;
+# `apps/common/recaptcha.py` reads the pair together.
+RECAPTCHA_SITE_KEY = os.environ.get("RECAPTCHA_SITE_KEY", "").strip()
+RECAPTCHA_SECRET_KEY = os.environ.get("RECAPTCHA_SECRET_KEY", "").strip()
+
 # A reset link lives an hour. Django's token needs no table: it is signed
 # over the password hash and the last sign-in, so it dies the moment
 # either changes, which is what a reset does.

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { type FormEvent, useState } from "react";
 
 import { Alert, Field, FieldLink, submit } from "@/components/auth/form";
+import { useRecaptcha } from "@/components/auth/recaptcha";
 import { Button } from "@/components/site/button";
 import { Input } from "@/components/ui/input";
 
@@ -14,13 +15,18 @@ export function LoginForm({ next }: { next: string }) {
   const router = useRouter();
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const recaptcha = useRecaptcha();
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setBusy(true);
     setError("");
     const form = new FormData(event.currentTarget);
-    const sentence = await submit("/api/v1/auth/login", { email: form.get("email"), password: form.get("password") });
+    const sentence = await submit("/api/v1/auth/login", {
+      email: form.get("email"),
+      password: form.get("password"),
+      recaptcha_token: recaptcha.token,
+    });
     if (sentence === null) {
       /* Refresh as well as push: the header and the footer were rendered
          for a stranger, and the session cookie has just changed that. */
@@ -28,6 +34,7 @@ export function LoginForm({ next }: { next: string }) {
       router.refresh();
       return;
     }
+    recaptcha.reset();
     setError(sentence);
     setBusy(false);
   }
@@ -41,6 +48,7 @@ export function LoginForm({ next }: { next: string }) {
       <Field id="password" label="Password" aside={<FieldLink href="/forgot">Forgotten?</FieldLink>}>
         <Input id="password" name="password" type="password" autoComplete="current-password" />
       </Field>
+      {recaptcha.widget}
       <Button type="submit" size="lg" disabled={busy} className="w-full">
         Sign in
       </Button>

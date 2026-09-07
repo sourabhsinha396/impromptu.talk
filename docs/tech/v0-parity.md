@@ -2,7 +2,7 @@
 
 The acceptance list for the board. Every route and every behaviour v0 had, with the v1 card that carries it and a tick once it has landed on `main`. Nothing on this list may be quietly dropped; a line that v1 changes on purpose says so and points at `DECISIONS.md`.
 
-Ticked as of 2026-09-07, after cards 01 to 21.
+Ticked as of 2026-09-07, after cards 01 to 22.
 
 ## Routes
 
@@ -50,7 +50,7 @@ Ticked as of 2026-09-07, after cards 01 to 21.
 - [x] Rate limiting, sliding window, keyed by address behind one trusted hop and by identity, 429 with Retry-After (03; per-route rates land with 15, 19, 20, 26)
 - [x] CSRF: API exempt behind the first-party rewrite, admin protected, pinned by strict client (03)
 - [x] `/account`, `/packs`, `/affiliate/referrals` gated on the cookie by the proxy; `/administration` left to 404 (03)
-- [ ] reCAPTCHA fails open (22)
+- [x] reCAPTCHA fails open (22)
 - [x] Google sign-in fails closed (21)
 - [ ] Slack logs instead of posting without a webhook (27)
 
@@ -128,7 +128,7 @@ Ticked as of 2026-09-07, after cards 01 to 21.
 - [ ] Slack `signup` after commit (19, 27)
 - [x] Password reset: one hour, ends every session; mail via the provider, console elsewhere (20). Every link in the hour works until one is used, `DECISIONS.md`
 - [x] Google: second door, fails closed, links a verified address, `google_sub` first, no placeholder password, `?next=` in the signed state (21)
-- [ ] reCAPTCHA v2 on signup, login, forgot; public key only when both keys are set (22)
+- [x] reCAPTCHA v2 on signup, login, forgot; public key only when both keys are set (22)
 - [ ] `/account` sections: account, email, subscription; `/account/additional`: accent (Pro), sessions (23)
 - [x] Nothing on the site raises `is_staff` or `is_superuser`, pinned (19)
 
