@@ -46,6 +46,18 @@ def start(user) -> str:
     return user.share_token
 
 
+def stop(user) -> None:
+    """Turn sharing off. The token is cleared, so the link somebody was
+    sent stops working the moment the switch moves, and sharing again
+    mints a new one. The alternative was parking the token and handing
+    the same link back, which would have quietly let everybody holding
+    the old one back in the second sharing was turned on again: an off
+    switch has to mean the URL you already sent is dead."""
+    if user.share_token:
+        user.share_token = None
+        user.save(update_fields=["share_token"])
+
+
 def owner(token: str):
     """Whose page this is, or None. An empty token would otherwise match
     every account that has never shared, so it is refused before the

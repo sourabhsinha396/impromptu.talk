@@ -34,9 +34,11 @@ class UserFactory(DjangoModelFactory):
 
     @factory.post_generation
     def password(obj, create, extracted, **kwargs):
-        # None keeps the unusable password a Google-only row has; a test that
-        # wants one passes it, and the rest get the shared one.
-        obj.set_password(PASSWORD if extracted is None else extracted)
+        # `password=""` asks for the unusable password a Google-only row
+        # has: factory_boy cannot tell `password=None` from an argument
+        # nobody passed, so blank is the way to say it. A test that wants
+        # a particular one passes it, and the rest get the shared one.
+        obj.set_password(PASSWORD if extracted is None else (extracted or None))
         if create:
             obj.save()
 

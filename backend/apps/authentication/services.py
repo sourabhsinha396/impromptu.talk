@@ -32,6 +32,7 @@ NOT_AN_ADDRESS = "That does not look like an email address."
 TOO_SHORT = f"Use at least {MIN_PASSWORD} characters."
 LINK_DEAD = "That link has expired or has already been used."
 NOT_HUMAN = "Confirm you're not a robot."
+WRONG_PASSWORD = "That is not your current password."
 
 
 def normalize_email(email: str) -> str:
@@ -186,6 +187,61 @@ def reset_password(token: str, password: str) -> User:
     user = reset_user(token)
     if user is None:
         raise HttpError(400, LINK_DEAD)
+    if len(password) < MIN_PASSWORD:
+        raise HttpError(400, TOO_SHORT)
+    user.set_password(password)
+    user.save(update_fields=["password"])
+    end_all_sessions(user)
+    return user
+
+
+# What the account can change about itself. The colour, the name and the
+# password are the three things settings owns; everything else on these
+# pages belongs to another card's domain and is read, not written, here.
+
+# The six in the palette, and the same six as lib/palette.ts and the
+# [data-accent] rules in globals.css. Duplicated across the two languages
+# because it is product policy on both sides of the wire, not config.
+ACCENTS = ("lime", "amber", "coral", "magenta", "violet", "cyan")
+
+
+def valid_accent(slug: str) -> str:
+    """One of the six, or blank for the default. Unknown is the default
+    rather than a refusal, as v0 did with its icon and format validators:
+    this value is rendered into an attribute on <html>, so the one thing
+    it must never be is whatever somebody typed."""
+    return slug if slug in ACCENTS else ""
+
+
+def set_name(user: User, name: str) -> User:
+    """What we call somebody. Blank is allowed and means no name: the
+    field is optional at signup, and clearing it has to be possible or
+    a name typed once could never be taken back."""
+    user.name = tidy_name(name)
+    user.save(update_fields=["name"])
+    return user
+
+
+def set_accent(user: User, slug: str) -> User:
+    user.accent = valid_accent(slug)
+    user.save(update_fields=["accent"])
+    return user
+
+
+def change_password(user: User, *, current: str, password: str) -> User:
+    """Set a new password, and end every other browser's session.
+
+    A row with a password confirms the old one first: this session is
+    already open, so without that check a borrowed laptop is a taken
+    account. A Google-only row has none to confirm and is not asked for
+    one it could never supply; setting one here is how it gains a second
+    way in, and Google keeps working.
+
+    The caller signs this browser back in, because `end_all_sessions`
+    cannot know which of the rows it deletes is the one asking.
+    """
+    if user.has_usable_password() and not user.check_password(current):
+        raise HttpError(400, WRONG_PASSWORD)
     if len(password) < MIN_PASSWORD:
         raise HttpError(400, TOO_SHORT)
     user.set_password(password)

@@ -7,7 +7,17 @@ from ninja.errors import HttpError
 
 from apps.authentication import google as google_auth
 from apps.authentication import services
-from apps.authentication.schemas import ForgotIn, LoginIn, MeOut, ResetIn, SignupIn
+from apps.authentication.schemas import (
+    AccentIn,
+    AccountOut,
+    ForgotIn,
+    LoginIn,
+    MeOut,
+    NameIn,
+    PasswordIn,
+    ResetIn,
+    SignupIn,
+)
 from apps.authentication.security import session_auth
 from apps.common import recaptcha
 from apps.common.devices import rotate_device
@@ -165,5 +175,52 @@ def reset(request, payload: ResetIn):
     they hold the address and chosen a password, and a login form after
     that protects nobody. Every other session ended in the service."""
     user = services.reset_password(payload.token, payload.password)
+    dj_login(request, user)
+    return user
+
+
+# Settings. Four routes behind the session, one per thing the account can
+# change about itself, each answering the shape the page already holds so
+# nothing has to be re-fetched to redraw one card.
+
+
+@api.get("/account", auth=session_auth, response=AccountOut)
+def account(request):
+    """Everything the two settings pages draw. One call rather than the
+    page assembling itself out of /me and the streak's history, which
+    would fetch a year of runs to learn whether a switch is on."""
+    user = request.auth
+    return {
+        "email": user.email,
+        "name": user.name,
+        "accent": user.accent,
+        "has_password": user.has_usable_password(),
+        "share_token": user.share_token,
+    }
+
+
+@api.patch("/name", auth=session_auth, response=MeOut)
+def set_name(request, payload: NameIn):
+    return services.set_name(request.auth, payload.name)
+
+
+@api.patch("/accent", auth=session_auth, response=MeOut)
+def set_accent(request, payload: AccentIn):
+    """The colour is Pro's to keep once there is a Pro to buy (card 24).
+    Everything is free right now, so every account saves one."""
+    return services.set_accent(request.auth, payload.accent)
+
+
+@api.post("/password", auth=session_auth, response=MeOut)
+# Per account, and low: this route checks a secret, so it is a guessing
+# surface even behind a session, and nobody changes their password twice
+# in a morning.
+@throttle("password", "10/hour", key=lambda request, **kwargs: str(request.auth.pk))
+def set_password(request, payload: PasswordIn):
+    """Change the password, or set the first one on a Google-only row.
+    Every other browser is signed out; this one is signed back in on the
+    spot, so the person who just proved they hold the account is not the
+    one it locks out."""
+    user = services.change_password(request.auth, current=payload.current, password=payload.password)
     dj_login(request, user)
     return user

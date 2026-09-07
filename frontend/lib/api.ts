@@ -21,7 +21,28 @@ export async function backendFetch(path: string, init: RequestInit = {}) {
 
 /* `is_pro` arrives with the entitlement card; until then it is absent, and
    absent reads as not Pro, which is true of every account today. */
-export type SessionUser = { email: string; name: string; is_superuser: boolean; is_pro?: boolean };
+export type SessionUser = { email: string; name: string; is_superuser: boolean; accent: string; is_pro?: boolean };
+
+/** Everything the two settings pages draw, in one call. Null when the
+    backend is unreachable or the session has gone, which the page turns
+    into the sign-in redirect the proxy would have made. */
+export type AccountSettings = {
+  email: string;
+  name: string;
+  accent: string;
+  has_password: boolean;
+  share_token: string | null;
+};
+
+export async function accountSettings(): Promise<AccountSettings | null> {
+  try {
+    const response = await backendFetch("/api/v1/auth/account");
+    if (!response.ok) return null;
+    return (await response.json()) as AccountSettings;
+  } catch {
+    return null;
+  }
+}
 
 /** The account behind the session, or null for a stranger. Null too when
     the backend is unreachable: the page still renders, in its signed-out

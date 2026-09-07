@@ -2,7 +2,7 @@
 
 The acceptance list for the board. Every route and every behaviour v0 had, with the v1 card that carries it and a tick once it has landed on `main`. Nothing on this list may be quietly dropped; a line that v1 changes on purpose says so and points at `DECISIONS.md`.
 
-Ticked as of 2026-09-07, after cards 01 to 22.
+Ticked as of 2026-09-07, after cards 01 to 23.
 
 ## Routes
 
@@ -23,7 +23,7 @@ Ticked as of 2026-09-07, after cards 01 to 22.
 | (none: page context) | `GET /api/v1/auth/me` | 05 | [x] |
 | `GET /login/google`, callback | same | 21 | [x] |
 | `GET`/`POST /forgot`, `GET`/`POST /reset/{token}` | `/forgot`, `/reset/[token]`, `POST /api/v1/auth/forgot`, `GET`/`POST /api/v1/auth/reset` | 20 | [x] |
-| `GET /account`, `POST /account/name`, `/password`, `/sessions`, `/accent` | `/account`, `/account/additional`, `PATCH`/`POST` under `v1/auth` | 23 | [ ] `POST /api/v1/auth/logout/everywhere` landed with 19; the pages and the rest per 23 |
+| `GET /account`, `POST /account/name`, `/password`, `/sessions`, `/accent` | `/account`, `/account/additional-settings`, `GET /api/v1/auth/account`, `PATCH /name`, `PATCH /accent`, `POST /password` | 23 | [x] The path is `additional-settings`, `DECISIONS.md`. The subscription section says "Everything is free right now" until 24 to 26; the affiliate section waits for the code's minting on 31 |
 | `POST /account/billing` (portal) | `/api/v1/payments/portal` | 26 | [ ] |
 | `GET /pro`, `POST /pro` (currency) | `/pro` | 25 | [ ] |
 | `POST /pro/checkout`, `GET /pro/done` | `/api/v1/payments/checkout`, `/pro/done` | 26 | [ ] |
@@ -129,7 +129,7 @@ Ticked as of 2026-09-07, after cards 01 to 22.
 - [x] Password reset: one hour, ends every session; mail via the provider, console elsewhere (20). Every link in the hour works until one is used, `DECISIONS.md`
 - [x] Google: second door, fails closed, links a verified address, `google_sub` first, no placeholder password, `?next=` in the signed state (21)
 - [x] reCAPTCHA v2 on signup, login, forgot; public key only when both keys are set (22)
-- [ ] `/account` sections: account, email, subscription; `/account/additional`: accent (Pro), sessions (23)
+- [x] `/account` sections: subscription, colour; `/account/additional-settings`: name, email, password, sharing, sessions, closing (23). Purchases and the portal land with 24 to 26, the affiliate section with 31, and Save on the colour narrows to Pro with 24
 - [x] Nothing on the site raises `is_staff` or `is_superuser`, pinned (19)
 
 ### Pro

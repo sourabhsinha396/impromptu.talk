@@ -70,3 +70,26 @@ def test_it_names_bank_topics_with_their_links_and_never_a_line_they_wrote_thems
 def test_a_token_nobody_holds_is_a_page_that_never_existed(db):
     assert Client().get(f"{RUNS}/shared/nobody").status_code == 404
     assert sharing.owner("") is None
+
+
+def test_turning_sharing_off_kills_the_link_and_sharing_again_makes_a_new_one(auth_client, user, db):
+    run(auth_client)
+    first = auth_client.post(f"{RUNS}/share").json()["token"]
+    assert auth_client.delete(f"{RUNS}/share").status_code == 204
+    user.refresh_from_db()
+    assert user.share_token is None
+    # The link somebody was already sent has to stop working the moment
+    # the switch moves, or the switch is decoration.
+    assert auth_client.get(f"{RUNS}/shared/{first}").status_code == 404
+    # And sharing again is a new page, not the old one handed back to
+    # everybody still holding the first link.
+    assert auth_client.post(f"{RUNS}/share").json()["token"] != first
+
+
+def test_turning_sharing_off_twice_is_not_an_error(auth_client, user, db):
+    assert auth_client.delete(f"{RUNS}/share").status_code == 204
+    assert auth_client.delete(f"{RUNS}/share").status_code == 204
+
+
+def test_a_stranger_cannot_turn_a_link_off(client, db):
+    assert client.delete(f"{RUNS}/share").status_code == 401

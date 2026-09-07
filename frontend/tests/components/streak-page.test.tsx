@@ -78,7 +78,7 @@ describe("the streak page", () => {
       calendar: days(365, [0, 1, 2, 4, 5], [3]),
       topics: 1,
     };
-    render(<StreakPage history={pro} bank={bank} user={{ email: "p@example.com", name: "Priya", is_superuser: false, is_pro: true }} now={NOW} />);
+    render(<StreakPage history={pro} bank={bank} user={{ email: "p@example.com", name: "Priya", is_superuser: false, accent: "", is_pro: true }} now={NOW} />);
     expect(screen.getByRole("heading", { name: "Last year" })).toBeInTheDocument();
     expect(screen.getByTitle(/missed, and held/)).toBeInTheDocument();
     expect(screen.getByText(/a missed day the freeze held/)).toBeInTheDocument();
@@ -103,7 +103,7 @@ describe("the streak page", () => {
   /* A link to an empty calendar is not a thing anybody sends, and the link
      has to outlive the browser that made it. */
   it("offers a share link only to someone signed in with runs, and shows the link once it exists", () => {
-    const priya = { email: "p@example.com", name: "Priya", is_superuser: false };
+    const priya = { email: "p@example.com", name: "Priya", is_superuser: false, accent: "" };
     const { unmount } = render(<StreakPage history={free} bank={bank} user={null} now={NOW} />);
     expect(screen.queryByText("Share")).not.toBeInTheDocument();
     unmount();

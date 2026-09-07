@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { Label } from "@/components/ui/label";
+import { sendJson } from "@/lib/forms";
 
 /* The pieces the account forms share, as approved in docs/mocks/signin.html:
    one narrow column, a field with its label row, one sentence above the
@@ -82,23 +83,9 @@ export function DoorLink({ href, children }: { href: string; children: ReactNode
   );
 }
 
-const FAILED = "Something went wrong. Try again.";
-
-/** Post a form as JSON. Null when it went through; otherwise the one
-    sentence to print above the form. The backend answers every refusal a
-    person can act on with a sentence in `detail`; anything else (a 422 at
-    the edge, a dead network) gets the generic one. */
+/** Post a form as JSON, and the one sentence when it is refused. The
+    account forms' own wrapper around the shared sender, so a call site
+    here reads as "post this form" rather than naming a verb. */
 export async function submit(path: string, body: Record<string, FormDataEntryValue | null>): Promise<string | null> {
-  try {
-    const response = await fetch(path, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-    if (response.ok) return null;
-    const answer = await response.json().catch(() => null);
-    return typeof answer?.detail === "string" ? answer.detail : FAILED;
-  } catch {
-    return FAILED;
-  }
+  return sendJson("POST", path, body);
 }

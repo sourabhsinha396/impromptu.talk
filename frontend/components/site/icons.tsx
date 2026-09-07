@@ -11,6 +11,7 @@ import {
   ChevronDown,
   Clapperboard,
   Coffee,
+  Copy,
   Dices,
   Dumbbell,
   Flame,
@@ -94,6 +95,7 @@ export const AutoThemeIcon = icon(SunMoon);
 export const ChevronDownIcon = icon(ChevronDown);
 export const PlusIcon = icon(Plus);
 export const CheckIcon = icon(Check);
+export const CopyIcon = icon(Copy);
 export const CloseIcon = icon(X);
 export const SignOutIcon = icon(LogOut);
 export const PauseIcon = icon(Pause);

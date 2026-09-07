@@ -11,6 +11,7 @@ import { analyticsConfig } from "@/lib/analytics";
 import { currentUser, streakSummary } from "@/lib/api";
 import { DEVICE_COOKIE, deviceIdFrom, timezoneInit } from "@/lib/cookies";
 import { OG_IMAGE } from "@/lib/metadata";
+import { validAccent } from "@/lib/palette";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/site";
 import { themeInit } from "@/lib/theme";
 import { visitorCountry } from "@/lib/visitor";
@@ -40,7 +41,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const crispWebsiteId = process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID ?? "";
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    /* The accent is server-rendered, so the topic is the chosen colour in
+       the first paint rather than after a hydration flash. The theme
+       cannot be: it is per browser and only the pre-paint script knows it.
+       Card 24 narrows this to accounts whose Pro is live; everything is
+       free right now, so a saved colour applies. */
+    <html lang="en" data-accent={validAccent(user?.accent)} suppressHydrationWarning>
       <head>
         {/* The two latin font files are wanted on every page, for the body
             and for the topic, and the browser would not discover them until

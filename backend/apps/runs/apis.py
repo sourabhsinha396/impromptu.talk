@@ -1,5 +1,5 @@
 from django.http import Http404, HttpResponse
-from ninja import Router
+from ninja import Router, Status
 
 from apps.authentication.security import session_auth
 from apps.common.clock import request_offset
@@ -81,6 +81,15 @@ def share(request):
     account is needed because the link has to outlive the browser that
     made it; a stranger is told 401."""
     return {"token": sharing.start(request.auth)}
+
+
+@api.delete("/share", auth=session_auth, response={204: None})
+def unshare(request):
+    """Turn the public page off, from the account's additional settings.
+    The link dies at once; sharing again makes a new one. Idempotent, so
+    a second press on a slow connection is not an error."""
+    sharing.stop(request.auth)
+    return Status(204, None)
 
 
 @api.get("/shared/{token}", response=SharedOut)
