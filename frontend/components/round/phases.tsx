@@ -90,7 +90,7 @@ export function TopicPhase({
           </Button>
         )}
         <Button size="lg" variant="ghost" onClick={onSpin} aria-label="Spin for another topic">
-          <LogoMark className="size-[18px]" />
+          <LogoMark className="size-[1em]" />
           Spin
         </Button>
       </div>
@@ -228,7 +228,7 @@ export function DonePhase({
       )}
       <div className={`${ROW} ${summary ? "" : "mt-8"}`}>
         <Button size="lg" onClick={onAgain}>
-          <LogoMark className="size-[18px]" />
+          <LogoMark className="size-[1em]" />
           Spin again
         </Button>
         <Button size="lg" variant="ghost" onClick={onSame}>
