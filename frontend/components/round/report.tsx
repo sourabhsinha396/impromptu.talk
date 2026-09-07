@@ -1,6 +1,6 @@
 import { Button } from "@/components/site/button";
 import { MicIcon } from "@/components/site/icons";
-import { blocks, clock, headline, type Kind, type Report } from "@/lib/report";
+import { blocks, clock, headline, marked, type Kind, type Report } from "@/lib/report";
 
 /* The minute you just spoke, drawn.
 
@@ -19,10 +19,17 @@ export function RoundReport({ report, length }: { report: Report | "off" | null;
   // Silence, rather than an apology for a feature nobody asked for.
   if (report === "off") return null;
 
-  // Nothing yet: the run has landed and the transcriber has not. A quiet
-  // placeholder the same height as the bar, so the buttons under it do not
-  // jump when the words arrive.
-  if (!report) return <div className="h-2 w-full animate-pulse rounded-full bg-line" aria-hidden />;
+  // The run has landed and the transcriber has not. Saying so matters:
+  // an unexplained blank where a report should be reads as a feature that
+  // did not work, and this can take a few seconds.
+  if (!report) {
+    return (
+      <div className="text-center" role="status">
+        <div className="h-2 w-full animate-pulse rounded-full bg-line" />
+        <p className="mt-3 text-[13px] text-muted">Reading your round back...</p>
+      </div>
+    );
+  }
 
   if (!report.heard) {
     return <p className="text-sm text-muted">We could not hear you. Check your microphone.</p>;
@@ -59,7 +66,46 @@ export function RoundReport({ report, length }: { report: Report | "off" | null;
           You leaned on {report.crutch_words.map((crutch) => `${crutch.word} ${crutch.count}`).join(", ")}
         </p>
       )}
+
+      <Transcript report={report} />
     </div>
+  );
+}
+
+/* What you actually said, with what was counted marked in it.
+
+   Stored since the report shipped and never shown until now. Reading your
+   own minute back is the most convincing thing here after the bar, and it
+   is the only place a filler count stops being a number and becomes a
+   thing you can hear yourself doing. */
+function Transcript({ report }: { report: Report }) {
+  const parts = marked(report);
+  if (!parts.length) return null;
+  return (
+    <details className="group mt-5 text-left">
+      <summary className="cursor-pointer list-none text-center text-[12.5px] font-semibold text-muted underline underline-offset-4 hover:text-ink">
+        <span className="group-open:hidden">Read it back</span>
+        <span className="hidden group-open:inline">Hide</span>
+      </summary>
+      <p className="mt-3 rounded-card border border-line bg-card2 px-4 py-3.5 text-[13.5px] leading-relaxed text-muted">
+        {parts.map((part, index) =>
+          part.kind ? (
+            <mark
+              key={index}
+              className={
+                part.kind === "filler"
+                  ? "rounded-[3px] bg-warn/20 px-0.5 font-semibold text-ink"
+                  : "rounded-[3px] bg-accent/15 px-0.5 font-semibold text-ink"
+              }
+            >
+              {part.text}
+            </mark>
+          ) : (
+            <span key={index}>{part.text}</span>
+          ),
+        )}
+      </p>
+    </details>
   );
 }
 
@@ -80,7 +126,11 @@ const PAINT: Record<Kind, string> = {
    and not the ums, because Whisper deletes those before anybody asks and
    a zero there would be an undercount presented as a fact. */
 function numbers(report: Report): string[] {
-  const out = [`${report.pauses.length} pause${report.pauses.length === 1 ? "" : "s"}`];
+  // Not the raw pause count. A minute of ordinary speech breathes twenty
+  // times and reporting that as twenty pauses reads like an accusation
+  // while telling nobody anything; the gaps long enough for a listener to
+  // notice are the ones worth acting on.
+  const out = [`${report.awkward_pauses} long gap${report.awkward_pauses === 1 ? "" : "s"}`];
   if (report.opening_stall >= 1) out.push(`${clock(report.opening_stall)} to start`);
   if (report.pace !== null) out.push(`${report.pace} wpm`);
   if (report.fillers !== null) out.push(`${report.fillers} um`);

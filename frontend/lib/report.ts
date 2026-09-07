@@ -33,6 +33,7 @@ export type Report = {
   fillers: number | null;
   filler_rate: number | null;
   crutch_words: Crutch[];
+  filler_words: string[];
   transcript: string;
   seconds_left: number;
 };
@@ -139,4 +140,32 @@ export function headline(report: Report): string {
     return `${report.awkward_pauses} gap${many ? "s" : ""} long enough to notice.`;
   }
   return "Steady all the way through.";
+}
+
+
+export type Marked = { text: string; kind: "filler" | "crutch" | "" };
+
+/** The transcript split so the page can mark what was counted.
+
+    Reading your own minute back is the most convincing thing in the
+    report after the bar, and it is the one artifact we already store and
+    have never shown. Marking is done against the words the backend says
+    it found, rather than a copy of its lists kept here, for the same
+    reason the country ladder lives in one place: two copies of the same
+    table drift apart on the first edit. */
+export function marked(report: Report): Marked[] {
+  const text = report.transcript.trim();
+  if (!text) return [];
+  const fillers = new Set(report.filler_words.map((word) => word.toLowerCase()));
+  const crutches = new Set(report.crutch_words.map((crutch) => crutch.word.toLowerCase()));
+  // Split on word boundaries and keep the gaps, so punctuation and spacing
+  // survive: a transcript reflowed into single spaces stops reading like
+  // the thing somebody said.
+  return text.split(/([A-Za-z']+)/).flatMap<Marked>((part) => {
+    if (!part) return [];
+    const word = part.toLowerCase();
+    if (fillers.has(word)) return [{ text: part, kind: "filler" }];
+    if (crutches.has(word)) return [{ text: part, kind: "crutch" }];
+    return [{ text: part, kind: "" }];
+  });
 }

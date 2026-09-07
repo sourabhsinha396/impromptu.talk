@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { blocks, clock, headline, type Report } from "@/lib/report";
+import { blocks, clock, headline, marked, type Report } from "@/lib/report";
 
 /* The bar is the whole report: somebody sees the hole at 0:34 without
    reading a number. So what is pinned here is that it adds up - the blocks
@@ -23,6 +23,7 @@ function report(over: Partial<Report> = {}): Report {
     fillers: null,
     filler_rate: null,
     crutch_words: [],
+    filler_words: [],
     transcript: "",
     seconds_left: 300,
     ...over,
@@ -101,6 +102,30 @@ describe("headline", () => {
     // Whisper deletes fillers before anybody asks, so free rounds carry
     // null and must never be described as having none.
     expect(headline(report({ fillers: null, filler_rate: null }))).not.toMatch(/um/);
+  });
+});
+
+describe("marked", () => {
+  it("marks what was counted and leaves the rest of the sentence alone", () => {
+    const parts = marked(
+      report({ transcript: "Um, so I really think so.", filler_words: ["um"], crutch_words: [{ word: "so", count: 2 }] }),
+    );
+    expect(parts.filter((p) => p.kind === "filler").map((p) => p.text)).toEqual(["Um"]);
+    expect(parts.filter((p) => p.kind === "crutch").map((p) => p.text)).toEqual(["so", "so"]);
+    // Punctuation and spacing survive, or it stops reading like speech.
+    expect(parts.map((p) => p.text).join("")).toBe("Um, so I really think so.");
+  });
+
+  it("is nothing at all without a transcript", () => {
+    expect(marked(report())).toEqual([]);
+    expect(marked(report({ transcript: "   " }))).toEqual([]);
+  });
+
+  it("marks nothing when the transcriber could not count fillers", () => {
+    // Groq deletes them, so the backend sends no filler words and the page
+    // must not imply a clean round by marking none.
+    const parts = marked(report({ transcript: "um so we begin", filler_words: [], crutch_words: [] }));
+    expect(parts.every((p) => p.kind === "")).toBe(true);
   });
 });
 

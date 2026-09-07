@@ -126,6 +126,7 @@ class ReportOut(Schema):
     fillers: int | None = None
     filler_rate: float | None = None
     crutch_words: list[CrutchOut] = []
+    filler_words: list[str] = []
     transcript: str = ""
 
     # Seconds of transcription left this calendar month, so the page can

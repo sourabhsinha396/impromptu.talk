@@ -117,6 +117,7 @@ def make(
                 row.fillers = spoken.fillers
                 row.filler_rate = spoken.filler_rate
                 row.crutch_words = [list(pair) for pair in spoken.crutch_words]
+                row.filler_words = list(spoken.filler_words)
 
     row.save()
     return row
@@ -165,6 +166,10 @@ def render(row: Report, *, pro: bool = False) -> dict:
         "fillers": row.fillers if row.provider == transcribe.ASSEMBLYAI else None,
         "filler_rate": row.filler_rate if row.provider == transcribe.ASSEMBLYAI else None,
         "crutch_words": [{"word": word, "count": count} for word, count in row.crutch_words],
+        # Only where a filler count is honest, for the same reason: Whisper
+        # deletes them, so marking none in a Groq transcript would read as
+        # a clean round rather than an uncounted one.
+        "filler_words": row.filler_words if row.provider == transcribe.ASSEMBLYAI else [],
         "transcript": row.transcript,
         "seconds_left": left(row.run.device_id, row.run.user, pro),
     }

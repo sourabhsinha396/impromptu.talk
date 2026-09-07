@@ -245,6 +245,13 @@ export function DonePhase({
           Same topic
         </Button>
       </div>
+      {/* Under the buttons, not above them. Spin again is what somebody
+          came back for and it stays where the eye lands; the report reads
+          downward from there and has room to grow without ever pushing the
+          round out of reach. */}
+      <div className="mx-auto mt-10 w-full max-w-[640px]">
+        <RoundReport report={report} length={spokenSeconds} />
+      </div>
       {!signedIn && (
         <p className="mt-6 max-w-[44ch] text-sm text-muted">
           Your streak lives in this browser.{" "}

@@ -140,6 +140,10 @@ class Words:
     fillers: int
     filler_rate: float
     crutch_words: tuple[tuple[str, int], ...]
+    # Which fillers turned up, so a page can mark them in the transcript
+    # without keeping a second copy of FILLERS in another language. The
+    # same argument that kept the country ladder in one place.
+    filler_words: tuple[str, ...]
 
 
 @dataclass(frozen=True)
@@ -260,6 +264,7 @@ def words(transcript: str, speaking_seconds: float) -> Words | None:
 
     minutes = speaking_seconds / 60 if speaking_seconds > 0 else 0.0
     return Words(
+        filler_words=tuple(sorted({token for token in tokens if token in FILLERS})),
         count=len(spoken_words),
         pace=round(len(spoken_words) / minutes) if minutes else 0,
         fillers=fillers,

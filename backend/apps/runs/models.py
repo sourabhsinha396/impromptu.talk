@@ -104,6 +104,7 @@ class Report(models.Model):
     fillers = models.PositiveIntegerField(default=0)
     filler_rate = models.FloatField(default=0)
     crutch_words = models.JSONField(default=list)
+    filler_words = models.JSONField(default=list)
 
     created_at = models.DateTimeField(default=timezone.now, db_index=True)
 
