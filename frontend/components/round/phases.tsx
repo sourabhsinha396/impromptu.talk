@@ -44,7 +44,10 @@ function Reset({ onReset, label = "Reset" }: { onReset: () => void; label?: stri
   );
 }
 
-const ROW = "flex flex-wrap items-center justify-center gap-3";
+/* One height for every button in a row led by the xl primary: three heights
+   in one row read as three unrelated things, one height reads as one choice
+   with a default. The primary keeps its width and its larger type. */
+const ROW = "flex flex-wrap items-center justify-center gap-3 *:min-h-[54px]";
 
 export function TopicPhase({
   topic,

@@ -27,10 +27,13 @@ const VARIANTS: Record<Variant, string> = {
 
 /* Three sizes and a square. xl is the round's own button, wide enough to
    be the obvious thing on a screen filmed from across a room. */
+/* Each size names its line-height too: a text utility carries its own,
+   and it would beat the base's `leading-none` and quietly add ten pixels
+   to the xl button, which is the one whose height every row copies. */
 const SIZES: Record<Size, string> = {
-  sm: "px-3.5 py-2 text-[13.5px]",
-  md: "px-6 py-3 text-base",
-  xl: "px-[46px] py-[17px] text-lg",
+  sm: "px-3.5 py-2 text-[13.5px]/none",
+  md: "px-6 py-3 text-base/none",
+  xl: "px-[46px] py-[17px] text-lg/none",
   icon: "p-3",
 };
 
