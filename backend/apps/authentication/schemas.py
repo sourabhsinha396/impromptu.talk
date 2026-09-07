@@ -29,3 +29,14 @@ class SignupIn(Schema):
 class LoginIn(Schema):
     email: str = Field(max_length=254)
     password: str = Field(max_length=128)
+
+
+class ForgotIn(Schema):
+    email: str = Field(max_length=254)
+
+
+class ResetIn(Schema):
+    # Longer than a token can be and shorter than anything a script would
+    # try; the shape is checked by Django's own generator.
+    token: str = Field(max_length=200)
+    password: str = Field(max_length=128)

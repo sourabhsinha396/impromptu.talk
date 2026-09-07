@@ -21,6 +21,9 @@ DATABASES = {
 }
 
 PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
+# Blank, so no test can reach the provider whatever a developer's .env
+# holds; the in-memory backend is what the suite reads mail off.
+BREVO_API_KEY = ""
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 
 # Pinned to memory so a developer's .env can never point a test run at a

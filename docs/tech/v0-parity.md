@@ -2,7 +2,7 @@
 
 The acceptance list for the board. Every route and every behaviour v0 had, with the v1 card that carries it and a tick once it has landed on `main`. Nothing on this list may be quietly dropped; a line that v1 changes on purpose says so and points at `DECISIONS.md`.
 
-Ticked as of 2026-09-07, after cards 01 to 19.
+Ticked as of 2026-09-07, after cards 01 to 20.
 
 ## Routes
 
@@ -22,7 +22,7 @@ Ticked as of 2026-09-07, after cards 01 to 19.
 | `GET`/`POST /login`, `POST /logout` | `/login`, `POST /api/v1/auth/login`, `POST /api/v1/auth/logout` | 19 | [x] |
 | (none: page context) | `GET /api/v1/auth/me` | 05 | [x] |
 | `GET /login/google`, callback | same | 21 | [ ] |
-| `GET`/`POST /forgot`, `GET`/`POST /reset/{token}` | `/forgot`, `/reset/[token]` and their endpoints | 20 | [ ] |
+| `GET`/`POST /forgot`, `GET`/`POST /reset/{token}` | `/forgot`, `/reset/[token]`, `POST /api/v1/auth/forgot`, `GET`/`POST /api/v1/auth/reset` | 20 | [x] |
 | `GET /account`, `POST /account/name`, `/password`, `/sessions`, `/accent` | `/account`, `/account/additional`, `PATCH`/`POST` under `v1/auth` | 23 | [ ] `POST /api/v1/auth/logout/everywhere` landed with 19; the pages and the rest per 23 |
 | `POST /account/billing` (portal) | `/api/v1/payments/portal` | 26 | [ ] |
 | `GET /pro`, `POST /pro` (currency) | `/pro` | 25 | [ ] |
@@ -126,7 +126,7 @@ Ticked as of 2026-09-07, after cards 01 to 19.
 - [x] Device claim on every door through the login signal; the collision case keeps both histories (15, 19)
 - [x] Referral attributed at signup and frozen (19); the code is minted on 31
 - [ ] Slack `signup` after commit (19, 27)
-- [ ] Password reset: one hour, newest only, ends every session; mail via the provider, console elsewhere (20)
+- [x] Password reset: one hour, ends every session; mail via the provider, console elsewhere (20). Every link in the hour works until one is used, `DECISIONS.md`
 - [ ] Google: second door, fails closed, links a verified address, `google_sub` first, no placeholder password, `?next=` in the signed state (21)
 - [ ] reCAPTCHA v2 on signup, login, forgot; public key only when both keys are set (22)
 - [ ] `/account` sections: account, email, subscription; `/account/additional`: accent (Pro), sessions (23)

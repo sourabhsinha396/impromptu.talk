@@ -1,9 +1,10 @@
 from django.contrib.auth import login as dj_login
 from django.contrib.auth import logout as dj_logout
 from ninja import Router, Status
+from ninja.errors import HttpError
 
 from apps.authentication import services
-from apps.authentication.schemas import LoginIn, MeOut, SignupIn
+from apps.authentication.schemas import ForgotIn, LoginIn, MeOut, ResetIn, SignupIn
 from apps.authentication.security import session_auth
 from apps.common.devices import rotate_device
 from apps.common.ratelimit import throttle
@@ -70,3 +71,37 @@ def logout_everywhere(request):
     dj_logout(request)
     rotate_device(request)
     return Status(204, None)
+
+
+# Password reset. The asking route answers 204 whatever it found, because
+# any way of telling "we mailed somebody" from "we did not" turns the
+# form into an account oracle. The reset page must not leak the token
+# through a Referer header; the frontend sends no-referrer on it.
+
+
+@api.post("/forgot", response={204: None})
+@throttle("forgot-address", "5/hour")
+@throttle("forgot-email", "3/hour", key=lambda request, **kwargs: services.normalize_email(kwargs["payload"].email))
+def forgot(request, payload: ForgotIn):
+    services.request_reset(payload.email)
+    return Status(204, None)
+
+
+@api.get("/reset/{token}", response={204: None})
+def reset_link(request, token: str):
+    """Whether a link is still live, so the page can show the form or the
+    sentence before anybody types a password into a dead one."""
+    if services.reset_user(token) is None:
+        raise HttpError(400, services.LINK_DEAD)
+    return Status(204, None)
+
+
+@api.post("/reset", response=MeOut)
+@throttle("reset", "10/hour")
+def reset(request, payload: ResetIn):
+    """Set the password and sign in on the spot: they have just proved
+    they hold the address and chosen a password, and a login form after
+    that protects nobody. Every other session ended in the service."""
+    user = services.reset_password(payload.token, payload.password)
+    dj_login(request, user)
+    return user

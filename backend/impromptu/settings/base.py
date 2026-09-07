@@ -113,8 +113,24 @@ RATELIMIT_TRUSTED_PROXY_HOPS = 1
 # from it. An address, so env; the default is the dev server.
 FRONTEND_ORIGIN = os.environ.get("FRONTEND_ORIGIN") or "http://localhost:3009"
 
-# Console here keeps every non-production environment safe by default.
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# What the site calls itself in a mail. Copy, so code.
+SITE_NAME = "impromptu.talk"
+
+# Mail goes through Brevo when a key is set and to the console when it is
+# not, so a checkout with no key prints the message and a laptop with one
+# can prove the provider works. The key is the whole gate; testing blanks
+# it and pins the in-memory backend. The from address is an address, so
+# env; the name beside it is the site's.
+BREVO_API_KEY = os.environ.get("BREVO_API_KEY", "").strip()
+EMAIL_BACKEND = (
+    "apps.common.mail.BrevoEmailBackend" if BREVO_API_KEY else "django.core.mail.backends.console.EmailBackend"
+)
+DEFAULT_FROM_EMAIL = f"{SITE_NAME} <{os.environ.get('MAIL_FROM_ADDRESS') or 'no-reply@impromptu.talk'}>"
+
+# A reset link lives an hour. Django's token needs no table: it is signed
+# over the password hash and the last sign-in, so it dies the moment
+# either changes, which is what a reset does.
+PASSWORD_RESET_TIMEOUT = 60 * 60
 
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"

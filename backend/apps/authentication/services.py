@@ -5,16 +5,21 @@ so the form re-renders with it and the typing intact. Only a value no
 person could have typed is refused at the edge, by the schema, as a 422.
 """
 
+from django.conf import settings
 from django.contrib.auth import SESSION_KEY
 from django.contrib.auth import authenticate as dj_authenticate
+from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sessions.models import Session
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.db import IntegrityError, transaction
 from django.utils import timezone
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from ninja.errors import HttpError
 
 from apps.authentication.models import User
+from apps.common import mail
 
 MIN_PASSWORD = 8
 
@@ -25,6 +30,7 @@ WRONG_CREDENTIALS = "That email and password do not match."
 TAKEN = "That email already has an account."
 NOT_AN_ADDRESS = "That does not look like an email address."
 TOO_SHORT = f"Use at least {MIN_PASSWORD} characters."
+LINK_DEAD = "That link has expired or has already been used."
 
 
 def normalize_email(email: str) -> str:
@@ -103,3 +109,52 @@ def end_all_sessions(user: User) -> int:
             row.delete()
             ended += 1
     return ended
+
+
+# Password reset. Django's token is signed over the account's password
+# hash and last sign-in with an hour's timestamp, so there is no table and
+# nothing to spend: a reset changes the password and signs in, and every
+# link sent before it dies at that moment. Until then, every link sent in
+# the hour works, which is the one change from v0 (DECISIONS.md).
+
+
+def request_reset(email: str) -> bool:
+    """Mail a link, if there is anywhere to mail it. The endpoint answers
+    the same either way: a form that said "no account with that email"
+    would be a way to ask this site whether somebody has one. True when a
+    mail went out, for the tests."""
+    user = User.objects.filter(email=normalize_email(email), is_active=True).first()
+    if user is None:
+        return False
+    token = f"{urlsafe_base64_encode(force_bytes(user.pk))}.{default_token_generator.make_token(user)}"
+    return mail.send(
+        "password_reset",
+        to=user.email,
+        subject=f"Reset your {settings.SITE_NAME} password",
+        link=f"{settings.FRONTEND_ORIGIN}/reset/{token}",
+    )
+
+
+def reset_user(token: str) -> User | None:
+    """The account a link names, if the link is still live."""
+    uid, _, signed = token.partition(".")
+    try:
+        user = User.objects.get(pk=urlsafe_base64_decode(uid).decode(), is_active=True)
+    except (ValueError, TypeError, OverflowError, User.DoesNotExist):
+        return None
+    return user if default_token_generator.check_token(user, signed) else None
+
+
+def reset_password(token: str, password: str) -> User:
+    """Set the password the link's owner chose and end every other
+    session: whoever knew the old password no longer holds the account. A
+    Google-only row gains a password here, which is how it gets one."""
+    user = reset_user(token)
+    if user is None:
+        raise HttpError(400, LINK_DEAD)
+    if len(password) < MIN_PASSWORD:
+        raise HttpError(400, TOO_SHORT)
+    user.set_password(password)
+    user.save(update_fields=["password"])
+    end_all_sessions(user)
+    return user

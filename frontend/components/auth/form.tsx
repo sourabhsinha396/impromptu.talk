@@ -58,6 +58,18 @@ export function Alert({ children }: { children: ReactNode }) {
   );
 }
 
+/* A notice is the same box with the accent edge: something went right. */
+export function Notice({ children }: { children: ReactNode }) {
+  return (
+    <p
+      role="status"
+      className="rounded-[10px] border border-line border-l-[3px] border-l-accent bg-card2 px-3.5 py-[11px] text-[14.5px] leading-[1.45] font-semibold"
+    >
+      {children}
+    </p>
+  );
+}
+
 export function OtherDoor({ children }: { children: ReactNode }) {
   return <p className="mt-[22px] text-sm text-muted">{children}</p>;
 }

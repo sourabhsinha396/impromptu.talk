@@ -77,3 +77,15 @@ export async function sharedPractice(token: string): Promise<Shared | null> {
     return null;
   }
 }
+
+/** Whether a reset link still opens, so the page shows the form or the
+    sentence before anybody types into a dead one. Dead when the backend
+    is unreachable, which prints the sentence with the way to ask again. */
+export async function resetLinkLive(token: string): Promise<boolean> {
+  try {
+    const response = await backendFetch(`/api/v1/auth/reset/${encodeURIComponent(token)}`);
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
