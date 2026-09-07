@@ -174,7 +174,7 @@ Every account has a link, `impromptu.talk?ref=<code>`, minted on the first look 
 
 ## 10. Administration
 
-Two consoles, and they are not the same thing. **`/admin/`** is Django's admin over every table, opened by `is_staff`; it is the owner's console and the only place a purchase, a refund or a share token is edited by hand. **`/administration`** is a grid of operator tools that act on the browser in front of them, reached with the ordinary session and opened by `is_superuser`. Nothing on the site raises either flag.
+Two consoles, and they are not the same thing. **`/re-admin/`** is Django's admin over every table, opened by `is_staff`; it is the owner's console and the only place a purchase, a refund or a share token is edited by hand. **`/administration`** is a grid of operator tools that act on the browser in front of them, reached with the ordinary session and opened by `is_superuser`. Nothing on the site raises either flag.
 
 - **The gate answers 404**, to a stranger and a signed-in speaker alike. A 403 confirms the path was guessed right; a sign-in prompt is the same confirmation with a form on it. The Next proxy does not gate it for the same reason.
 - **A grid of cards, not a menu.** A tool is a place you go and do one thing: the staged topic; Pro by hand (a gift filed as a complimentary plan, never as a lifetime row priced at nothing, and taking one back refuses any row that took money); affiliate payouts (rows an operator writes after the money moved); outreach (the message to a creator, addressed and ready to copy, and who has had it; the rate in it is read off the same constant settlement pays).

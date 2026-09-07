@@ -39,10 +39,9 @@ admin.site.site_title = "impromptu"
 admin.site.index_title = "Tables"
 
 urlpatterns = [
-    # `/admin/`, the name Django uses and the name anybody looks for
-    # (owner's call, 2026-09-07). The frontend's operator console is
-    # `/administration`, a different path segment, so the two cannot
-    # collide even where one proxy fronts both origins.
-    path("admin/", admin.site.urls),
+    # `re-admin`, not `admin` (owner's call, 2026-09-07, after a day at
+    # `/admin`): the frontend owns the short name, and the two consoles
+    # sit on one domain behind a single proxy in production.
+    path("re-admin/", admin.site.urls),
     path("api/", api.urls),
 ]

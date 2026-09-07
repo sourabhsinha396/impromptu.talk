@@ -30,4 +30,9 @@ class SuperuserAuth(SessionAuth):
         return user
 
 
-superuser_auth = SuperuserAuth()
+# csrf=False for the same reason `session_auth` has it: the browser only
+# reaches this API through the frontend's first-party rewrite. Without it
+# every console POST answers "CSRF check Failed" from the browser while
+# the test client, which skips CSRF, stays green - which is exactly how
+# this was missed until a curl through the proxy caught it.
+superuser_auth = SuperuserAuth(csrf=False)

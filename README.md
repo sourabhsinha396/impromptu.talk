@@ -47,7 +47,7 @@ cd frontend && pnpm test && pnpm lint
 
 ## Admin
 
-http://localhost:8009/admin/ with the superuser made above. Every table, editable.
+http://localhost:8009/re-admin/ with the superuser made above. Every table, editable.
 
 ## Spend
 
