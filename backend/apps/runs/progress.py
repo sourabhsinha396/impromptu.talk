@@ -20,10 +20,13 @@ jagged line through noise reads as a verdict. The trend is smoothed over a
 few rounds so a single Monday cannot make somebody think they have
 regressed.
 
-**Nothing is drawn until there are enough rounds to mean anything.** Under
-`ENOUGH` the page says how many more are needed instead of drawing a line
-through two points, which is also the one honest way this feature asks
-somebody to come back tomorrow.
+**It draws from the second round.** An earlier version waited for five and
+smoothed from the first, which was wrong twice over (owner's call): the
+wait put an empty box in front of somebody at exactly the moment they were
+deciding whether any of this was worth having, and averaging three rounds
+together when there are only three flattens the very change it is meant to
+show. Two rounds is the least you can compare, and comparing two rounds is
+the whole feature.
 
 The window is the plan's, the same `streaks.Rule` the calendar and the run
 list already use, so free sees five days of it and a plan sees its own
@@ -37,13 +40,18 @@ from apps.runs import streaks
 from apps.runs.models import Report, Run
 from apps.runs.services import owned_by
 
-# Below this a line is a rumour. Five rounds is enough to see a direction
-# without being so many that nobody reaches it in a first week.
-ENOUGH = 5
+# The least that can be compared. One round is a report and not a trend;
+# two is a before and an after, which is the whole point of the page.
+ENOUGH = 2
 
-# How many rounds the trend smooths over. Three is enough to flatten one
-# bad Monday and short enough that a real change still shows within a week.
+# How many rounds the trend smooths over once smoothing is worth doing.
 SMOOTH = 3
+
+# Smoothing exists to make many points readable, not to hide few. Under
+# this it is off entirely: averaging three rounds together when somebody
+# has done four turns a real improvement into a shrug, which is the
+# opposite of the job.
+SMOOTH_FROM = 8
 
 # The most points drawn. A year of practice is a thousand rounds and a line
 # with a thousand points is a smear; the newest are the ones anybody is
@@ -84,7 +92,10 @@ class Progress:
 def _smooth(values: list[float | None], window: int = SMOOTH) -> list[float | None]:
     """A trailing mean over the last few readings, skipping the ones that
     are absent: a round nobody transcribed has no filler rate, and treating
-    that as a zero would draw an improvement that never happened."""
+    that as a zero would draw an improvement that never happened.
+
+    A window of one is the honest identity, and that is what a short
+    history gets."""
     out: list[float | None] = []
     for index in range(len(values)):
         seen = [v for v in values[max(0, index - window + 1) : index + 1] if v is not None]
@@ -113,13 +124,14 @@ def progress(did: str, user=None, rule: streaks.Rule = streaks.FREE, *, now=None
         return Progress(enough=False, needed=ENOUGH - counted, counted=counted, points=[], first=None, latest=None)
 
     shown = rows[-MOST:]
+    window = SMOOTH if len(shown) >= SMOOTH_FROM else 1
     # Only a provider that keeps disfluencies may contribute a filler rate.
     # A Whisper round's zero would pull the line down and read as progress
     # somebody did not make.
     rates = [row["filler_rate"] if row["provider"] == "assemblyai" else None for row in shown]
-    smoothed = _smooth(rates)
-    stalls = _smooth([row["opening_stall"] for row in shown])
-    gaps = _smooth([row["longest_pause"] for row in shown])
+    smoothed = _smooth(rates, window)
+    stalls = _smooth([row["opening_stall"] for row in shown], window)
+    gaps = _smooth([row["longest_pause"] for row in shown], window)
 
     points = [
         Point(at=row["created_at"], stall=stalls[i] or 0.0, gap=gaps[i] or 0.0, fillers=smoothed[i])

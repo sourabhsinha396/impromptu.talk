@@ -47,11 +47,9 @@ const METRICS: Metric[] = [
 
 export function ProgressSection({ progress }: { progress: Progress }) {
   if (!progress.enough) {
-    return (
-      <p className="text-sm text-muted">
-        {progress.needed === 1 ? "One more round" : `${progress.needed} more rounds`} and your trend appears here.
-      </p>
-    );
+    // One round is a report, not a trend. Two is a before and an after,
+    // which is the whole page, so this is the shortest wait there is.
+    return <p className="text-sm text-muted">Do one more round and you can see the two side by side.</p>;
   }
 
   return (
