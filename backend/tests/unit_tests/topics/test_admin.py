@@ -7,7 +7,7 @@ from django.test import Client
 from apps.authentication.models import User
 from tests.unit_tests import factories
 
-GENRES = "/re-admin/topics/genre/"
+GENRES = "/admin/topics/genre/"
 
 
 def owner_client(db) -> Client:

@@ -25,7 +25,7 @@ def probe_post(request):
 probe_api = NinjaAPI(urls_namespace="csrf_probe")
 probe_api.add_router("", probe)
 
-urlpatterns = [path("api/", probe_api.urls), path("re-admin/", admin.site.urls)]
+urlpatterns = [path("api/", probe_api.urls), path("admin/", admin.site.urls)]
 
 
 @override_settings(ROOT_URLCONF=__name__)
@@ -46,5 +46,5 @@ def test_a_stranger_is_still_refused(db):
 @override_settings(ROOT_URLCONF=__name__)
 def test_the_admin_keeps_csrf(db):
     strict = Client(enforce_csrf_checks=True)
-    response = strict.post("/re-admin/login/", {"username": "owner@example.com", "password": "x"})
+    response = strict.post("/admin/login/", {"username": "owner@example.com", "password": "x"})
     assert response.status_code == 403

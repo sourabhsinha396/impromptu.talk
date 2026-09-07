@@ -18,11 +18,11 @@ def owner_client(db):
 
 def test_the_owner_can_raise_the_operator_flags_from_the_admin(db, user):
     client, _ = owner_client(db)
-    page = client.get(f"/re-admin/authentication/user/{user.pk}/change/")
+    page = client.get(f"/admin/authentication/user/{user.pk}/change/")
     assert page.status_code == 200
     assert 'name="is_superuser"' in page.content.decode()
     response = client.post(
-        f"/re-admin/authentication/user/{user.pk}/change/",
+        f"/admin/authentication/user/{user.pk}/change/",
         {
             "email": user.email,
             "name": "Priya",
@@ -47,9 +47,9 @@ def test_the_owner_can_raise_the_operator_flags_from_the_admin(db, user):
 
 def test_a_run_can_be_added_and_edited_by_hand(db):
     client, owner = owner_client(db)
-    assert client.get("/re-admin/runs/run/add/").status_code == 200
+    assert client.get("/admin/runs/run/add/").status_code == 200
     run = factories.RunFactory()
-    page = client.get(f"/re-admin/runs/run/{run.pk}/change/")
+    page = client.get(f"/admin/runs/run/{run.pk}/change/")
     assert page.status_code == 200
     assert 'name="spoken_seconds"' in page.content.decode()
     assert Run.objects.count() == 1

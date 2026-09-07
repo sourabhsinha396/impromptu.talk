@@ -32,7 +32,7 @@ Ticked as of 2026-09-07, after cards 01 to 26.
 | (new) share an owned genre, `/g/[token]` | | 29 | [ ] |
 | `GET /affiliate`, `GET /affiliate/referrals`, `POST /affiliate/paypal` | same | 31 | [ ] |
 | `GET /administration`, `/staged-topic`, `GET`/`POST /pro`, `POST /pro/revoke`, `GET`/`POST /payouts`, `GET`/`POST /outreach` | same paths | 32 | [ ] |
-| `/admin` (sqladmin, env password) | `/re-admin/` (Django admin, `is_staff`) | 01, 28 | [x] mounted; User, Genre, Topic registered; the rest per card |
+| `/admin` (sqladmin, env password) | `/admin/` (Django admin, `is_staff`) | 01, 28 | [x] mounted; User, Genre, Topic registered; the rest per card |
 | `/about`, `/contact`, `/privacy`, `/terms`, `/refunds` | same | 33 | [ ] |
 | `GET /robots.txt`, `GET /sitemap.xml` | `robots.ts`, `sitemap.ts` | 05 | [x] |
 | 404, 405, 422, 500 as pages outside `/api` | `not-found.tsx`, `error.tsx`; forms re-render with a sentence | 05, 19 | [x] 404 and 500; sign up and sign in forms (19); the rest per card |

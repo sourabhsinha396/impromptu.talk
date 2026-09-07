@@ -16,7 +16,7 @@ from apps.payments import services
 from apps.payments.models import Purchase
 from tests.unit_tests import factories
 
-CHANGE = "/re-admin/payments/purchase/{}/change/"
+CHANGE = "/admin/payments/purchase/{}/change/"
 
 
 def owner_client(db) -> Client:
@@ -71,7 +71,7 @@ def test_the_ledger_shows_the_quote_and_the_charge_side_by_side(db, user):
     client = owner_client(db)
     factories.PurchaseFactory(user=user, status=Purchase.PAID, amount_minor=3900, currency="USD",
                               charged_minor=4200, charged_currency="USD")
-    page = client.get("/re-admin/payments/purchase/").content.decode()
+    page = client.get("/admin/payments/purchase/").content.decode()
     assert "$39" in page and "$42" in page
 
 
@@ -81,6 +81,6 @@ def test_an_ordinary_account_cannot_reach_the_ledger(db, user):
     purchase."""
     signed_in = Client()
     signed_in.force_login(user)
-    response = signed_in.get("/re-admin/payments/purchase/")
+    response = signed_in.get("/admin/payments/purchase/")
     assert response.status_code == 302
-    assert "/re-admin/login/" in response["Location"]
+    assert "/admin/login/" in response["Location"]

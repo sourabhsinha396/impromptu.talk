@@ -35,8 +35,10 @@ admin.site.site_title = "impromptu"
 admin.site.index_title = "Tables"
 
 urlpatterns = [
-    # `re-admin`, not `admin`: /administration is the superusers' tool console
-    # on the frontend, and a bare `admin` prefix would sit under it.
-    path("re-admin/", admin.site.urls),
+    # `/admin/`, the name Django uses and the name anybody looks for
+    # (owner's call, 2026-09-07). The frontend's operator console is
+    # `/administration`, a different path segment, so the two cannot
+    # collide even where one proxy fronts both origins.
+    path("admin/", admin.site.urls),
     path("api/", api.urls),
 ]

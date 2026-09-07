@@ -47,7 +47,7 @@ def test_an_edited_signed_cookie_is_replaced_too(client):
 
 
 def test_the_admin_does_not_carry_it(client):
-    response = client.get("/re-admin/login/")
+    response = client.get("/admin/login/")
     assert devices.DEVICE_COOKIE not in response.cookies
 
 
