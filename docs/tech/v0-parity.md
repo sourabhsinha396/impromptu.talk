@@ -14,9 +14,9 @@ Ticked as of 2026-09-06, after cards 01 to 13.
 | `GET /genre/{slug}` | `/genre/[slug]` | 09 | [x] |
 | `GET /topic/{slug}` answers 404 | same, by having no route | 09 | [x] pinned |
 | `GET /?topic=<slug>` deep link | same | 12 | [ ] |
-| `POST /api/sessions` | `POST /api/v1/sessions` | 15 | [ ] |
+| `POST /api/sessions` | `POST /api/v1/runs` | 15 | [x] |
 | `GET /streak` | `/streak` | 17 | [ ] |
-| `POST /streak/share` | `POST /api/v1/sessions/share` | 18 | [ ] |
+| `POST /streak/share` | `POST /api/v1/runs/share` | 18 | [ ] |
 | `GET /s/{token}` | `/s/[token]` | 18 | [ ] |
 | `GET`/`POST /signup` | `/signup`, `POST /api/v1/auth/signup` | 19 | [ ] |
 | `GET`/`POST /login`, `POST /logout` | `/login`, `POST /api/v1/auth/login`, `POST /api/v1/auth/logout` | 19 | [ ] |
@@ -116,13 +116,13 @@ Ticked as of 2026-09-06, after cards 01 to 13.
 - [ ] Pro freeze rule: two missed days a calendar month, all or nothing, repairs gaps behind you (16)
 - [ ] `/streak`: current streak, totals, eight-week and one-year calendars ending today (17)
 - [ ] Share token minted once, `/s/[token]` noindex, no off switch on the site (18)
-- [ ] Retention report: day-2 and day-7 cohorts in UTC days, as a management command (15)
+- [x] Retention report: day-2 and day-7 cohorts in UTC days, as `retention_report` (15)
 
 ### Accounts
 
 - [ ] Email and password, minimum eight; forms re-render with one sentence, never a bare 422 (19)
 - [ ] Django sessions; `?next=` honoured for own paths; sign out rotates the device; "sign out everywhere" (19, 23)
-- [ ] Device claim on both doors; the collision case keeps both histories (15, 19)
+- [x] Device claim on every door through the login signal; the collision case keeps both histories (15); the doors themselves land on 19
 - [ ] Referral attributed at signup and frozen (19, 31)
 - [ ] Slack `signup` after commit (19, 27)
 - [ ] Password reset: one hour, newest only, ends every session; mail via the provider, console elsewhere (20)

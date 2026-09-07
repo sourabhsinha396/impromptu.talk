@@ -42,7 +42,7 @@ Decisions that changed with the rebuild, each with its reason in `DECISIONS.md`:
 - **Icons, not emoji.** Every emoji v0 drew is a lucide glyph mapped by meaning in `frontend/components/site/icons.tsx`. A genre carries an icon slug from a fixed set of 26; the seeder writes the built-ins' and a person picks their own genre's.
 - **Format is style.** How a prompt asks you to talk is `Topic.style`; v0 called it format, and "category" was tried for an afternoon and dropped because a stranger cannot tell a category from a genre. Same four values, same rules.
 - **Owned genres are genre rows** (v0: packs in their own tables) and can be shared by link. §8.
-- **Fewer tables and columns.** No `Genre.category` grouping, no `Topic.difficulty`, no `Session.topic_id`, no separate affiliates table, no login-session or password-reset tables of our own, static exchange rates.
+- **Fewer tables and columns.** No `Genre.category` grouping, no `Topic.difficulty`, no `Run.topic_id`, no separate affiliates table, no login-session or password-reset tables of our own, static exchange rates.
 - **Crawlable pages stay server-rendered.** The growth plan is the ten genre pages, so they are rendered on the server with every topic in the HTML, as v0's were.
 
 ---
@@ -66,7 +66,7 @@ Shipped as twenty in v0 and cut to ten on 5 September 2026. A flat scroll list s
 
 **Merged, never deleted.** The ten that went took their topics into the ten that stayed: food and travel into Everyday life; productivity into Career; personal finance and startups into Money and business; climate into Science; fitness, mental health and psychology into Health and mind; ethics into Philosophy; history, film and TV, anime and manga into Culture. The bank was 800 in v0 and is 1000 in v1 (owner's call, 6 September 2026: 200 written for the rebuild, the thin genres first); genres hold between 80 and 120 each, and 40 stays the floor. Anime and manga was the one contested call and is the first to split out again if genre pages earn their traffic.
 
-Removing a built-in genre from the seeder's list deletes its row once its topics have moved off it; one that still owns topics is deactivated, never deleted with them. `Session.genre_slug` on finished runs is a plain string with no foreign key, so history stays readable through a merge.
+Removing a built-in genre from the seeder's list deletes its row once its topics have moved off it; one that still owns topics is deactivated, never deleted with them. `Run.genre_slug` on finished runs is a plain string with no foreign key, so history stays readable through a merge.
 
 ### Four styles, and Surprise me
 
@@ -117,7 +117,7 @@ The engine is a pure TypeScript module with no DOM in it, tested with fake timer
 
 ## 5. Streak
 
-**Derived, never stored.** A stored counter drifts the first time a timezone, a retry or a clock change surprises it; counting distinct days back from today costs one indexed query and can never disagree with the sessions table.
+**Derived, never stored.** A stored counter drifts the first time a timezone, a retry or a clock change surprises it; counting distinct days back from today costs one indexed query and can never disagree with the runs table.
 
 - **Days are the visitor's own local days.** The browser sends its UTC offset with every run, and a round finished at 11pm on Tuesday counts as Tuesday for the person who spoke, whatever the server thinks.
 - **Whose runs count.** An account spans devices. A device that has not signed in sees only its unclaimed runs, so signing out does not keep showing history the account now owns.
@@ -125,14 +125,14 @@ The engine is a pure TypeScript module with no DOM in it, tested with fake timer
 - **The flame is the only door to `/streak`.** The pill is a flame and a digit, the sentence in the title and the aria-label, absent until there is a streak.
 - **`/streak`** shows the current streak, lifetime totals, and two calendars, eight weeks and a year, a week per column with time running left to right so the last column is the week you are in. Both windows are whole weeks (56 and 371 days) ending today.
 - **Sharing** is one nullable token on the account: 16 random bytes, minted once, never rotated. `/s/<token>` shows the stats and recently practised topics (linking `/?topic=`), no account needed, `noindex`. There is no off switch on the site, on purpose: the page exists to be shown, and it carries nothing that is not already public or already theirs. A regretted link is cleared by hand in the admin for somebody who writes in.
-- **The retention report** counts day-2 and day-7 return as cohorts off the sessions table, in UTC days (a cohort is a population, not a person), as a management command. It is what analytics gets checked against, and it keeps working when an ad blocker removes somebody from analytics.
+- **The retention report** counts day-2 and day-7 return as cohorts off the runs table, in UTC days (a cohort is a population, not a person), as a management command. It is what analytics gets checked against, and it keeps working when an ad blocker removes somebody from analytics.
 
 ---
 
 ## 6. Accounts
 
 - **Email and password**, minimum eight characters and no other rule. Django's own user, sessions (30 days, HttpOnly, SameSite Lax, cookie `impromptu_session`) and Argon2 hashing. A form that refuses re-renders with one sentence and the typing intact, never a bare 422; only a value no person could have typed is refused at the edge.
-- **The anonymous device is claimed** on both doors: every run carrying the current device id and no user gets the user set. A device with anonymous history signing into an account with its own history keeps both. Signing out rotates the device cookie so nothing is left behind.
+- **The anonymous device is claimed** at every sign-in, through the login signal so no door can forget: every run carrying the current device id and no user gets the user set. A device with anonymous history signing into an account with its own history keeps both. Signing out rotates the device cookie so nothing is left behind.
 - **`?next=` is honoured** after sign-in, for our own paths only.
 - **Password reset** sends one link, valid for an hour; only the newest works; a successful reset ends every session. Mail goes through the transactional provider, and every non-production environment prints it to the console instead.
 - **Google sign-in is a second door, not a second system.** It ends where the form ends: one user row, the same session, the same device claim. It lives on `/login` and `/signup` only, never on the home page or in the menu. It fails closed where the captcha fails open, because an unreachable Google handled leniently signs somebody in as an account they have not proved they own. A verified address links to the existing row rather than making a second one; `google_sub` is matched first because it survives a change of address; a Google-only row has no password rather than a placeholder; `?next=` travels in the signed state because the redirect URI is one fixed string.

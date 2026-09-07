@@ -2,13 +2,26 @@
 collide. A test that needs a specific value passes it; everything else is
 whatever the sequence hands out."""
 
+import datetime as dt
+
 import factory
 from factory.django import DjangoModelFactory
 
 from apps.authentication.models import User
+from apps.runs.models import Run
 from apps.topics.models import Genre, Topic
 
 PASSWORD = "correct horse battery"
+DEVICE = "0123456789abcdef0123456789abcdef"
+
+
+def midday() -> dt.datetime:
+    """Noon today in UTC, the instant runs are dated back from. `now()` is
+    how a suite passes all afternoon and fails at 3am: with now at 04:00 a
+    run "five hours ago" lands on the previous calendar day. Noon is twelve
+    hours from either boundary. The date is still today's, because the
+    streak and the cohorts read the real clock for day zero."""
+    return dt.datetime.now(dt.UTC).replace(hour=12, minute=0, second=0, microsecond=0)
 
 
 class UserFactory(DjangoModelFactory):
@@ -47,5 +60,36 @@ class TopicFactory(DjangoModelFactory):
     style = "just-talk"
 
 
+class RunFactory(DjangoModelFactory):
+    """One finished round. `days_ago` is the one number most streak tests
+    care about, so it is the parameter; the rest is whatever a round is."""
+
+    class Meta:
+        model = Run
+        exclude = ("days_ago", "hours_ago", "base")
+
+    days_ago = 0
+    hours_ago = 0
+    base = factory.LazyFunction(midday)
+
+    device_id = DEVICE
+    user = None
+    topic_text = "Low tide"
+    genre_slug = "general"
+    prep_seconds = 60
+    speak_seconds = 60
+    spoken_seconds = 60
+    tz_offset = 0
+    created_at = factory.LazyAttribute(lambda r: r.base - dt.timedelta(days=r.days_ago, hours=r.hours_ago))
+
+
+def runs_on_days(days: list[int], **fields) -> None:
+    """A run on each of `days` (0 today, 1 yesterday), one base for the
+    whole list so the rows stay exactly a day apart."""
+    base = midday()
+    for day in days:
+        RunFactory(days_ago=day, base=base, **fields)
+
+
 def all_factories():
-    return [UserFactory, GenreFactory, TopicFactory]
+    return [UserFactory, GenreFactory, TopicFactory, RunFactory]

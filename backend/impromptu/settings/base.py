@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     "apps.common",
     "apps.authentication",
     "apps.topics",
+    "apps.runs",
 ]
 
 MIDDLEWARE = [

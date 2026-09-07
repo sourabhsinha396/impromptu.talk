@@ -31,12 +31,13 @@ function safeStorage(): Storage | null {
   }
 }
 
-/* The record's answer, when the sessions card lands; until then the call
-   fails quietly and the done screen shows no numbers. The round already
-   happened; a failed write is not the visitor's problem. */
+/* The record's answer: the streak, topics and minutes the done screen
+   shows. A failed write fails quietly and the done screen shows no
+   numbers; the round already happened, and it is not the visitor's
+   problem. */
 async function record(payload: Extract<Effect, { type: "record" }>["payload"]): Promise<Summary | null> {
   try {
-    const response = await fetch("/api/v1/sessions", {
+    const response = await fetch("/api/v1/runs", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
