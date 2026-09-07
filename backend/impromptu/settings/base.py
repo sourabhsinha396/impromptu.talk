@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     "apps.topics",
     "apps.runs",
     "apps.payments",
+    "apps.affiliates",
 ]
 
 MIDDLEWARE = [

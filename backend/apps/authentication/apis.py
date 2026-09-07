@@ -5,6 +5,7 @@ from django.http import Http404, HttpResponseRedirect
 from ninja import Router, Status
 from ninja.errors import HttpError
 
+from apps.affiliates import services as affiliates
 from apps.authentication import google as google_auth
 from apps.authentication import services
 from apps.authentication.schemas import (
@@ -198,6 +199,9 @@ def account(request):
         "accent": user.accent,
         "has_password": user.has_usable_password(),
         "share_token": user.share_token,
+        # Minted on the first look at the page that shows it, as the
+        # affiliate page does: a link is shown rather than asked for.
+        "affiliate_code": affiliates.code_for(user),
         "is_pro": payments.is_pro(user),
         "plan": plan
         and {

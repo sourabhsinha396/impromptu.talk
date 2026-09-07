@@ -3,8 +3,10 @@ from django.http import Http404
 from ninja import Router, Status
 from ninja.errors import HttpError
 
+from apps.affiliates import services as affiliates
 from apps.authentication.security import session_auth
 from apps.common.ratelimit import throttle
+from apps.common.referrals import referral_code
 from apps.payments import checkout, plans, pricing, services
 from apps.payments.dodo import DodoError
 from apps.payments.schemas import CatalogueOut, CheckoutIn, CheckoutOut, ReceiptOut, SettleIn
@@ -85,7 +87,7 @@ def start_checkout(request, payload: CheckoutIn):
             request.auth,
             plan_code=payload.plan,
             currency=payload.currency or pricing.BASE_CURRENCY,
-            referrer=None,  # card 31 decides this from the cookie
+            referrer=affiliates.referrer_for(request.auth, referral_code(request)),
         )
     except plans.UnknownPlan as exc:
         raise HttpError(400, "No such plan.") from exc

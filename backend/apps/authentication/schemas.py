@@ -86,6 +86,7 @@ class AccountOut(Schema):
     accent: str
     has_password: bool
     share_token: str | None
+    affiliate_code: str
     is_pro: bool
     #: The plan granting Pro, for the subscription section to name, or
     #: None when nothing is held. Named here rather than by a copy of the

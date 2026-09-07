@@ -13,6 +13,7 @@ import uuid
 
 from django.conf import settings
 
+from apps.affiliates import services as affiliates
 from apps.common import mail, slack
 from apps.payments import plans, pricing, services
 from apps.payments.dodo import DEAD, SUBSCRIPTION_OVER, SUCCEEDED, DodoError, gateway
@@ -128,6 +129,7 @@ def _settle_payment(row: Purchase, plan: plans.Plan, payment_id: str, subscripti
         row.status = Purchase.PAID
         row.verified_at = dt.datetime.now(dt.UTC)
         row.expires_at = _grant_until(row, plan)
+        _credit(row)
     elif payment.status in DEAD:
         row.status = Purchase.FAILED
     row.save()
@@ -190,6 +192,7 @@ def _settle_subscription(row: Purchase, subscription_id: str) -> Purchase:
     row.verified_at = dt.datetime.now(dt.UTC)
     row.expires_at = _expiry_from(live)
     row.checked_at = dt.datetime.now(dt.UTC)
+    _credit(row)
     row.save()
     if drifted:
         _announce_drift(row)
@@ -362,6 +365,21 @@ def _record_charge(row: Purchase, amounts: tuple[tuple[int, str], ...]) -> bool:
         )
         return True
     return False
+
+
+def _credit(row: Purchase) -> None:
+    """What the affiliate earned, written onto the row at settlement and
+    frozen there like the quote (card 31).
+
+    Off the charge and never off the list price: a lifetime bought in
+    rupees at a third of the list earns thirty percent of the rupees. A
+    subscription's renewals never come back through here, so a
+    subscription earns on its first charge and the affiliate page says
+    exactly that.
+    """
+    if row.referrer_id is None:
+        return
+    row.commission_usd_cents = affiliates.commission_cents(row)
 
 
 def _grant_until(row: Purchase, plan: plans.Plan) -> dt.datetime | None:

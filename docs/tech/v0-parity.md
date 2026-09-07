@@ -155,8 +155,8 @@ Ticked as of 2026-09-07, after cards 01 to 26.
 
 ### Affiliates
 
-- [ ] Code shape and minting; link on `/account` and `/affiliate` (31)
-- [ ] 30% of the charge, written at settlement; balance derived; nobody named; payouts by operator from $10 (31, 32)
+- [x] Code shape and minting; link on `/account` and `/affiliate`, minted on the first GET that shows it (31)
+- [x] 30% of the charge, written at settlement; balance derived; nobody named; payouts by operator from $10 (31; the tool that writes them is 32). No affiliates table and no payout method column, `DECISIONS.md`
 - [ ] `/affiliate` pitch with the rate and sample faces; `/affiliate/referrals` with PayPal address (31)
 
 ### Administration

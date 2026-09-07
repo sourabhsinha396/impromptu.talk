@@ -27,6 +27,9 @@ def test_the_settings_payload_says_a_password_exists_and_never_what_it_is(auth_c
         "accent": "",
         "has_password": True,
         "share_token": None,
+        # Minted on this first look, from the front of the address: the
+        # link is shown rather than asked for (card 31).
+        "affiliate_code": "speaker",
         # Nothing is for sale in a test run, so Pro's features are open to
         # everybody and no plan is held.
         "is_pro": True,
