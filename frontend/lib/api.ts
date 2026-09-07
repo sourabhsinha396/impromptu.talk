@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 
-import { EMPTY_HISTORY, type History } from "@/lib/practice";
+import { EMPTY_HISTORY, type History, type Shared } from "@/lib/practice";
 
 export const BACKEND_ORIGIN = process.env.BACKEND_ORIGIN ?? "http://127.0.0.1:8009";
 
@@ -63,5 +63,17 @@ export async function practiceHistory(): Promise<History> {
     return (await response.json()) as History;
   } catch {
     return EMPTY_HISTORY;
+  }
+}
+
+/** One person's shared practice, or null for a token nobody holds, which
+    the page turns into a 404. Public: no cookie decides what it shows. */
+export async function sharedPractice(token: string): Promise<Shared | null> {
+  try {
+    const response = await backendFetch(`/api/v1/runs/shared/${encodeURIComponent(token)}`);
+    if (!response.ok) return null;
+    return (await response.json()) as Shared;
+  } catch {
+    return null;
   }
 }

@@ -24,6 +24,7 @@ import {
   type LucideProps,
   Mail,
   MessageCircle,
+  MessageSquareText,
   Mic,
   Microscope,
   Moon,
@@ -81,6 +82,9 @@ function icon(Glyph: Glyph) {
 export const SettingsIcon = icon(Settings);
 export const AccountIcon = icon(User);
 export const FlameIcon = icon(Flame);
+/* The three tiles: the streak, the topics, the minutes spoken. */
+export const TopicsIcon = icon(MessageSquareText);
+export const MinutesIcon = icon(Mic);
 export const BackIcon = icon(ArrowLeft);
 export const RotateIcon = icon(RotateCw);
 export const EditIcon = icon(Pencil);

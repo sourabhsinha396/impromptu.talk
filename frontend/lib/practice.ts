@@ -18,6 +18,23 @@ export type History = {
   share_token?: string | null;
 };
 
+/** One person's practice as a stranger may see it. */
+export type Shared = {
+  name: string;
+  streak: number;
+  topics: number;
+  minutes: number;
+  days: number;
+  calendar: Day[];
+  recent: { text: string; slug: string }[];
+};
+
+/** A calendar longer than a quarter wants the whole width; anything
+    shorter shares the row with the list beside it on a laptop. */
+export function isWide(days: number): boolean {
+  return days > 91;
+}
+
 export const EMPTY_HISTORY: History = {
   streak: 0,
   longest: 0,

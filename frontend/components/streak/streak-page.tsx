@@ -6,7 +6,7 @@ import { FlameIcon, GenreIcon } from "@/components/site/icons";
 import { Share } from "@/components/streak/share";
 import type { SessionUser } from "@/lib/api";
 import type { Bank } from "@/lib/bank";
-import { type Day, type History, heatmapLayout, isStrip, timeAgo, weekdayName, windowLabel } from "@/lib/practice";
+import { type Day, type History, heatmapLayout, isStrip, isWide, timeAgo, weekdayName, windowLabel } from "@/lib/practice";
 import { absolute } from "@/lib/site";
 
 /* The streak page, as approved in docs/mocks/streak.html. One column at
@@ -40,26 +40,28 @@ export function StreakPage({
 
       {hasRuns ? (
         <>
-          <div className="mt-6">
+          <div className="mt-6 max-w-[760px]">
             <Stats streak={history.streak} topics={history.topics} minutes={history.minutes} />
           </div>
 
-          <Section
-            title={windowLabel(history.days)}
-            aside={
-              pro ? null : (
-                <>
-                  Free keeps {history.days} days. <PitchLink>Pro keeps a year</PitchLink>
-                </>
-              )
-            }
-          >
-            {isStrip(history.days) ? <Strip days={history.calendar} /> : <Heatmap days={history.calendar} />}
-          </Section>
+          <TwoColumns wide={isWide(history.days)}>
+            <Section
+              title={windowLabel(history.days)}
+              aside={
+                pro ? null : (
+                  <>
+                    Free keeps {history.days} days. <PitchLink>Pro keeps a year</PitchLink>
+                  </>
+                )
+              }
+            >
+              {isStrip(history.days) ? <Strip days={history.calendar} /> : <Heatmap days={history.calendar} />}
+            </Section>
 
-          <Section title="Recent" aside={<Capped history={history} pro={pro} />}>
-            <RecentList history={history} bank={bank} now={now} />
-          </Section>
+            <Section title="Recent" aside={<Capped history={history} pro={pro} />}>
+              <RecentList history={history} bank={bank} now={now} />
+            </Section>
+          </TwoColumns>
 
           <div className="mt-9">
             <Button href="/" size="xl">
@@ -108,7 +110,15 @@ export function StreakPage({
   );
 }
 
-function Section({ title, aside, children }: { title: string; aside: React.ReactNode; children: React.ReactNode }) {
+/* The calendar is the wide thing and the list is the tall one, so on a
+   laptop they sit side by side and finish together instead of leaving a
+   column of nothing down the right of a long page. A year-long heatmap
+   wants the whole width and takes it alone. One column on a phone. */
+export function TwoColumns({ wide, children }: { wide: boolean; children: React.ReactNode }) {
+  return <div className={wide ? "" : "md:grid md:grid-cols-2 md:gap-x-12"}>{children}</div>;
+}
+
+export function Section({ title, aside, children }: { title: string; aside: React.ReactNode; children: React.ReactNode }) {
   return (
     <section className="mt-10">
       <div className="mb-3 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
@@ -170,8 +180,13 @@ function Strip({ days }: { days: Day[] }) {
   );
 }
 
-const CELL = "12px";
-const GAP = "3px";
+/* Cells size themselves to the room: a year across a laptop is a 13px
+   square, eight weeks beside a list is a 34px one, and a phone gets what
+   fits down to a floor, past which the row scrolls. Container query units
+   do the arithmetic, so the weekday labels and the month names share the
+   same cell without a script. */
+const GAP = "4px";
+const cellSize = (columns: number) => `clamp(9px, calc((100cqw - ${columns - 1} * ${GAP}) / ${columns}), 34px)`;
 
 /* A week per column, time left to right, the last column the week you are
    in. The scroll container runs right to left with its content left to
@@ -179,15 +194,15 @@ const GAP = "3px";
    no script: the grid ends on today, so the end is the part worth showing.
    A dashed square is a day the freeze held: it did not happen, and a
    square that read as a run would be the calendar telling a small lie. */
-function Heatmap({ days }: { days: Day[] }) {
+export function Heatmap({ days }: { days: Day[] }) {
   const layout = heatmapLayout(days.map((day) => day.date));
   const anyFrozen = days.some((day) => day.frozen);
   return (
-    <>
-      <div className="flex items-start gap-2">
+    <div style={{ "--cell": cellSize(layout.columns), "--gap": GAP } as React.CSSProperties}>
+      <div className="flex items-start gap-2 [container-type:inline-size]">
         <div
-          className="mt-[17px] grid text-[10px] font-semibold text-muted"
-          style={{ gridTemplateRows: `repeat(7, ${CELL})`, gap: GAP, lineHeight: CELL }}
+          className="mt-[calc(14px+var(--gap))] grid text-[10px] font-semibold text-muted"
+          style={{ gridTemplateRows: "repeat(7, var(--cell))", gap: "var(--gap)", lineHeight: "var(--cell)" }}
           aria-hidden
         >
           <span style={{ gridRow: 1 }}>Mon</span>
@@ -195,10 +210,13 @@ function Heatmap({ days }: { days: Day[] }) {
           <span style={{ gridRow: 5 }}>Fri</span>
         </div>
         <div className="min-w-0 flex-1 overflow-x-auto [direction:rtl] [scrollbar-width:thin]">
-          <div className="w-max [direction:ltr]">
+          {/* At least the container's width, so a grid that fits sits at the
+              left like everything else on the page; only one that overflows
+              is wider, and then the right-to-left container opens on today. */}
+          <div className="w-max min-w-full [direction:ltr]">
             <div
               className="grid h-3.5 text-[10px] font-semibold whitespace-nowrap text-muted"
-              style={{ gridAutoFlow: "column", gridAutoColumns: CELL, gap: GAP }}
+              style={{ gridAutoFlow: "column", gridAutoColumns: "var(--cell)", gap: "var(--gap)" }}
               aria-hidden
             >
               {layout.months.map((month) => (
@@ -209,7 +227,12 @@ function Heatmap({ days }: { days: Day[] }) {
             </div>
             <ol
               className="grid"
-              style={{ gridAutoFlow: "column", gridTemplateRows: `repeat(7, ${CELL})`, gridAutoColumns: CELL, gap: GAP }}
+              style={{
+                gridAutoFlow: "column",
+                gridTemplateRows: "repeat(7, var(--cell))",
+                gridAutoColumns: "var(--cell)",
+                gap: "var(--gap)",
+              }}
             >
               {days.map((day, index) => {
                 const today = index === days.length - 1;
@@ -222,7 +245,7 @@ function Heatmap({ days }: { days: Day[] }) {
                   <li
                     key={day.date}
                     title={`${day.date}${day.count ? `, ${day.count} ${day.count === 1 ? "topic" : "topics"}` : day.frozen ? ", missed, and held" : ""}`}
-                    className={`rounded-[2px] border ${fill} ${today ? "outline outline-1 outline-offset-1 outline-line-strong" : ""}`}
+                    className={`rounded-[3px] border ${fill} ${today ? "outline outline-1 outline-offset-1 outline-line-strong" : ""}`}
                     style={index === 0 ? { gridRow: layout.firstRow } : undefined}
                   />
                 );
@@ -242,7 +265,7 @@ function Heatmap({ days }: { days: Day[] }) {
           </span>
         </p>
       )}
-    </>
+    </div>
   );
 }
 

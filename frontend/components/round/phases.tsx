@@ -1,6 +1,6 @@
 import { Ring } from "@/components/round/ring";
 import { Button } from "@/components/site/button";
-import { GenreIcon, PauseIcon, PlayIcon, StyleIcon } from "@/components/site/icons";
+import { FlameIcon, GenreIcon, MinutesIcon, PauseIcon, PlayIcon, StyleIcon, TopicsIcon } from "@/components/site/icons";
 import { LogoMark } from "@/components/site/logo";
 import type { Topic } from "@/lib/bank";
 import { MAX_NOTE } from "@/lib/round/engine";
@@ -220,7 +220,7 @@ export function DonePhase({
     <>
       <p className="font-display text-headline font-semibold">{headline}</p>
       {summary && (
-        <div className="mt-8 mb-9 flex w-full justify-center">
+        <div className="mx-auto mt-8 mb-9 w-full max-w-[640px]">
           <Stats streak={summary.streak} topics={summary.topics} minutes={summary.minutes} />
         </div>
       )}
@@ -248,23 +248,25 @@ export function DonePhase({
 
 /* Three tiles in one row, always: a grid, not a wrapping flex row, because
    the third tile wrapping onto its own line read as two rows of unequal
-   things. The number sits above its label, and no tile carries a glyph
-   (owner's call: the other two have none, so the first has none either).
-   The streak page draws the same three, so the page the flame opens looks
-   like the screen that sent you. */
+   things. Each tile is a glyph, the number and its label; the glyphs are
+   for a laptop and drop on a phone, where the three tiles share 360px
+   (owner's call: all three carry one or none carries one). The streak
+   page draws the same three, so the page the flame opens looks like the
+   screen that sent you. */
 export function Stats({ streak, topics, minutes }: { streak: number; topics: number; minutes: number }) {
   return (
-    <div className="grid w-full max-w-[560px] grid-cols-3 gap-3">
-      <Stat value={streak} label="day streak" />
-      <Stat value={topics} label="topics" />
-      <Stat value={minutes} label="minutes spoken" />
+    <div className="grid w-full grid-cols-3 gap-3 sm:gap-4">
+      <Stat value={streak} label="day streak" icon={FlameIcon} />
+      <Stat value={topics} label="topics" icon={TopicsIcon} />
+      <Stat value={minutes} label="minutes spoken" icon={MinutesIcon} />
     </div>
   );
 }
 
-function Stat({ value, label }: { value: number; label: string }) {
+function Stat({ value, label, icon: Icon }: { value: number; label: string; icon: typeof FlameIcon }) {
   return (
-    <div className="min-w-0 rounded-card border border-line bg-card px-1.5 py-3 text-center sm:px-3 sm:py-4">
+    <div className="min-w-0 rounded-card border border-line bg-card px-1.5 py-3 text-center sm:px-4 sm:pt-4.5 sm:pb-4">
+      <Icon size={20} className="mx-auto mb-2.5 hidden text-accent sm:block" />
       <div className="font-display text-[28px] leading-none font-semibold tracking-[-0.03em] sm:text-[40px]">{value}</div>
       <div className="mt-1.5 text-[11.5px] font-semibold text-muted sm:text-[12.5px]">{label}</div>
     </div>
