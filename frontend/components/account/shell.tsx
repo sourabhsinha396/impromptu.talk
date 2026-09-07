@@ -1,6 +1,10 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import { Tag } from "@/components/account/section";
+import { CheckIcon } from "@/components/site/icons";
+import type { Plan } from "@/lib/api";
+
 /* The frame both settings pages share: where you are, who you are, and
    the bar between the two pages.
 
@@ -15,11 +19,16 @@ export const ADDITIONAL = "/account/additional-settings";
 export function SettingsPage({
   title,
   email,
+  plan,
   current,
   children,
 }: {
   title: string;
   email: string;
+  /** The plan granting Pro, or null. Named rather than a boolean: the tag
+      says what is held, and while nothing is for sale nobody holds
+      anything, so no tag is drawn at all. */
+  plan?: Plan | null;
   current: typeof ACCOUNT | typeof ADDITIONAL;
   children: ReactNode;
 }) {
@@ -34,6 +43,12 @@ export function SettingsPage({
           account could not tell you which one you were signed in as. */}
       <p className="mt-3.5 flex flex-wrap items-center gap-2.5 text-[15px] text-muted">
         <span className="font-semibold text-ink [overflow-wrap:anywhere]">{email}</span>
+        {plan && (
+          <Tag live>
+            <CheckIcon size={13} />
+            Pro
+          </Tag>
+        )}
       </p>
       <nav className="mt-[26px] flex gap-[26px] border-b border-line">
         <Tab href={ACCOUNT} on={current === ACCOUNT}>

@@ -2,7 +2,7 @@
 
 The acceptance list for the board. Every route and every behaviour v0 had, with the v1 card that carries it and a tick once it has landed on `main`. Nothing on this list may be quietly dropped; a line that v1 changes on purpose says so and points at `DECISIONS.md`.
 
-Ticked as of 2026-09-07, after cards 01 to 23.
+Ticked as of 2026-09-07, after cards 01 to 24.
 
 ## Routes
 
@@ -134,8 +134,10 @@ Ticked as of 2026-09-07, after cards 01 to 23.
 
 ### Pro
 
-- [ ] Four plans, two shapes, comp plans not for sale; annual below lifetime; on sale only with key and product id (24)
-- [ ] Eight currencies with rates, multipliers and rounding; static rates; picker of five; default by the ladder (24)
+- [x] Four plans, two shapes, comp plans not for sale; annual below lifetime; on sale only with key and product id (24). Prices moved from env into `apps/payments/plans.py`, `DECISIONS.md`
+- [x] Eight currencies with rates, multipliers and rounding; static rates; picker of five; default by the ladder (24). The ladder lives once, in `frontend/lib/geo.ts`, with the `?currency=` pick on top; the picker itself is card 25
+- [x] Entitlement: the best paid row, forever beats a date, status and expiry independent; the streak counted under the plan's own length; the colour refused without Pro (24). The lazy re-read of a lapsed subscription lands with 26, which is what talks to the provider
+- [x] Purchase table ported column for column, `PROTECT` on the account, append-only in code (24)
 - [ ] `/pro` two cards with pills; overlay checkout; nothing linked without a key (25)
 - [ ] Checkout writes a pending row; settlement re-reads the payment; binding by reference and session; price as a log line; receipts by mail (26)
 - [ ] Subscriptions: lazy refresh after expiry and on return from the portal; portal not a cancel button; cancel keeps the period; cancel flag separate from status; customer id backfilled lazily (26)

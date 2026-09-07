@@ -1,6 +1,14 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-import { REFERRAL_COOKIE, REFERRAL_MAX_AGE, SESSION_COOKIE, referralCode } from "@/lib/cookies";
+import {
+  CURRENCY_COOKIE,
+  CURRENCY_MAX_AGE,
+  REFERRAL_COOKIE,
+  REFERRAL_MAX_AGE,
+  SESSION_COOKIE,
+  referralCode,
+} from "@/lib/cookies";
+import { currencyCode } from "@/lib/geo";
 
 /* Pages that need an account. A visitor without the session cookie is sent
    to sign in and brought back afterwards; the page still checks the
@@ -21,11 +29,28 @@ export default function proxy(request: NextRequest) {
      rule nobody was told. GET only: a form post carrying ?ref= is not a
      visit anybody was sent on. Last click wins, which is the ordinary rule
      and the only one a cookie can keep without turning into a list. */
-  const code = request.method === "GET" ? referralCode(searchParams.get("ref")) : "";
+  const get = request.method === "GET";
+  const code = get ? referralCode(searchParams.get("ref")) : "";
   if (code) {
     response.cookies.set(REFERRAL_COOKIE, code, {
       maxAge: REFERRAL_MAX_AGE,
       httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+    });
+  }
+
+  /* `?currency=` is the top rung of the pricing ladder: a pick beats
+     every signal under it, and only a pick is written down. Not httpOnly,
+     unlike the two above: nothing is decided by holding it, it is a
+     preference about what a page shows, and a person changing it in their
+     own browser has only changed which price they are quoted, which the
+     picker lets them do anyway. */
+  const currency = get ? currencyCode(searchParams.get("currency")) : "";
+  if (currency) {
+    response.cookies.set(CURRENCY_COOKIE, currency, {
+      maxAge: CURRENCY_MAX_AGE,
       sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
       path: "/",

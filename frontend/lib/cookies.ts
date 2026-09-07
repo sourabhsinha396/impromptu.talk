@@ -7,6 +7,11 @@
 export const SESSION_COOKIE = "impromptu_session";
 export const REFERRAL_COOKIE = "impromptu_ref";
 export const TIMEZONE_COOKIE = "impromptu_tz";
+/* A currency somebody picked, which is a different thing from one we
+   guessed. Only a pick is remembered: a guess that wrote itself down
+   would harden a wrong one into a preference nobody chose, and the
+   ladder can guess again on every request for free. */
+export const CURRENCY_COOKIE = "impromptu_currency";
 
 /* Sixty days: somebody who read a post, tried the free round for a few
    weeks and then bought is still credited to the person who sent them,
@@ -38,6 +43,10 @@ export const timezoneInit =
   `try{if(document.cookie.indexOf("${TIMEZONE_COOKIE}=")<0){` +
   `var z=Intl.DateTimeFormat().resolvedOptions().timeZone;` +
   `if(z)document.cookie="${TIMEZONE_COOKIE}="+encodeURIComponent(z)+";path=/;max-age=15552000;samesite=lax"}}catch(e){}`;
+
+/* A year: long enough that somebody who picked their currency once is
+   still shown it when they come back to buy. */
+export const CURRENCY_MAX_AGE = 60 * 60 * 24 * 365;
 
 export const DEVICE_COOKIE = "impromptu_device";
 

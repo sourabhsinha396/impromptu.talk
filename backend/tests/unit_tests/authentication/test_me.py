@@ -14,7 +14,7 @@ def test_a_stranger_is_told_401_and_nothing_else(client):
 def test_the_session_owner_gets_their_name_and_the_operator_flag(auth_client, user):
     response = auth_client.get(ME)
     assert response.status_code == 200
-    assert response.json() == {"email": user.email, "name": "", "is_superuser": False, "accent": ""}
+    assert response.json() == {"email": user.email, "name": "", "is_superuser": False, "accent": "", "is_pro": True}
 
 
 def test_a_superuser_is_told_so(db):
@@ -22,4 +22,4 @@ def test_a_superuser_is_told_so(db):
     signed_in = Client()
     signed_in.force_login(owner)
     body = signed_in.get(ME).json()
-    assert body == {"email": "owner@example.com", "name": "Owner", "is_superuser": True, "accent": ""}
+    assert body == {"email": "owner@example.com", "name": "Owner", "is_superuser": True, "accent": "", "is_pro": True}

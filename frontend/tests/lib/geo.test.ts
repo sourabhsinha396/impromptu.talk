@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { where } from "@/lib/geo";
+import { currencyCode, currencyFor, where } from "@/lib/geo";
 
 describe("where", () => {
   it("believes a country header first, a timezone next, and a language region last", () => {
@@ -21,5 +21,24 @@ describe("where", () => {
   it("reads only the region of a language, because a language is not a place", () => {
     expect(where(null, "hi", "")).toEqual(["", "default"]);
     expect(where(null, "hi-IN", "")).toEqual(["IN", "language"]);
+  });
+});
+
+describe("the currency a visitor is quoted in", () => {
+  it("names the eight markets and pays the base currency everywhere else", () => {
+    expect(currencyFor("IN")).toBe("INR");
+    expect(currencyFor("de")).toBe("EUR");
+    // A country with no market is no better an answer than none.
+    expect(currencyFor("NP")).toBe("USD");
+    expect(currencyFor("")).toBe("USD");
+  });
+
+  it("takes only one of the eight out of a URL", () => {
+    expect(currencyCode("inr")).toBe("INR");
+    // This value becomes a cookie and then a request for a market, so the
+    // shape is the whole of what is trusted.
+    expect(currencyCode("AED")).toBe("");
+    expect(currencyCode("USD; drop")).toBe("");
+    expect(currencyCode(null)).toBe("");
   });
 });

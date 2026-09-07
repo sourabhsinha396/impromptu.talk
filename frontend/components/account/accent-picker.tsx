@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -15,7 +16,7 @@ import { ACCENTS, type Accent, validAccent } from "@/lib/palette";
     one here paints the whole page at once, which is a better argument for
     Pro than a locked row could ever be: the accent is on the topic, the
     streak and every link, and that is the thing being sold. */
-export function AccentPicker({ accent }: { accent: string }) {
+export function AccentPicker({ accent, pro }: { accent: string; pro: boolean }) {
   const router = useRouter();
   const stored = validAccent(accent);
   const [picked, setPicked] = useState<Accent>(stored);
@@ -85,11 +86,27 @@ export function AccentPicker({ accent }: { accent: string }) {
         </div>
       </SectionBody>
       <SectionFoot>
-        <Button size="sm" onClick={save} disabled={busy || picked === settled.current}>
+        {/* Everybody browses all six; only Save is Pro's, and it says so
+            underneath. A locked row would have been a worse argument for
+            Pro than watching the page change colour is. */}
+        <Button size="sm" onClick={save} disabled={busy || !pro || picked === settled.current}>
           Save colour
         </Button>
-        {error ? <Refused>{error}</Refused> : justSaved ? <Saved /> : null}
-        <Hint>Picking one shows it straight away. Save keeps it.</Hint>
+        {error ? (
+          <Refused>{error}</Refused>
+        ) : justSaved ? (
+          <Saved />
+        ) : pro ? (
+          <Hint>Picking one shows it straight away. Save keeps it.</Hint>
+        ) : (
+          <Hint>
+            Look at all six.{" "}
+            <Link href="/pro" className="font-semibold text-accent-strong">
+              Pro
+            </Link>{" "}
+            is needed to keep one.
+          </Hint>
+        )}
       </SectionFoot>
     </>
   );

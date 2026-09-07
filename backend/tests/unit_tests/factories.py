@@ -8,6 +8,7 @@ import factory
 from factory.django import DjangoModelFactory
 
 from apps.authentication.models import User
+from apps.payments.models import Purchase
 from apps.runs.models import Run
 from apps.topics.models import Genre, Topic
 
@@ -93,5 +94,29 @@ def runs_on_days(days: list[int], **fields) -> None:
         RunFactory(days_ago=day, base=base, **fields)
 
 
+class PurchaseFactory(DjangoModelFactory):
+    """One settled purchase. Paid and forever by default, because that is
+    the row every entitlement test starts from; `days` is how long the
+    access it bought lasts, and None means never running out."""
+
+    class Meta:
+        model = Purchase
+        exclude = ("days",)
+
+    days = None
+
+    user = factory.SubFactory(UserFactory)
+    reference = factory.Sequence(lambda n: f"ref{n:08d}")
+    plan = "lifetime"
+    status = Purchase.PAID
+    session_id = factory.Sequence(lambda n: f"sess_{n}")
+    amount_minor = 3900
+    currency = "USD"
+    usd_cents = 3900
+    expires_at = factory.LazyAttribute(
+        lambda p: None if p.days is None else dt.datetime.now(dt.UTC) + dt.timedelta(days=p.days)
+    )
+
+
 def all_factories():
-    return [UserFactory, GenreFactory, TopicFactory, RunFactory]
+    return [UserFactory, GenreFactory, TopicFactory, RunFactory, PurchaseFactory]

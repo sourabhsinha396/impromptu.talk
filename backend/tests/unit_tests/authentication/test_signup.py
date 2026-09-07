@@ -22,7 +22,8 @@ def signup(client, **over):
 def test_creates_the_account_lowercased_and_tidied_and_signs_it_in(client, db):
     response = signup(client)
     assert response.status_code == 201
-    assert response.json() == {"email": "speaker@example.com", "name": "Ada Grace", "is_superuser": False, "accent": ""}
+    body = {"email": "speaker@example.com", "name": "Ada Grace", "is_superuser": False, "accent": "", "is_pro": True}
+    assert response.json() == body
     assert settings.SESSION_COOKIE_NAME in client.cookies
     assert client.get(ME).status_code == 200
     user = User.objects.get()

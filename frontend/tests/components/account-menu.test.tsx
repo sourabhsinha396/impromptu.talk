@@ -15,7 +15,7 @@ afterEach(() => {
   refresh.mockClear();
 });
 
-const speaker: SessionUser = { email: "speaker@example.com", name: "", is_superuser: false, accent: "" };
+const speaker: SessionUser = { email: "speaker@example.com", name: "", is_superuser: false, accent: "", is_pro: false };
 
 async function open(user: SessionUser | null) {
   render(<AccountMenu user={user} />);

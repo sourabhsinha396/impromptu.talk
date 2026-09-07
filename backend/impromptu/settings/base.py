@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "apps.authentication",
     "apps.topics",
     "apps.runs",
+    "apps.payments",
 ]
 
 MIDDLEWARE = [
@@ -142,6 +143,20 @@ GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", "").strip()
 # `apps/common/recaptcha.py` reads the pair together.
 RECAPTCHA_SITE_KEY = os.environ.get("RECAPTCHA_SITE_KEY", "").strip()
 RECAPTCHA_SECRET_KEY = os.environ.get("RECAPTCHA_SECRET_KEY", "").strip()
+
+# The payment provider. The key is the whole switch: with none, nothing
+# is for sale, Pro is not linked, and no feature is gated, because gating
+# on a purchase nobody can make is a lock on a door with no key cut for
+# it. Each plan also needs its own dashboard product id, and a missing one
+# switches that plan off on its own. Prices are not here: they are product
+# policy and live in `apps/payments/plans.py`, reviewed like code.
+DODO_API_KEY = os.environ.get("DODO_API_KEY", "").strip()
+DODO_PRODUCTS = {
+    "monthly": os.environ.get("DODO_PRODUCT_MONTHLY", "").strip(),
+    "annual": os.environ.get("DODO_PRODUCT_ANNUAL", "").strip(),
+    "pass": os.environ.get("DODO_PRODUCT_PASS", "").strip(),
+    "lifetime": os.environ.get("DODO_PRODUCT_LIFETIME", "").strip(),
+}
 
 # A reset link lives an hour. Django's token needs no table: it is signed
 # over the password hash and the last sign-in, so it dies the moment

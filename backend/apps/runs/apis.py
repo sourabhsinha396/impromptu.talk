@@ -5,6 +5,7 @@ from apps.authentication.security import session_auth
 from apps.common.clock import request_offset
 from apps.common.devices import device_id
 from apps.common.ratelimit import throttle
+from apps.payments import services as payments
 from apps.runs import history, services, sharing, streaks
 from apps.runs.schemas import HistoryOut, RunIn, SharedOut, ShareOut, SummaryOut
 
@@ -16,11 +17,11 @@ def _who(request):
 
 
 # The rule a streak is counted under is the plan's: five days and no
-# freezes free, the plan's length with freezes on Pro. Nobody is Pro until
-# the entitlement card lands (24), which replaces this with the account's
-# plan (`streaks.pro_rule(plan_days)`).
+# freezes free, the plan's length with freezes on Pro. One query for an
+# account, none at all for a stranger, who cannot hold a plan.
 def _rule(user) -> streaks.Rule:
-    return streaks.FREE
+    days = payments.streak_days(user)
+    return streaks.pro_rule(days) if days else streaks.FREE
 
 
 def _scoreboard(summary: streaks.Summary) -> dict:

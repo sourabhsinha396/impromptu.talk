@@ -5,10 +5,10 @@ locked out the browser that made it, a colour that reached an attribute on
 <html> as whatever was typed, and a settings payload carrying the hash.
 """
 
-from django.test import Client
+from django.test import Client, override_settings
 
 from apps.authentication.models import User
-from apps.authentication.services import TOO_SHORT, WRONG_PASSWORD
+from apps.authentication.services import PRO_ONLY, TOO_SHORT, WRONG_PASSWORD
 from tests.unit_tests import factories
 
 ACCOUNT = "/api/v1/auth/account"
@@ -27,6 +27,10 @@ def test_the_settings_payload_says_a_password_exists_and_never_what_it_is(auth_c
         "accent": "",
         "has_password": True,
         "share_token": None,
+        # Nothing is for sale in a test run, so Pro's features are open to
+        # everybody and no plan is held.
+        "is_pro": True,
+        "plan": None,
     }
 
 
@@ -102,3 +106,19 @@ def test_a_google_only_account_sets_its_first_password_without_confirming_one(db
     # Google keeps working: the second door is added, not swapped in.
     assert google.check_password("a first real password")
     assert google.google_sub == "g-2"
+
+
+@override_settings(DODO_API_KEY="live", DODO_PRODUCTS={"lifetime": "prod_l"})
+def test_the_colour_is_refused_to_an_account_without_pro(auth_client, user):
+    # Everybody may look at all six; keeping one is what is bought. The
+    # refusal lives here as well as in the page, or the gate is decoration.
+    response = auth_client.patch(ACCENT, {"accent": "violet"}, content_type=JSON)
+    assert response.status_code == 400
+    assert response.json()["detail"] == PRO_ONLY
+    user.refresh_from_db()
+    assert user.accent == ""
+
+    factories.PurchaseFactory(user=user, plan="lifetime")
+    assert auth_client.patch(ACCENT, {"accent": "violet"}, content_type=JSON).status_code == 200
+    user.refresh_from_db()
+    assert user.accent == "violet"

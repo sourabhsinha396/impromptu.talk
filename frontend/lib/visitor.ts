@@ -1,7 +1,7 @@
 import { cookies, headers } from "next/headers";
 
-import { TIMEZONE_COOKIE } from "@/lib/cookies";
-import { where } from "@/lib/geo";
+import { CURRENCY_COOKIE, TIMEZONE_COOKIE } from "@/lib/cookies";
+import { currencyCode, currencyFor, where } from "@/lib/geo";
 
 /* The country header is read only where a proxy sets it. Anywhere else it
    is visitor-supplied, and both consequences are harmless (the wrong price
@@ -24,4 +24,16 @@ export async function visitorCountry(): Promise<string> {
   const timezone = decodeURIComponent(jar.get(TIMEZONE_COOKIE)?.value ?? "");
   const [place] = where(country, sent.get("accept-language") ?? "", timezone);
   return place;
+}
+
+/** The currency to quote this visitor in.
+
+    The whole ladder, top rung first: a currency they picked, then the
+    country any signal places them in, then the base currency. A guess is
+    never written down, only a pick, so somebody who was quoted rupees on
+    a guess and travels is quoted afresh rather than in a currency nobody
+    chose. Server only: it reads the request. */
+export async function visitorCurrency(): Promise<string> {
+  const [jar, country] = await Promise.all([cookies(), visitorCountry()]);
+  return currencyCode(jar.get(CURRENCY_COOKIE)?.value) || currencyFor(country);
 }

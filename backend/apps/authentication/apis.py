@@ -23,6 +23,7 @@ from apps.common import recaptcha
 from apps.common.devices import rotate_device
 from apps.common.ratelimit import throttle
 from apps.common.referrals import referral_code
+from apps.payments import services as payments
 
 api = Router(tags=["auth"])
 
@@ -190,12 +191,22 @@ def account(request):
     page assembling itself out of /me and the streak's history, which
     would fetch a year of runs to learn whether a switch is on."""
     user = request.auth
+    row = payments.held(user)
+    plan = payments.plan_of(row)
     return {
         "email": user.email,
         "name": user.name,
         "accent": user.accent,
         "has_password": user.has_usable_password(),
         "share_token": user.share_token,
+        "is_pro": payments.is_pro(user),
+        "plan": plan
+        and {
+            "code": plan.code,
+            "name": plan.name,
+            "recurring": plan.recurring,
+            "note": plan.note,
+        },
     }
 
 
@@ -206,8 +217,11 @@ def set_name(request, payload: NameIn):
 
 @api.patch("/accent", auth=session_auth, response=MeOut)
 def set_accent(request, payload: AccentIn):
-    """The colour is Pro's to keep once there is a Pro to buy (card 24).
-    Everything is free right now, so every account saves one."""
+    """The colour is Pro's. Everybody may look at all six; keeping one is
+    what is bought, and with nothing for sale everybody may keep one. The
+    refusal is here and not only in the page, or the gate is decoration."""
+    if not payments.is_pro(request.auth):
+        raise HttpError(400, services.PRO_ONLY)
     return services.set_accent(request.auth, payload.accent)
 
 

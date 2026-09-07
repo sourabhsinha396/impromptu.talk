@@ -21,7 +21,21 @@ export async function backendFetch(path: string, init: RequestInit = {}) {
 
 /* `is_pro` arrives with the entitlement card; until then it is absent, and
    absent reads as not Pro, which is true of every account today. */
-export type SessionUser = { email: string; name: string; is_superuser: boolean; accent: string; is_pro?: boolean };
+export type SessionUser = {
+  email: string;
+  name: string;
+  is_superuser: boolean;
+  accent: string;
+  /* Whether Pro's features are open to this account. True for everybody
+     while nothing is for sale, which is also what keeps "Get Pro" out of
+     the menu while there is no page to send anybody to. */
+  is_pro: boolean;
+};
+
+/** One plan, as an account page names it. What a plan is called is
+    product policy, so the backend says it rather than the frontend
+    keeping a second copy of the catalogue. */
+export type Plan = { code: string; name: string; recurring: boolean; note: string };
 
 /** Everything the two settings pages draw, in one call. Null when the
     backend is unreachable or the session has gone, which the page turns
@@ -32,6 +46,9 @@ export type AccountSettings = {
   accent: string;
   has_password: boolean;
   share_token: string | null;
+  is_pro: boolean;
+  /** The plan granting Pro, or null when nothing is held. */
+  plan: Plan | null;
 };
 
 export async function accountSettings(): Promise<AccountSettings | null> {

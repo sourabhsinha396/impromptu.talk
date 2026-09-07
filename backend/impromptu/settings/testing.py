@@ -39,3 +39,10 @@ GOOGLE_CLIENT_SECRET = ""
 # holds; `recaptcha.human()` passes everything when unset.
 RECAPTCHA_SITE_KEY = ""
 RECAPTCHA_SECRET_KEY = ""
+
+# Blank, so no test can reach the provider whatever a developer's .env
+# holds. A test that wants the shop open sets these itself; with them
+# empty nothing is for sale and every feature is free, which is the state
+# the site ships in until the first product id exists.
+DODO_API_KEY = ""
+DODO_PRODUCTS = {"monthly": "", "annual": "", "pass": "", "lifetime": ""}

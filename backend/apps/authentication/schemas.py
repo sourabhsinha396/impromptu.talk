@@ -1,6 +1,8 @@
 from ninja import Schema
 from pydantic import Field
 
+from apps.payments import services as payments
+
 
 class MeOut(Schema):
     """Who is signed in, as the chrome needs it: what to call them,
@@ -12,6 +14,17 @@ class MeOut(Schema):
     name: str
     is_superuser: bool
     accent: str
+    #: Whether Pro's features are open to this account, which is also what
+    #: hides "Get Pro" in the menu. True for everybody while nothing is
+    #: for sale, because there is then no Pro to get and nothing gated.
+    is_pro: bool
+
+    # Resolved rather than read off the row: entitlement is the best of an
+    # account's paid purchases, not a column. Every route answering MeOut
+    # gets it from here, so no door can forget it.
+    @staticmethod
+    def resolve_is_pro(obj) -> bool:
+        return payments.is_pro(obj)
 
 
 # The ceilings below refuse only what no person could have typed: a
@@ -47,6 +60,15 @@ class ResetIn(Schema):
     password: str = Field(max_length=128)
 
 
+class PlanOut(Schema):
+    """One plan, as an account page names it."""
+
+    code: str
+    name: str
+    recurring: bool
+    note: str
+
+
 class AccountOut(Schema):
     """Everything the settings pages draw, in one answer. Wider than
     `MeOut` because these two pages are the only place the account looks
@@ -59,6 +81,13 @@ class AccountOut(Schema):
     accent: str
     has_password: bool
     share_token: str | None
+    is_pro: bool
+    #: The plan granting Pro, for the subscription section to name, or
+    #: None when nothing is held. Named here rather than by a copy of the
+    #: catalogue in the frontend: what a plan is called is product policy,
+    #: and it already lives in `apps/payments/plans.py`. The dates and the
+    #: portal button land with card 26.
+    plan: PlanOut | None
 
 
 class NameIn(Schema):

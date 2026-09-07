@@ -33,6 +33,7 @@ TOO_SHORT = f"Use at least {MIN_PASSWORD} characters."
 LINK_DEAD = "That link has expired or has already been used."
 NOT_HUMAN = "Confirm you're not a robot."
 WRONG_PASSWORD = "That is not your current password."
+PRO_ONLY = "Pro is needed to keep a colour."
 
 
 def normalize_email(email: str) -> str:

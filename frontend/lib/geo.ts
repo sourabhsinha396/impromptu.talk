@@ -96,3 +96,24 @@ export function where(country: string | null | undefined, acceptLanguage = "", t
 
   return ["", "default"];
 }
+
+/** The currency to quote in, given the country a signal placed somebody
+    in. The base currency for everybody the table does not name, because a
+    country with no market is no better an answer than none. */
+export function currencyFor(country: string): string {
+  return COUNTRY_CURRENCY[country.trim().toUpperCase()] ?? BASE_CURRENCY;
+}
+
+/* The eight the site quotes in, and what everybody else pays. The prices
+   themselves are the backend's: this side needs only to know which codes
+   are real, so a `?currency=` value out of a URL cannot become a cookie
+   and then a request for a market nobody sells in. */
+export const BASE_CURRENCY = "USD";
+
+/** The code in a `?currency=` value, or "" for anything that is not one
+    of the eight. */
+export function currencyCode(value: string | null | undefined): string {
+  if (!value) return "";
+  const code = value.trim().toUpperCase();
+  return Object.values(COUNTRY_CURRENCY).includes(code) ? code : "";
+}

@@ -60,7 +60,7 @@ describe("the name card", () => {
 describe("the colour card", () => {
   it("paints the page as soon as a colour is picked", async () => {
     vi.stubGlobal("fetch", ok());
-    render(<AccentPicker accent="lime" />);
+    render(<AccentPicker accent="lime" pro />);
     expect(document.documentElement.dataset.accent).toBe("lime");
     await userEvent.click(screen.getByRole("button", { name: "Violet" }));
     expect(document.documentElement.dataset.accent).toBe("violet");
@@ -68,7 +68,7 @@ describe("the colour card", () => {
 
   it("puts an unsaved colour back on the way out, so it cannot follow somebody around the site", async () => {
     vi.stubGlobal("fetch", ok());
-    const picker = render(<AccentPicker accent="lime" />);
+    const picker = render(<AccentPicker accent="lime" pro />);
     await userEvent.click(screen.getByRole("button", { name: "Coral" }));
     picker.unmount();
     expect(document.documentElement.dataset.accent).toBe("lime");
@@ -77,7 +77,7 @@ describe("the colour card", () => {
   it("keeps a saved colour on the way out", async () => {
     const sent = ok();
     vi.stubGlobal("fetch", sent);
-    const picker = render(<AccentPicker accent="lime" />);
+    const picker = render(<AccentPicker accent="lime" pro />);
     await userEvent.click(screen.getByRole("button", { name: "Cyan" }));
     await userEvent.click(screen.getByRole("button", { name: "Save colour" }));
     expect(JSON.parse(String(sent.mock.calls[0][1]?.body))).toEqual({ accent: "cyan" });

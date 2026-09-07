@@ -103,7 +103,7 @@ describe("the streak page", () => {
   /* A link to an empty calendar is not a thing anybody sends, and the link
      has to outlive the browser that made it. */
   it("offers a share link only to someone signed in with runs, and shows the link once it exists", () => {
-    const priya = { email: "p@example.com", name: "Priya", is_superuser: false, accent: "" };
+    const priya = { email: "p@example.com", name: "Priya", is_superuser: false, accent: "", is_pro: false };
     const { unmount } = render(<StreakPage history={free} bank={bank} user={null} now={NOW} />);
     expect(screen.queryByText("Share")).not.toBeInTheDocument();
     unmount();
