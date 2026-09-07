@@ -148,6 +148,22 @@ export function Round({
      outlives the round. */
   useEffect(() => () => void listener.current?.stop(), []);
 
+  /* The only call for the microphone that is not gated on the pref, and it
+     is inside a press. Opened and closed again at once, because all this
+     wants is the permission: the round it was offered on is already over,
+     and the report starts with the next one.
+
+     A refusal writes "off" rather than leaving it "on" and failing
+     silently every round after. There is no asking again from here, so the
+     settings sheet is where that state is explained. */
+  const turnOnMic = useCallback(async () => {
+    const ears = listener.current;
+    if (!ears) return;
+    const allowed = await ears.start();
+    await ears.stop();
+    engine?.setMic(allowed ? "on" : "off");
+  }, [engine]);
+
   /* Camera mode: the chrome hides while thinking and speaking. */
   const filming = engine?.filming ?? false;
   useEffect(() => {
@@ -221,6 +237,7 @@ export function Round({
               onLength={(which, seconds) => engine.setLength(which, seconds)}
               onStyle={(key) => engine.chooseStyle(key)}
               onSound={(on) => engine.setSound(on)}
+              onMic={(on) => (on ? void turnOnMic() : engine.setMic("off"))}
             />
           </>
         )}
@@ -286,6 +303,11 @@ export function Round({
           summary={summary}
           report={report}
           spokenSeconds={engine.spokeFor}
+          /* Offered once nobody has decided, and never again after "Not
+             now": the settings sheet is the way back. */
+          offerMic={engine.prefs.mic === "ask"}
+          onMicYes={() => void turnOnMic()}
+          onMicNo={() => engine.setMic("off")}
           signedIn={signedIn}
           onAgain={armed(() => engine.spin())}
           onSame={() => engine.sameTopic()}

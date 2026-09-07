@@ -1,3 +1,5 @@
+import { Button } from "@/components/site/button";
+import { MicIcon } from "@/components/site/icons";
 import { blocks, clock, headline, type Kind, type Report } from "@/lib/report";
 
 /* The minute you just spoke, drawn.
@@ -83,4 +85,41 @@ function numbers(report: Report): string[] {
   if (report.pace !== null) out.push(`${report.pace} wpm`);
   if (report.fillers !== null) out.push(`${report.fillers} um`);
   return out;
+}
+
+
+/* The one place the microphone is ever asked for.
+
+   It sits in the slot the report will fill, after a round rather than
+   before one, so the ask lands on somebody who has just spoken and is
+   looking at what it was worth, and so enabling it puts the thing exactly
+   where the ask was. Nothing about it appears on home or during a round:
+   the ten-second rule outranks this, and an offer made while somebody is
+   trying to think is one they refuse to get rid of it.
+
+   The button names what you get, not what you give up. "Turn on the mic"
+   is the cost; "Turn on feedback" is the reason, and the line under it is
+   where the microphone is admitted to, because a prompt nobody was warned
+   about is the thing this whole flow exists to avoid. */
+export function ReportInvitation({ onYes, onNo }: { onYes: () => void; onNo: () => void }) {
+  return (
+    <div className="rounded-card border border-line bg-card2 px-5 py-5 text-center">
+      <MicIcon size={24} className="mx-auto mb-2.5 text-accent" />
+      <h3 className="font-display text-[19px] font-semibold tracking-[-0.02em]">Get feedback on every round</h3>
+      <p className="mx-auto mt-1.5 max-w-[38ch] text-sm text-muted">
+        A report on your pauses, your pace and the words you lean on.
+      </p>
+      <p className="mx-auto mt-1 max-w-[38ch] text-[12.5px] text-muted">
+        Needs your microphone. We never keep the audio.
+      </p>
+      <div className="mt-4 flex flex-wrap justify-center gap-2.5">
+        <Button size="sm" onClick={onYes}>
+          Turn on feedback
+        </Button>
+        <Button size="sm" variant="ghost" onClick={onNo}>
+          Not now
+        </Button>
+      </div>
+    </div>
+  );
 }

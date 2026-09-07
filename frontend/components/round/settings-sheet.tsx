@@ -20,6 +20,7 @@ export function SettingsSheet({
   onLength,
   onStyle,
   onSound,
+  onMic,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -29,6 +30,7 @@ export function SettingsSheet({
   onLength: (which: "prep" | "speak", seconds: number) => void;
   onStyle: (key: string) => void;
   onSound: (on: boolean) => void;
+  onMic: (on: boolean) => void;
 }) {
   const coined = ownStyles(bank, prefs.genre);
   const builtIn = bank.styles.find((style) => style.key === prefs.style);
@@ -89,6 +91,25 @@ export function SettingsSheet({
             />
             Mute sound effects
           </label>
+
+          {/* The way back after "Not now" on the done screen, and the only
+              other door to the microphone. Ticking it opens the browser's
+              prompt from inside this press, which is the same rule the
+              invitation follows: the prompt is never a surprise. */}
+          <div>
+            <label className="flex cursor-pointer items-center gap-2.5 text-sm font-semibold">
+              <input
+                type="checkbox"
+                checked={prefs.mic === "on"}
+                onChange={(event) => onMic(event.target.checked)}
+                className="size-4 accent-accent"
+              />
+              Feedback after each round
+            </label>
+            <p className="mt-1.5 text-[13px] text-muted">
+              Your pauses, your pace and the words you lean on. We never keep the audio.
+            </p>
+          </div>
 
           {/* Only where there is a keyboard: a phone has no space bar. */}
           <p className="hidden text-[12.5px] text-muted [@media(hover:hover)]:block">

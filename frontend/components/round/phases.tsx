@@ -1,4 +1,4 @@
-import { RoundReport } from "@/components/round/report";
+import { ReportInvitation, RoundReport } from "@/components/round/report";
 import { Ring } from "@/components/round/ring";
 import { Button } from "@/components/site/button";
 import { FlameIcon, GenreIcon, MinutesIcon, PauseIcon, PlayIcon, StyleIcon, TopicsIcon } from "@/components/site/icons";
@@ -210,6 +210,9 @@ export function DonePhase({
   summary,
   report,
   spokenSeconds,
+  offerMic,
+  onMicYes,
+  onMicNo,
   signedIn,
   onAgain,
   onSame,
@@ -217,6 +220,9 @@ export function DonePhase({
   summary: Summary | null;
   report: Report | "off" | null;
   spokenSeconds: number;
+  offerMic: boolean;
+  onMicYes: () => void;
+  onMicNo: () => void;
   signedIn: boolean;
   onAgain: () => void;
   onSame: () => void;
@@ -229,7 +235,11 @@ export function DonePhase({
           header pill on every page; the done screen's own job is to say
           something about the sixty seconds that just happened. */}
       <div className="mx-auto mt-8 w-full max-w-[640px]">
-        <RoundReport report={report} length={spokenSeconds} />
+        {offerMic ? (
+          <ReportInvitation onYes={onMicYes} onNo={onMicNo} />
+        ) : (
+          <RoundReport report={report} length={spokenSeconds} />
+        )}
       </div>
       {summary && (
         <div className="mx-auto mt-8 mb-9 w-full max-w-[640px]">

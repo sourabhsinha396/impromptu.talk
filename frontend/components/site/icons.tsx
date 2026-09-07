@@ -87,6 +87,11 @@ export const FlameIcon = icon(Flame);
 /* The three tiles: the streak, the topics, the minutes spoken. */
 export const TopicsIcon = icon(MessageSquareText);
 export const MinutesIcon = icon(Mic);
+/* The same glyph, named for the other thing it means. A tile counting
+   minutes spoken and a control that opens the microphone are two ideas,
+   and a name that reads as one of them at the other's call site is the
+   wrong name. */
+export const MicIcon = icon(Mic);
 export const BackIcon = icon(ArrowLeft);
 export const RotateIcon = icon(RotateCw);
 export const EditIcon = icon(Pencil);
