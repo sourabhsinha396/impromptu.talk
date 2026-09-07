@@ -1,5 +1,7 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
+vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
 
 import { StreakPage } from "@/components/streak/streak-page";
 import type { Bank } from "@/lib/bank";
@@ -96,5 +98,26 @@ describe("the streak page", () => {
     expect(screen.getByText("Finish a round. It shows up here.")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Start" })).toHaveAttribute("href", "/");
     expect(screen.queryByText("day streak")).not.toBeInTheDocument();
+  });
+
+  /* A link to an empty calendar is not a thing anybody sends, and the link
+     has to outlive the browser that made it. */
+  it("offers a share link only to someone signed in with runs, and shows the link once it exists", () => {
+    const priya = { email: "p@example.com", name: "Priya", is_superuser: false };
+    const { unmount } = render(<StreakPage history={free} bank={bank} user={null} now={NOW} />);
+    expect(screen.queryByText("Share")).not.toBeInTheDocument();
+    unmount();
+
+    const second = render(<StreakPage history={free} bank={bank} user={priya} now={NOW} />);
+    expect(screen.getByRole("button", { name: "Create a link" })).toBeInTheDocument();
+    second.unmount();
+
+    render(<StreakPage history={{ ...free, share_token: "abc123" }} bank={bank} user={priya} now={NOW} />);
+    expect(screen.getByLabelText("Your public link")).toHaveValue("http://localhost:3009/s/abc123");
+    expect(screen.getByRole("link", { name: "Open it" })).toHaveAttribute("href", "http://localhost:3009/s/abc123");
+    expect(screen.queryByRole("button", { name: "Create a link" })).not.toBeInTheDocument();
+
+    render(<StreakPage history={EMPTY_HISTORY} bank={bank} user={priya} now={NOW} />);
+    expect(screen.queryByRole("button", { name: "Create a link" })).not.toBeInTheDocument();
   });
 });

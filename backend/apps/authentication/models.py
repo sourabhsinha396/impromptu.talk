@@ -51,6 +51,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    # The whole of streak sharing: null means no public page, which is the
+    # default, because a streak is private until its owner decides
+    # otherwise. Minted once on the streak page, cleared from the account's
+    # additional settings or by hand in the admin for somebody who writes in.
+    share_token = models.CharField(max_length=32, null=True, blank=True, unique=True)
 
     objects = UserManager()
 

@@ -52,3 +52,29 @@ class HistoryOut(Schema):
     runs_kept: int
     calendar: list[DayOut]
     recent: list[RecentOut]
+    # The signed-in owner's share token, so the streak page can show the
+    # link or offer to make one; null for a stranger and before it is made.
+    share_token: str | None = None
+
+
+class ShareOut(Schema):
+    token: str
+
+
+class SharedTopicOut(Schema):
+    text: str
+    slug: str
+
+
+class SharedOut(Schema):
+    """One person's practice as a stranger may see it: the first name they
+    gave or nothing, never the email; the numbers; eight weeks; and only
+    the bank topics they practised, each a link into a round on it."""
+
+    name: str
+    streak: int
+    topics: int
+    minutes: int
+    days: int
+    calendar: list[DayOut]
+    recent: list[SharedTopicOut]

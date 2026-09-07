@@ -1,11 +1,12 @@
-from django.http import HttpResponse
+from django.http import Http404, HttpResponse
 from ninja import Router
 
+from apps.authentication.security import session_auth
 from apps.common.clock import request_offset
 from apps.common.devices import device_id
 from apps.common.ratelimit import throttle
-from apps.runs import history, services, streaks
-from apps.runs.schemas import HistoryOut, RunIn, SummaryOut
+from apps.runs import history, services, sharing, streaks
+from apps.runs.schemas import HistoryOut, RunIn, SharedOut, ShareOut, SummaryOut
 
 api = Router(tags=["runs"])
 
@@ -70,4 +71,24 @@ def practice(request, response: HttpResponse):
         "recent": [
             {"topic_text": r.topic_text, "genre_slug": r.genre_slug, "at": r.at.isoformat()} for r in shown.recent
         ],
+        "share_token": user.share_token if user else None,
     }
+
+
+@api.post("/share", auth=session_auth, response=ShareOut)
+def share(request):
+    """Turn the public page on, or hand back the link already in use. An
+    account is needed because the link has to outlive the browser that
+    made it; a stranger is told 401."""
+    return {"token": sharing.start(request.auth)}
+
+
+@api.get("/shared/{token}", response=SharedOut)
+def shared_page(request, token: str, response: HttpResponse):
+    """One person's practice for anybody with the link. 404 for a token
+    nobody holds, the same as a page that never existed."""
+    who = sharing.owner(token)
+    if who is None:
+        raise Http404
+    response["Cache-Control"] = "private, no-store"
+    return sharing.shared(who, request_offset(request))

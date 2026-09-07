@@ -15,6 +15,7 @@ export type History = {
   runs_kept: number;
   calendar: Day[];
   recent: Recent[];
+  share_token?: string | null;
 };
 
 export const EMPTY_HISTORY: History = {

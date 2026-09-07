@@ -3,9 +3,11 @@ import Link from "next/link";
 import { Stats } from "@/components/round/phases";
 import { Button } from "@/components/site/button";
 import { FlameIcon, GenreIcon } from "@/components/site/icons";
+import { Share } from "@/components/streak/share";
 import type { SessionUser } from "@/lib/api";
 import type { Bank } from "@/lib/bank";
 import { type Day, type History, heatmapLayout, isStrip, timeAgo, weekdayName, windowLabel } from "@/lib/practice";
+import { absolute } from "@/lib/site";
 
 /* The streak page, as approved in docs/mocks/streak.html. One column at
    960px, the genre page's frame. The tiles are the done screen's, so the
@@ -72,6 +74,11 @@ export function StreakPage({
               A missed day ended your last streak. <PitchLink>Pro would have held it at {history.would_be}.</PitchLink>
             </p>
           )}
+
+          {/* Only once there is something to be proud of, and only with an
+              account: a link to an empty calendar is not a thing anybody
+              sends, and the link has to outlive the browser that made it. */}
+          {user && <Share url={history.share_token ? absolute(`/s/${history.share_token}`) : null} />}
 
           <p className="mt-9 max-w-[60ch] text-[13.5px] text-muted">
             {user ? (
