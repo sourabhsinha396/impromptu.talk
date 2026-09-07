@@ -30,7 +30,7 @@ Ticked as of 2026-09-07, after cards 01 to 26.
 | `GET`/`POST /packs`, `GET /packs/{slug}`, topics add/edit/delete, `/delete` | `/genres/yours`, `/genres/yours/[slug]`, `v1/topics/mine` endpoints | 29 | [x] |
 | `POST /packs/{slug}/generate` | `POST /api/v1/topics/mine/{slug}/generate` | 30 | [x] |
 | (new) share an owned genre, `/g/[token]` | | 29 | [ ] |
-| `GET /affiliate`, `GET /affiliate/referrals`, `POST /affiliate/paypal` | same | 31 | [ ] |
+| `GET /affiliate`, `GET /affiliate/referrals`, `POST /affiliate/paypal` | same, over `GET /api/v1/affiliates`, `/referrals`, `POST /paypal` | 31 | [x] |
 | `GET /administration`, `/staged-topic`, `GET`/`POST /pro`, `POST /pro/revoke`, `GET`/`POST /payouts`, `GET`/`POST /outreach` | same paths | 32 | [ ] |
 | `/admin` (sqladmin, env password) | `/admin/` (Django admin, `is_staff`) | 01, 28 | [x] mounted; User, Genre, Topic registered; the rest per card |
 | `/about`, `/contact`, `/privacy`, `/terms`, `/refunds` | same | 33 | [ ] |
@@ -157,7 +157,7 @@ Ticked as of 2026-09-07, after cards 01 to 26.
 
 - [x] Code shape and minting; link on `/account` and `/affiliate`, minted on the first GET that shows it (31)
 - [x] 30% of the charge, written at settlement; balance derived; nobody named; payouts by operator from $10 (31; the tool that writes them is 32). No affiliates table and no payout method column, `DECISIONS.md`
-- [ ] `/affiliate` pitch with the rate and sample faces; `/affiliate/referrals` with PayPal address (31)
+- [x] `/affiliate` pitch with the rate and sample faces; `/affiliate/referrals` with PayPal address (31). Every number on both pages is read from the backend's constants, and each sample face says so under itself rather than in a footnote
 
 ### Administration
 
