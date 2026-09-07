@@ -56,3 +56,31 @@ class CatalogueOut(Schema):
     #: The free streak, so the page can say what Pro is longer than
     #: without keeping its own copy of the number.
     free_days: int
+
+
+class CheckoutIn(Schema):
+    plan: str
+    currency: str = ""
+
+
+class CheckoutOut(Schema):
+    url: str
+
+
+class SettleIn(Schema):
+    reference: str
+    payment_id: str = ""
+    subscription_id: str = ""
+
+
+class ReceiptOut(Schema):
+    """The done page. `charged` is what the card was charged where that is
+    known and the quote otherwise, because a receipt should read back the
+    statement rather than our arithmetic."""
+
+    reference: str
+    plan_name: str
+    recurring: bool
+    status: str
+    charged: str
+    expires_at: str | None

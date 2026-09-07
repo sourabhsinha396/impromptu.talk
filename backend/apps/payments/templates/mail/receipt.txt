@@ -1,0 +1,13 @@
+{{ site_name }}
+
+Your receipt
+
+{{ plan_name }} - {{ charged }}
+{% if recurring %}Renews until you cancel, in your account settings.{% elif expires_at %}Pro until {{ expires_at|date:"j F Y" }}.{% else %}Pro for as long as the site exists.{% endif %}
+
+Reference: {{ reference }}
+{{ link }}
+
+Thanks for paying for this. It is what keeps the round free for everybody else.
+
+- {{ site_name }}

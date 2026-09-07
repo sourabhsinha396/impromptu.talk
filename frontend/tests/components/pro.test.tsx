@@ -111,14 +111,25 @@ describe("the plans", () => {
     expect(screen.queryByText(/What you get with/)).not.toBeInTheDocument();
   });
 
-  it("asks our own route for a checkout and shows the one sentence when it refuses", async () => {
+  it("asks our own route for a checkout, naming the plan and the currency on screen", async () => {
     const sent = vi.fn().mockResolvedValue(new Response(JSON.stringify({ detail: "Not open yet." }), { status: 400 }));
     vi.stubGlobal("fetch", sent);
     render(<Plans catalogue={CATALOGUE} signedIn />);
     await userEvent.click(screen.getByRole("button", { name: "Subscribe for $5" }));
     expect(sent).toHaveBeenCalledWith("/api/v1/payments/checkout", expect.objectContaining({ method: "POST" }));
-    expect(JSON.parse(String(sent.mock.calls[0][1]?.body))).toEqual({ plan: "monthly" });
+    expect(JSON.parse(String(sent.mock.calls[0][1]?.body))).toEqual({ plan: "monthly", currency: "USD" });
     expect(screen.getByRole("alert")).toHaveTextContent("Not open yet.");
+  });
+
+  it("leaves for the checkout it is handed, rather than routing to a page of ours", async () => {
+    const url = "https://test.checkout.dodopayments.com/session/cks_1";
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({ url }), { status: 200 })));
+    const location = { href: "" };
+    vi.stubGlobal("location", location);
+    render(<Plans catalogue={CATALOGUE} signedIn />);
+    await userEvent.click(screen.getByRole("button", { name: "Subscribe for $5" }));
+    expect(location.href).toBe(url);
+    expect(push).not.toHaveBeenCalled();
   });
 
   it("carries a picked currency into the URL, which is what the proxy remembers", async () => {

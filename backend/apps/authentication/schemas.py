@@ -61,12 +61,17 @@ class ResetIn(Schema):
 
 
 class PlanOut(Schema):
-    """One plan, as an account page names it."""
+    """One plan, as an account page names it, with what the row it came
+    from says about when it ends."""
 
     code: str
     name: str
     recurring: bool
     note: str
+    expires_at: str | None
+    #: Its own field because `subscription_status` cannot say it: a
+    #: cancelled subscription stays active until the paid period ends.
+    cancels: bool
 
 
 class AccountOut(Schema):

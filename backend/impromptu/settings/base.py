@@ -151,6 +151,9 @@ RECAPTCHA_SECRET_KEY = os.environ.get("RECAPTCHA_SECRET_KEY", "").strip()
 # switches that plan off on its own. Prices are not here: they are product
 # policy and live in `apps/payments/plans.py`, reviewed like code.
 DODO_API_KEY = os.environ.get("DODO_API_KEY", "").strip()
+# Their test host by default: a host that forgot this variable talks to
+# the sandbox rather than to somebody's card.
+DODO_BASE_URL = os.environ.get("DODO_BASE_URL", "").strip() or "https://test.dodopayments.com"
 DODO_PRODUCTS = {
     "monthly": os.environ.get("DODO_PRODUCT_MONTHLY", "").strip(),
     "annual": os.environ.get("DODO_PRODUCT_ANNUAL", "").strip(),

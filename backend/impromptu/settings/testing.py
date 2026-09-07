@@ -46,3 +46,4 @@ RECAPTCHA_SECRET_KEY = ""
 # the site ships in until the first product id exists.
 DODO_API_KEY = ""
 DODO_PRODUCTS = {"monthly": "", "annual": "", "pass": "", "lifetime": ""}
+DODO_BASE_URL = "https://test.invalid"

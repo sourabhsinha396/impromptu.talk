@@ -155,10 +155,9 @@ def test_the_account_payload_names_the_plan_rather_than_its_code(user, shop_open
     body = signed_in.get("/api/v1/auth/account").json()
     # What a plan is called is product policy, so the page is told rather
     # than keeping its own copy of the catalogue.
-    assert body["plan"] == {
-        "code": plans.MONTHLY,
-        "name": "Monthly",
-        "recurring": True,
-        "note": plans.plan(plans.MONTHLY).note,
-    }
+    assert body["plan"]["code"] == plans.MONTHLY
+    assert body["plan"]["name"] == "Monthly"
+    assert body["plan"]["recurring"] is True
+    assert body["plan"]["cancels"] is False
+    assert body["plan"]["expires_at"] is not None
     assert body["is_pro"] is True

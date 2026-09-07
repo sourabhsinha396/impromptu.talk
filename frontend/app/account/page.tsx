@@ -5,7 +5,8 @@ import { redirect } from "next/navigation";
 import { AccentPicker } from "@/components/account/accent-picker";
 import { Section, Tag } from "@/components/account/section";
 import { ACCOUNT, ADDITIONAL, OtherPage, SettingsPage } from "@/components/account/shell";
-import { accountSettings } from "@/lib/api";
+import { Subscription } from "@/components/account/subscription";
+import { accountSettings, refreshEntitlement } from "@/lib/api";
 import { pageMetadata } from "@/lib/metadata";
 
 /* noindex: one person's own account, which says nothing to a crawler. */
@@ -14,7 +15,14 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default async function AccountRoute() {
+export default async function AccountRoute({ searchParams }: { searchParams: Promise<{ back?: string }> }) {
+  /* One of the two moments an entitlement can have changed is the way
+     back from the provider's portal. Re-read once, then land on the
+     plain URL so a reload does not ask again. */
+  if ((await searchParams).back === "portal") {
+    await refreshEntitlement();
+    redirect(ACCOUNT);
+  }
   const settings = await accountSettings();
   /* The proxy already turned strangers away at the cookie; this catches
      a session the backend has since ended, and a backend that is not
@@ -30,16 +38,13 @@ export default async function AccountRoute() {
 
   return (
     <SettingsPage title="Your account." email={settings.email} plan={plan} current={ACCOUNT}>
-      {/* Subscription first: it is the only section whose answer changes
-          on its own. What it charges, when it renews and the way through
-          to the provider's portal land with cards 25 and 26, which is also
-          when purchases have rows to list. */}
+      {/* Subscription first: the only section whose answer changes on its
+          own. Purchases, which need rows to list, land with card 31's
+          affiliate section as the last of these to fill in. */}
       {plan ? (
-        <Section
-          title="Subscription"
-          tag={<Tag>{plan.recurring ? "Renews" : "Paid once"}</Tag>}
-          description={plan.note}
-        />
+        <Section title="Subscription" tag={<Tag>{plan.cancels ? "Cancelled" : plan.recurring ? "Renews" : "Paid once"}</Tag>}>
+          <Subscription plan={plan} />
+        </Section>
       ) : free ? (
         <Section
           title="Subscription"

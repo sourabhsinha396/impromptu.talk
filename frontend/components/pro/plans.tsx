@@ -6,7 +6,6 @@ import { CurrencyPicker } from "@/components/pro/currency-picker";
 import { Button } from "@/components/site/button";
 import { CheckIcon } from "@/components/site/icons";
 import type { Card, Catalogue, PricedPlan } from "@/lib/api";
-import { sendJson } from "@/lib/forms";
 
 /* The plans, as approved in docs/mocks/pro.html: two cards over one list.
 
@@ -53,6 +52,7 @@ export function Plans({ catalogue, signedIn }: { catalogue: Catalogue; signedIn:
           <PlanCard
             key={card.kind}
             card={card}
+            currency={catalogue.currency}
             showing={showing[card.kind]}
             picked={pickedCard === card.kind}
             signedIn={signedIn}
@@ -93,6 +93,7 @@ function plansOf(cards: Card[], kind: string): PricedPlan[] {
 
 function PlanCard({
   card,
+  currency,
   showing,
   picked,
   signedIn,
@@ -100,6 +101,7 @@ function PlanCard({
   onShow,
 }: {
   card: Card;
+  currency: string;
   showing: string | undefined;
   picked: boolean;
   signedIn: boolean;
@@ -137,7 +139,7 @@ function PlanCard({
             {plan.price}
             <span className="font-sans text-[15px] font-semibold tracking-normal text-muted">{plan.unit}</span>
           </p>
-          <Buy plan={plan} signedIn={signedIn} verb={plan.recurring ? "Subscribe for" : "Pay"} />
+          <Buy plan={plan} currency={currency} signedIn={signedIn} verb={plan.recurring ? "Subscribe for" : "Pay"} />
           <p className="mt-2.5 text-[13px] text-muted">{plan.note}</p>
         </>
       )}
@@ -182,7 +184,7 @@ function Segment({
     belong to an account before it opens. Signed in it asks our own route
     for a checkout and follows where it says. The overlay lands on card
     26 over exactly this: whatever fails, this button is what buys Pro. */
-function Buy({ plan, signedIn, verb }: { plan: PricedPlan; signedIn: boolean; verb: string }) {
+function Buy({ plan, currency, signedIn, verb }: { plan: PricedPlan; currency: string; signedIn: boolean; verb: string }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
@@ -196,11 +198,26 @@ function Buy({ plan, signedIn, verb }: { plan: PricedPlan; signedIn: boolean; ve
 
   async function buy() {
     setBusy(true);
-    const refusal = await sendJson("POST", "/api/v1/payments/checkout", { plan: plan.code });
-    setBusy(false);
-    /* A refusal is the only thing this can show: a checkout that worked
-       has already taken the browser somewhere else. */
-    setError(refusal ?? "");
+    setError("");
+    try {
+      const response = await fetch("/api/v1/payments/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan: plan.code, currency }),
+      });
+      const answer = await response.json().catch(() => null);
+      if (!response.ok || !answer?.url) {
+        setError(typeof answer?.detail === "string" ? answer.detail : "Could not open a checkout. Try again.");
+        setBusy(false);
+        return;
+      }
+      /* A full navigation, not a router push: the checkout is theirs, not
+         a page of ours. Busy stays set, because the browser is leaving. */
+      window.location.href = answer.url;
+    } catch {
+      setError("Could not open a checkout. Try again.");
+      setBusy(false);
+    }
   }
 
   return (

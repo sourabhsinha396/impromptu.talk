@@ -7,6 +7,7 @@ import { NameForm } from "@/components/account/name-form";
 import { PasswordForm } from "@/components/account/password-form";
 import { Sharing } from "@/components/account/sharing";
 import { SignOutEverywhere } from "@/components/account/sign-out-everywhere";
+import { Subscription } from "@/components/account/subscription";
 
 const push = vi.fn();
 const refresh = vi.fn();
@@ -150,5 +151,35 @@ describe("signing out everywhere", () => {
     await userEvent.click(screen.getByRole("button", { name: "Cancel" }));
     expect(sent).not.toHaveBeenCalled();
     expect(screen.getByRole("button", { name: "Sign out everywhere" })).toBeInTheDocument();
+  });
+});
+
+describe("the subscription card", () => {
+  const monthly = { code: "monthly", name: "Monthly", recurring: true, note: "", expires_at: "2027-03-04T00:00:00Z", cancels: false };
+
+  it("says Renews while it renews and Ends once it is cancelled", () => {
+    const { rerender } = render(<Subscription plan={monthly} />);
+    expect(screen.getByText("Renews")).toBeInTheDocument();
+    rerender(<Subscription plan={{ ...monthly, cancels: true }} />);
+    // The same date under a different word: cancelling keeps the period
+    // already paid for.
+    expect(screen.getByText("Ends")).toBeInTheDocument();
+    expect(screen.getByText("4 March 2027")).toBeInTheDocument();
+  });
+
+  it("leaves for the provider's portal rather than cancelling here", async () => {
+    const url = "https://test.dodopayments.com/portal/session/pse_1";
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({ url }), { status: 200 })));
+    const location = { href: "" };
+    vi.stubGlobal("location", location);
+    render(<Subscription plan={monthly} />);
+    await userEvent.click(screen.getByRole("button", { name: "Manage subscription" }));
+    expect(location.href).toBe(url);
+  });
+
+  it("offers invoices, not management, on something that does not renew", () => {
+    render(<Subscription plan={{ ...monthly, name: "Lifetime", recurring: false, expires_at: null }} />);
+    expect(screen.getByRole("button", { name: "Invoices and receipts" })).toBeInTheDocument();
+    expect(screen.getByText(/No renewal, no expiry/)).toBeInTheDocument();
   });
 });

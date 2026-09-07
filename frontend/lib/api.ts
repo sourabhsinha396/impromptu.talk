@@ -35,7 +35,15 @@ export type SessionUser = {
 /** One plan, as an account page names it. What a plan is called is
     product policy, so the backend says it rather than the frontend
     keeping a second copy of the catalogue. */
-export type Plan = { code: string; name: string; recurring: boolean; note: string };
+export type Plan = {
+  code: string;
+  name: string;
+  recurring: boolean;
+  note: string;
+  expires_at: string | null;
+  /** Its own field: a cancelled subscription stays active until the paid period ends. */
+  cancels: boolean;
+};
 
 /** Everything the two settings pages draw, in one call. Null when the
     backend is unreachable or the session has gone, which the page turns
@@ -170,5 +178,41 @@ export async function catalogue(currency: string): Promise<Catalogue> {
     return (await response.json()) as Catalogue;
   } catch {
     return NOTHING_FOR_SALE;
+  }
+}
+
+export type Receipt = {
+  reference: string;
+  plan_name: string;
+  recurring: boolean;
+  status: string;
+  charged: string;
+  expires_at: string | null;
+};
+
+/** Settle a purchase and read it back. Idempotent: a settled row
+    short-circuits, so a reload re-grants nothing. Null when the reference
+    is not this account's, which the page turns into a 404. */
+export async function settlePurchase(reference: string, paymentId: string, subscriptionId: string) {
+  try {
+    const response = await backendFetch("/api/v1/payments/settle", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reference, payment_id: paymentId, subscription_id: subscriptionId }),
+    });
+    if (!response.ok) return null;
+    return (await response.json()) as Receipt;
+  } catch {
+    return null;
+  }
+}
+
+/** Re-read whatever subscription has run out. Called on the way back
+    from the provider's portal, and nowhere else. */
+export async function refreshEntitlement(): Promise<void> {
+  try {
+    await backendFetch("/api/v1/payments/refresh", { method: "POST" });
+  } catch {
+    // A provider having a day is not a page that fails to render.
   }
 }

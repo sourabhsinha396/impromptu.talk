@@ -2,7 +2,7 @@
 
 The acceptance list for the board. Every route and every behaviour v0 had, with the v1 card that carries it and a tick once it has landed on `main`. Nothing on this list may be quietly dropped; a line that v1 changes on purpose says so and points at `DECISIONS.md`.
 
-Ticked as of 2026-09-07, after cards 01 to 25.
+Ticked as of 2026-09-07, after cards 01 to 26.
 
 ## Routes
 
@@ -24,9 +24,9 @@ Ticked as of 2026-09-07, after cards 01 to 25.
 | `GET /login/google`, callback | same | 21 | [x] |
 | `GET`/`POST /forgot`, `GET`/`POST /reset/{token}` | `/forgot`, `/reset/[token]`, `POST /api/v1/auth/forgot`, `GET`/`POST /api/v1/auth/reset` | 20 | [x] |
 | `GET /account`, `POST /account/name`, `/password`, `/sessions`, `/accent` | `/account`, `/account/additional-settings`, `GET /api/v1/auth/account`, `PATCH /name`, `PATCH /accent`, `POST /password` | 23 | [x] The path is `additional-settings`, `DECISIONS.md`. The subscription section says "Everything is free right now" until 24 to 26; the affiliate section waits for the code's minting on 31 |
-| `POST /account/billing` (portal) | `/api/v1/payments/portal` | 26 | [ ] |
+| `POST /account/billing` (portal) | `/api/v1/payments/portal` | 26 | [x] |
 | `GET /pro`, `POST /pro` (currency) | `/pro` | 25 | [ ] |
-| `POST /pro/checkout`, `GET /pro/done` | `/api/v1/payments/checkout`, `/pro/done` | 26 | [ ] |
+| `POST /pro/checkout`, `GET /pro/done` | `/api/v1/payments/checkout`, `/api/v1/payments/settle`, `/pro/done` | 26 | [x] The overlay SDK is not ported; the page navigates to the hosted checkout, `DECISIONS.md` |
 | `GET`/`POST /packs`, `GET /packs/{slug}`, topics add/edit/delete, `/delete` | `/packs`, `/packs/[slug]`, `v1/topics` owned-genre endpoints | 29 | [ ] |
 | `POST /packs/{slug}/generate` | `/api/v1/topics/.../generate` | 30 | [ ] |
 | (new) share an owned genre, `/g/[token]` | | 29 | [ ] |
@@ -139,8 +139,8 @@ Ticked as of 2026-09-07, after cards 01 to 25.
 - [x] Entitlement: the best paid row, forever beats a date, status and expiry independent; the streak counted under the plan's own length; the colour refused without Pro (24). The lazy re-read of a lapsed subscription lands with 26, which is what talks to the provider
 - [x] Purchase table ported column for column, `PROTECT` on the account, append-only in code (24)
 - [x] `/pro` two cards with pills, priced by `GET /api/v1/payments/plans`, the currency picker, the questions, the refusal in place of a button, "not open yet" without a key (25). The overlay and the checkout it opens land together on 26, which owns the route: an SDK wired to a checkout that does not exist yet could not be tested through
-- [ ] Checkout writes a pending row; settlement re-reads the payment; binding by reference and session; price as a log line; receipts by mail (26)
-- [ ] Subscriptions: lazy refresh after expiry and on return from the portal; portal not a cancel button; cancel keeps the period; cancel flag separate from status; customer id backfilled lazily (26)
+- [x] Checkout writes a pending row; settlement re-reads the payment; binding by reference and session; price as a log line; receipts by mail (26). No webhook endpoint anywhere, by design
+- [x] Subscriptions: lazy refresh after expiry and on return from the portal; portal not a cancel button; cancel keeps the period; cancel flag separate from status; customer id backfilled lazily (26)
 - [ ] Slack's six events, never raising, cancellation as the flip (27)
 - [ ] Django admin as the owner console over every table; refunds recorded there (28)
 

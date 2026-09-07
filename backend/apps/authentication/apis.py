@@ -206,6 +206,8 @@ def account(request):
             "name": plan.name,
             "recurring": plan.recurring,
             "note": plan.note,
+            "expires_at": row.expires_at.isoformat() if row and row.expires_at else None,
+            "cancels": bool(row and row.cancel_at_next_billing_date),
         },
     }
 
