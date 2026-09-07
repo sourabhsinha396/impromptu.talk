@@ -28,6 +28,12 @@ def rate_limited(request, exc):
     return response
 
 
+# The console names itself, so a tab open beside a neighbouring stack's
+# admin is not a coin toss.
+admin.site.site_header = "impromptu"
+admin.site.site_title = "impromptu"
+admin.site.index_title = "Tables"
+
 urlpatterns = [
     # `re-admin`, not `admin`: /administration is the superusers' tool console
     # on the frontend, and a bare `admin` prefix would sit under it.

@@ -3,10 +3,34 @@ from django.contrib import admin
 from apps.topics.models import Genre, Topic
 
 
+class Shared(admin.SimpleListFilter):
+    """Whether a genre is behind a link. `share_token` is either a token
+    or nothing, so the useful question is which of the two, not which
+    token: a filter listing every token would be one row per genre."""
+
+    title = "shared"
+    parameter_name = "shared"
+
+    def lookups(self, request, model_admin):
+        return (("yes", "Shared"), ("no", "Not shared"))
+
+    def queryset(self, request, queryset):
+        if self.value() == "yes":
+            return queryset.exclude(share_token=None)
+        if self.value() == "no":
+            return queryset.filter(share_token=None)
+        return queryset
+
+
 @admin.register(Genre)
 class GenreAdmin(admin.ModelAdmin):
+    """The bank's own genres and the ones people make (card 29), in one
+    table because they are one table. The owner and shared filters are
+    what let the owner see what is being made and what is being passed
+    around, without a second console for it."""
+
     list_display = ("name", "slug", "icon", "owner", "is_active", "sort_order", "share_token")
-    list_filter = ("is_active",)
+    list_filter = ("is_active", "owner", Shared)
     search_fields = ("name", "slug", "owner__email")
     ordering = ("sort_order", "id")
 

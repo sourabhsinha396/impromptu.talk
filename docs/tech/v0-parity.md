@@ -142,7 +142,7 @@ Ticked as of 2026-09-07, after cards 01 to 26.
 - [x] Checkout writes a pending row; settlement re-reads the payment; binding by reference and session; price as a log line; receipts by mail (26). No webhook endpoint anywhere, by design
 - [x] Subscriptions: lazy refresh after expiry and on return from the portal; portal not a cancel button; cancel keeps the period; cancel flag separate from status; customer id backfilled lazily (26)
 - [x] Slack's six events, never raising, cancellation as the flip (27). The refund's call sits in `checkout.announce_refund` for the admin edit on 28; a charge in a currency we never quoted is a log line and not a mismatch, `DECISIONS.md`
-- [ ] Django admin as the owner console over every table; refunds recorded there (28)
+- [x] Django admin as the owner console over every table; refunds recorded there (28). The round table is editable rather than a read-only ledger and Django's `Session` is not registered at all, `DECISIONS.md`
 
 ### Owned genres (v0 packs)
 
