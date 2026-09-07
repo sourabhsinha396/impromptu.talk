@@ -14,6 +14,21 @@ import type { Heard } from "@/lib/round/voice";
 
 export type Pause = { at: number; seconds: number; awkward: boolean };
 export type Crutch = { word: string; count: number };
+export type PaceAt = { start: number; end: number; wpm: number };
+export type FillerAt = { word: string; at: number };
+export type Restart = { quote: string; at: number };
+export type Repeat = { phrase: string; count: number };
+export type Sentence = { text: string; words: number };
+/* What this person usually does, the mean of the rounds before this one.
+   Pro's, and absent under two rounds; any part can be null on its own. */
+export type Usual = {
+  pace: number | null;
+  stall: number | null;
+  gap: number | null;
+  fillers: number | null;
+  sentence: number | null;
+  rounds: number;
+};
 
 export type Report = {
   heard: boolean;
@@ -46,6 +61,18 @@ export type Report = {
   at: string;
   genre_slug: string;
   seconds_left: number;
+  /* The round's own page. All arithmetic over the transcript and the word
+     timings; empty where nothing timed the words, and the filler pieces
+     empty again wherever a filler count would not be honest. */
+  pace_curve: PaceAt[];
+  filler_times: FillerAt[];
+  filler_counts: Crutch[];
+  leaned_on: Crutch[];
+  restarts: Restart[];
+  repeats: Repeat[];
+  sentences: Sentence[];
+  ended_clean: boolean;
+  usual: Usual | null;
 };
 
 /** Sends the timeline and the recording. Fails quietly: the round already
@@ -117,6 +144,52 @@ export function blocks(report: Report, length: number): Block[] {
   return out;
 }
 
+export type Mark =
+  | { kind: "stroke"; x: number; height: number }
+  | { kind: "line"; from: number; to: number; tone: "breath" | "gap"; seconds: number };
+
+/** How far apart the strokes sit, as a share of the width. One in a
+    hundred is six pixels on a laptop and three on a phone, which is the
+    narrowest that still reads as strokes rather than a block. */
+export const PITCH = 1;
+
+/* A quiet rise and fall, so a stretch of talking looks like a voice and
+   not like a comb. A texture and not a measurement: no audio is kept and
+   nothing here knows how loud anybody was, only when there was sound. */
+const HEIGHTS = [0.55, 0.9, 0.7, 1, 0.6, 0.85, 0.75, 0.95];
+
+/** The minute as a waveform: strokes where there was a voice, a flat line
+    where there was not, the long holes in the warm colour.
+
+    The first bar was a strip of green and red, and reading it took a
+    key: which colour was the talking, and was red bad. A wave needs no
+    key, because everybody has seen one: the wiggle is a voice and the
+    flat line is nobody speaking (owner's call, with a sketch). The
+    silence after the last word draws nothing at all, since finishing
+    early is not a hole. */
+export function waveform(parts: Block[], pitch: number = PITCH): Mark[] {
+  const out: Mark[] = [];
+  let index = 0;
+  for (const block of parts) {
+    if (block.kind === "talking") {
+      const end = block.at + block.width;
+      // A stretch narrower than the pitch still gets one stroke, in the
+      // middle of it: a word said is a word drawn.
+      let x = block.width < pitch ? block.at + block.width / 2 : block.at + pitch / 2;
+      for (; x < end; x += pitch) {
+        // The first and last strokes of a stretch are shorter, so a
+        // voice starts and stops rather than switching on and off.
+        const edge = x - block.at < pitch || end - x < pitch;
+        out.push({ kind: "stroke", x, height: HEIGHTS[index % HEIGHTS.length] * (edge ? 0.5 : 1) });
+        index += 1;
+      }
+    } else if (block.kind === "breath" || block.kind === "gap") {
+      out.push({ kind: "line", from: block.at, to: block.at + block.width, tone: block.kind, seconds: block.seconds });
+    }
+  }
+  return out;
+}
+
 /** Where the voice stopped for good. Speaking time plus every gap before
     it, which lands on the end of the last stretch of sound. */
 function lastSound(report: Report, length: number): number {
@@ -153,7 +226,14 @@ export function headline(report: Report): string {
 }
 
 
-export type Said = { kind: "word" | "filler" | "crutch" | "pause"; text: string; seconds: number; awkward: boolean };
+export type Said = {
+  kind: "word" | "filler" | "crutch" | "pause";
+  text: string;
+  seconds: number;
+  awkward: boolean;
+  /* Where it fell, so the read-back can find the word a restart began on. */
+  at: number;
+};
 
 export type Marked = { text: string; kind: "filler" | "crutch" | "" };
 
@@ -214,6 +294,12 @@ export type Band = {
   verdict: string;
   /** The ends of the scale, named, so the picture reads without a legend. */
   ends: [string, string];
+  /** The one-word name the radar has room for. */
+  short?: string;
+  /** Where this person usually lands, drawn as a hollow ring; null without a past. */
+  usual?: number | null;
+  /** An axis of the shape and never a bar: the donut says it better. */
+  radarOnly?: boolean;
 };
 
 function band(
@@ -230,56 +316,60 @@ function band(
   return { key, label, value, shown, scale, good, verdict, ends };
 }
 
+function paceBand(report: Report): Band | null {
+  if (report.pace === null || report.pace <= 0) return null;
+  return band(
+    "pace",
+    "Pace",
+    report.pace,
+    `${report.pace} wpm`,
+    [80, 220],
+    [130, 170],
+    ["Slow", "Good pace", "Rushed"],
+    ["slow", "rushed"],
+  );
+}
+
+// Lower is better, so the comfortable stretch starts at nothing and the
+// scale runs out to the right.
+function startBand(report: Report): Band {
+  return band(
+    "start",
+    "Time to start",
+    report.opening_stall,
+    clock(report.opening_stall),
+    [0, 8],
+    [0, 2],
+    ["", "Straight in", "Slow to start"],
+    ["at once", "8s"],
+  );
+}
+
+// The comfortable edge is AWKWARD itself, and deliberately so. It was
+// 2 while a pause became "long enough to notice" at 1.5, so a round with
+// a 1.6-second gap had a headline calling it out and a band underneath
+// calling it fine. A report that contradicts itself is the one thing
+// that makes every other number on the page worth less.
+function gapBand(report: Report): Band {
+  return band(
+    "gap",
+    "Longest gap",
+    report.longest_pause,
+    `${report.longest_pause}s`,
+    [0, 8],
+    [0, AWKWARD],
+    ["", "No holes", "Long hole"],
+    ["none", "8s"],
+  );
+}
+
 export function bands(report: Report): Band[] {
   const out: Band[] = [];
 
-  if (report.pace !== null && report.pace > 0) {
-    out.push(
-      band(
-        "pace",
-        "Pace",
-        report.pace,
-        `${report.pace} wpm`,
-        [80, 220],
-        [130, 170],
-        ["Slow", "Good pace", "Rushed"],
-        ["slow", "rushed"],
-      ),
-    );
-  }
-
-  // Lower is better, so the comfortable stretch starts at nothing and the
-  // scale runs out to the right.
-  out.push(
-    band(
-      "start",
-      "Time to start",
-      report.opening_stall,
-      clock(report.opening_stall),
-      [0, 8],
-      [0, 2],
-      ["", "Straight in", "Slow to start"],
-      ["at once", "8s"],
-    ),
-  );
-
-  // The comfortable edge is AWKWARD itself, and deliberately so. It was
-  // 2 while a pause became "long enough to notice" at 1.5, so a round with
-  // a 1.6-second gap had a headline calling it out and a band underneath
-  // calling it fine. A report that contradicts itself is the one thing
-  // that makes every other number on the page worth less.
-  out.push(
-    band(
-      "gap",
-      "Longest gap",
-      report.longest_pause,
-      `${report.longest_pause}s`,
-      [0, 8],
-      [0, AWKWARD],
-      ["", "No holes", "Long hole"],
-      ["none", "8s"],
-    ),
-  );
+  const pace = paceBand(report);
+  if (pace) out.push(pace);
+  out.push(startBand(report));
+  out.push(gapBand(report));
 
   if (report.filler_rate !== null) {
     out.push(
@@ -377,7 +467,145 @@ export function advice(band: Band): string | null {
       return "Say the next point half-formed. A wobble costs less than a hole.";
     case "fillers":
       return "Pause instead of um. Silence reads as deliberate; um reads as lost.";
+    case "sentence":
+      return "Land a full stop. Then start the next thought fresh.";
     default:
       return null;
   }
+}
+
+/* -------------------------------------------------- the round's own page */
+
+/** A sentence this long has run on. Impromptu speech fails by stringing
+    thoughts on "and" more than by any other route, and no count of pauses
+    shows it; one column of 56 words does. Editorial, like every edge here. */
+export const RUN_ON = 35;
+
+/** The five things the round's own page measures it on, each against its
+    comfortable stretch. One list feeds the radar and the bars so the two
+    can never disagree. Fillers are an axis of the shape and never a bar,
+    because the donut beside it says everything a bar would, as words rather
+    than as a rate (owner's call). */
+export function axes(report: Report): Band[] {
+  const usual = report.usual;
+  const out: Band[] = [];
+  const pace = paceBand(report);
+  if (pace) out.push({ ...pace, short: "Pace", usual: usual?.pace ?? null });
+  out.push({ ...startBand(report), short: "Start", usual: usual?.stall ?? null });
+  out.push({ ...gapBand(report), short: "Gaps", usual: usual?.gap ?? null });
+  const longest = Math.max(0, ...report.sentences.map((sentence) => sentence.words));
+  if (longest > 0) {
+    out.push({
+      ...band(
+        "sentence",
+        "Longest sentence",
+        longest,
+        `${longest} words`,
+        [0, 60],
+        [0, RUN_ON],
+        ["", "Landed", "Run-on"],
+        ["short", "60 words"],
+      ),
+      short: "Sentences",
+      usual: usual?.sentence ?? null,
+    });
+  }
+  if (report.filler_rate !== null) {
+    out.push({
+      ...band("fillers", "Fillers", report.filler_rate, `${report.filler_rate}`, [0, 12], [0, 4], ["", "Clean", "Heavy"], ["none", "12"]),
+      short: "Fillers",
+      usual: usual?.fillers ?? null,
+      radarOnly: true,
+    });
+  }
+  return out;
+}
+
+/** How far inside the comfortable stretch, as the radar draws it: 100
+    anywhere inside, falling to nothing at the end of the scale. A shape
+    and never a score with a name: an average of seconds and words a minute
+    would be a number with nothing behind it. */
+export function fit(band: Band, value: number | null = band.value): number | null {
+  if (value === null || value === undefined) return null;
+  if (value >= band.good[0] && value <= band.good[1]) return 100;
+  const room = value > band.good[1] ? band.scale[1] - band.good[1] : band.good[0] - band.scale[0];
+  if (room <= 0) return 0;
+  const over = value > band.good[1] ? (value - band.good[1]) / room : (band.good[0] - value) / room;
+  return Math.max(0, Math.round(100 * (1 - over)));
+}
+
+/** The line beside the shape: how many landed, and which is furthest out. */
+export function shapeCaption(rows: Band[]): string {
+  if (!rows.length) return "";
+  const inRange = rows.filter((row) => fit(row) === 100).length;
+  if (inRange === rows.length) return `All ${rows.length} in the comfortable range`;
+  const worst = [...rows].sort((a, b) => (fit(a) ?? 0) - (fit(b) ?? 0))[0];
+  return `${inRange} of ${rows.length} in the comfortable range · furthest out: ${worst.label.toLowerCase()}`;
+}
+
+/** Written by code from the peak and the trough, never by a model, so the
+    same round reads the same twice. Nothing under two readings. */
+export function paceCaption(report: Report): string | null {
+  const points = report.pace_curve;
+  if (points.length < 2) return null;
+  const fast = points.reduce((best, point) => (point.wpm > best.wpm ? point : best));
+  const slow = points.reduce((best, point) => (point.wpm < best.wpm ? point : best));
+  let out = `Fastest from ${clock(fast.start)}, ${fast.wpm} words a minute. Slowest from ${clock(slow.start)}, ${slow.wpm}.`;
+  if (report.trail_off < 0.6) out += " You faded in the last stretch.";
+  else if (report.trail_off > 1.4) out += " You sped up to finish.";
+  return out;
+}
+
+export type Slice = { word: string; count: number; kind: "filler" | "crutch"; shade: number };
+
+/** The donut's slices: fillers first and warm, leaned-on words after and
+    in the accent, each group stepping down in shade so a legend can tell
+    them apart. Everything else you said is the quiet remainder. */
+export function slices(report: Report): Slice[] {
+  const fillers = report.filler_counts.map<Slice>((c, i) => ({
+    word: c.word,
+    count: c.count,
+    kind: "filler",
+    shade: Math.max(0.4, 1 - i * 0.3),
+  }));
+  const crutches = report.leaned_on.map<Slice>((c, i) => ({
+    word: c.word,
+    count: c.count,
+    kind: "crutch",
+    shade: Math.max(0.35, 1 - i * 0.16),
+  }));
+  return [...fillers, ...crutches];
+}
+
+/** Every word said, fillers included, which is what the donut is a share
+    of. A Whisper round has no fillers to include, honestly or otherwise. */
+export function saidCount(report: Report): number {
+  return (report.words ?? 0) + (report.fillers ?? 0);
+}
+
+/** How many different words, fillers left out. Sixty different words in a
+    hundred and twenty-five is a fact about range that nothing else here
+    carries. */
+export function distinctWords(report: Report): number {
+  const fillers = new Set(report.filler_words.map((word) => word.toLowerCase()));
+  const seen = new Set<string>();
+  for (const word of report.transcript.toLowerCase().match(/[a-z']+/g) ?? []) {
+    if (!fillers.has(word)) seen.add(word);
+  }
+  return seen.size;
+}
+
+export function sentenceCaption(report: Report): string | null {
+  const counts = report.sentences.map((sentence) => sentence.words);
+  if (!counts.length) return null;
+  const longest = Math.max(...counts);
+  return longest > RUN_ON
+    ? `One ran to ${longest} words. Land a full stop and let it sit.`
+    : `Longest ${longest} words. Every one of them landed.`;
+}
+
+/** Where the voice stopped for good, for the tile beside the first word. */
+export function lastWord(report: Report, length: number): number {
+  const gaps = report.pauses.reduce((total, pause) => total + pause.seconds, 0);
+  return Math.min(length, report.opening_stall + gaps + report.speaking_seconds);
 }

@@ -12,6 +12,7 @@ from apps.runs.analysis import (
     CRUTCHES_NAMED,
     MIN_PAUSE,
     at_transitions,
+    clock_seconds,
     read_back,
     report,
     timing,
@@ -97,10 +98,19 @@ class TestWords:
         assert measured.count == 3
         assert measured.filler_rate == 2.0
 
-    def test_pace_is_measured_over_speaking_time_not_the_whole_round(self):
-        # Thirty words spoken across thirty seconds of sound is sixty a
-        # minute, whatever the pauses around it added up to.
+    def test_pace_is_measured_over_the_clock_from_first_word_to_last(self):
+        # Thirty words across thirty seconds of sound and fifteen of
+        # silence between them is forty a minute, which is what a listener
+        # heard. Sixty was the articulation rate, and it was being judged
+        # against a wall-clock band, so nearly every round read as rushed.
+        assert words(" ".join(["word"] * 30), 30, clock=45).pace == 40
+
+    def test_without_a_clock_the_speaking_time_stands_in(self):
         assert words(" ".join(["word"] * 30), 30).pace == 60
+
+    def test_the_silence_after_the_last_word_is_not_in_the_clock(self):
+        measured = timing([(0.0, 10.0), (12.0, 22.0)], 60)
+        assert clock_seconds(measured) == 22.0
 
 
 class TestCrutchWords:

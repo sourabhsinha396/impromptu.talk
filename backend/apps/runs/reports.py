@@ -124,7 +124,7 @@ def make(
             row.transcript = answer.text
             row.words_at = [list(word) for word in answer.words]
             row.fillers_at_transitions = analysis.at_transitions(list(answer.words), measured.pauses)
-            if spoken := analysis.words(answer.text, measured.speaking_seconds):
+            if spoken := analysis.words(answer.text, measured.speaking_seconds, analysis.clock_seconds(measured)):
                 row.words = spoken.count
                 row.pace = spoken.pace
                 row.fillers = spoken.fillers
@@ -155,13 +155,79 @@ def _may_spend(run: Run, pro: bool) -> bool:
     return left(run.device_id, run.user, pro) > 0
 
 
+# How many past rounds "your usual" is the mean of. Twelve is a fortnight
+# of daily practice: recent enough to still be you, long enough that one
+# bad Monday cannot move it.
+USUAL_ROUNDS = 12
+
+# Under this there is no usual, only a previous round, and a mean of one
+# round is a comparison dressed up as a baseline.
+USUAL_LEAST = 2
+
+
+def usual(row: Report, *, pro: bool) -> dict | None:
+    """What this person usually does: the mean of their last rounds before
+    this one, so a round read back months later is compared with the person
+    who spoke it and not with who they became.
+
+    Pro's, because the baseline from your own past is what the plan sells.
+    Only rounds with words count, so the pace has something to be the mean
+    of; the filler rate is the mean of the rounds a transcriber that keeps
+    fillers saw, or absent."""
+    if not pro:
+        return None
+    rows = list(
+        _mine(row.run.device_id, row.run.user)
+        .exclude(pk=row.pk)
+        .filter(created_at__lt=row.created_at, words__gt=0)
+        .select_related("run")
+        .order_by("-created_at")[:USUAL_ROUNDS]
+    )
+    if len(rows) < USUAL_LEAST:
+        return None
+    paces: list[int] = []
+    stalls: list[float] = []
+    gaps: list[float] = []
+    rates: list[float] = []
+    longest: list[int] = []
+    for past in rows:
+        measured = analysis.timing(past.segments, past.run.spoken_seconds)
+        spoken = analysis.words(past.transcript, measured.speaking_seconds, analysis.clock_seconds(measured))
+        if spoken and spoken.pace:
+            paces.append(spoken.pace)
+        stalls.append(measured.opening_stall)
+        gaps.append(measured.longest_pause)
+        if past.provider == transcribe.ASSEMBLYAI:
+            rates.append(past.filler_rate)
+        if said := analysis.sentences(past.transcript):
+            longest.append(max(sentence.words for sentence in said))
+
+    def mean(values, places=1):
+        if not values:
+            return None
+        out = round(sum(values) / len(values), places)
+        return int(out) if places == 0 else out
+
+    return {
+        "pace": mean(paces, 0),
+        "stall": mean(stalls),
+        "gap": mean(gaps),
+        "fillers": mean(rates),
+        "sentence": mean(longest, 0),
+        "rounds": len(rows),
+    }
+
+
 def render(row: Report, *, pro: bool = False) -> dict:
-    """A stored report as the done screen reads it.
+    """A stored report as the done screen and the round's own page read it.
 
     Timing is recomputed from the segments rather than read off the
     columns, so a threshold that moves rewrites what history says it was
-    instead of leaving old rounds judged by an old number. The columns stay
-    because a year of trend cannot afford to parse a year of JSON.
+    instead of leaving old rounds judged by an old number. Pace is
+    recomputed too, for the same reason: it moved from speaking time to the
+    clock, and a round from before that day should read by the same rule
+    as one from after. The columns stay because a year of trend cannot
+    afford to parse a year of JSON.
     """
     measured = analysis.timing(row.segments, row.run.spoken_seconds)
     # Whether anything was actually said, which is not the same question as
@@ -169,7 +235,32 @@ def render(row: Report, *, pro: bool = False) -> dict:
     # and the page reported nought words a minute as though it were a fact
     # about the speaker.
     said = row.words > 0 or row.fillers > 0
+    spoken = (
+        analysis.words(row.transcript, measured.speaking_seconds, analysis.clock_seconds(measured))
+        if measured.heard
+        else None
+    )
+    # Only a provider that keeps disfluencies may say anything about
+    # fillers: where they fell, how many of each. Whisper deletes them
+    # before anybody asks, so a Groq round says nothing rather than none.
+    honest = row.provider == transcribe.ASSEMBLYAI
+    words_at = [tuple(word) for word in row.words_at]
+    found = analysis.restarts(words_at)
     return {
+        "pace_curve": [
+            {"start": p.start, "end": p.end, "wpm": p.wpm}
+            for p in analysis.pace_curve(words_at, row.run.spoken_seconds)
+        ],
+        "filler_times": [{"word": f.word, "at": f.at} for f in analysis.filler_times(words_at)] if honest else [],
+        "filler_counts": [{"word": w, "count": c} for w, c in analysis.filler_counts(row.transcript)] if honest else [],
+        "leaned_on": [{"word": w, "count": c} for w, c in analysis.leaned_on(row.transcript)],
+        "restarts": [{"quote": r.quote, "at": r.at} for r in found],
+        "repeats": [
+            {"phrase": p, "count": c} for p, c in analysis.repeats(row.transcript, tuple(r.quote for r in found))
+        ],
+        "sentences": [{"text": s.text, "words": s.words} for s in analysis.sentences(row.transcript)],
+        "ended_clean": analysis.ended_clean(row.transcript) if row.transcript else False,
+        "usual": usual(row, pro=pro),
         "heard": measured.heard,
         "speaking_seconds": measured.speaking_seconds,
         "opening_stall": measured.opening_stall,
@@ -183,7 +274,7 @@ def render(row: Report, *, pro: bool = False) -> dict:
         "words": row.words if said else None,
         # Pace needs words to pace. Nought a minute is never the answer; it
         # means nobody counted, and the page should say nothing instead.
-        "pace": row.pace if row.words else None,
+        "pace": spoken.pace if spoken and spoken.pace and row.words else None,
         # Only a provider that keeps disfluencies may report a filler
         # count. Whisper deletes them before anybody asks, so a zero from
         # Groq would be a systematic undercount presented as a fact.
@@ -198,8 +289,8 @@ def render(row: Report, *, pro: bool = False) -> dict:
         # The transcript with our own silences put back where they fell,
         # which is the one place a pause stops being a number.
         "said": [
-            {"kind": part.kind, "text": part.text, "seconds": part.seconds, "awkward": part.awkward}
-            for part in analysis.read_back(row.words_at, measured.pauses)
+            {"kind": part.kind, "text": part.text, "seconds": part.seconds, "awkward": part.awkward, "at": part.at}
+            for part in analysis.read_back(words_at, measured.pauses)
         ],
         "fillers_at_transitions": row.fillers_at_transitions if row.provider == transcribe.ASSEMBLYAI else None,
         # So the read-back can say what it was an answer to, months later.

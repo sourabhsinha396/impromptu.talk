@@ -209,6 +209,7 @@ export type Summary = { streak: number; topics: number; minutes: number };
 export function DonePhase({
   summary,
   report,
+  runId,
   spokenSeconds,
   signedIn,
   onAgain,
@@ -216,6 +217,9 @@ export function DonePhase({
 }: {
   summary: Summary | null;
   report: Report | "off" | null;
+  /* The row the report hangs off, so the done screen can link to the
+     round's own page. Null until the run has been written. */
+  runId: number | null;
   spokenSeconds: number;
   signedIn: boolean;
   onAgain: () => void;
@@ -244,7 +248,7 @@ export function DonePhase({
           downward from there and has room to grow without ever pushing the
           round out of reach. */}
       <div className="mx-auto mt-10 w-full max-w-[640px]">
-        <RoundReport report={report} length={spokenSeconds} />
+        <RoundReport report={report} length={spokenSeconds} href={runId ? `/streak/${runId}` : undefined} />
       </div>
       {!signedIn && (
         <p className="mt-6 max-w-[44ch] text-sm text-muted">

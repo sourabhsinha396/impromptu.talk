@@ -108,6 +108,7 @@ Ticked as of 2026-09-07, after cards 01 to 26.
 - [x] Staged topic per browser, read and cleared by the next draw, spin intact (12; the tool that writes it is 32)
 - [x] Finished run posted once, per-device limit 120 per hour (15). Keyed on the device, since a classroom behind one address is many speakers
 - [x] Engine as a pure TypeScript module with fake-timer tests (10)
+- [x] New in v1, no v0 equivalent: the report on a round (timing free, words metered) and the round's own page at `/streak/[id]`, with the minute as a wave, the pace line, the shape of the round, the leaned-on words as a donut, repeats and restarts, sentences, your usual over the last twelve rounds (35). Every number is arithmetic over the stored transcript and word timings, `DECISIONS.md`
 
 ### Streak
 

@@ -140,6 +140,46 @@ class SaidOut(Schema):
     text: str
     seconds: float = 0.0
     awkward: bool = False
+    at: float = 0.0
+
+
+class PaceOut(Schema):
+    start: float
+    end: float
+    wpm: int
+
+
+class FillerAtOut(Schema):
+    word: str
+    at: float
+
+
+class RestartOut(Schema):
+    quote: str
+    at: float
+
+
+class RepeatOut(Schema):
+    phrase: str
+    count: int
+
+
+class SentenceOut(Schema):
+    text: str
+    words: int
+
+
+class UsualOut(Schema):
+    """What this person usually does, as the mean of the rounds before
+    this one. Any part can be absent: a pace needs rounds with words, a
+    filler rate needs rounds a filler-keeping transcriber saw."""
+
+    pace: int | None = None
+    stall: float | None = None
+    gap: float | None = None
+    fillers: float | None = None
+    sentence: int | None = None
+    rounds: int
 
 
 class ReportOut(Schema):
@@ -172,6 +212,21 @@ class ReportOut(Schema):
     topic: str = ""
     at: str = ""
     genre_slug: str = ""
+
+    # The round's own page, all of it arithmetic over the transcript and
+    # the word timings. Empty lists where nothing timed the words; the
+    # filler pieces are empty again wherever a filler count would not be
+    # honest, for the same reason `fillers` is null there.
+    pace_curve: list[PaceOut] = []
+    filler_times: list[FillerAtOut] = []
+    filler_counts: list[CrutchOut] = []
+    leaned_on: list[CrutchOut] = []
+    restarts: list[RestartOut] = []
+    repeats: list[RepeatOut] = []
+    sentences: list[SentenceOut] = []
+    ended_clean: bool = False
+    # Null for free and for anybody with fewer than two rounds behind them.
+    usual: UsualOut | None = None
 
     # Seconds of transcription left this calendar month, so the page can
     # say what is left rather than let somebody discover it by finishing a

@@ -1,6 +1,18 @@
 import { Button } from "@/components/site/button";
 import { MicIcon } from "@/components/site/icons";
-import { advice, at, bands, blocks, clock, headline, marked, type Band, type Kind, type Report } from "@/lib/report";
+import {
+  advice,
+  at,
+  bands,
+  blocks,
+  clock,
+  headline,
+  marked,
+  waveform,
+  type Band,
+  type FillerAt,
+  type Report,
+} from "@/lib/report";
 
 /* The minute you just spoke, drawn.
 
@@ -12,9 +24,22 @@ import { advice, at, bands, blocks, clock, headline, marked, type Band, type Kin
    Deliberately not a dashboard. The done screen is a moment, and the
    report never rewrites anybody's words: a paragraph of advice from a
    model cannot be plotted, so a report made of paragraphs would mean the
-   progress view could never exist. */
+   progress view could never exist. The full reading, with the charts,
+   lives on the round's own page, and this screen only links to it.
 
-export function RoundReport({ report, length }: { report: Report | "off" | null; length: number }) {
+   The pieces are exported one by one so that page can compose the same
+   bar, sentence, bands and read-back rather than draw its own and drift. */
+
+export function RoundReport({
+  report,
+  length,
+  href,
+}: {
+  report: Report | "off" | null;
+  length: number;
+  /* The round's own page, once there is a row to hang it on. */
+  href?: string;
+}) {
   // No microphone behind this round, so there is nothing to say about it.
   // Silence, rather than an apology for a feature nobody asked for.
   if (report === "off") return null;
@@ -35,28 +60,104 @@ export function RoundReport({ report, length }: { report: Report | "off" | null;
     return <p className="text-sm text-muted">We could not hear you. Check your microphone.</p>;
   }
 
-  const parts = blocks(report, length);
   return (
     <div className="w-full">
-      <div
-        className="relative h-2 w-full overflow-hidden rounded-full bg-line"
-        role="img"
-        aria-label={`Your minute: ${report.pauses.length} pauses, longest ${report.longest_pause} seconds`}
-      >
-        {parts.map((block, index) => (
+      <MinuteBar report={report} length={length} />
+      <Headline report={report} />
+      <Bands rows={bands(report)} />
+      <Transcript report={report} />
+      {href && (
+        <p className="mt-4 text-center text-[12.5px]">
+          <a href={href} className="font-semibold text-accent-strong underline underline-offset-4 hover:text-ink">
+            See the full report
+          </a>
+        </p>
+      )}
+    </div>
+  );
+}
+
+/* The tones of the wave. A voice is the accent, a gap long enough to
+   notice is the warm colour the clock already uses for its last ten
+   seconds, an ordinary breath is a hairline. Finishing early is none of
+   the three and draws nothing: answering in twenty seconds is a short
+   answer, not a forty-second hole, and the first version of this bar
+   said otherwise. */
+const TONE: Record<"breath" | "gap", { stroke: string; width: number }> = {
+  breath: { stroke: "var(--line-strong)", width: 1.5 },
+  gap: { stroke: "var(--warn)", width: 3 },
+};
+
+/* The minute as a waveform: strokes where you were talking, a flat line
+   where you were not, and, when asked for, each um as a warm dot on the
+   line at the second it was said, so "six ums" becomes "six ums, all in
+   the first half", which is the thing you can do something about.
+
+   Drawn in percent with the strokes kept at their pixel width, so the
+   same round is the same picture at every size. The heights are a texture
+   and not loudness: nothing here knows how loud anybody was. */
+export function MinuteBar({ report, length, ticks = [] }: { report: Report; length: number; ticks?: FillerAt[] }) {
+  const marks = waveform(blocks(report, length));
+  return (
+    <>
+      <div className="relative w-full">
+        <svg
+          viewBox="0 0 100 40"
+          preserveAspectRatio="none"
+          className="block h-10 w-full overflow-visible"
+          role="img"
+          aria-label={`Your minute: ${report.pauses.length} pauses, longest ${report.longest_pause} seconds`}
+        >
+          {marks.map((mark, index) =>
+            mark.kind === "stroke" ? (
+              <line
+                key={index}
+                x1={mark.x}
+                x2={mark.x}
+                y1={20 - mark.height * 18}
+                y2={20 + mark.height * 18}
+                stroke="var(--accent)"
+                strokeWidth={1.5}
+                strokeLinecap="round"
+                vectorEffect="non-scaling-stroke"
+              />
+            ) : (
+              <line
+                key={index}
+                x1={mark.from}
+                x2={mark.to}
+                y1={20}
+                y2={20}
+                stroke={TONE[mark.tone].stroke}
+                strokeWidth={TONE[mark.tone].width}
+                vectorEffect="non-scaling-stroke"
+              >
+                <title>{mark.tone === "gap" ? `A ${mark.seconds}s gap` : `A ${mark.seconds}s breath`}</title>
+              </line>
+            ),
+          )}
+        </svg>
+        {ticks.map((tick, index) => (
           <span
             key={index}
-            className={`absolute inset-y-0 ${PAINT[block.kind]}`}
-            style={{ left: `${block.at}%`, width: `${block.width}%` }}
+            title={`${tick.word} at ${clock(tick.at)}`}
+            className="absolute top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-warn ring-2 ring-surface"
+            style={{ left: `${Math.min(100, (tick.at / length) * 100)}%` }}
           />
         ))}
       </div>
-
-      <div className="mt-2 flex justify-between text-[11px] tabular-nums text-muted">
+      <div className="mt-1 flex justify-between text-[11px] tabular-nums text-muted">
         <span>0:00</span>
         <span>{clock(length)}</span>
       </div>
+    </>
+  );
+}
 
+/* One sentence, then the plain numbers, then what was leaned on. */
+export function Headline({ report }: { report: Report }) {
+  return (
+    <>
       <p className="mt-4 text-sm font-semibold">{headline(report)}</p>
 
       <p className="mt-2 text-[12.5px] tabular-nums text-muted">{numbers(report).join("  ·  ")}</p>
@@ -68,17 +169,7 @@ export function RoundReport({ report, length }: { report: Report | "off" | null;
             : `${report.fillers_at_transitions} of them beside a gap, where the next point was not ready.`}
         </p>
       )}
-
-      {report.crutch_words.length > 0 && (
-        <p className="mt-1 text-[12.5px] text-muted">
-          You leaned on {report.crutch_words.map((crutch) => `${crutch.word} ${crutch.count}`).join(", ")}
-        </p>
-      )}
-
-      <Bands report={report} />
-
-      <Transcript report={report} />
-    </div>
+    </>
   );
 }
 
@@ -87,45 +178,38 @@ export function RoundReport({ report, length }: { report: Report | "off" | null;
    Stored since the report shipped and never shown until now. Reading your
    own minute back is the most convincing thing here after the bar, and it
    is the only place a filler count stops being a number and becomes a
-   thing you can hear yourself doing. */
-function Transcript({ report }: { report: Report }) {
+   thing you can hear yourself doing. Behind a link on the done screen,
+   which is a moment; open on the round's own page, which is the record. */
+export function Transcript({ report, open = false }: { report: Report; open?: boolean }) {
   const parts = marked(report);
   if (!parts.length && !report.said.length) return null;
+  const body = (
+    <div className={`rounded-card border border-line bg-card2 px-4 py-3.5 ${open ? "" : "mt-3"}`}>
+      <div className="flex items-baseline justify-between gap-3 border-b border-line pb-2.5">
+        {/* The topic, so the read-back says what it was an answer to.
+            Months later a transcript on its own is a paragraph nobody
+            can place. */}
+        <p className="text-[12.5px] font-semibold">{report.topic}</p>
+        {report.words !== null && (
+          <span className="shrink-0 text-[11.5px] tabular-nums text-muted">{report.words} words</span>
+        )}
+      </div>
+      <p className="mt-2.5 text-[13.5px] leading-relaxed text-muted">
+        {report.said.length ? <Timed report={report} /> : <Flat parts={parts} />}
+      </p>
+    </div>
+  );
+  if (open) return body;
   return (
     <details className="group mt-5 text-left">
       <summary className="cursor-pointer list-none text-center text-[12.5px] font-semibold text-muted underline underline-offset-4 hover:text-ink">
         <span className="group-open:hidden">Read it back</span>
         <span className="hidden group-open:inline">Hide</span>
       </summary>
-      <div className="mt-3 rounded-card border border-line bg-card2 px-4 py-3.5">
-        <div className="flex items-baseline justify-between gap-3 border-b border-line pb-2.5">
-          {/* The topic, so the read-back says what it was an answer to.
-              Months later a transcript on its own is a paragraph nobody
-              can place. */}
-          <p className="text-[12.5px] font-semibold">{report.topic}</p>
-          {report.words !== null && (
-            <span className="shrink-0 text-[11.5px] tabular-nums text-muted">{report.words} words</span>
-          )}
-        </div>
-        <p className="mt-2.5 text-[13.5px] leading-relaxed text-muted">
-          {report.said.length ? <Timed report={report} /> : <Flat parts={parts} />}
-        </p>
-      </div>
+      {body}
     </details>
   );
 }
-
-/* Talking is the accent, a gap long enough to notice is the warm colour
-   the clock already uses for its last ten seconds, and an ordinary breath
-   is a line. Finishing early is none of the three and keeps the track's
-   own background: answering in twenty seconds is a short answer, not a
-   forty-second hole, and the first version of this bar said otherwise. */
-const PAINT: Record<Kind, string> = {
-  talking: "bg-accent",
-  gap: "bg-warn",
-  breath: "bg-line-strong",
-  after: "bg-transparent",
-};
 
 /* Only what was actually measured. A round nothing transcribed shows the
    timing numbers and stops; a round Whisper transcribed shows the words
@@ -142,7 +226,6 @@ function numbers(report: Report): string[] {
   if (report.fillers !== null) out.push(`${report.fillers} um`);
   return out;
 }
-
 
 /* The one place the microphone is ever asked for.
 
@@ -193,7 +276,6 @@ export function ReportInvitation({ onYes, onNo }: { onYes: () => void; onNo: () 
   );
 }
 
-
 /* Every number against a comfortable range.
 
    This is what stops a first round being a page of orphaned facts. "166
@@ -204,12 +286,11 @@ export function ReportInvitation({ onYes, onNo }: { onYes: () => void; onNo: () 
    Drawn by hand rather than by a chart library. A track, a band and a
    marker is not a chart, and the alternative would put a hundred kilobytes
    of charting on the home page, where the first paint is measured. The
-   progress view is where axes and hover start to earn a library. */
-function Bands({ report }: { report: Report }) {
-  const rows = bands(report);
+   round's own page is where axes and hover start to earn a library. */
+export function Bands({ rows, columns = 2 }: { rows: Band[]; columns?: 1 | 2 }) {
   if (!rows.length) return null;
   return (
-    <div className="mt-6 grid gap-4 text-left sm:grid-cols-2">
+    <div className={`mt-6 grid gap-4 text-left ${columns === 2 ? "sm:grid-cols-2" : "sm:mt-0"}`}>
       {rows.map((row) => (
         <BandRow key={row.key} band={row} />
       ))}
@@ -231,11 +312,19 @@ function BandRow({ band }: { band: Band }) {
         <span className="text-[12.5px] tabular-nums text-muted">{band.shown}</span>
       </div>
       <div className="relative mt-2 h-1.5 w-full rounded-full bg-line">
-        {/* The comfortable stretch, and then where you landed on it. */}
+        {/* The comfortable stretch, then where you usually land, then
+            where you landed today on top of both. */}
         <span
           className="absolute inset-y-0 rounded-full bg-accent/30"
           style={{ left: `${start}%`, width: `${width}%` }}
         />
+        {band.usual !== null && band.usual !== undefined && (
+          <span
+            title={`Your usual: ${band.usual}`}
+            className="absolute -top-[3px] size-3 -translate-x-1/2 rounded-full border-2 border-muted bg-surface"
+            style={{ left: `${at(band.usual, band.scale)}%` }}
+          />
+        )}
         <span
           className={`absolute -top-1 size-3.5 -translate-x-1/2 rounded-full border-2 border-surface ${
             inside ? "bg-accent" : "bg-warn"
@@ -264,15 +353,18 @@ function BandRow({ band }: { band: Band }) {
   );
 }
 
-
 /* The silences drawn where they fell.
 
    A six-second hole reported as "longest gap 6s" is a number. The same
    hole sitting inside the sentence it interrupted tells you where you
    stalled, which is the thing you can actually fix. The words and their
    clock come from the transcriber; the silence is our own, measured off
-   the envelope, which is the more exact of the two. */
+   the envelope, which is the more exact of the two. A restart, the two
+   words a sentence was begun on twice, is underlined in the warm colour
+   where it happened. */
 function Timed({ report }: { report: Report }) {
+  const restarts = new Set(report.restarts.map((restart) => restart.at));
+  let underline = 0;
   return (
     <>
       {report.said.map((part, index) => {
@@ -289,17 +381,28 @@ function Timed({ report }: { report: Report }) {
             </span>
           );
         }
-        if (part.kind === "word") return <span key={index}>{part.text} </span>;
-        return (
-          <mark
-            key={index}
-            className={`rounded-[3px] px-0.5 font-semibold text-ink ${
-              part.kind === "filler" ? "bg-warn/20" : "bg-accent/15"
-            }`}
-          >
-            {part.text}{" "}
-          </mark>
-        );
+        if (restarts.has(part.at)) underline = 2;
+        const said =
+          part.kind === "word" ? (
+            <>{part.text} </>
+          ) : (
+            <mark
+              className={`rounded-[3px] px-0.5 font-semibold text-ink ${
+                part.kind === "filler" ? "bg-warn/20" : "bg-accent/15"
+              }`}
+            >
+              {part.text}{" "}
+            </mark>
+          );
+        if (underline > 0 && part.kind !== "filler") {
+          underline -= 1;
+          return (
+            <u key={index} className="text-ink decoration-warn decoration-dotted decoration-2 underline-offset-[3px]">
+              {said}
+            </u>
+          );
+        }
+        return <span key={index}>{said}</span>;
       })}
     </>
   );

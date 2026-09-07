@@ -1,17 +1,17 @@
-import { RoundReport } from "@/components/round/report";
 import { Button } from "@/components/site/button";
 import { GenreIcon } from "@/components/site/icons";
+import { RoundDetail } from "@/components/streak/round-detail";
 import type { Bank } from "@/lib/bank";
 import type { Report } from "@/lib/report";
 
-/* One past round, read back.
+/* One past round, read all the way back.
 
    Everything here has been stored since the report shipped and none of it
    was reachable: the report was drawn once on the done screen and then
-   gone, while Pro was sold on keeping exactly this. The page is the same
-   `RoundReport` the done screen draws, so a round looks the same the day
-   after as it did the moment it ended, and there is one component to keep
-   right rather than two that drift.
+   gone, while Pro was sold on keeping exactly this. The top of the page is
+   the done screen's own bar and sentence, drawn by the same pieces, so a
+   round looks the same the day after as it did the moment it ended; under
+   it is the full reading the done screen has no room for.
 
    The topic is the headline, because that is what somebody is looking for
    when they come back: they remember the prompt, not the date. */
@@ -40,7 +40,7 @@ export function PastRound({ report, bank, signedIn }: { report: Report; bank: Ba
       <h1 className="font-display text-[clamp(1.6rem,4vw,2.2rem)] font-semibold tracking-[-0.03em]">{report.topic}</h1>
 
       <div className="mt-8">
-        <RoundReport report={report} length={Math.max(1, Math.round(report.speaking_seconds + totalGaps(report)))} />
+        <RoundDetail report={report} length={Math.max(1, Math.round(report.speaking_seconds + totalGaps(report)))} />
       </div>
 
       <div className="mt-10 flex flex-wrap gap-3">

@@ -74,16 +74,18 @@ class Transcript:
     words: tuple[tuple[str, float, float], ...] = ()
 
 
-def _multipart(fields: dict[str, str], filename: str, blob: bytes) -> tuple[bytes, str]:
+def _multipart(fields: dict[str, str | list[str]], filename: str, blob: bytes) -> tuple[bytes, str]:
     """One file and a few strings, by hand. `urllib` has no multipart and
     the alternative is a dependency for one POST, which is the call
-    `mail.py`, `recaptcha.py` and `dodo.py` already made."""
+    `mail.py`, `recaptcha.py` and `dodo.py` already made. A list value is
+    the field repeated, which is how an array travels in a form."""
     boundary = uuid.uuid4().hex
     marker = f"--{boundary}".encode()
     body = bytearray()
     for name, value in fields.items():
-        body += marker + b"\r\n"
-        body += f'Content-Disposition: form-data; name="{name}"\r\n\r\n{value}\r\n'.encode()
+        for one in value if isinstance(value, list) else [value]:
+            body += marker + b"\r\n"
+            body += f'Content-Disposition: form-data; name="{name}"\r\n\r\n{one}\r\n'.encode()
     body += marker + b"\r\n"
     body += f'Content-Disposition: form-data; name="file"; filename="{filename}"\r\n'.encode()
     guessed = mimetypes.guess_type(filename)[0] or "application/octet-stream"
@@ -109,13 +111,23 @@ def _post(url: str, *, data: bytes, headers: dict, method: str = "POST") -> dict
 
 @dataclass
 class GroqGateway:
-    """The free tier. Cheap and fast, and it eats the fillers."""
+    """The free tier. Cheap and fast, and it eats the fillers.
+
+    Asked for `verbose_json` with word timestamps, which costs nothing
+    extra and is what lets a free round have its pace drawn through the
+    minute and its silences drawn inside the sentence they interrupted.
+    The ums are still gone before the answer arrives; timings do not bring
+    them back."""
 
     api_key: str
     base_url: str = "https://api.groq.com/openai/v1"
 
     def transcribe(self, blob: bytes, filename: str) -> Transcript:
-        body, content_type = _multipart({"model": GROQ_MODEL, "response_format": "json"}, filename, blob)
+        body, content_type = _multipart(
+            {"model": GROQ_MODEL, "response_format": "verbose_json", "timestamp_granularities[]": ["word"]},
+            filename,
+            blob,
+        )
         answer = _post(
             f"{self.base_url.rstrip('/')}/audio/transcriptions",
             data=body,
@@ -124,7 +136,19 @@ class GroqGateway:
         text = (answer.get("text") or "").strip()
         if not text:
             raise TranscribeError("the transcriber returned nothing")
-        return Transcript(text=text, provider=GROQ)
+        return Transcript(text=text, provider=GROQ, words=_timed_seconds(answer.get("words")))
+
+
+def _timed_seconds(words) -> tuple[tuple[str, float, float], ...]:
+    """Whisper's words arrive as `word`, `start`, `end`, in seconds already.
+    Nothing that cannot be placed is kept, as with the other provider."""
+    out = []
+    for word in words or []:
+        text = str(word.get("word") or "").strip()
+        start, end = word.get("start"), word.get("end")
+        if text and start is not None and end is not None:
+            out.append((text, round(float(start), 2), round(float(end), 2)))
+    return tuple(out)
 
 
 @dataclass

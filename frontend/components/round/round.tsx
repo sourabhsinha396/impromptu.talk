@@ -78,6 +78,9 @@ export function Round({
      thing. Without the third the placeholder would pulse forever for
      everybody who declined the prompt. */
   const [report, setReport] = useState<Report | "off" | null>(null);
+  /* The run's row, once written, so the done screen can link to the
+     round's own page. */
+  const [runId, setRunId] = useState<number | null>(null);
   const [sheet, setSheet] = useState<"genre" | "settings" | null>(null);
   /* One listener for the life of the page. In a ref because nothing
      renders differently for it existing: it is a microphone, not state. */
@@ -97,12 +100,14 @@ export function Round({
       else if (effect.type === "record") {
         setSummary(null);
         setReport(null);
+        setRunId(null);
         /* Stopped before the run is written, so the recording is closed
            while the POST is in flight rather than after it. */
         const heard = listener.current?.stop() ?? Promise.resolve(NOTHING);
         void record(effect.payload).then(async (answer) => {
           setSummary(answer);
           if (!answer) return;
+          setRunId(answer.id);
           const listened = await heard;
           /* A refused or missing microphone has nothing to report, and the
              round trip could only ever answer "we could not hear you". */
@@ -309,6 +314,7 @@ export function Round({
         <DonePhase
           summary={summary}
           report={report}
+          runId={runId}
           spokenSeconds={engine.spokeFor}
           signedIn={signedIn}
           onAgain={armed(() => engine.spin())}

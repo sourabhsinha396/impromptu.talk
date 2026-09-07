@@ -1,0 +1,598 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mock: your round, read back</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..600&family=Plus+Jakarta+Sans:wght@400..700&display=swap" rel="stylesheet"><style>
+:root{color-scheme:light;--surface:#fff;--card:#fff;--card2:oklch(.965 .008 120);--ink:#1c1917;--muted:#57534e;--line:#e7e5e4;--line-strong:#918b87;
+--accent-h:120;--accent-c:.12;--accent-l:.5;--accent-l-strong:.42;--accent:oklch(var(--accent-l) var(--accent-c) var(--accent-h));--accent-strong:oklch(var(--accent-l-strong) var(--accent-c) var(--accent-h));
+--btn:#1c1917;--btn-ink:#fff;--btn-strong:#000;--note:oklch(.93 .13 118);--note-ink:oklch(.32 .06 120);--warn:oklch(.62 .2 30);
+--sans:"Plus Jakarta Sans",ui-sans-serif,system-ui,sans-serif;--display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;--header-h:60px}
+[data-theme=dark]{color-scheme:dark;--surface:#080808;--card:#161616;--card2:#101010;--ink:#f5f5f4;--muted:#a8a29e;--line:#292524;--line-strong:#6b6560;
+--accent-l:.796;--accent-l-strong:.86;--btn:#f5f5f4;--btn-ink:#111110;--btn-strong:#fff;--note:oklch(.86 .15 120);--note-ink:oklch(.2 .04 120);--warn:oklch(.75 .19 30)}
+*{box-sizing:border-box}html,body{margin:0}body{background:#3f3d3a;font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased}
+.mockbar{position:sticky;top:0;z-index:50;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:10px 16px;background:#26241f;color:#d6d3d1;font:600 12px/1 var(--sans);letter-spacing:.02em}
+.mockbar b{color:#fff;font-weight:700;margin-right:6px}.mockbar .seg{display:inline-flex;border:1px solid #57534e;border-radius:999px;overflow:hidden}
+.mockbar button{all:unset;cursor:pointer;padding:7px 12px;color:#d6d3d1}.mockbar button.on{background:#f5f5f4;color:#1c1917}
+.frame{margin:18px auto;max-width:1100px;background:var(--surface);color:var(--ink);box-shadow:0 20px 60px rgb(0 0 0/.35);position:relative;overflow:hidden}
+.phone .frame{max-width:390px}
+.notes{max-width:1100px;margin:0 auto 40px;background:#fffbea;color:#3b2f0b;border-radius:14px;padding:18px 22px;font-size:14px;line-height:1.55}
+.notes h2{margin:0 0 8px;font:600 15px var(--sans)}.notes h3{margin:16px 0 6px;font:600 14px var(--sans)}.notes ul{margin:0;padding-left:18px}.notes li{margin:5px 0}.notes[hidden]{display:none}
+.notes code{background:#f3e9b8;padding:1px 5px;border-radius:4px;font-size:12.5px}
+.ico{flex:none}
+.topbar{height:var(--header-h);display:flex;align-items:center;padding:10px clamp(14px,4vw,28px);border-bottom:1px solid var(--accent)}
+.topbar-in{flex:1;display:flex;align-items:center;justify-content:space-between;max-width:80rem;margin-inline:auto}
+.wordmark{display:inline-flex;align-items:center;gap:8px;font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:-.02em;font-variation-settings:"wdth" 96;color:var(--ink);text-decoration:none}
+.wordmark i{color:var(--muted);font-weight:400;font-style:normal}.die{width:19px;height:19px;color:var(--accent)}
+.right{display:flex;align-items:center;gap:6px}
+.pill{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line-strong);background:var(--card2);border-radius:999px;padding:5px 11px;font-size:13.5px;font-weight:600}
+.pill b{color:var(--accent)}.pill .ico{color:var(--accent)}
+.iconbtn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border:1px solid var(--line-strong);background:var(--card2);color:var(--muted);border-radius:999px}
+.btn{font:inherit;font-weight:600;border-radius:999px;border:1px solid transparent;padding:14px 26px;cursor:pointer;line-height:1;display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-size:16px}
+.btn-primary{background:var(--btn);color:var(--btn-ink)}.btn-ghost{background:none;color:var(--muted);border-color:var(--line-strong)}
+[hidden]{display:none!important}
+
+/* the page */
+main{max-width:720px;margin:0 auto;padding:28px clamp(16px,4vw,32px) 64px}
+.crumb{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--muted);margin:0 0 6px}
+.crumb a{color:inherit;text-decoration:underline;text-underline-offset:4px}.crumb .g{display:inline-flex;align-items:center;gap:4px}.crumb .g .ico{color:var(--accent)}
+h1{font-family:var(--display);font-weight:600;letter-spacing:-.03em;font-variation-settings:"wdth" 96;font-size:clamp(1.6rem,4vw,2.2rem);line-height:1.1;margin:0}
+.sect{margin:34px 0 0}
+.sect-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:0 0 10px}
+.sect-h h2{font-family:var(--display);font-weight:600;letter-spacing:-.02em;font-variation-settings:"wdth" 96;font-size:17px;margin:0}
+.sect-h .c{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.line{font-size:14px;font-weight:600;margin:14px 0 0}
+.nums{font-size:12.5px;color:var(--muted);margin:6px 0 0;font-variant-numeric:tabular-nums}
+.sub{font-size:12.5px;color:var(--muted);margin:8px 0 0;line-height:1.5}
+.sub b{color:var(--ink);font-weight:600}
+
+/* the minute */
+.bar{position:relative;height:40px}
+.bar svg{display:block;width:100%;height:40px;overflow:visible}
+.bar i{position:absolute;top:50%;width:8px;height:8px;transform:translate(-50%,-50%);border-radius:999px;background:var(--warn);border:2px solid var(--surface);box-shadow:0 0 0 1px var(--warn);cursor:default}
+.ticks{display:none}
+.legend .wave{display:inline-flex;align-items:center;gap:1px;height:12px;vertical-align:-2px;margin-right:5px}
+.legend .wave b{display:block;width:2px;border-radius:2px;background:var(--accent)}
+.legend .ln{display:inline-block;width:14px;height:0;border-top:1.5px solid var(--line-strong);vertical-align:middle;margin-right:5px}
+.legend .ln.gap{border-top:3px solid var(--warn)}
+.clocks{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:4px;font-variant-numeric:tabular-nums}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:11.5px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;vertical-align:-1px;margin-right:5px}
+.legend i.dot{border-radius:999px;width:8px;height:8px}
+
+/* pace chart */
+.chart{position:relative;margin-top:6px}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart .grid{stroke:var(--line);stroke-width:1}
+.chart .band{fill:var(--accent);opacity:.12}
+.chart .area{fill:var(--accent);opacity:.1}
+.chart .path{fill:none;stroke:var(--accent);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.chart .pt{fill:var(--accent);stroke:var(--surface);stroke-width:2}
+.chart .pt.out{fill:var(--warn)}
+.chart text{font:600 11px var(--sans);fill:var(--muted)}
+.chart text.val{fill:var(--ink)}
+.chart .cross{stroke:var(--line-strong);stroke-width:1;display:none}
+.chart .hit{fill:transparent;cursor:crosshair}
+.tip{position:absolute;pointer-events:none;background:var(--card);border:1px solid var(--line-strong);border-radius:10px;padding:7px 10px;font-size:12px;line-height:1.35;box-shadow:0 8px 24px rgb(0 0 0/.14);white-space:nowrap;z-index:5;display:none;color:var(--ink)}
+.tip b{display:block;font-size:13px}.tip span{color:var(--muted)}
+
+/* bands */
+.shape{display:grid;grid-template-columns:250px 1fr;gap:16px 30px;align-items:center;margin-top:8px}
+.phone .shape{grid-template-columns:1fr}
+.radar svg{display:block;width:100%;height:auto;overflow:visible}
+.radar .web{fill:none;stroke:var(--line);stroke-width:1}
+.radar .spoke{stroke:var(--line);stroke-width:1}
+.radar .target{fill:none;stroke:var(--line-strong);stroke-width:1;stroke-dasharray:4 4}
+.radar .usualp{fill:none;stroke:var(--muted);stroke-width:1.5}
+.radar .today{fill:var(--accent);fill-opacity:.22;stroke:var(--accent);stroke-width:2;stroke-linejoin:round}
+.radar .pt{fill:var(--accent);stroke:var(--surface);stroke-width:2}
+.radar .pt.out{fill:var(--warn)}
+.radar text{font:600 11px var(--sans);fill:var(--muted)}
+.radar .k{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:11.5px;color:var(--muted);margin-top:6px;justify-content:center}
+.radar .k i{display:inline-block;width:14px;height:0;border-top:2px solid var(--accent);vertical-align:middle;margin-right:5px}
+.radar .k i.t{border-top:1px dashed var(--line-strong)}
+.radar .k i.u{border-top:1.5px solid var(--muted)}
+.bands{display:grid;gap:14px}
+.band .h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:12.5px}
+.band .h b{font-weight:600}.band .h span{color:var(--muted);font-variant-numeric:tabular-nums}
+.band .track{position:relative;height:6px;border-radius:999px;background:var(--line);margin-top:8px}
+.band .good{position:absolute;top:0;bottom:0;border-radius:999px;background:var(--accent);opacity:.3}
+.band .mark{position:absolute;top:-4px;width:14px;height:14px;margin-left:-7px;border-radius:999px;border:2px solid var(--surface);background:var(--accent)}
+.band .mark.out{background:var(--warn)}
+.band .usual{position:absolute;top:-3px;width:12px;height:12px;margin-left:-6px;border-radius:999px;border:2px solid var(--muted);background:var(--surface)}
+.band .ends{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:6px}
+.band .ends b{font-weight:600;color:var(--ink)}.band .ends b.in{color:var(--accent-strong)}
+.band details{margin-top:6px}.band summary{cursor:pointer;list-style:none;font-size:11.5px;font-weight:600;color:var(--muted);text-decoration:underline;text-underline-offset:4px}
+.band details p{margin:6px 0 0;font-size:12px;color:var(--muted);line-height:1.5}
+
+/* leaned on */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:20px 32px}
+.phone .two{grid-template-columns:1fr}
+.hbars{display:grid;grid-template-columns:auto 1fr auto;gap:7px 10px;align-items:center;font-size:12.5px}
+.hbars .w{font-weight:600}.hbars .n{color:var(--muted);font-variant-numeric:tabular-nums;text-align:right}
+.hbars .t{position:relative;height:10px;background:var(--line);border-radius:999px;overflow:hidden}
+.hbars .t i{position:absolute;top:0;bottom:0;left:0;border-radius:0 4px 4px 0}
+.hbars .t i.f{background:var(--warn)}.hbars .t i.c{background:var(--accent)}
+.hbars .grp{grid-column:1/-1;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.hbars .grp:first-child{margin-top:0}
+.donut{display:grid;grid-template-columns:150px 1fr;gap:12px 16px;align-items:center}
+.phone .donut{grid-template-columns:130px 1fr}
+.donut svg{display:block;width:100%;height:auto;overflow:visible}
+.donut .seg{cursor:default}
+.donut .seg.f{stroke:var(--warn)}.donut .seg.c{stroke:var(--accent)}
+.donut .rest{stroke:var(--line)}
+.donut .big{font:600 26px var(--sans);fill:var(--ink);letter-spacing:-.02em}
+.donut .lab{font:600 11px var(--sans);fill:var(--muted)}
+.dlist{list-style:none;margin:0;padding:0;font-size:12.5px}
+.dlist li{display:flex;align-items:center;gap:8px;padding:4px 0}
+.dlist i{width:10px;height:10px;border-radius:3px;flex:none}
+.dlist .w{flex:1;font-weight:600}.dlist .n{color:var(--muted);font-variant-numeric:tabular-nums}
+.dlist .grp{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:6px 0 2px}
+.plain{font-size:12.5px;color:var(--muted);line-height:1.5}
+.plain a{color:var(--accent-strong);font-weight:600}
+.rep{list-style:none;margin:0;padding:0;font-size:13px}
+.rep li{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--line)}
+.rep li:last-child{border-bottom:0}
+.rep q{quotes:"\201C" "\201D";font-weight:600}.rep q:before,.rep q:after{color:var(--muted);font-weight:400}
+.rep .n{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.rep .at{color:var(--muted);font-variant-numeric:tabular-nums}
+.rep li.restart q{font-weight:500}.rep li.restart q mark{background:none;color:var(--ink);font-weight:600;text-decoration:underline dotted var(--warn);text-decoration-thickness:2px;text-underline-offset:3px}
+.small{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+
+/* sentences */
+.sent{display:flex;align-items:flex-end;gap:6px;height:104px;padding:20px 0 1px;border-bottom:1px solid var(--line)}
+.sent i{flex:1;max-width:24px;background:var(--accent);border-radius:4px 4px 0 0;position:relative;cursor:default;min-height:3px}
+.sent i.long{background:var(--warn)}
+.sent i b{position:absolute;left:50%;transform:translateX(-50%);top:-17px;font:600 11px var(--sans);color:var(--ink);font-variant-numeric:tabular-nums}
+.sentx{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:5px}
+
+/* tiles */
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tile{border:1px solid var(--line);background:var(--card);border-radius:14px;padding:14px 12px 12px;min-width:0}
+.tile .n{font-size:24px;font-weight:600;letter-spacing:-.02em;line-height:1.1}
+.tile .l{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.4}
+.phone .tile .n{font-size:20px}
+
+/* read back */
+.rb{border:1px solid var(--line);background:var(--card2);border-radius:14px;padding:14px 16px}
+.rb .h{display:flex;justify-content:space-between;gap:12px;align-items:baseline;border-bottom:1px solid var(--line);padding-bottom:10px;font-size:12.5px}
+.rb .h b{font-weight:600}.rb .h span{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.rb p{margin:10px 0 0;font-size:14px;line-height:1.85;color:var(--muted)}
+.rb .p{display:inline-block;margin:0 4px;padding:0 5px;border-radius:4px;font-size:11px;font-weight:600;vertical-align:middle;background:var(--line);color:var(--muted);font-variant-numeric:tabular-nums;line-height:1.6}
+.rb .p.aw{background:color-mix(in oklab,var(--warn) 25%,transparent);color:var(--ink)}
+.rb mark{border-radius:3px;padding:0 2px;font-weight:600;color:var(--ink)}
+.rb mark.f{background:color-mix(in oklab,var(--warn) 22%,transparent)}
+.rb mark.c{background:color-mix(in oklab,var(--accent) 16%,transparent)}
+.rb u{text-decoration:underline dotted var(--warn);text-decoration-thickness:2px;text-underline-offset:3px;color:var(--ink)}
+.rb .key{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:11.5px;color:var(--muted);margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+
+.acts{display:flex;gap:12px;flex-wrap:wrap;margin:40px 0 0}
+.saved{margin:24px 0 0;font-size:13.5px;color:var(--muted);max-width:52ch}.saved a{color:var(--accent-strong);font-weight:600}
+.pro{font-size:12.5px;color:var(--muted)}.pro a{color:var(--accent-strong);font-weight:600}
+</style></head><body>
+<div class="mockbar"><b>Mock</b><span class="seg"><button data-tab="real" class="on">Pro, this round</button><button data-tab="rough">Pro, a rough one</button><button data-tab="free">Free</button></span>
+<span class="seg"><button data-theme-set="light" class="on">Light</button><button data-theme-set="dark">Dark</button></span>
+<span class="seg"><button data-width="desk" class="on">Desktop</button><button data-width="phone">Phone</button></span>
+<span class="seg"><button data-notes class="on">Notes</button></span></div>
+
+<div class="notes"><h2>Your round, read back: what changes and why</h2>
+<p style="margin:0 0 8px">The page is <code>/streak/[id]</code>, the record of one round, reached on purpose from the streak page. The done screen on home stays exactly as built (bar, one sentence, the bands, the read-back behind a link), because it is a moment and the ten-second rule wants it short; it gains one underlined link, <b>See the full report</b>, into this page. Recharts is already a dependency of <code>/streak</code> and nowhere else, so every chart here is inside that decision. The mock draws them by hand so the file opens on its own.</p>
+<h3>What is new on the page, top to bottom</h3>
+<ul>
+<li><b>The minute as a wave.</b> Strokes where there was a voice, a flat line where there was not, the holes you would notice in the warm colour, and nothing at all after the last word. The first version was a strip of green and red and took a key to read; a wave needs none, because everybody has seen one (owner's call, with a sketch). The heights are a texture and not loudness: no audio is kept and the report knows only when there was sound.</li>
+<li><b>Fillers on the wave.</b> Each um is a warm dot on the line at the second it was said, so "6 um" becomes "six ums, all of them in the first half". The transcriber's word clock places them; nothing new is stored.</li>
+<li><b>Pace through the minute.</b> Words a minute in each ten seconds, with the comfortable 130 to 170 band shaded. Run 30 shows what one number hides: 156, 120, <b>210</b>, 78, 126, 75. A sprint at 0:20 and a fade from 0:40, and the single "235 wpm" said neither. The line under it is written by code from the peak and the trough, never by a model.</li>
+<li><b>The shape of your round.</b> The radar from the owner's screenshot, five axes: pace, start, gaps, sentences, fillers. The dashed pentagon is the comfortable range, the filled shape is today, the thin outline is your usual over the last twelve rounds (Pro). Beside it the same measures as bars in their real units, because "143 wpm" and "2.65s" are what a person understands and the radar is only the picture of them; on every bar the hollow ring is your usual. The caption says how many of the five are in range and which is furthest out. No average: an average of seconds and words a minute is a number with nothing behind it.</li>
+<li><b>Words you leaned on, as a donut.</b> ReUI's donut with a centre total. The ring is every word you said, the warm slices are fillers, the accent slices the words you lean on, the quiet remainder is the rest of your minute; the centre reads "18 of 129 words", and hovering a slice makes the centre answer with that word's count. The list beside it carries every count, never just the top three. <b>The "ums a minute" band is gone:</b> a cluster you can see needs no rate beside it (owner's call). Then <b>said more than once</b>: phrases of two or more words that came back ("most of the time" three times), and <b>restarts</b>, a two-word run begun twice within four seconds ("and that I used, and that I used"), which is the sound of losing the sentence and is the thing nobody notices in themselves.</li>
+<li><b>Sentences.</b> One thin column per sentence, its word count as the height, anything past 35 words in warm. Run 30 has one sentence of 56 words strung on "and". Impromptu speech fails this way more than any other and no count of pauses shows it.</li>
+<li><b>Three tiles</b> for the facts that are not a scale: when you started, when you finished and whether on a full stop, how many different words. A three-column grid, never two and one.</li>
+<li><b>Read it back, open.</b> On this page it is the record, so it is not behind a link. Pauses inline where they fell, fillers and leaned-on words marked as today, restarts dotted underneath.</li>
+</ul>
+<h3>Taken from ReUI's chart set, and left there</h3>
+<ul>
+<li><b>Taken.</b> The donut with a centre total and its active-segment variant (the leaned-on words). The radar with a filled shape (the shape of your round), with a dashed target polygon added because a radar with no reference shape is a blob. The card heading pattern, a title with one number at the right, which every section here already wears. The plain bar chart, which the sentence columns are.</li>
+<li><b>Left.</b> Glowing markers and entrance animation (decoration; Motion is not installed, by decision, and the site respects reduced motion). Stripe and crosshatch fills (they exist for colour-blind and print readers as an opt-in, not as a look). The Lighthouse radial of concentric arcs (three arcs read worse than three bars, and the values end up printed sideways). Forecast zones (nothing here is a forecast). 3D isometric bars.</li>
+<li><b>In the build</b> every one of these is Recharts, which <code>/streak</code> already loads: <code>PieChart</code> for the donut, <code>RadarChart</code> for the shape, <code>AreaChart</code> for pace, plain divs for the bars and the minute.</li>
+</ul>
+<h3>Where each number comes from</h3>
+<ul>
+<li><b>Stored today, never shown:</b> word timings (<code>words_at</code>) for every Pro round, the pause list, <code>speaking_ratio</code>, <code>trail_off</code>, the full transcript. Everything in the filler dots, the pace curve, the repeats, the restarts and the sentence columns is arithmetic over these. No schema change, no new call.</li>
+<li><b>One request parameter away, free tier:</b> Groq's transcription accepts <code>response_format=verbose_json</code> with <code>timestamp_granularities[]=word</code> on whisper-large-v3-turbo at the same price. That gives Free the pace curve and the pause-in-sentence read-back too; only the ums stay Pro, because Whisper deletes them. The Free tab is drawn with that change made; today Free has the transcript and nothing timed.</li>
+<li><b>Dropped on the floor today, worth keeping:</b> AssemblyAI's per-word <code>confidence</code> and <code>audio_duration</code>. The duration is a second clock and would have caught run 30's stretched timeline (see below). Confidence is <em>not</em> drawn here on purpose: low confidence on an accent is the transcriber's problem, not the speaker's, and marking it as "unclear" would be unfair before it was useful.</li>
+<li><b>Later, browser side, both tiers:</b> the loudness envelope is sampled fifty times a second for the pause map and then thrown away. Keeping 240 numbers a minute (four a second) would draw volume over the minute and make trail-off a shape rather than a ratio. It is not audio and stores nothing anybody said. Pitch is possible the same way and is left out: a laptop microphone's pitch track is noisy and a confidence score is refused already.</li>
+<li><b>Available from the transcriber and rejected:</b> sentiment per sentence (tone is not what this exercise trains), key phrases (a lexical guess at "focus"), entities, topic categories, summaries and LeMUR prose (the report writes no prose, by decision). A language flag is worth turning on when the filler list goes multilingual, not before.</li>
+</ul>
+<h3>Two things the data said while drawing this</h3>
+<ul>
+<li><b>Run 30's browser clock ran four times fast.</b> Its stored timeline ends at 226 seconds for a 58 second round; the transcriber's words end at 54.7. Every respin on the topic screen starts another level ticker without stopping the last, so four spins meant four tickers feeding one array. The built page's "0:07 to start", "4 long gaps" and "5.02s" are artefacts of that; the transcriber's clock says 0:02, five gaps over 1.5s and 2.65s. This mock draws run 30 from the word clock. The fix is a few lines in <code>voice.ts</code> and is filed separately.</li>
+<li><b>Pace is measured one way and judged another.</b> <code>analysis.words</code> divides by speaking time with the silences removed, which is articulation rate and sits around 200 to 240 for ordinary speech; the band it is judged against, 130 to 170, is the wall-clock norm. So nearly every round will read "Rushed". Run 30 is 231 over speaking time and 143 over the clock. The mock uses the clock for the curve and the band, and proposes the same for the number.</li>
+</ul>
+</div>
+
+<div class="frame">
+<header class="topbar"><div class="topbar-in"><a class="wordmark" href="#"><svg class="die" viewBox="0 0 32 32" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4.6 26.4 10.6 26.4 21.4 16 27.4 5.6 21.4 5.6 10.6z"/><path d="M5.6 10.6 16 16 26.4 10.6M16 16v11.4"/></g><g fill="currentColor"><circle cx="16" cy="10.45" r="1.5"/><circle cx="8.9" cy="15.55" r="1.5"/><circle cx="12.71" cy="22.15" r="1.5"/><circle cx="21.2" cy="18.85" r="1.5"/><circle cx="23.11" cy="15.55" r="1.5"/><circle cx="19.29" cy="22.15" r="1.5"/></g></svg><span>impromptu<i>.talk</i></span></a><div class="right"><span class="pill"><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg><b>1</b></span><span class="iconbtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span></div></div></header>
+
+<main>
+<p class="crumb"><a href="#">Your streak</a><span aria-hidden>/</span><span>7 September</span><span class="g"><svg class="ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="12" height="12" x="2" y="10" rx="2" ry="2"/><path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6"/><path d="M6 18h.01"/><path d="M10 14h.01"/><path d="M15 6h.01"/><path d="M18 9h.01"/></svg><span id="genre">General</span></span></p>
+<h1 id="topic"></h1>
+
+<section class="sect" style="margin-top:28px">
+  <div class="bar" id="bar" role="img"></div>
+  <div class="ticks" id="ticks"></div>
+  <div class="clocks"><span>0:00</span><span id="endclock"></span></div>
+  <div class="legend" id="barkey"></div>
+  <p class="line" id="headline"></p>
+  <p class="nums" id="nums"></p>
+</section>
+
+<section class="sect">
+  <div class="sect-h"><h2>Pace through the minute</h2><span class="c" id="pacec"></span></div>
+  <div class="chart" id="pace"></div>
+  <p class="sub" id="pacesub"></p>
+</section>
+
+<section class="sect">
+  <div class="sect-h"><h2>The shape of your round</h2><span class="c" id="shapec"></span></div>
+  <div class="shape"><div class="radar" id="radar"></div><div class="bands" id="bands"></div></div>
+</section>
+
+<section class="sect">
+  <div class="sect-h"><h2>Words you leaned on</h2><span class="c" id="leanc"></span></div>
+  <div class="two">
+    <div id="lean"></div>
+    <div id="repeats"></div>
+  </div>
+</section>
+
+<section class="sect">
+  <div class="sect-h"><h2>Sentences</h2><span class="c" id="sentc"></span></div>
+  <div class="sent" id="sent"></div>
+  <div class="sentx"><span>first</span><span>last</span></div>
+  <p class="sub" id="sentsub"></p>
+</section>
+
+<section class="sect">
+  <div class="tiles" id="tiles"></div>
+</section>
+
+<section class="sect">
+  <div class="sect-h"><h2>Read it back</h2><span class="c" id="rbc"></span></div>
+  <div class="rb"><div class="h"><b id="rbtopic"></b><span id="rbwords"></span></div><p id="rbtext"></p><div class="key" id="rbkey"></div></div>
+</section>
+
+<div class="acts"><a class="btn btn-primary" href="#">Try this one again</a><a class="btn btn-ghost" href="#">Back to your streak</a></div>
+<p class="saved" id="saved" hidden>Saved on this device only. <a href="#">Keep it with an account</a>.</p>
+</main>
+</div>
+
+<div class="tip" id="tip"></div>
+
+<script>
+const DATA = {"real": {"topic": "Argue for owning one good pen", "provider": "assemblyai", "spoken": 58, "first_word": 2.13, "last_word": 54.73, "speaking": 32.4, "words": 125, "unique": 60, "pace_wall": 143, "pace_speaking": 231, "pace": [{"from": 0, "to": 10, "wpm": 156}, {"from": 10, "to": 20, "wpm": 120}, {"from": 20, "to": 30, "wpm": 210}, {"from": 30, "to": 40, "wpm": 78}, {"from": 40, "to": 50, "wpm": 126}, {"from": 50, "to": 58, "wpm": 75}], "pauses": [{"at": 2.98, "seconds": 0.66, "awkward": false}, {"at": 5.32, "seconds": 0.65, "awkward": false}, {"at": 10.13, "seconds": 2.19, "awkward": true}, {"at": 14.18, "seconds": 0.63, "awkward": false}, {"at": 15.25, "seconds": 0.9, "awkward": false}, {"at": 16.93, "seconds": 0.5, "awkward": false}, {"at": 18.22, "seconds": 0.99, "awkward": false}, {"at": 20.39, "seconds": 0.91, "awkward": false}, {"at": 22.42, "seconds": 0.34, "awkward": false}, {"at": 25.78, "seconds": 0.45, "awkward": false}, {"at": 26.62, "seconds": 0.91, "awkward": false}, {"at": 29.85, "seconds": 2.65, "awkward": true}, {"at": 33.08, "seconds": 0.37, "awkward": false}, {"at": 36.14, "seconds": 0.46, "awkward": false}, {"at": 38.21, "seconds": 1.16, "awkward": false}, {"at": 39.5, "seconds": 0.84, "awkward": false}, {"at": 43.72, "seconds": 0.58, "awkward": false}, {"at": 45.84, "seconds": 2.32, "awkward": true}, {"at": 49.24, "seconds": 0.52, "awkward": false}, {"at": 50.43, "seconds": 2.13, "awkward": true}], "longest": 2.65, "awkward": 4, "breaths": 16, "fillers": [{"word": "um", "at": 41.08}], "filler_counts": {"um": 1}, "filler_rate": 1.9, "transitions": 1, "crutches": {"yeah": 1}, "repeats": [{"phrase": "most of the time", "count": 3}, {"phrase": "i used to", "count": 3}], "immediate": ["very"], "restarts": [{"quote": "and that I used, and that", "at": 21.3}], "sentences": ["A good pen is very essential for a pen fight.", "I remember the days when I used to play pen fight with my friend named Mukesh, and I had a pen which was of my father, and it was having a steel body, very, very heavyweight pen, and that I used, and that I used to fight, and most of the time I used to win.", "The thing is that he quickly understood that I am winning because of my pen.", "And then his target became to defeat me using a 2 rupee penny.", "And yeah, um but I always had that advantage, and most of the time I won the fight.", "He was also very good with it, but eventually he lost most of the time."], "sentence_words": [10, 56, 15, 12, 17, 15], "ended_clean": true, "trail_off": 0.55, "tail_wpm": 78, "body_wpm": 142, "said": [{"kind": "word", "text": "A", "at": 2.13}, {"kind": "word", "text": "good", "at": 2.27}, {"kind": "word", "text": "pen", "at": 2.45}, {"kind": "pause", "seconds": 0.66, "awkward": false}, {"kind": "word", "text": "is", "at": 3.64}, {"kind": "word", "text": "very", "at": 3.88}, {"kind": "word", "text": "essential", "at": 4.08}, {"kind": "word", "text": "for", "at": 4.62}, {"kind": "word", "text": "a", "at": 4.77}, {"kind": "word", "text": "pen", "at": 4.86}, {"kind": "word", "text": "fight.", "at": 5.11}, {"kind": "pause", "seconds": 0.65, "awkward": false}, {"kind": "word", "text": "I", "at": 5.97}, {"kind": "word", "text": "remember", "at": 6.07}, {"kind": "word", "text": "the", "at": 6.46}, {"kind": "word", "text": "days", "at": 6.55}, {"kind": "word", "text": "when", "at": 6.88}, {"kind": "word", "text": "I", "at": 7.21}, {"kind": "word", "text": "used", "at": 7.5}, {"kind": "word", "text": "to", "at": 7.75}, {"kind": "word", "text": "play", "at": 7.92}, {"kind": "word", "text": "pen", "at": 8.25}, {"kind": "word", "text": "fight", "at": 8.41}, {"kind": "word", "text": "with", "at": 8.73}, {"kind": "word", "text": "my", "at": 9.12}, {"kind": "word", "text": "friend", "at": 9.36}, {"kind": "word", "text": "named", "at": 9.54}, {"kind": "word", "text": "Mukesh,", "at": 9.94}, {"kind": "pause", "seconds": 2.19, "awkward": true}, {"kind": "word", "text": "and", "at": 12.32}, {"kind": "word", "text": "I", "at": 12.59}, {"kind": "word", "text": "had", "at": 12.82}, {"kind": "word", "text": "a", "at": 13.16}, {"kind": "word", "text": "pen", "at": 13.24}, {"kind": "word", "text": "which", "at": 13.73}, {"kind": "word", "text": "was", "at": 13.95}, {"kind": "word", "text": "of", "at": 14.12}, {"kind": "pause", "seconds": 0.63, "awkward": false}, {"kind": "word", "text": "my", "at": 14.81}, {"kind": "word", "text": "father,", "at": 14.94}, {"kind": "pause", "seconds": 0.9, "awkward": false}, {"kind": "word", "text": "and", "at": 16.15}, {"kind": "word", "text": "it", "at": 16.56}, {"kind": "word", "text": "was", "at": 16.7}, {"kind": "pause", "seconds": 0.5, "awkward": false}, {"kind": "word", "text": "having", "at": 17.43}, {"kind": "word", "text": "a", "at": 17.67}, {"kind": "word", "text": "steel", "at": 17.71}, {"kind": "word", "text": "body,", "at": 18.09}, {"kind": "pause", "seconds": 0.99, "awkward": false}, {"kind": "word", "text": "very,", "at": 19.21}, {"kind": "word", "text": "very", "at": 19.54}, {"kind": "word", "text": "heavyweight", "at": 19.76}, {"kind": "word", "text": "pen,", "at": 20.18}, {"kind": "pause", "seconds": 0.91, "awkward": false}, {"kind": "word", "text": "and", "at": 21.3}, {"kind": "word", "text": "that", "at": 21.64}, {"kind": "word", "text": "I", "at": 21.95}, {"kind": "word", "text": "used,", "at": 22.12}, {"kind": "pause", "seconds": 0.34, "awkward": false}, {"kind": "word", "text": "and", "at": 22.76}, {"kind": "word", "text": "that", "at": 22.84}, {"kind": "word", "text": "I", "at": 23.16}, {"kind": "word", "text": "used", "at": 23.32}, {"kind": "word", "text": "to", "at": 23.48}, {"kind": "word", "text": "fight,", "at": 23.82}, {"kind": "word", "text": "and", "at": 24.54}, {"kind": "word", "text": "most", "at": 24.88}, {"kind": "word", "text": "of", "at": 25.2}, {"kind": "word", "text": "the", "at": 25.28}, {"kind": "word", "text": "time", "at": 25.38}, {"kind": "word", "text": "I", "at": 25.77}, {"kind": "pause", "seconds": 0.45, "awkward": false}, {"kind": "word", "text": "used", "at": 26.23}, {"kind": "word", "text": "to", "at": 26.41}, {"kind": "word", "text": "win.", "at": 26.49}, {"kind": "pause", "seconds": 0.91, "awkward": false}, {"kind": "word", "text": "The", "at": 27.53}, {"kind": "word", "text": "thing", "at": 27.63}, {"kind": "word", "text": "is", "at": 27.95}, {"kind": "word", "text": "that", "at": 28.08}, {"kind": "word", "text": "he", "at": 28.16}, {"kind": "word", "text": "quickly", "at": 28.2}, {"kind": "word", "text": "understood", "at": 28.91}, {"kind": "word", "text": "that", "at": 29.17}, {"kind": "word", "text": "I", "at": 29.24}, {"kind": "word", "text": "am", "at": 29.25}, {"kind": "word", "text": "winning", "at": 29.34}, {"kind": "word", "text": "because", "at": 29.5}, {"kind": "word", "text": "of", "at": 29.65}, {"kind": "word", "text": "my", "at": 29.68}, {"kind": "word", "text": "pen.", "at": 29.75}, {"kind": "pause", "seconds": 2.65, "awkward": true}, {"kind": "word", "text": "And", "at": 32.5}, {"kind": "word", "text": "then", "at": 32.8}, {"kind": "pause", "seconds": 0.37, "awkward": false}, {"kind": "word", "text": "his", "at": 33.45}, {"kind": "word", "text": "target", "at": 33.71}, {"kind": "word", "text": "became", "at": 34.12}, {"kind": "word", "text": "to", "at": 34.68}, {"kind": "word", "text": "defeat", "at": 34.84}, {"kind": "word", "text": "me", "at": 35.97}, {"kind": "pause", "seconds": 0.46, "awkward": false}, {"kind": "word", "text": "using", "at": 36.6}, {"kind": "word", "text": "a", "at": 36.95}, {"kind": "word", "text": "2", "at": 37.04}, {"kind": "word", "text": "rupee", "at": 37.74}, {"kind": "word", "text": "penny.", "at": 38.0}, {"kind": "pause", "seconds": 1.16, "awkward": false}, {"kind": "word", "text": "And", "at": 39.37}, {"kind": "pause", "seconds": 0.84, "awkward": false}, {"kind": "crutch", "text": "yeah,", "at": 40.34}, {"kind": "filler", "text": "um", "at": 41.08}, {"kind": "word", "text": "but", "at": 41.79}, {"kind": "word", "text": "I", "at": 42.05}, {"kind": "word", "text": "always", "at": 42.19}, {"kind": "word", "text": "had", "at": 42.53}, {"kind": "word", "text": "that", "at": 42.76}, {"kind": "word", "text": "advantage,", "at": 42.84}, {"kind": "pause", "seconds": 0.58, "awkward": false}, {"kind": "word", "text": "and", "at": 44.3}, {"kind": "word", "text": "most", "at": 44.4}, {"kind": "word", "text": "of", "at": 44.71}, {"kind": "word", "text": "the", "at": 44.8}, {"kind": "word", "text": "time", "at": 44.84}, {"kind": "word", "text": "I", "at": 45.19}, {"kind": "word", "text": "won", "at": 45.36}, {"kind": "word", "text": "the", "at": 45.52}, {"kind": "word", "text": "fight.", "at": 45.62}, {"kind": "pause", "seconds": 2.32, "awkward": true}, {"kind": "word", "text": "He", "at": 48.16}, {"kind": "word", "text": "was", "at": 48.36}, {"kind": "word", "text": "also", "at": 48.61}, {"kind": "word", "text": "very", "at": 49.03}, {"kind": "pause", "seconds": 0.52, "awkward": false}, {"kind": "word", "text": "good", "at": 49.76}, {"kind": "word", "text": "with", "at": 50.01}, {"kind": "word", "text": "it,", "at": 50.19}, {"kind": "pause", "seconds": 2.13, "awkward": true}, {"kind": "word", "text": "but", "at": 52.56}, {"kind": "word", "text": "eventually", "at": 52.88}, {"kind": "word", "text": "he", "at": 53.43}, {"kind": "word", "text": "lost", "at": 53.68}, {"kind": "word", "text": "most", "at": 54.08}, {"kind": "word", "text": "of", "at": 54.28}, {"kind": "word", "text": "the", "at": 54.41}, {"kind": "word", "text": "time.", "at": 54.49}], "transcript": "A good pen is very essential for a pen fight. I remember the days when I used to play pen fight with my friend named Mukesh, and I had a pen which was of my father, and it was having a steel body, very, very heavyweight pen, and that I used, and that I used to fight, and most of the time I used to win. The thing is that he quickly understood that I am winning because of my pen. And then his target became to defeat me using a 2 rupee penny. And yeah, um but I always had that advantage, and most of the time I won the fight. He was also very good with it, but eventually he lost most of the time."}, "rough": {"topic": "A promotion you did not want", "provider": "assemblyai", "spoken": 60, "first_word": 2.79, "last_word": 59.6, "speaking": 32.6, "words": 111, "unique": 64, "pace_wall": 117, "pace_speaking": 204, "pace": [{"from": 0, "to": 10, "wpm": 84}, {"from": 10, "to": 20, "wpm": 108}, {"from": 20, "to": 30, "wpm": 132}, {"from": 30, "to": 40, "wpm": 168}, {"from": 40, "to": 50, "wpm": 78}, {"from": 50, "to": 60, "wpm": 96}], "pauses": [{"at": 2.93, "seconds": 0.35, "awkward": false}, {"at": 3.59, "seconds": 0.34, "awkward": false}, {"at": 6.11, "seconds": 0.34, "awkward": false}, {"at": 6.76, "seconds": 0.35, "awkward": false}, {"at": 8.18, "seconds": 2.07, "awkward": true}, {"at": 10.56, "seconds": 0.35, "awkward": false}, {"at": 11.61, "seconds": 0.34, "awkward": false}, {"at": 12.83, "seconds": 0.34, "awkward": false}, {"at": 13.6, "seconds": 0.34, "awkward": false}, {"at": 14.16, "seconds": 0.35, "awkward": false}, {"at": 15.71, "seconds": 2.56, "awkward": true}, {"at": 19.4, "seconds": 0.35, "awkward": false}, {"at": 20.06, "seconds": 0.34, "awkward": false}, {"at": 22.07, "seconds": 1.14, "awkward": false}, {"at": 25.53, "seconds": 3.19, "awkward": true}, {"at": 32.96, "seconds": 1.8, "awkward": true}, {"at": 36.09, "seconds": 0.34, "awkward": false}, {"at": 39.26, "seconds": 0.34, "awkward": false}, {"at": 39.91, "seconds": 0.35, "awkward": false}, {"at": 41.07, "seconds": 1.66, "awkward": true}, {"at": 43.92, "seconds": 0.34, "awkward": false}, {"at": 44.81, "seconds": 0.52, "awkward": false}, {"at": 46.61, "seconds": 3.06, "awkward": true}, {"at": 49.89, "seconds": 0.51, "awkward": false}, {"at": 50.74, "seconds": 0.51, "awkward": false}, {"at": 51.89, "seconds": 0.52, "awkward": false}, {"at": 52.87, "seconds": 0.52, "awkward": false}, {"at": 56.99, "seconds": 0.51, "awkward": false}, {"at": 57.97, "seconds": 0.52, "awkward": false}], "longest": 3.19, "awkward": 6, "breaths": 23, "fillers": [{"word": "um", "at": 3.28}, {"word": "uh", "at": 6.45}, {"word": "um", "at": 10.25}, {"word": "um", "at": 19.75}, {"word": "uh", "at": 23.87}, {"word": "um", "at": 29.4}, {"word": "um", "at": 39.6}, {"word": "um", "at": 52.41}, {"word": "uh", "at": 57.5}], "filler_counts": {"um": 6, "uh": 3}, "filler_rate": 16.6, "transitions": 9, "crutches": {"so": 3, "like": 2, "actually": 2, "yeah": 2, "basically": 1, "really": 1}, "repeats": [{"phrase": "i said i would", "count": 2}], "immediate": [], "restarts": [{"quote": "I liked my job. I liked,", "at": 11.95}, {"quote": "I said, uh, I said", "at": 23.36}, {"quote": "I think, um, I think", "at": 51.25}], "sentences": ["So, um, I got offered a promotion last year and, uh, I did not want it.", "Um, the thing is, I liked my job.", "I liked, like, actually doing the work.", "And the promotion was, um, basically managing people who did the work.", "So I said, uh, I said I would think about it.", "And then I, um, I avoided my manager for like two weeks, which, yeah, was not great.", "Eventually I told her the truth.", "I said I would rather be really good at this than, um, average at that.", "She was fine with it, actually.", "Better than fine.", "So, yeah, I think, um, I think the lesson is you can say no and, uh, and the world"], "sentence_words": [14, 7, 7, 11, 10, 16, 6, 14, 6, 3, 17], "ended_clean": false, "trail_off": 0.72, "tail_wpm": 85, "body_wpm": 118, "said": [{"kind": "crutch", "text": "So,", "at": 2.79}, {"kind": "pause", "seconds": 0.35, "awkward": false}, {"kind": "filler", "text": "um,", "at": 3.28}, {"kind": "pause", "seconds": 0.34, "awkward": false}, {"kind": "word", "text": "I", "at": 3.93}, {"kind": "word", "text": "got", "at": 4.1}, {"kind": "word", "text": "offered", "at": 4.34}, {"kind": "word", "text": "a", "at": 4.73}, {"kind": "word", "text": "promotion", "at": 4.9}, {"kind": "word", "text": "last", "at": 5.36}, {"kind": "word", "text": "year", "at": 5.64}, {"kind": "word", "text": "and,", "at": 5.92}, {"kind": "pause", "seconds": 0.34, "awkward": false}, {"kind": "filler", "text": "uh,", "at": 6.45}, {"kind": "pause", "seconds": 0.35, "awkward": false}, {"kind": "word", "text": "I", "at": 7.11}, {"kind": "word", "text": "did", "at": 7.27}, {"kind": "word", "text": "not", "at": 7.52}, {"kind": "word", "text": "want", "at": 7.76}, {"kind": "word", "text": "it.", "at": 8.04}, {"kind": "pause", "seconds": 2.07, "awkward": true}, {"kind": "filler", "text": "Um,", "at": 10.25}, {"kind": "pause", "seconds": 0.35, "awkward": false}, {"kind": "word", "text": "the", "at": 10.91}, {"kind": "word", "text": "thing", "at": 11.15}, {"kind": "word", "text": "is,", "at": 11.46}, {"kind": "pause", "seconds": 0.34, "awkward": false}, {"kind": "word", "text": "I", "at": 11.95}, {"kind": "word", "text": "liked", "at": 12.12}, {"kind": "word", "text": "my", "at": 12.44}, {"kind": "word", "text": "job.", "at": 12.64}, {"kind": "pause", "seconds": 0.34, "awkward": false}, {"kind": "word", "text": "I", "at": 13.17}, {"kind": "word", "text": "liked,", "at": 13.34}, {"kind": "pause", "seconds": 0.34, "awkward": false}, {"kind": "crutch", "text": "like,", "at": 13.94}, {"kind": "pause", "seconds": 0.35, "awkward": false}, {"kind": "crutch", "text": "actually", "at": 14.51}, {"kind": "word", "text": "doing", "at": 14.93}, {"kind": "word", "text": "the", "at": 15.25}, {"kind": "word", "text": "work.", "at": 15.49}, {"kind": "pause", "seconds": 2.56, "awkward": true}, {"kind": "word", "text": "And", "at": 18.27}, {"kind": "word", "text": "the", "at": 18.51}, {"kind": "word", "text": "promotion", "at": 18.75}, {"kind": "word", "text": "was,", "at": 19.22}, {"kind": "pause", "seconds": 0.35, "awkward": false}, {"kind": "filler", "text": "um,", "at": 19.75}, {"kind": "pause", "seconds": 0.34, "awkward": false}, {"kind": "crutch", "text": "basically", "at": 20.4}, {"kind": "word", "text": "managing", "at": 20.86}, {"kind": "word", "text": "people", "at": 21.16}, {"kind": "word", "text": "who", "at": 21.41}, {"kind": "word", "text": "did", "at": 21.58}, {"kind": "word", "text": "the", "at": 21.75}, {"kind": "word", "text": "work.", "at": 21.92}, {"kind": "pause", "seconds": 1.14, "awkward": false}, {"kind": "crutch", "text": "So", "at": 23.21}, {"kind": "word", "text": "I", "at": 23.36}, {"kind": "word", "text": "said,", "at": 23.48}, {"kind": "filler", "text": "uh,", "at": 23.87}, {"kind": "word", "text": "I", "at": 24.33}, {"kind": "word", "text": "said", "at": 24.45}, {"kind": "word", "text": "I", "at": 24.64}, {"kind": "word", "text": "would", "at": 24.76}, {"kind": "word", "text": "think", "at": 24.98}, {"kind": "word", "text": "about", "at": 25.2}, {"kind": "word", "text": "it.", "at": 25.42}, {"kind": "pause", "seconds": 3.19, "awkward": true}, {"kind": "word", "text": "And", "at": 28.72}, {"kind": "word", "text": "then", "at": 28.89}, {"kind": "word", "text": "I,", "at": 29.08}, {"kind": "filler", "text": "um,", "at": 29.4}, {"kind": "word", "text": "I", "at": 29.86}, {"kind": "word", "text": "avoided", "at": 29.98}, {"kind": "word", "text": "my", "at": 30.25}, {"kind": "word", "text": "manager", "at": 30.39}, {"kind": "word", "text": "for", "at": 30.67}, {"kind": "crutch", "text": "like", "at": 30.84}, {"kind": "word", "text": "two", "at": 31.03}, {"kind": "word", "text": "weeks,", "at": 31.2}, {"kind": "word", "text": "which,", "at": 31.62}, {"kind": "crutch", "text": "yeah,", "at": 32.04}, {"kind": "word", "text": "was", "at": 32.44}, {"kind": "word", "text": "not", "at": 32.61}, {"kind": "word", "text": "great.", "at": 32.78}, {"kind": "pause", "seconds": 1.8, "awkward": true}, {"kind": "word", "text": "Eventually", "at": 34.76}, {"kind": "word", "text": "I", "at": 35.11}, {"kind": "word", "text": "told", "at": 35.22}, {"kind": "word", "text": "her", "at": 35.42}, {"kind": "word", "text": "the", "at": 35.59}, {"kind": "word", "text": "truth.", "at": 35.83}, {"kind": "pause", "seconds": 0.34, "awkward": false}, {"kind": "word", "text": "I", "at": 36.43}, {"kind": "word", "text": "said", "at": 36.6}, {"kind": "word", "text": "I", "at": 36.88}, {"kind": "word", "text": "would", "at": 37.05}, {"kind": "word", "text": "rather", "at": 37.36}, {"kind": "word", "text": "be", "at": 37.72}, {"kind": "crutch", "text": "really", "at": 37.92}, {"kind": "word", "text": "good", "at": 38.27}, {"kind": "word", "text": "at", "at": 38.55}, {"kind": "word", "text": "this", "at": 38.76}, {"kind": "word", "text": "than,", "at": 39.04}, {"kind": "pause", "seconds": 0.34, "awkward": false}, {"kind": "filler", "text": "um,", "at": 39.6}, {"kind": "pause", "seconds": 0.35, "awkward": false}, {"kind": "word", "text": "average", "at": 40.26}, {"kind": "word", "text": "at", "at": 40.65}, {"kind": "word", "text": "that.", "at": 40.85}, {"kind": "pause", "seconds": 1.66, "awkward": true}, {"kind": "word", "text": "She", "at": 42.73}, {"kind": "word", "text": "was", "at": 42.97}, {"kind": "word", "text": "fine", "at": 43.21}, {"kind": "word", "text": "with", "at": 43.49}, {"kind": "word", "text": "it,", "at": 43.77}, {"kind": "pause", "seconds": 0.34, "awkward": false}, {"kind": "crutch", "text": "actually.", "at": 44.26}, {"kind": "pause", "seconds": 0.52, "awkward": false}, {"kind": "word", "text": "Better", "at": 45.33}, {"kind": "word", "text": "than", "at": 45.86}, {"kind": "word", "text": "fine.", "at": 46.28}, {"kind": "pause", "seconds": 3.06, "awkward": true}, {"kind": "crutch", "text": "So,", "at": 49.67}, {"kind": "pause", "seconds": 0.51, "awkward": false}, {"kind": "crutch", "text": "yeah,", "at": 50.4}, {"kind": "pause", "seconds": 0.51, "awkward": false}, {"kind": "word", "text": "I", "at": 51.25}, {"kind": "word", "text": "think,", "at": 51.5}, {"kind": "pause", "seconds": 0.52, "awkward": false}, {"kind": "filler", "text": "um,", "at": 52.41}, {"kind": "pause", "seconds": 0.52, "awkward": false}, {"kind": "word", "text": "I", "at": 53.39}, {"kind": "word", "text": "think", "at": 53.64}, {"kind": "word", "text": "the", "at": 54.12}, {"kind": "word", "text": "lesson", "at": 54.48}, {"kind": "word", "text": "is", "at": 55.01}, {"kind": "word", "text": "you", "at": 55.32}, {"kind": "word", "text": "can", "at": 55.68}, {"kind": "word", "text": "say", "at": 56.04}, {"kind": "word", "text": "no", "at": 56.4}, {"kind": "word", "text": "and,", "at": 56.71}, {"kind": "pause", "seconds": 0.51, "awkward": false}, {"kind": "filler", "text": "uh,", "at": 57.5}, {"kind": "pause", "seconds": 0.52, "awkward": false}, {"kind": "word", "text": "and", "at": 58.49}, {"kind": "word", "text": "the", "at": 58.85}, {"kind": "word", "text": "world", "at": 59.21}], "transcript": "So, um, I got offered a promotion last year and, uh, I did not want it. Um, the thing is, I liked my job. I liked, like, actually doing the work. And the promotion was, um, basically managing people who did the work. So I said, uh, I said I would think about it. And then I, um, I avoided my manager for like two weeks, which, yeah, was not great. Eventually I told her the truth. I said I would rather be really good at this than, um, average at that. She was fine with it, actually. Better than fine. So, yeah, I think, um, I think the lesson is you can say no and, uh, and the world"}, "free": {"topic": "Argue for owning one good pen", "provider": "groq", "spoken": 58, "first_word": 2.13, "last_word": 54.73, "speaking": 31.7, "words": 125, "unique": 60, "pace_wall": 143, "pace_speaking": 237, "pace": [{"from": 0, "to": 10, "wpm": 156}, {"from": 10, "to": 20, "wpm": 120}, {"from": 20, "to": 30, "wpm": 210}, {"from": 30, "to": 40, "wpm": 78}, {"from": 40, "to": 50, "wpm": 126}, {"from": 50, "to": 58, "wpm": 75}], "pauses": [{"at": 2.98, "seconds": 0.66, "awkward": false}, {"at": 5.32, "seconds": 0.65, "awkward": false}, {"at": 10.13, "seconds": 2.19, "awkward": true}, {"at": 14.18, "seconds": 0.63, "awkward": false}, {"at": 15.25, "seconds": 0.9, "awkward": false}, {"at": 16.93, "seconds": 0.5, "awkward": false}, {"at": 18.22, "seconds": 0.99, "awkward": false}, {"at": 20.39, "seconds": 0.91, "awkward": false}, {"at": 22.42, "seconds": 0.34, "awkward": false}, {"at": 25.78, "seconds": 0.45, "awkward": false}, {"at": 26.62, "seconds": 0.91, "awkward": false}, {"at": 29.85, "seconds": 2.65, "awkward": true}, {"at": 33.08, "seconds": 0.37, "awkward": false}, {"at": 36.14, "seconds": 0.46, "awkward": false}, {"at": 38.21, "seconds": 1.16, "awkward": false}, {"at": 39.5, "seconds": 0.84, "awkward": false}, {"at": 41.08, "seconds": 0.71, "awkward": false}, {"at": 43.72, "seconds": 0.58, "awkward": false}, {"at": 45.84, "seconds": 2.32, "awkward": true}, {"at": 49.24, "seconds": 0.52, "awkward": false}, {"at": 50.43, "seconds": 2.13, "awkward": true}], "longest": 2.65, "awkward": 4, "breaths": 17, "fillers": null, "filler_counts": null, "filler_rate": null, "transitions": null, "crutches": {"yeah": 1}, "repeats": [{"phrase": "most of the time", "count": 3}, {"phrase": "i used to", "count": 3}], "immediate": ["very"], "restarts": [{"quote": "and that I used, and that", "at": 21.3}], "sentences": ["A good pen is very essential for a pen fight.", "I remember the days when I used to play pen fight with my friend named Mukesh, and I had a pen which was of my father, and it was having a steel body, very, very heavyweight pen, and that I used, and that I used to fight, and most of the time I used to win.", "The thing is that he quickly understood that I am winning because of my pen.", "And then his target became to defeat me using a 2 rupee penny.", "And yeah, but I always had that advantage, and most of the time I won the fight.", "He was also very good with it, but eventually he lost most of the time."], "sentence_words": [10, 56, 15, 12, 17, 15], "ended_clean": true, "trail_off": 0.55, "tail_wpm": 78, "body_wpm": 142, "said": [{"kind": "word", "text": "A", "at": 2.13}, {"kind": "word", "text": "good", "at": 2.27}, {"kind": "word", "text": "pen", "at": 2.45}, {"kind": "pause", "seconds": 0.66, "awkward": false}, {"kind": "word", "text": "is", "at": 3.64}, {"kind": "word", "text": "very", "at": 3.88}, {"kind": "word", "text": "essential", "at": 4.08}, {"kind": "word", "text": "for", "at": 4.62}, {"kind": "word", "text": "a", "at": 4.77}, {"kind": "word", "text": "pen", "at": 4.86}, {"kind": "word", "text": "fight.", "at": 5.11}, {"kind": "pause", "seconds": 0.65, "awkward": false}, {"kind": "word", "text": "I", "at": 5.97}, {"kind": "word", "text": "remember", "at": 6.07}, {"kind": "word", "text": "the", "at": 6.46}, {"kind": "word", "text": "days", "at": 6.55}, {"kind": "word", "text": "when", "at": 6.88}, {"kind": "word", "text": "I", "at": 7.21}, {"kind": "word", "text": "used", "at": 7.5}, {"kind": "word", "text": "to", "at": 7.75}, {"kind": "word", "text": "play", "at": 7.92}, {"kind": "word", "text": "pen", "at": 8.25}, {"kind": "word", "text": "fight", "at": 8.41}, {"kind": "word", "text": "with", "at": 8.73}, {"kind": "word", "text": "my", "at": 9.12}, {"kind": "word", "text": "friend", "at": 9.36}, {"kind": "word", "text": "named", "at": 9.54}, {"kind": "word", "text": "Mukesh,", "at": 9.94}, {"kind": "pause", "seconds": 2.19, "awkward": true}, {"kind": "word", "text": "and", "at": 12.32}, {"kind": "word", "text": "I", "at": 12.59}, {"kind": "word", "text": "had", "at": 12.82}, {"kind": "word", "text": "a", "at": 13.16}, {"kind": "word", "text": "pen", "at": 13.24}, {"kind": "word", "text": "which", "at": 13.73}, {"kind": "word", "text": "was", "at": 13.95}, {"kind": "word", "text": "of", "at": 14.12}, {"kind": "pause", "seconds": 0.63, "awkward": false}, {"kind": "word", "text": "my", "at": 14.81}, {"kind": "word", "text": "father,", "at": 14.94}, {"kind": "pause", "seconds": 0.9, "awkward": false}, {"kind": "word", "text": "and", "at": 16.15}, {"kind": "word", "text": "it", "at": 16.56}, {"kind": "word", "text": "was", "at": 16.7}, {"kind": "pause", "seconds": 0.5, "awkward": false}, {"kind": "word", "text": "having", "at": 17.43}, {"kind": "word", "text": "a", "at": 17.67}, {"kind": "word", "text": "steel", "at": 17.71}, {"kind": "word", "text": "body,", "at": 18.09}, {"kind": "pause", "seconds": 0.99, "awkward": false}, {"kind": "word", "text": "very,", "at": 19.21}, {"kind": "word", "text": "very", "at": 19.54}, {"kind": "word", "text": "heavyweight", "at": 19.76}, {"kind": "word", "text": "pen,", "at": 20.18}, {"kind": "pause", "seconds": 0.91, "awkward": false}, {"kind": "word", "text": "and", "at": 21.3}, {"kind": "word", "text": "that", "at": 21.64}, {"kind": "word", "text": "I", "at": 21.95}, {"kind": "word", "text": "used,", "at": 22.12}, {"kind": "pause", "seconds": 0.34, "awkward": false}, {"kind": "word", "text": "and", "at": 22.76}, {"kind": "word", "text": "that", "at": 22.84}, {"kind": "word", "text": "I", "at": 23.16}, {"kind": "word", "text": "used", "at": 23.32}, {"kind": "word", "text": "to", "at": 23.48}, {"kind": "word", "text": "fight,", "at": 23.82}, {"kind": "word", "text": "and", "at": 24.54}, {"kind": "word", "text": "most", "at": 24.88}, {"kind": "word", "text": "of", "at": 25.2}, {"kind": "word", "text": "the", "at": 25.28}, {"kind": "word", "text": "time", "at": 25.38}, {"kind": "word", "text": "I", "at": 25.77}, {"kind": "pause", "seconds": 0.45, "awkward": false}, {"kind": "word", "text": "used", "at": 26.23}, {"kind": "word", "text": "to", "at": 26.41}, {"kind": "word", "text": "win.", "at": 26.49}, {"kind": "pause", "seconds": 0.91, "awkward": false}, {"kind": "word", "text": "The", "at": 27.53}, {"kind": "word", "text": "thing", "at": 27.63}, {"kind": "word", "text": "is", "at": 27.95}, {"kind": "word", "text": "that", "at": 28.08}, {"kind": "word", "text": "he", "at": 28.16}, {"kind": "word", "text": "quickly", "at": 28.2}, {"kind": "word", "text": "understood", "at": 28.91}, {"kind": "word", "text": "that", "at": 29.17}, {"kind": "word", "text": "I", "at": 29.24}, {"kind": "word", "text": "am", "at": 29.25}, {"kind": "word", "text": "winning", "at": 29.34}, {"kind": "word", "text": "because", "at": 29.5}, {"kind": "word", "text": "of", "at": 29.65}, {"kind": "word", "text": "my", "at": 29.68}, {"kind": "word", "text": "pen.", "at": 29.75}, {"kind": "pause", "seconds": 2.65, "awkward": true}, {"kind": "word", "text": "And", "at": 32.5}, {"kind": "word", "text": "then", "at": 32.8}, {"kind": "pause", "seconds": 0.37, "awkward": false}, {"kind": "word", "text": "his", "at": 33.45}, {"kind": "word", "text": "target", "at": 33.71}, {"kind": "word", "text": "became", "at": 34.12}, {"kind": "word", "text": "to", "at": 34.68}, {"kind": "word", "text": "defeat", "at": 34.84}, {"kind": "word", "text": "me", "at": 35.97}, {"kind": "pause", "seconds": 0.46, "awkward": false}, {"kind": "word", "text": "using", "at": 36.6}, {"kind": "word", "text": "a", "at": 36.95}, {"kind": "word", "text": "2", "at": 37.04}, {"kind": "word", "text": "rupee", "at": 37.74}, {"kind": "word", "text": "penny.", "at": 38.0}, {"kind": "pause", "seconds": 1.16, "awkward": false}, {"kind": "word", "text": "And", "at": 39.37}, {"kind": "pause", "seconds": 0.84, "awkward": false}, {"kind": "crutch", "text": "yeah,", "at": 40.34}, {"kind": "pause", "seconds": 0.71, "awkward": false}, {"kind": "word", "text": "but", "at": 41.79}, {"kind": "word", "text": "I", "at": 42.05}, {"kind": "word", "text": "always", "at": 42.19}, {"kind": "word", "text": "had", "at": 42.53}, {"kind": "word", "text": "that", "at": 42.76}, {"kind": "word", "text": "advantage,", "at": 42.84}, {"kind": "pause", "seconds": 0.58, "awkward": false}, {"kind": "word", "text": "and", "at": 44.3}, {"kind": "word", "text": "most", "at": 44.4}, {"kind": "word", "text": "of", "at": 44.71}, {"kind": "word", "text": "the", "at": 44.8}, {"kind": "word", "text": "time", "at": 44.84}, {"kind": "word", "text": "I", "at": 45.19}, {"kind": "word", "text": "won", "at": 45.36}, {"kind": "word", "text": "the", "at": 45.52}, {"kind": "word", "text": "fight.", "at": 45.62}, {"kind": "pause", "seconds": 2.32, "awkward": true}, {"kind": "word", "text": "He", "at": 48.16}, {"kind": "word", "text": "was", "at": 48.36}, {"kind": "word", "text": "also", "at": 48.61}, {"kind": "word", "text": "very", "at": 49.03}, {"kind": "pause", "seconds": 0.52, "awkward": false}, {"kind": "word", "text": "good", "at": 49.76}, {"kind": "word", "text": "with", "at": 50.01}, {"kind": "word", "text": "it,", "at": 50.19}, {"kind": "pause", "seconds": 2.13, "awkward": true}, {"kind": "word", "text": "but", "at": 52.56}, {"kind": "word", "text": "eventually", "at": 52.88}, {"kind": "word", "text": "he", "at": 53.43}, {"kind": "word", "text": "lost", "at": 53.68}, {"kind": "word", "text": "most", "at": 54.08}, {"kind": "word", "text": "of", "at": 54.28}, {"kind": "word", "text": "the", "at": 54.41}, {"kind": "word", "text": "time.", "at": 54.49}], "transcript": "A good pen is very essential for a pen fight. I remember the days when I used to play pen fight with my friend named Mukesh, and I had a pen which was of my father, and it was having a steel body, very, very heavyweight pen, and that I used, and that I used to fight, and most of the time I used to win. The thing is that he quickly understood that I am winning because of my pen. And then his target became to defeat me using a 2 rupee penny. And yeah, but I always had that advantage, and most of the time I won the fight. He was also very good with it, but eventually he lost most of the time."}, "usual": {"pace": 148, "start": 3.1, "gap": 2.4, "fillers": 3.2, "rounds": 12}};
+const AWK = 1.5;
+const clock = s => { const w = Math.max(0, Math.round(s)); return `${Math.floor(w/60)}:${String(w%60).padStart(2,'0')}`; };
+const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text !== undefined) n.textContent = text; return n; };
+const tip = document.getElementById('tip');
+function showTip(target, html, x, y) { tip.innerHTML = html; tip.style.display = 'block'; const r = target.getBoundingClientRect(); tip.style.left = (x + 12) + 'px'; tip.style.top = (y - 10) + 'px'; }
+function hideTip() { tip.style.display = 'none'; }
+document.addEventListener('scroll', hideTip, true);
+
+/* The minute as a waveform: strokes where there was a voice, a flat line
+   where there was not, the long holes in the warm colour. The first bar was
+   a strip of green and red and needed a key; a wave needs none (owner's
+   call, with a sketch). The heights are a texture, not loudness: no audio
+   is kept. */
+const HEIGHTS = [0.55, 0.9, 0.7, 1, 0.6, 0.85, 0.75, 0.95];
+function bar(d) {
+  const host = document.getElementById('bar'); host.replaceChildren();
+  const L = d.spoken; const marks = []; let k = 0;
+  const talk = (from, to) => { const a = from / L * 100, b = to / L * 100, w = b - a; if (w <= 0) return; let x = w < 1 ? a + w / 2 : a + 0.5; for (; x < b; x += 1) { const edge = x - a < 1 || b - x < 1; marks.push({ stroke: true, x, h: HEIGHTS[k++ % HEIGHTS.length] * (edge ? 0.5 : 1) }); } };
+  const quiet = (from, to, gap, secs) => { if (to <= from) return; marks.push({ stroke: false, a: from / L * 100, b: to / L * 100, gap, secs }); };
+  let cur = 0;
+  quiet(0, d.first_word, d.first_word >= AWK, d.first_word.toFixed(1)); cur = d.first_word;
+  for (const p of d.pauses) { talk(cur, p.at); quiet(p.at, p.at + p.seconds, p.awkward, p.seconds); cur = p.at + p.seconds; }
+  talk(cur, d.last_word);
+  const S = (tag, attrs, text) => { const n = document.createElementNS('http://www.w3.org/2000/svg', tag); for (const a in attrs) n.setAttribute(a, attrs[a]); if (text !== undefined) n.textContent = text; return n; };
+  const svg = S('svg', { viewBox: '0 0 100 40', preserveAspectRatio: 'none', role: 'img', 'aria-label': `Your minute: ${d.pauses.length} pauses, longest ${d.longest} seconds` });
+  for (const m of marks) {
+    if (m.stroke) { svg.appendChild(S('line', { x1: m.x, x2: m.x, y1: 20 - m.h * 18, y2: 20 + m.h * 18, stroke: 'var(--accent)', 'stroke-width': 1.5, 'stroke-linecap': 'round', 'vector-effect': 'non-scaling-stroke' })); continue; }
+    const l = S('line', { x1: m.a, x2: m.b, y1: 20, y2: 20, stroke: m.gap ? 'var(--warn)' : 'var(--line-strong)', 'stroke-width': m.gap ? 3 : 1.5, 'vector-effect': 'non-scaling-stroke' });
+    l.appendChild(S('title', {}, `A ${m.secs}s ${m.gap ? 'gap' : 'breath'}`)); svg.appendChild(l);
+  }
+  host.appendChild(svg);
+  if (d.fillers) for (const f of d.fillers) { const i = el('i'); i.style.left = (f.at / L * 100) + '%'; i.title = `${f.word} at ${clock(f.at)}`; host.appendChild(i); }
+  document.getElementById('endclock').textContent = clock(L);
+  const key = document.getElementById('barkey'); key.replaceChildren();
+  const wave = el('span'); const w = el('i', 'wave'); [8, 12, 10].forEach(h => { const b = el('b'); b.style.height = h + 'px'; w.appendChild(b); }); wave.append(w, 'talking'); key.appendChild(wave);
+  const k2 = (cls, label) => { const s = el('span'); s.append(el('i', cls), label); key.appendChild(s); };
+  k2('ln', 'a breath'); k2('ln gap', 'a gap you would notice'); if (d.fillers && d.fillers.length) k2('dot gap', 'an um');
+}
+
+function headline(d) {
+  const stall = d.first_word;
+  let h;
+  if (stall >= 3) h = `You took ${clock(stall)} to start. Open with your point.`;
+  else if (d.longest >= 3) h = `Your longest gap was ${d.longest} seconds.`;
+  else if (d.trail_off < 0.6) h = 'You faded at the end. Plan your last line early.';
+  else if (d.filler_rate !== null && d.filler_rate >= 4) h = `You said um ${d.fillers.length} times. Pause instead.`;
+  else if (d.awkward > 0) h = `${d.awkward} gap${d.awkward > 1 ? 's' : ''} long enough to notice.`;
+  else h = 'Steady all the way through.';
+  document.getElementById('headline').textContent = h;
+  const n = [`${d.awkward} long gap${d.awkward === 1 ? '' : 's'}`];
+  if (stall >= 1) n.push(`${clock(stall)} to start`);
+  n.push(`${d.pace_wall} wpm`);
+  if (d.fillers) n.push(`${d.fillers.length} um`);
+  document.getElementById('nums').textContent = n.join('  ·  ');
+}
+
+function pace(d) {
+  const host = document.getElementById('pace'); host.replaceChildren();
+  // Drawn at the width it has, so the type stays type on a phone instead
+  // of a 640-unit picture scaled down to six-pixel labels.
+  const W = Math.max(300, host.clientWidth || 640), H = W < 480 ? 190 : 170, padL = 34, padR = 16, padT = 18, padB = 26;
+  const pts = d.pace; const maxY = Math.max(240, ...pts.map(p => p.wpm)) ; const minY = 0;
+  const x = t => padL + (t / d.spoken) * (W - padL - padR);
+  const y = v => padT + (1 - (v - minY) / (maxY - minY)) * (H - padT - padB);
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  const S = (tag, attrs, text) => { const n = document.createElementNS('http://www.w3.org/2000/svg', tag); for (const a in attrs) n.setAttribute(a, attrs[a]); if (text !== undefined) n.textContent = text; return n; };
+  // comfortable band first, then hairlines
+  svg.appendChild(S('rect', { class: 'band', x: padL, y: y(170), width: W - padL - padR, height: y(130) - y(170) }));
+  for (const v of [0, 80, 160, 240]) { svg.appendChild(S('line', { class: 'grid', x1: padL, x2: W - padR, y1: y(v), y2: y(v) })); svg.appendChild(S('text', { x: padL - 6, y: y(v) + 4, 'text-anchor': 'end' }, String(v))); }
+  svg.appendChild(S('text', { x: W - padR, y: y(170) - 5, 'text-anchor': 'end', style: 'fill:var(--accent-strong)' }, 'comfortable, 130 to 170'));
+  const mids = pts.map(p => (p.from + p.to) / 2);
+  const line = pts.map((p, i) => `${i ? 'L' : 'M'}${x(mids[i]).toFixed(1)},${y(p.wpm).toFixed(1)}`).join(' ');
+  svg.appendChild(S('path', { class: 'area', d: `${line} L${x(mids[mids.length - 1]).toFixed(1)},${y(0)} L${x(mids[0]).toFixed(1)},${y(0)} Z` }));
+  svg.appendChild(S('path', { class: 'path', d: line }));
+  const hi = pts.reduce((a, p, i) => p.wpm > pts[a].wpm ? i : a, 0), lo = pts.reduce((a, p, i) => p.wpm < pts[a].wpm ? i : a, 0);
+  pts.forEach((p, i) => {
+    const out = p.wpm < 130 || p.wpm > 170;
+    svg.appendChild(S('circle', { class: 'pt' + (out ? ' out' : ''), cx: x(mids[i]), cy: y(p.wpm), r: 4.5 }));
+    if (i === hi || i === lo) svg.appendChild(S('text', { class: 'val', x: x(mids[i]), y: y(p.wpm) + (i === hi ? -10 : 18), 'text-anchor': 'middle' }, String(p.wpm)));
+  });
+  for (let t = 0; t <= d.spoken; t += 10) svg.appendChild(S('text', { x: x(t), y: H - 6, 'text-anchor': t === 0 ? 'start' : 'middle' }, clock(t)));
+  const cross = S('line', { class: 'cross', y1: padT, y2: H - padB }); svg.appendChild(cross);
+  const hit = S('rect', { class: 'hit', x: padL, y: 0, width: W - padL - padR, height: H }); svg.appendChild(hit);
+  hit.addEventListener('pointermove', e => {
+    const r = svg.getBoundingClientRect(); const px = (e.clientX - r.left) / r.width * W;
+    let best = 0; mids.forEach((m, i) => { if (Math.abs(x(m) - px) < Math.abs(x(mids[best]) - px)) best = i; });
+    cross.setAttribute('x1', x(mids[best])); cross.setAttribute('x2', x(mids[best])); cross.style.display = 'block';
+    showTip(hit, `<b>${pts[best].wpm} wpm</b><span>${clock(pts[best].from)} to ${clock(pts[best].to)}</span>`, e.clientX, e.clientY);
+  });
+  hit.addEventListener('pointerleave', () => { cross.style.display = 'none'; hideTip(); });
+  host.appendChild(svg);
+  document.getElementById('pacec').textContent = `${d.pace_wall} wpm over the round`;
+  const fast = pts[hi], slow = pts[lo];
+  let s = `Fastest from <b>${clock(fast.from)}</b>, ${fast.wpm} words a minute. Slowest from <b>${clock(slow.from)}</b>, ${slow.wpm}.`;
+  if (d.trail_off < 0.6) s += ' You faded in the last stretch.'; else if (d.trail_off > 1.4) s += ' You sped up to finish.';
+  document.getElementById('pacesub').innerHTML = s;
+}
+
+/* The five things a round is measured on, each against its comfortable
+   stretch. The same rows feed the radar and the bars, so the two can never
+   disagree. Fillers are an axis of the radar only: the donut below says
+   everything a band would have, and says it as words rather than a rate. */
+function AXES(d, usual) {
+  const u = usual || {};
+  const longest = Math.max(...d.sentence_words);
+  const rows = [
+    { key: 'pace', label: 'Pace', short: 'Pace', value: d.pace_wall, shown: `${d.pace_wall} wpm`, scale: [80, 220], good: [130, 170], words: ['Slow', 'Good pace', 'Rushed'], ends: ['slow', 'rushed'], usual: usual ? u.pace : null, advice: ['Push on a little. Long words land better than long gaps.', null, 'Slow down. Land on your full stops and let them sit.'] },
+    { key: 'start', label: 'Time to start', short: 'Start', value: d.first_word, shown: clock(d.first_word), scale: [0, 8], good: [0, 2], words: ['', 'Straight in', 'Slow to start'], ends: ['at once', '8s'], usual: usual ? u.start : null, advice: [null, null, 'Open with your claim, not a wind-up. Say the point, then explain it.'] },
+    { key: 'gap', label: 'Longest gap', short: 'Gaps', value: d.longest, shown: `${d.longest}s`, scale: [0, 8], good: [0, AWK], words: ['', 'No holes', 'Long hole'], ends: ['none', '8s'], usual: usual ? u.gap : null, advice: [null, null, 'Say the next point half-formed. A wobble costs less than a hole.'] },
+    { key: 'sentence', label: 'Longest sentence', short: 'Sentences', value: longest, shown: `${longest} words`, scale: [0, 60], good: [0, 35], words: ['', 'Landed', 'Run-on'], ends: ['short', '60 words'], usual: usual ? u.sentence : null, advice: [null, null, 'Land a full stop. Then start the next thought fresh.'] },
+  ];
+  if (d.filler_rate !== null) rows.push({ key: 'fillers', label: 'Fillers', short: 'Fillers', value: d.filler_rate, scale: [0, 12], good: [0, 4], usual: usual ? u.fillers : null, radarOnly: true });
+  return rows;
+}
+
+/* How far inside the comfortable stretch: 100 anywhere inside it, falling
+   to nothing at the end of the scale. A shape on the radar and never a
+   score with a name, because an average of seconds and words a minute is
+   a number with nothing behind it. */
+function fit(b, value = b.value) {
+  if (value == null) return null;
+  if (value >= b.good[0] && value <= b.good[1]) return 100;
+  const over = value > b.good[1] ? (value - b.good[1]) / (b.scale[1] - b.good[1]) : (b.good[0] - value) / (b.good[0] - b.scale[0]);
+  return Math.max(0, Math.round(100 * (1 - over)));
+}
+
+/* The radar from the owner's screenshot, with a dashed target added: a
+   radar without a reference shape is a blob, and the comfortable pentagon
+   is what makes today's shape readable at a glance. */
+function radar(axes, usual) {
+  const host = document.getElementById('radar'); host.replaceChildren();
+  const S = (tag, attrs, text) => { const n = document.createElementNS('http://www.w3.org/2000/svg', tag); for (const a in attrs) n.setAttribute(a, attrs[a]); if (text !== undefined) n.textContent = text; return n; };
+  const size = 250, cx = 125, cy = 128, R = 84, n = axes.length;
+  const ang = i => -Math.PI / 2 + i * 2 * Math.PI / n;
+  const pt = (i, r) => [cx + r * Math.cos(ang(i)), cy + r * Math.sin(ang(i))];
+  const poly = rs => rs.map((r, i) => pt(i, r).map(v => v.toFixed(1)).join(',')).join(' ');
+  const svg = S('svg', { viewBox: `0 0 ${size} ${size}` });
+  for (const k of [1 / 3, 2 / 3]) svg.appendChild(S('polygon', { class: 'web', points: poly(axes.map(() => R * k)) }));
+  axes.forEach((a, i) => { const [x, y] = pt(i, R); svg.appendChild(S('line', { class: 'spoke', x1: cx, y1: cy, x2: x, y2: y })); });
+  svg.appendChild(S('polygon', { class: 'target', points: poly(axes.map(() => R)) }));
+  if (usual) {
+    const us = axes.map(a => fit(a, a.usual));
+    if (us.every(v => v != null)) svg.appendChild(S('polygon', { class: 'usualp', points: poly(us.map(v => Math.max(4, R * v / 100))) }));
+  }
+  const today = axes.map(a => fit(a));
+  svg.appendChild(S('polygon', { class: 'today', points: poly(today.map(v => Math.max(4, R * v / 100))) }));
+  axes.forEach((a, i) => { const [x, y] = pt(i, Math.max(4, R * today[i] / 100)); svg.appendChild(S('circle', { class: 'pt' + (today[i] < 100 ? ' out' : ''), cx: x, cy: y, r: 4 })); });
+  axes.forEach((a, i) => {
+    const [x, y] = pt(i, R + 13); const c = Math.cos(ang(i));
+    svg.appendChild(S('text', { x, y: y + 4, 'text-anchor': c > 0.15 ? 'start' : c < -0.15 ? 'end' : 'middle' }, a.short));
+  });
+  host.appendChild(svg);
+  const key = el('div', 'k');
+  const k = (cls, t) => { const s = el('span'); s.append(el('i', cls), t); key.appendChild(s); };
+  k('', 'today'); k('t', 'comfortable'); if (usual) k('u', `your usual, ${usual.rounds} rounds`);
+  host.appendChild(key);
+}
+
+function bands(d, usual) {
+  const host = document.getElementById('bands'); host.replaceChildren();
+  const axes = AXES(d, usual);
+  const rows = axes.filter(a => !a.radarOnly);
+  const at = (v, [lo, hi]) => Math.max(0, Math.min(100, (v - lo) / (hi - lo) * 100));
+  for (const b of rows) {
+    const inside = b.value >= b.good[0] && b.value <= b.good[1];
+    const verdict = b.value < b.good[0] ? b.words[0] : b.value > b.good[1] ? b.words[2] : b.words[1];
+    const box = el('div', 'band');
+    const h = el('div', 'h'); h.append(el('b', '', b.label), el('span', '', b.shown)); box.appendChild(h);
+    const track = el('div', 'track');
+    const good = el('span', 'good'); good.style.left = at(b.good[0], b.scale) + '%'; good.style.width = (at(b.good[1], b.scale) - at(b.good[0], b.scale)) + '%'; track.appendChild(good);
+    if (b.usual != null) { const u = el('span', 'usual'); u.style.left = at(b.usual, b.scale) + '%'; u.title = `Your usual: ${b.usual}`; track.appendChild(u); }
+    const m = el('span', 'mark' + (inside ? '' : ' out')); m.style.left = at(b.value, b.scale) + '%'; track.appendChild(m);
+    box.appendChild(track);
+    const ends = el('div', 'ends'); const v = el('b', inside ? 'in' : '', verdict); ends.append(el('span', '', b.ends[0]), v, el('span', '', b.ends[1])); box.appendChild(ends);
+    const adv = b.value < b.good[0] ? b.advice[0] : b.value > b.good[1] ? b.advice[2] : null;
+    if (adv) { const det = el('details'); det.append(el('summary', '', 'What to do'), el('p', '', adv)); box.appendChild(det); }
+    host.appendChild(box);
+  }
+  const inRange = axes.filter(a => fit(a) === 100).length;
+  const worst = axes.slice().sort((a, b) => fit(a) - fit(b))[0];
+  document.getElementById('shapec').textContent = inRange === axes.length
+    ? `All ${axes.length} in the comfortable range`
+    : `${inRange} of ${axes.length} in the comfortable range · furthest out: ${worst.label.toLowerCase()}`;
+  radar(axes, usual);
+}
+
+function lean(d) {
+  const host = document.getElementById('lean'); host.replaceChildren();
+  /* The donut with a centre total, taken from ReUI. The ring is every word
+     you said; the warm slices are fillers, the accent slices the words you
+     lean on, and the quiet remainder is the rest of your minute. Hover a
+     slice and the centre answers with that word, which is their active
+     segment variant and costs one event listener. */
+  const f = d.filler_counts ? Object.entries(d.filler_counts) : [];
+  const c = Object.entries(d.crutches);
+  const fillTotal = f.reduce((a, x) => a + x[1], 0);
+  const all = d.words + fillTotal;
+  const entries = [
+    ...f.map(([w, n], i) => ({ w, n, cls: 'f', op: Math.max(0.4, 1 - i * 0.3) })),
+    ...c.map(([w, n], i) => ({ w, n, cls: 'c', op: Math.max(0.35, 1 - i * 0.16) })),
+  ];
+  const total = entries.reduce((a, e) => a + e.n, 0);
+  const box = el('div', 'donut');
+  const S = (tag, attrs, text) => { const n = document.createElementNS('http://www.w3.org/2000/svg', tag); for (const a in attrs) n.setAttribute(a, attrs[a]); if (text !== undefined) n.textContent = text; return n; };
+  const size = 150, r = 58, cx = 75, cy = 75, C = 2 * Math.PI * r, GAP = 2;
+  const svg = S('svg', { viewBox: `0 0 ${size} ${size}` });
+  svg.appendChild(S('circle', { class: 'rest', cx, cy, r, fill: 'none', 'stroke-width': 16 }));
+  const big = S('text', { class: 'big', x: cx, y: cy + 3, 'text-anchor': 'middle' }, String(total));
+  const lab = S('text', { class: 'lab', x: cx, y: cy + 19, 'text-anchor': 'middle' }, `of ${all} words`);
+  let cum = 0;
+  for (const e of entries) {
+    const len = e.n / all * C; const drawn = Math.max(0.5, len - GAP);
+    const seg = S('circle', { class: `seg ${e.cls}`, cx, cy, r, fill: 'none', 'stroke-width': 16, 'stroke-opacity': e.op, 'stroke-dasharray': `${drawn} ${C - drawn}`, 'stroke-dashoffset': -cum, transform: `rotate(-90 ${cx} ${cy})` });
+    seg.addEventListener('pointerenter', () => { big.textContent = String(e.n); lab.textContent = e.w; });
+    seg.addEventListener('pointerleave', () => { big.textContent = String(total); lab.textContent = `of ${all} words`; });
+    svg.appendChild(seg); cum += len;
+  }
+  svg.append(big, lab);
+  box.appendChild(svg);
+  const list = el('ul', 'dlist');
+  const grp = t => list.appendChild(el('li', 'grp', t));
+  const row = e => { const li = el('li'); const i = el('i'); i.style.background = e.cls === 'f' ? 'var(--warn)' : 'var(--accent)'; i.style.opacity = e.op; li.append(i, el('span', 'w', e.w), el('span', 'n', String(e.n))); list.appendChild(li); };
+  if (d.filler_counts !== null) { grp('Fillers'); if (f.length) entries.filter(e => e.cls === 'f').forEach(row); else list.appendChild(el('li', 'plain', 'Not one um.')); }
+  grp('Words you lean on');
+  if (c.length) entries.filter(e => e.cls === 'c').forEach(row); else list.appendChild(el('li', 'plain', 'None this time.'));
+  if (d.immediate.length) { const li = el('li', 'plain'); li.textContent = `Doubled: ${d.immediate.map(w => `“${w}, ${w}”`).join(', ')}.`; list.appendChild(li); }
+  box.appendChild(list);
+  host.appendChild(box);
+  if (d.filler_counts === null) { const p = el('p', 'plain pro'); p.style.marginTop = '12px'; p.innerHTML = 'The free transcriber drops the ums before anybody can count them. <a href="#">Pro counts them</a>.'; host.appendChild(p); }
+  const parts = [`${total} of ${all} words`];
+  if (d.transitions != null && fillTotal) parts.push(`${d.transitions} um${d.transitions === 1 ? '' : 's'} beside a gap`);
+  document.getElementById('leanc').textContent = parts.join(' · ');
+
+  const rep = document.getElementById('repeats'); rep.replaceChildren();
+  if (d.repeats.length) {
+    rep.appendChild(el('p', 'small', 'Said more than once'));
+    const ul = el('ul', 'rep');
+    d.repeats.slice(0, 4).forEach(r => { const li = el('li'); const q = el('q', '', r.phrase); li.append(q, el('span', 'n', `${r.count} times`)); ul.appendChild(li); });
+    rep.appendChild(ul);
+  }
+  if (d.restarts.length) {
+    const p = el('p', 'small', `Restart${d.restarts.length === 1 ? '' : 's'}`); p.style.marginTop = d.repeats.length ? '16px' : '0'; rep.appendChild(p);
+    const ul = el('ul', 'rep');
+    d.restarts.slice(0, 3).forEach(r => {
+      const li = el('li', 'restart'); const q = el('q');
+      // The two-word run that was begun twice is the underlined part, both times.
+      const words = r.quote.split(' '); const first = words.slice(0, 2).join(' ').replace(/[,.]/g, '').toLowerCase();
+      let html = ''; for (let i = 0; i < words.length; i++) { const pair = (words[i] + ' ' + (words[i + 1] || '')).replace(/[,.]/g, '').toLowerCase(); if (pair === first && i + 1 < words.length) { html += `<mark>${words[i]} ${words[i + 1]}</mark> `; i++; } else html += words[i] + ' '; }
+      q.innerHTML = html.trim(); li.append(q, el('span', 'at', clock(r.at))); ul.appendChild(li);
+    });
+    rep.appendChild(ul);
+    const s = el('p', 'plain'); s.style.marginTop = '8px'; s.textContent = 'A restart is a sentence begun twice within a few seconds: the sound of losing the thread and going back for it.'; rep.appendChild(s);
+  }
+  if (!d.repeats.length && !d.restarts.length) rep.appendChild(el('p', 'plain', 'Nothing said twice, no restarts.'));
+}
+
+function sentences(d) {
+  const host = document.getElementById('sent'); host.replaceChildren();
+  const n = d.sentence_words; const max = Math.max(...n, 20);
+  n.forEach((w, i) => {
+    const i_ = el('i', w > 35 ? 'long' : ''); i_.style.height = Math.max(3, w / max * 100) + '%';
+    if (w === Math.max(...n)) i_.appendChild(el('b', '', String(w)));
+    i_.addEventListener('pointermove', e => showTip(i_, `<b>${w} words</b><span>${d.sentences[i].length > 90 ? d.sentences[i].slice(0, 90) + '…' : d.sentences[i]}</span>`, e.clientX, e.clientY));
+    i_.addEventListener('pointerleave', hideTip);
+    host.appendChild(i_);
+  });
+  const avg = Math.round(n.reduce((a, b) => a + b, 0) / n.length);
+  document.getElementById('sentc').textContent = `${n.length} sentences · ${avg} words each`;
+  const long = n.filter(w => w > 35).length;
+  document.getElementById('sentsub').innerHTML = long ? `One ran to <b>${Math.max(...n)} words</b>. Land a full stop and let it sit.` : `Longest <b>${Math.max(...n)} words</b>. Every one of them landed.`;
+}
+
+function tiles(d) {
+  const host = document.getElementById('tiles'); host.replaceChildren();
+  const t = (n, l) => { const b = el('div', 'tile'); b.append(el('div', 'n', n), el('div', 'l', l)); host.appendChild(b); };
+  t(clock(d.first_word), 'to your first word');
+  t(clock(d.last_word), d.ended_clean ? `last word, on a full stop` : `last word, mid-sentence`);
+  t(String(d.unique), `different words of ${d.words}`);
+}
+
+function readback(d) {
+  document.getElementById('rbtopic').textContent = d.topic;
+  document.getElementById('rbwords').textContent = `${d.words} words`;
+  document.getElementById('rbc').textContent = d.provider === 'groq' ? 'words from the free transcriber' : '';
+  const p = document.getElementById('rbtext'); p.replaceChildren();
+  const restartAt = new Set(d.restarts.map(r => r.at));
+  let underline = 0;
+  for (const s of d.said) {
+    if (s.kind === 'pause') { const sp = el('span', 'p' + (s.awkward ? ' aw' : ''), `${s.seconds}s`); sp.title = s.awkward ? 'Long enough to notice' : 'A breath'; p.appendChild(sp); continue; }
+    if (restartAt.has(s.at)) underline = 2;
+    let node;
+    if (s.kind === 'filler') node = el('mark', 'f', s.text);
+    else if (s.kind === 'crutch') node = el('mark', 'c', s.text);
+    else node = document.createTextNode(s.text);
+    if (underline > 0 && s.kind === 'word') { const u = el('u'); u.appendChild(node); node = u; underline--; }
+    p.append(node, ' ');
+  }
+  const key = document.getElementById('rbkey'); key.replaceChildren();
+  const k = (html) => { const s = el('span'); s.innerHTML = html; key.appendChild(s); };
+  k('<span class="p">0.8s</span> a breath'); k('<span class="p aw">2.6s</span> a gap you would notice');
+  if (d.filler_counts !== null) k('<mark class="f">um</mark> a filler');
+  k('<mark class="c">so</mark> a word you lean on'); if (d.restarts.length) k('<u>begun twice</u> a restart');
+}
+
+let current = 'real';
+function show(id) {
+  current = id;
+  const d = DATA[id]; const usual = id === 'free' ? null : { ...DATA.usual, sentence: 24 };
+  document.getElementById('topic').textContent = d.topic;
+  document.getElementById('genre').textContent = id === 'rough' ? 'Career & work' : 'General';
+  bar(d); headline(d); pace(d); bands(d, usual); lean(d); sentences(d); tiles(d); readback(d);
+  document.getElementById('saved').hidden = id !== 'free';
+  document.querySelectorAll('[data-tab]').forEach(b => b.classList.toggle('on', b.dataset.tab === id));
+}
+function theme(t) { document.documentElement.dataset.theme = t; document.querySelectorAll('[data-theme-set]').forEach(b => b.classList.toggle('on', b.dataset.themeSet === t)); }
+function width(w) { document.body.classList.toggle('phone', w === 'phone'); document.querySelectorAll('[data-width]').forEach(b => b.classList.toggle('on', b.dataset.width === w)); pace(DATA[current]); }
+window.addEventListener('resize', () => pace(DATA[current]));
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-tab],[data-theme-set],[data-width],[data-notes]'); if (!t) return;
+  if (t.dataset.tab) show(t.dataset.tab);
+  if (t.dataset.themeSet) theme(t.dataset.themeSet);
+  if (t.dataset.width) width(t.dataset.width);
+  if (t.hasAttribute('data-notes')) { const n = document.querySelector('.notes'); n.hidden = !n.hidden; t.classList.toggle('on', !n.hidden); }
+});
+/* Deep links for review: round.html#rough,dark,phone,nonotes opens that state. */
+const hash = new Set(location.hash.replace('#', '').split(',').filter(Boolean));
+show(hash.has('rough') ? 'rough' : hash.has('free') ? 'free' : 'real');
+if (hash.has('dark')) theme('dark');
+if (hash.has('phone')) width('phone');
+if (hash.has('nonotes')) { document.querySelector('.notes').hidden = true; document.querySelector('[data-notes]').classList.remove('on'); }
+</script>
+</body></html>

@@ -132,10 +132,13 @@ class Words:
     round, which is a smaller report and never a broken one."""
 
     count: int
-    # Words a minute over *speaking* time rather than wall time: pace is
-    # how fast the words came out, and the silence between them is already
-    # reported as pauses. Measuring over wall time would count one long
-    # pause twice.
+    # Words a minute by the clock, from the first sound to the last. An
+    # earlier version divided by speaking time with the silences taken out,
+    # which is articulation rate and sits around 200 to 240 for ordinary
+    # speech, and then judged it against 130 to 170, the wall-clock norm,
+    # so nearly every round read as rushed. A number is measured the way it
+    # is judged. The silence after the last word is still left out: a short
+    # answer is not a slow one.
     pace: int
     fillers: int
     filler_rate: float
@@ -236,9 +239,20 @@ def timing(segments: list[tuple[float, float]], length: float) -> Timing:
     )
 
 
-def words(transcript: str, speaking_seconds: float) -> Words | None:
+def clock_seconds(measured: Timing) -> float:
+    """From the first sound to the last: the speaking and the silences
+    between, and not the silence after. What pace is measured over."""
+    return measured.speaking_seconds + sum(pause.seconds for pause in measured.pauses)
+
+
+def words(transcript: str, speaking_seconds: float, clock: float | None = None) -> Words | None:
     """None when nothing transcribed the round, so a caller can tell a
-    smaller report from a report full of zeroes."""
+    smaller report from a report full of zeroes.
+
+    `clock` is what pace is measured over, first sound to last; without one
+    the speaking time stands in, which is what a caller with only a
+    transcript and a duration has. The filler rate stays per speaking
+    minute, since that is the column a year of trend is drawn through."""
     if not transcript or not transcript.strip():
         return None
 
@@ -263,10 +277,11 @@ def words(transcript: str, speaking_seconds: float) -> Words | None:
     ranked = sorted(counts.items(), key=lambda pair: (-pair[1], pair[0]))
 
     minutes = speaking_seconds / 60 if speaking_seconds > 0 else 0.0
+    paced_over = (clock if clock and clock > 0 else speaking_seconds) / 60
     return Words(
         filler_words=tuple(sorted({token for token in tokens if token in FILLERS})),
         count=len(spoken_words),
-        pace=round(len(spoken_words) / minutes) if minutes else 0,
+        pace=round(len(spoken_words) / paced_over) if paced_over > 0 else 0,
         fillers=fillers,
         filler_rate=round(fillers / minutes, 1) if minutes else 0.0,
         crutch_words=tuple(ranked[:CRUTCHES_NAMED]),
@@ -281,7 +296,7 @@ def report(segments: list[tuple[float, float]], length: float, transcript: str =
     measured = timing(segments, length)
     if not measured.heard:
         return Report(timing=measured, words=None)
-    return Report(timing=measured, words=words(transcript, measured.speaking_seconds))
+    return Report(timing=measured, words=words(transcript, measured.speaking_seconds, clock_seconds(measured)))
 
 
 @dataclass(frozen=True)
@@ -292,6 +307,8 @@ class Said:
     text: str
     seconds: float = 0.0
     awkward: bool = False
+    # Where it fell, so a page can find the word a restart began on.
+    at: float = 0.0
 
 
 # A filler this close to a silence is a transition filler: the sound of
@@ -320,14 +337,14 @@ def read_back(words: list[tuple[str, float, float]], pauses: tuple[Pause, ...]) 
         # of it. More than one can, when a word is missing from the timing.
         while left and left[0].at < start and left[0].at >= previous_end - 0.01:
             gap = left.pop(0)
-            out.append(Said(kind="pause", text="", seconds=gap.seconds, awkward=gap.awkward))
+            out.append(Said(kind="pause", text="", seconds=gap.seconds, awkward=gap.awkward, at=gap.at))
         while left and left[0].at < start:
             left.pop(0)
         word = text.strip()
         bare = _WORD.findall(word.lower())
         first = bare[0] if bare else ""
         kind = "filler" if first in FILLERS else "crutch" if first in CRUTCHES else "word"
-        out.append(Said(kind=kind, text=word, seconds=round(end - start, 2)))
+        out.append(Said(kind=kind, text=word, seconds=round(end - start, 2), at=round(start, 2)))
         previous_end = end
     return tuple(out)
 
@@ -350,3 +367,229 @@ def at_transitions(words: list[tuple[str, float, float]], pauses: tuple[Pause, .
         if any(start - close <= BESIDE_A_PAUSE and opens - end <= BESIDE_A_PAUSE for opens, close in edges):
             beside += 1
     return beside
+
+
+# ------------------------------------------------------------ the full page
+#
+# Everything from here down is drawn on the page a past round opens to,
+# and all of it is arithmetic over what was already stored: the transcript
+# and the word timings. Nothing here is a new column and nothing here
+# spends.
+
+# The pace curve's step. Ten seconds is six readings in a minute: enough to
+# show a sprint and a fade, few enough that one long word is not a spike.
+PACE_STEP = 10
+
+# A run of words begun again inside this many seconds is a restart: the
+# sentence was lost and gone back for. Later than this it is a repeat,
+# which is a habit rather than a stumble.
+RESTART_WITHIN = 4.0
+
+# The longest phrase looked for when counting what was said more than once.
+REPEAT_LONGEST = 5
+
+# A phrase made only of these is grammar and not a habit: "of the" comes
+# back in every minute anybody speaks.
+FUNCTION_WORDS = frozenset(
+    {
+        "a", "an", "the", "of", "and", "to", "in", "i", "it", "that", "is", "was", "my", "he", "she", "we",
+        "you", "they", "with", "for", "on", "at", "be", "this", "but", "then", "so", "are", "or", "as", "if",
+        "not", "do", "have", "has", "had", "there", "what", "which",
+    }
+)  # fmt: skip
+
+_SENTENCE_END = re.compile(r"(?<=[.!?])\s+")
+
+
+@dataclass(frozen=True)
+class PaceAt:
+    start: float
+    end: float
+    wpm: int
+
+
+def _ends_sentence(written: str) -> bool:
+    return written.rstrip('"”') .endswith((".", "!", "?"))
+
+
+def _timed_words(words: list[tuple[str, float, float]]) -> list[tuple[str, str, float, float]]:
+    """(bare word, as written, start, end) for every timed token. The bare
+    word is empty for a token that holds no letters."""
+    out = []
+    for text, start, end in words:
+        written = str(text).strip()
+        bare = _WORD.findall(written.lower())
+        out.append((bare[0] if bare else "", written, float(start), float(end)))
+    return out
+
+
+def pace_curve(words: list[tuple[str, float, float]], length: float, step: int = PACE_STEP) -> tuple[PaceAt, ...]:
+    """Words a minute in each stretch of the round, by the clock.
+
+    One pace for the round hides the shape of it: run 30 read as a single
+    235 and was 156, 120, 210, 78, 126, 75 across its six stretches, a
+    sprint at 0:20 and a fade from 0:40. Fillers are left out as they are
+    everywhere. Empty without word timings, since a plain transcript cannot
+    place a word in the minute."""
+    spoken = [start for bare, _, start, _ in _timed_words(words) if bare and bare not in FILLERS]
+    if not spoken or length <= 0 or step <= 0:
+        return ()
+    out = []
+    start = 0.0
+    while start < length:
+        end = min(float(length), start + step)
+        inside = sum(1 for at in spoken if start <= at < end)
+        out.append(PaceAt(start=round(start, 2), end=round(end, 2), wpm=round(inside * 60 / (end - start))))
+        start = end
+    return tuple(out)
+
+
+@dataclass(frozen=True)
+class FillerAt:
+    word: str
+    at: float
+
+
+def filler_times(words: list[tuple[str, float, float]]) -> tuple[FillerAt, ...]:
+    """Where each filler fell, so six ums can be drawn as six marks under
+    the minute rather than read as a count."""
+    return tuple(
+        FillerAt(word=bare, at=round(start, 2)) for bare, _, start, _ in _timed_words(words) if bare in FILLERS
+    )
+
+
+def _ranked(counts: dict[str, int]) -> tuple[tuple[str, int], ...]:
+    return tuple(sorted(counts.items(), key=lambda pair: (-pair[1], pair[0])))
+
+
+def _counted(transcript: str, among: frozenset[str]) -> tuple[tuple[str, int], ...]:
+    counts: dict[str, int] = {}
+    for token in _WORD.findall(transcript.lower()):
+        if token in among:
+            counts[token] = counts.get(token, 0) + 1
+    return _ranked(counts)
+
+
+def filler_counts(transcript: str) -> tuple[tuple[str, int], ...]:
+    """Every filler with its count, most said first."""
+    return _counted(transcript, FILLERS)
+
+
+def leaned_on(transcript: str) -> tuple[tuple[str, int], ...]:
+    """Every leaned-on word with its count. `Words.crutch_words` names the
+    top few for a line of text; the page that lists them wants them all."""
+    return _counted(transcript, CRUTCHES)
+
+
+@dataclass(frozen=True)
+class Restart:
+    quote: str
+    at: float
+
+
+def restarts(words: list[tuple[str, float, float]]) -> tuple[Restart, ...]:
+    """Two-word runs begun twice within a few seconds, quoted from the first
+    start to the second.
+
+    "and that I used, and that I used" is the sound of losing the thread and
+    going back for it, and it is the thing nobody hears in themselves. A
+    filler between the two tries does not break the match, since "I said,
+    uh, I said" is the commonest shape of one. One restart per stretch: the
+    pairs inside a single stumble are one stumble."""
+    timed = _timed_words(words)
+    plain = [index for index, (bare, _, _, _) in enumerate(timed) if bare and bare not in FILLERS]
+    out: list[Restart] = []
+    last_at = -RESTART_WITHIN
+    for position in range(len(plain) - 3):
+        first = plain[position]
+        pair = (timed[plain[position]][0], timed[plain[position + 1]][0])
+        for later in range(position + 2, min(position + 9, len(plain) - 1)):
+            # A full stop between the two tries makes it a sentence said
+            # again on purpose, which is emphasis and not a stumble.
+            if any(_ends_sentence(timed[index][1]) for index in range(first, plain[later])):
+                break
+            again = (timed[plain[later]][0], timed[plain[later + 1]][0])
+            if again != pair or timed[plain[later]][2] - timed[first][2] > RESTART_WITHIN:
+                continue
+            if timed[first][2] - last_at > 1.0:
+                quote = " ".join(timed[index][1] for index in range(first, plain[later + 1] + 1))
+                out.append(Restart(quote=quote, at=round(timed[first][2], 2)))
+                last_at = timed[first][2]
+            break
+    return tuple(out)
+
+
+def repeats(transcript: str, leave: tuple[str, ...] = ()) -> tuple[tuple[str, int], ...]:
+    """Phrases of two to five words said more than once, each in its
+    longest form.
+
+    "most of the time" three times is a habit worth hearing; "of the" three
+    times is English, so a phrase made only of function words is never
+    listed, and a two-word phrase has to come back three times and hold no
+    function word to count at all. Between a phrase and a longer one that
+    holds it, the longer wins when they were said the same number of
+    times, and the shorter wins when it was said more. Anything inside one
+    of `leave` (the restarts) belongs to the restart and is not listed
+    twice."""
+    # Within a sentence only: "pen. The pen" is two sentences meeting, not
+    # a phrase anybody said.
+    by_sentence = [
+        [token for token in _WORD.findall(part.lower()) if token not in FILLERS]
+        for part in _SENTENCE_END.split(transcript.strip())
+    ]
+    left = [" ".join(t for t in _WORD.findall(quote.lower()) if t not in FILLERS) for quote in leave]
+    found: dict[str, int] = {}
+    for size in range(2, REPEAT_LONGEST + 1):
+        grams: dict[str, int] = {}
+        for plain in by_sentence:
+            for index in range(len(plain) - size + 1):
+                gram = " ".join(plain[index : index + size])
+                grams[gram] = grams.get(gram, 0) + 1
+        for gram, count in grams.items():
+            parts = gram.split()
+            if count < 2 or all(part in FUNCTION_WORDS for part in parts):
+                continue
+            if size == 2 and (count < 3 or any(part in FUNCTION_WORDS for part in parts)):
+                continue
+            if any(f" {gram} " in f" {quote} " for quote in left):
+                continue
+            found[gram] = count
+    kept = []
+    for gram, count in found.items():
+        inside_a_longer_one_said_as_often = any(
+            gram != other and f" {gram} " in f" {other} " and n == count for other, n in found.items()
+        )
+        holds_a_shorter_one_said_more = any(
+            gram != other and f" {other} " in f" {gram} " and n > count for other, n in found.items()
+        )
+        if not inside_a_longer_one_said_as_often and not holds_a_shorter_one_said_more:
+            kept.append((gram, count))
+    return tuple(sorted(kept, key=lambda pair: (-pair[1], -len(pair[0]), pair[0])))
+
+
+@dataclass(frozen=True)
+class Sentence:
+    text: str
+    words: int
+
+
+def sentences(transcript: str) -> tuple[Sentence, ...]:
+    """The transcript by its full stops, each with its word count, fillers
+    left out. Impromptu speech fails by running on ("and... and... and")
+    more than by any other route, and no count of pauses shows it; one
+    sentence of 56 words does."""
+    out = []
+    for part in _SENTENCE_END.split(transcript.strip()):
+        part = part.strip()
+        count = sum(1 for token in _WORD.findall(part.lower()) if token not in FILLERS)
+        if count:
+            out.append(Sentence(text=part, words=count))
+    return tuple(out)
+
+
+def ended_clean(transcript: str) -> bool:
+    """Whether the last thing said was a finished sentence, as the
+    transcriber punctuated it. A transcript that trails off without a full
+    stop is somebody the clock cut off mid-thought. Transcribers are
+    generous with a final full stop, so this errs towards yes."""
+    return bool(re.search(r'[.!?]["”]?\s*$', transcript or ""))

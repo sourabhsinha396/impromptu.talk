@@ -1,6 +1,26 @@
 import { describe, expect, it } from "vitest";
 
-import { AWKWARD, advice, at, bands, blocks, clock, headline, marked, type Report } from "@/lib/report";
+import {
+  AWKWARD,
+  RUN_ON,
+  advice,
+  at,
+  axes,
+  bands,
+  blocks,
+  clock,
+  distinctWords,
+  fit,
+  headline,
+  marked,
+  paceCaption,
+  saidCount,
+  sentenceCaption,
+  shapeCaption,
+  slices,
+  waveform,
+  type Report,
+} from "@/lib/report";
 
 /* The bar is the whole report: somebody sees the hole at 0:34 without
    reading a number. So what is pinned here is that it adds up - the blocks
@@ -31,6 +51,15 @@ function report(over: Partial<Report> = {}): Report {
     genre_slug: "general",
     transcript: "",
     seconds_left: 300,
+    pace_curve: [],
+    filler_times: [],
+    filler_counts: [],
+    leaned_on: [],
+    restarts: [],
+    repeats: [],
+    sentences: [],
+    ended_clean: false,
+    usual: null,
     ...over,
   };
 }
@@ -81,6 +110,28 @@ describe("blocks", () => {
     // not a forty-second hole, and the bar must not paint it as one.
     expect(last.kind).toBe("after");
     expect(last.width).toBeCloseTo((40 / 60) * 100, 1);
+  });
+});
+
+describe("waveform", () => {
+  it("draws strokes where there was a voice and a flat line where there was not", () => {
+    const marks = waveform(blocks(report({ opening_stall: 10, speaking_seconds: 40, pauses: [] }), 60));
+    const strokes = marks.filter((mark) => mark.kind === "stroke");
+    const lines = marks.filter((mark) => mark.kind === "line");
+    expect(lines).toEqual([{ kind: "line", from: 0, to: expect.closeTo(16.67, 1), tone: "gap", seconds: 10 }]);
+    expect(strokes.length).toBeGreaterThan(10);
+    expect(strokes.every((mark) => mark.kind === "stroke" && mark.x > 16.6 && mark.x < 83.4)).toBe(true);
+  });
+
+  it("gives even the shortest word one stroke, and draws nothing after the last one", () => {
+    const marks = waveform(blocks(report({ opening_stall: 0, speaking_seconds: 0.1, pauses: [] }), 60));
+    expect(marks.filter((mark) => mark.kind === "stroke")).toHaveLength(1);
+    expect(marks.filter((mark) => mark.kind === "line")).toHaveLength(0);
+  });
+
+  it("is the same picture twice, since a report has to repeat", () => {
+    const shown = report({ opening_stall: 2, speaking_seconds: 30, pauses: [{ at: 12, seconds: 2, awkward: true }] });
+    expect(waveform(blocks(shown, 60))).toEqual(waveform(blocks(shown, 60)));
   });
 });
 
@@ -205,6 +256,127 @@ describe("advice", () => {
     // Written here rather than by a model: the same round giving different
     // advice on two readings is weather, not advice.
     expect(advice(band("pace", 210))).toBe(advice(band("pace", 210)));
+  });
+});
+
+/* The round's own page. A shape, a donut and a line, all of them drawn from
+   the same numbers the bands use, so what is pinned is that the arithmetic
+   agrees with itself: inside the comfortable stretch is 100 on the radar,
+   the fillers axis is never a bar, and the caption names what the shape
+   shows. */
+
+const SPOKEN = report({
+  words: 120,
+  pace: 143,
+  fillers: 9,
+  filler_rate: 8.9,
+  filler_words: ["um", "uh"],
+  opening_stall: 1,
+  longest_pause: 1,
+  trail_off: 0.5,
+  transcript: "So um I said, uh, I said we begin. We begin now, so we do.",
+  pace_curve: [
+    { start: 0, end: 10, wpm: 156 },
+    { start: 10, end: 20, wpm: 210 },
+    { start: 20, end: 30, wpm: 78 },
+  ],
+  filler_counts: [
+    { word: "um", count: 6 },
+    { word: "uh", count: 3 },
+  ],
+  leaned_on: [
+    { word: "so", count: 3 },
+    { word: "like", count: 2 },
+  ],
+  sentences: [
+    { text: "one", words: 56 },
+    { text: "two", words: 10 },
+  ],
+});
+
+describe("axes", () => {
+  it("puts the fillers on the shape and never on a bar, since the donut says it as words", () => {
+    const rows = axes(SPOKEN);
+    expect(rows.map((row) => row.key)).toEqual(["pace", "start", "gap", "sentence", "fillers"]);
+    expect(rows.find((row) => row.key === "fillers")?.radarOnly).toBe(true);
+    expect(rows.filter((row) => !row.radarOnly).map((row) => row.key)).not.toContain("fillers");
+  });
+
+  it("has no fillers axis where nothing could count them, and no sentence axis without a transcript", () => {
+    expect(axes(report({ pace: 150, words: 10 })).map((row) => row.key)).toEqual(["pace", "start", "gap"]);
+  });
+
+  it("carries your usual onto each axis when there is one", () => {
+    const rows = axes(report({ ...SPOKEN, usual: { pace: 148, stall: 3.1, gap: 2.4, fillers: 3.2, sentence: 24, rounds: 12 } }));
+    expect(rows.map((row) => row.usual)).toEqual([148, 3.1, 2.4, 24, 3.2]);
+  });
+});
+
+describe("fit", () => {
+  it("is a hundred anywhere inside the comfortable stretch and falls to nothing at the end of the scale", () => {
+    const [pace] = axes(SPOKEN);
+    expect(fit(pace, 130)).toBe(100);
+    expect(fit(pace, 170)).toBe(100);
+    expect(fit(pace, 220)).toBe(0);
+    expect(fit(pace, 195)).toBe(50);
+    expect(fit(pace, 80)).toBe(0);
+  });
+
+  it("is nothing at all without a value, which is how an absent usual stays off the shape", () => {
+    expect(fit(axes(SPOKEN)[0], null)).toBeNull();
+  });
+});
+
+describe("shapeCaption", () => {
+  it("counts what landed and names the furthest out", () => {
+    // Nine ums a minute is well past four, and a 56-word sentence is
+    // further past 35 still, so the sentence is the one named.
+    expect(shapeCaption(axes(SPOKEN))).toBe("3 of 5 in the comfortable range · furthest out: longest sentence");
+  });
+
+  it("says so when everything landed", () => {
+    const rows = axes(report({ ...SPOKEN, filler_rate: 2, sentences: [{ text: "x", words: 12 }] }));
+    expect(shapeCaption(rows)).toBe("All 5 in the comfortable range");
+  });
+});
+
+describe("paceCaption", () => {
+  it("names the fastest stretch and the slowest, and the fade when there was one", () => {
+    expect(paceCaption(SPOKEN)).toBe(
+      "Fastest from 0:10, 210 words a minute. Slowest from 0:20, 78. You faded in the last stretch.",
+    );
+  });
+
+  it("says nothing under two readings", () => {
+    expect(paceCaption(report({ pace_curve: [{ start: 0, end: 10, wpm: 100 }] }))).toBeNull();
+  });
+});
+
+describe("slices", () => {
+  it("puts the fillers first, warm, then the leaned-on words, and the whole minute is the share", () => {
+    const cut = slices(SPOKEN);
+    expect(cut.map((slice) => slice.kind)).toEqual(["filler", "filler", "crutch", "crutch"]);
+    expect(cut.reduce((sum, slice) => sum + slice.count, 0)).toBe(14);
+    expect(saidCount(SPOKEN)).toBe(129);
+  });
+
+  it("steps each group down in shade so two ums and two crutches can be told apart", () => {
+    const [um, uh] = slices(SPOKEN);
+    expect(um.shade).toBeGreaterThan(uh.shade);
+  });
+});
+
+describe("sentences and words", () => {
+  it("calls a sentence past the edge a run-on and a short one landed", () => {
+    expect(sentenceCaption(SPOKEN)).toBe("One ran to 56 words. Land a full stop and let it sit.");
+    expect(sentenceCaption(report({ sentences: [{ text: "x", words: RUN_ON }] }))).toBe(
+      `Longest ${RUN_ON} words. Every one of them landed.`,
+    );
+  });
+
+  it("counts different words with the fillers left out", () => {
+    // so i said we begin now do: the ums and uhs are not words anybody chose.
+    expect(distinctWords(SPOKEN)).toBe(7);
   });
 });
 
