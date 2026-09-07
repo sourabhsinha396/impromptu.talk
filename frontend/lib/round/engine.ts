@@ -8,6 +8,7 @@ import {
   SURPRISE,
   loadPrefs,
   savePrefs,
+  type Mic,
   type Prefs,
   type Store,
 } from "@/lib/round/prefs";
@@ -329,6 +330,16 @@ export class Engine {
     this.prefs[which] = Math.min(high, Math.max(low, Math.round(seconds)));
     savePrefs(this.store, this.prefs);
     this.effect({ type: "track", name: "length_changed", props: { setting: which, seconds: this.prefs[which] } });
+    this.changed();
+  }
+
+  /** Turning the report on or off. Never opens the microphone itself:
+      the page does that, inside the press, so the browser's prompt is
+      always something a person asked for. */
+  setMic(mic: Mic): void {
+    this.prefs.mic = mic;
+    savePrefs(this.store, this.prefs);
+    this.effect({ type: "track", name: "mic_set", props: { mic } });
     this.changed();
   }
 

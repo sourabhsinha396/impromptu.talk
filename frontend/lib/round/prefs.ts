@@ -8,9 +8,17 @@ export const STAGE_KEY = "impromptu.staged";
 
 export const SURPRISE = "surprise";
 
-export type Prefs = { genre: string; prep: number; speak: number; style: string; sound: boolean };
+/* Whether the round listens, which is ours and is not the browser's
+   permission. "ask" is nobody having decided yet and is the only state
+   that draws the invitation; "off" is somebody who said no thanks, and it
+   stays off until they change it in settings. We never call for the
+   microphone under "ask", so the browser's own prompt can only ever
+   appear because a person pressed a button that said it would. */
+export type Mic = "ask" | "on" | "off";
 
-export const DEFAULT_PREFS: Prefs = { genre: "general", prep: 60, speak: 60, style: SURPRISE, sound: true };
+export type Prefs = { genre: string; prep: number; speak: number; style: string; sound: boolean; mic: Mic };
+
+export const DEFAULT_PREFS: Prefs = { genre: "general", prep: 60, speak: 60, style: SURPRISE, sound: true, mic: "ask" };
 
 /* The sliders' reach. Thinking may be none at all or up to half an hour (a
    long prep is how "deep research" is covered without a mode); talking is
@@ -43,6 +51,7 @@ export function loadPrefs(store: Store | null): Prefs {
     style: typeof style === "string" && style ? style : SURPRISE,
     /* v0 wrote 1 and 0; both are read, and a missing value means on. */
     sound: saved.sound === undefined ? true : Boolean(saved.sound),
+    mic: saved.mic === "on" || saved.mic === "off" ? saved.mic : "ask",
   };
 }
 

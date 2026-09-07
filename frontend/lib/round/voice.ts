@@ -172,6 +172,27 @@ function pickType(): string {
   return TYPES.find((type) => MediaRecorder.isTypeSupported(type)) ?? "";
 }
 
+/** What the browser would do if asked, learned without asking.
+
+    `navigator.permissions.query` never prompts, which is the whole point:
+    it lets the page know whether opening the microphone would be silent
+    or would throw a dialog over the topic. Safari does not implement it
+    for the microphone and Firefox is partial, so anything unknown is
+    treated as "ask" and the person is invited rather than surprised. */
+export type MicState = "granted" | "denied" | "ask";
+
+export async function micState(): Promise<MicState> {
+  if (typeof navigator === "undefined" || !navigator.mediaDevices?.getUserMedia) return "denied";
+  try {
+    const status = await navigator.permissions.query({ name: "microphone" as PermissionName });
+    if (status.state === "granted") return "granted";
+    if (status.state === "denied") return "denied";
+    return "ask";
+  } catch {
+    return "ask";
+  }
+}
+
 export type Heard = {
   segments: Segment[];
   audio: Blob | null;

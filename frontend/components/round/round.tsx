@@ -12,6 +12,7 @@ import { attach, type Report } from "@/lib/report";
 import type { Bank } from "@/lib/bank";
 import { Engine, type Effect } from "@/lib/round/engine";
 import { Sound } from "@/lib/round/sound";
+import { DEFAULT_PREFS } from "@/lib/round/prefs";
 import { Listener, NOTHING } from "@/lib/round/voice";
 
 /* The round on the page. The engine owns every rule; this component makes
@@ -124,17 +125,24 @@ export function Round({
   useSyncExternalStore(engine?.subscribe ?? noop, engine?.snapshot ?? (() => 0), () => 0);
 
   /* The microphone opens when the topic lands and the timeline starts when
-     the speaking does. Split so the permission prompt, which only ever
-     appears on somebody's first round, arrives while they are reading the
-     topic instead of at the instant they are meant to start talking. */
+     the speaking does, and **only** once somebody has switched it on.
+
+     Calling for it under any other state is what put Chrome's own prompt
+     over the topic, unasked, before anybody knew what it was for. An
+     unexplained prompt is refused by reflex and "Never allow" is permanent
+     for the site: nothing in this code can ask again, and the person would
+     have to find their browser's site settings to undo it. So the rule is
+     that the browser's prompt may only ever appear inside a press on a
+     control of ours that said it would. */
   const phase = engine?.phase;
+  const mic = engine?.prefs.mic ?? "ask";
   useEffect(() => {
     const ears = listener.current;
-    if (!ears) return;
+    if (!ears || mic !== "on") return;
     if (phase === "topic") void ears.start();
     else if (phase === "speak") ears.mark();
     else if (phase === "idle") void ears.stop();
-  }, [phase]);
+  }, [phase, mic]);
 
   /* Leaving the page with the microphone open is the one thing here that
      outlives the round. */
@@ -178,7 +186,7 @@ export function Round({
   const settle = useCallback(() => engine?.settle(), [engine]);
 
   const genre = engine?.currentGenre ?? bank.genres[0] ?? { slug: "general", name: "General", icon: "dices", blurb: "" };
-  const prefs = engine?.prefs ?? { genre: genre.slug, prep: 60, speak: 60, style: "surprise", sound: true };
+  const prefs = engine?.prefs ?? { ...DEFAULT_PREFS, genre: genre.slug };
 
   if (!engine || engine.phase === "idle") {
     return (
