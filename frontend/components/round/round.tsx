@@ -7,6 +7,7 @@ import { Idle } from "@/components/round/idle";
 import { DonePhase, PrepPhase, SpeakPhase, TopicPhase, type Summary } from "@/components/round/phases";
 import { Reel } from "@/components/round/reel";
 import { SettingsSheet } from "@/components/round/settings-sheet";
+import { track } from "@/lib/analytics";
 import type { Bank } from "@/lib/bank";
 import { Engine, type Effect } from "@/lib/round/engine";
 import { Sound } from "@/lib/round/sound";
@@ -63,6 +64,7 @@ export function Round({ bank, signedIn, isPro = false }: { bank: Bank; signedIn:
     const audio = new Sound(() => made.prefs.sound);
     const off = made.onEffect((effect) => {
       if (effect.type === "sound") audio.play(effect);
+      else if (effect.type === "track") track(effect.name, effect.props);
       else if (effect.type === "record") {
         setSummary(null);
         void record(effect.payload).then(setSummary);

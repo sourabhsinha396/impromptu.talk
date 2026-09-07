@@ -69,6 +69,10 @@
    way, because the frame is a laptop screen shot from across a room. */
 @custom-variant filming (&:where(.filming *));
 
+/* The support chat is on the body while its bubble is drawn, so the footer
+   can leave room for it on exactly the pages that show it. */
+@custom-variant chat (&:where(.chat *));
+
 /* Dark is a state on <html data-theme>, set by the pre-paint script from a
    stored choice, with the system preference as the fallback when nothing
    was chosen. The variant covers both routes, so a `dark:` utility is right
@@ -279,5 +283,12 @@
   :focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
+  }
+
+  /* The chat bubble is the one piece of chrome the site does not draw, so
+     it cannot carry the `filming:` utility; while filming it hides with the
+     header and the footer. */
+  .filming .crisp-client {
+    visibility: hidden;
   }
 }

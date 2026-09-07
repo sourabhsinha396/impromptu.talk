@@ -1,10 +1,15 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+import { cookies } from "next/headers";
+
+import { Analytics } from "@/components/site/analytics";
+import { Chat } from "@/components/site/chat";
 import { Footer } from "@/components/site/footer";
 import { Header } from "@/components/site/header";
+import { analyticsConfig } from "@/lib/analytics";
 import { currentUser } from "@/lib/api";
-import { timezoneInit } from "@/lib/cookies";
+import { DEVICE_COOKIE, deviceIdFrom, timezoneInit } from "@/lib/cookies";
 import { OG_IMAGE } from "@/lib/metadata";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/site";
 import { themeInit } from "@/lib/theme";
@@ -30,7 +35,9 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const [user, country] = await Promise.all([currentUser(), visitorCountry()]);
+  const [user, country, jar] = await Promise.all([currentUser(), visitorCountry(), cookies()]);
+  const analytics = analyticsConfig();
+  const crispWebsiteId = process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID ?? "";
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -47,6 +54,20 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <script dangerouslySetInnerHTML={{ __html: timezoneInit }} />
       </head>
       <body className="bg-surface font-sans text-ink antialiased">
+        {/* The address reaches the browser only when there is an account
+            and analytics are on at all: an anonymous visitor stays
+            anonymous, which is the promise /privacy makes to the people
+            who never sign up. */}
+        {analytics && (
+          <Analytics
+            token={analytics.token}
+            host={analytics.host}
+            deviceId={deviceIdFrom(jar.get(DEVICE_COOKIE)?.value)}
+            email={user?.email ?? ""}
+            name={user?.name ?? ""}
+          />
+        )}
+        {crispWebsiteId && <Chat websiteId={crispWebsiteId} email={user?.email} name={user?.name} />}
         <div className="flex min-h-screen flex-col">
           {/* The streak arrives with the streak cards; until then there is
               none to show, and the pill stays absent as it does for a

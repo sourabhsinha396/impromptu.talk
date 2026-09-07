@@ -1,6 +1,19 @@
 import { afterEach, describe, expect, it } from "vitest";
 
-import { TIMEZONE_COOKIE, referralCode, timezoneInit } from "@/lib/cookies";
+import { TIMEZONE_COOKIE, deviceIdFrom, referralCode, timezoneInit } from "@/lib/cookies";
+
+describe("deviceIdFrom", () => {
+  it("reads the id off the front of the signed cookie", () => {
+    expect(deviceIdFrom("0123456789abcdef0123456789abcdef:1tZabc:sig-nature")).toBe("0123456789abcdef0123456789abcdef");
+  });
+
+  it("treats no cookie, or one that is not the shape of an id, as no cookie", () => {
+    expect(deviceIdFrom(undefined)).toBe("");
+    expect(deviceIdFrom("")).toBe("");
+    expect(deviceIdFrom("a-device-i-typed-in:1tZ:sig")).toBe("");
+    expect(deviceIdFrom("0123456789abcdef0123456789abcdef")).toBe("0123456789abcdef0123456789abcdef");
+  });
+});
 
 describe("referralCode", () => {
   it("accepts lowercase letters and digits and lowercases on the way", () => {

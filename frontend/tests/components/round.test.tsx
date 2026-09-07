@@ -6,6 +6,9 @@ import { lengthWords, thinkLabel } from "@/components/round/phases";
 import { Round } from "@/components/round/round";
 import type { Bank } from "@/lib/bank";
 
+const tracked = vi.hoisted(() => vi.fn());
+vi.mock("@/lib/analytics", () => ({ track: tracked }));
+
 function topic(genre: string, text: string, style = "just-talk") {
   return { text, genre, style, slug: text.toLowerCase().replace(/\s+/g, "-") };
 }
@@ -67,6 +70,32 @@ describe("the round on the page", () => {
     expect(screen.getByText("day streak").previousSibling).toHaveTextContent("3");
     expect(screen.getByRole("button", { name: /Spin again/ })).toBeInTheDocument();
     expect(screen.getByText(/Create an account/)).toBeInTheDocument();
+  });
+
+  /* The mask in the PostHog config is only a promise; this is the markup
+     that keeps it. A note textarea without the class is filmed while it is
+     typed, and a chip without it is filmed a minute later where no input
+     rule can see it, and nothing else on the site would say so. */
+  it("marks the prep notes and the speak chips for the replay mask, and tracks nothing they say", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("{}", { status: 500 })));
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    render(<Round bank={bank} signedIn={false} />);
+
+    await user.click(await screen.findByRole("button", { name: "Spin" }));
+    await screen.findByText(/Low tide|Queues|Tipping should end/);
+    await user.click(screen.getByRole("button", { name: "Think for a minute" }));
+    const notes = screen.getAllByRole("textbox");
+    expect(notes).toHaveLength(3);
+    for (const note of notes) expect(note).toHaveClass("ph-no-capture");
+    await user.type(notes[0], "secret words");
+
+    await user.click(screen.getByRole("button", { name: "Speak now" }));
+    expect(screen.getByText("secret words")).toHaveClass("ph-no-capture");
+    await user.click(screen.getByRole("button", { name: "Done" }));
+
+    expect(tracked.mock.calls.length).toBeGreaterThan(0);
+    expect(JSON.stringify(tracked.mock.calls)).not.toContain("secret");
+    expect(tracked).toHaveBeenCalledWith("round_finished", expect.objectContaining({ notes_written: 1 }));
   });
 
   it("names the duration on the button and says 'a minute' rather than '1 minutes'", () => {

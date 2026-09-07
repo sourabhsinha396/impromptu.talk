@@ -38,3 +38,18 @@ export const timezoneInit =
   `try{if(document.cookie.indexOf("${TIMEZONE_COOKIE}=")<0){` +
   `var z=Intl.DateTimeFormat().resolvedOptions().timeZone;` +
   `if(z)document.cookie="${TIMEZONE_COOKIE}="+encodeURIComponent(z)+";path=/;max-age=15552000;samesite=lax"}}catch(e){}`;
+
+export const DEVICE_COOKIE = "impromptu_device";
+
+/* The backend signs the device cookie as `id:timestamp:signature` and is
+   the only side that verifies it. The id in front is read here for one
+   purpose: telling analytics which device this is, so a return rate read
+   from PostHog and one read from the sessions table describe the same
+   people. Nothing else on this side trusts it. A forged or expired value is
+   answered by the backend with a fresh id on the next API response, and the
+   next page load identifies with that one instead; anything that is not
+   the shape of an id is treated as no cookie at all. */
+export function deviceIdFrom(signed: string | undefined): string {
+  const id = signed?.split(":")[0] ?? "";
+  return /^[0-9a-f]{32}$/.test(id) ? id : "";
+}

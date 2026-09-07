@@ -73,7 +73,7 @@ Ticked as of 2026-09-06, after cards 01 to 13.
 - [x] Footer: brand column with the owner, Product, Company, Legal; bottom line by sign-in state, both halves pinned (05)
 - [x] "Proudly made in India" only when the visitor is placed in India; the country ladder (05)
 - [x] Chrome hides while filming (05, 12)
-- [ ] The Crisp bubble hides with it and is off on the home page (14)
+- [x] The Crisp bubble hides with it and is off on the home page (14)
 - [x] Error pages route back into the tool (05)
 - [x] Per-page title, description, canonical, OG and Twitter cards from one helper; one OG image (05)
 - [x] Sitemap: home, `/genres`, `/pro`, `/affiliate`, the paperwork, the ten genre pages; no topics, no share pages, no operator paths (05)
@@ -163,8 +163,8 @@ Ticked as of 2026-09-06, after cards 01 to 13.
 
 ### Analytics and support
 
-- [ ] PostHog: production only, device as distinct id, email as a property, autocapture off, replay on with both masks pinned (14)
-- [ ] Crisp: every page but home, hidden while filming, address on the session when signed in (14)
+- [x] PostHog: on with `DEBUG_ENV=production` and a token, device as distinct id, email and name as person properties, PostHog's defaults on, the notes' replay mask pinned in config and markup (14)
+- [x] Crisp: every page but home, hidden while filming, address on the session when signed in, footer clears the bubble (14)
 
 ### Pages
 

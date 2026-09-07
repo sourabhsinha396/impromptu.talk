@@ -69,8 +69,13 @@ export function Footer({
   inIndia: boolean;
   year?: number;
 }) {
+  /* The chat bubble is fixed to the bottom-right corner, which is where the
+     footer's own last row ends: scrolled to the bottom, it lands squarely on
+     "Proudly made in India". The footer is what yields, because the bubble
+     cannot: 96px clears a 54px bubble on a 20px inset. The home page never
+     asks for the room, since the chat is off there. */
   return (
-    <footer className="shrink-0 border-t border-line px-[clamp(16px,4vw,32px)] pt-[34px] pb-10 text-[13.5px] text-muted filming:invisible">
+    <footer className="shrink-0 border-t border-line px-[clamp(16px,4vw,32px)] pt-[34px] pb-10 text-[13.5px] text-muted chat:pb-24 filming:invisible">
       <div className="mx-auto grid max-w-[80rem] gap-8 sm:grid-cols-2 md:grid-cols-[1.6fr_1fr_1fr_1fr]">
         {/* The only place on the site where the name, what it does and who
             owns it are said together. */}
