@@ -1,5 +1,7 @@
 import { cookies } from "next/headers";
 
+import { EMPTY_HISTORY, type History } from "@/lib/practice";
+
 export const BACKEND_ORIGIN = process.env.BACKEND_ORIGIN ?? "http://127.0.0.1:8009";
 
 /* Server components call the backend origin directly (the rewrite is for
@@ -47,5 +49,19 @@ export async function streakSummary(): Promise<StreakSummary> {
     return (await response.json()) as StreakSummary;
   } catch {
     return { streak: 0, topics: 0, minutes: 0 };
+  }
+}
+
+/** Everything the streak page shows, in one call, for the device and
+    account behind the forwarded cookies. Empty when the backend is
+    unreachable, which draws the page's "Nothing yet." state rather than
+    failing the one page a person came to look at. */
+export async function practiceHistory(): Promise<History> {
+  try {
+    const response = await backendFetch("/api/v1/runs/history");
+    if (!response.ok) return EMPTY_HISTORY;
+    return (await response.json()) as History;
+  } catch {
+    return EMPTY_HISTORY;
   }
 }

@@ -15,7 +15,7 @@ Ticked as of 2026-09-06, after cards 01 to 13.
 | `GET /topic/{slug}` answers 404 | same, by having no route | 09 | [x] pinned |
 | `GET /?topic=<slug>` deep link | same | 12 | [ ] |
 | `POST /api/sessions` | `POST /api/v1/runs` | 15 | [x] |
-| `GET /streak` | `/streak` | 17 | [ ] |
+| `GET /streak` | `/streak` | 17 | [x] |
 | `POST /streak/share` | `POST /api/v1/runs/share` | 18 | [ ] |
 | `GET /s/{token}` | `/s/[token]` | 18 | [ ] |
 | `GET`/`POST /signup` | `/signup`, `POST /api/v1/auth/signup` | 19 | [ ] |
@@ -115,7 +115,7 @@ Ticked as of 2026-09-06, after cards 01 to 13.
 - [x] Whose runs count: an account across devices; an unclaimed device only its own (16)
 - [x] The rule is the plan's: free five days and no freezes, Pro the plan's length with two freezes a month; one summary per request feeds the pill, the done screen and `/streak` (16, owner's change from v0)
 - [ ] Pro freeze rule: two missed days a calendar month, all or nothing, repairs gaps behind you (16)
-- [ ] `/streak`: current streak, totals, eight-week and one-year calendars ending today (17)
+- [x] `/streak`: Day N with the flame, the three tiles, the plan's calendar ending today (a strip of five named days free, the heatmap on Pro), recent runs capped by the plan with the count said, the pitch only when true, the footer line by sign-in state, one button back to the tool, noindex (17). The share section lands with card 18; the payments switch that hides the Pro links lands with card 25
 - [ ] Share token minted once, `/s/[token]` noindex, no off switch on the site (18)
 - [x] Retention report: day-2 and day-7 cohorts in UTC days, as `retention_report` (15)
 
