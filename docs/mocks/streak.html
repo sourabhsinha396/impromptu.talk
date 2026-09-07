@@ -1,0 +1,200 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mock: streak</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..600&family=Plus+Jakarta+Sans:wght@400..700&display=swap" rel="stylesheet"><style>
+:root{color-scheme:light;--surface:#fff;--card:#fff;--card2:oklch(.965 .008 120);--ink:#1c1917;--muted:#57534e;--line:#e7e5e4;--line-strong:#918b87;
+--accent-h:120;--accent-c:.12;--accent-l:.5;--accent-l-strong:.42;--accent:oklch(var(--accent-l) var(--accent-c) var(--accent-h));--accent-strong:oklch(var(--accent-l-strong) var(--accent-c) var(--accent-h));
+--btn:#1c1917;--btn-ink:#fff;--btn-strong:#000;--note:oklch(.93 .13 118);--note-ink:oklch(.32 .06 120);--warn:oklch(.62 .2 30);
+--sans:"Plus Jakarta Sans",ui-sans-serif,system-ui,sans-serif;--display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;--header-h:60px}
+[data-theme=dark]{color-scheme:dark;--surface:#080808;--card:#161616;--card2:#101010;--ink:#f5f5f4;--muted:#a8a29e;--line:#292524;--line-strong:#6b6560;
+--accent-l:.796;--accent-l-strong:.86;--btn:#f5f5f4;--btn-ink:#111110;--btn-strong:#fff;--note:oklch(.86 .15 120);--note-ink:oklch(.2 .04 120);--warn:oklch(.75 .19 30)}
+*{box-sizing:border-box}html,body{margin:0}body{background:#3f3d3a;font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased}
+.mockbar{position:sticky;top:0;z-index:50;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:10px 16px;background:#26241f;color:#d6d3d1;font:600 12px/1 var(--sans);letter-spacing:.02em}
+.mockbar b{color:#fff;font-weight:700;margin-right:6px}.mockbar .seg{display:inline-flex;border:1px solid #57534e;border-radius:999px;overflow:hidden}
+.mockbar button{all:unset;cursor:pointer;padding:7px 12px;color:#d6d3d1}.mockbar button.on{background:#f5f5f4;color:#1c1917}
+.frame{margin:18px auto;max-width:1280px;min-height:calc(100vh - 80px);background:var(--surface);color:var(--ink);box-shadow:0 20px 60px rgb(0 0 0/.35);display:flex;flex-direction:column;position:relative;overflow:hidden}
+.phone .frame{max-width:390px;min-height:780px}
+.notes{max-width:1280px;margin:0 auto 40px;background:#fffbea;color:#3b2f0b;border-radius:14px;padding:18px 22px;font-size:14px;line-height:1.55}
+.notes h2{margin:0 0 8px;font:600 15px var(--sans)}.notes ul{margin:0;padding-left:18px}.notes li{margin:4px 0}.notes[hidden]{display:none}
+.ico{flex:none}
+/* chrome */
+.topbar{height:var(--header-h);display:flex;padding:10px clamp(14px,4vw,28px);border-bottom:1px solid var(--accent);flex:none}
+.topbar-in{flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:80rem;margin-inline:auto}
+.wordmark{display:inline-flex;align-items:center;gap:8px;font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:-.02em;color:var(--ink);text-decoration:none;font-variation-settings:"wdth" 96}
+.wordmark span span{color:var(--muted);font-weight:400}.die{width:21px;height:21px;color:var(--accent)}
+.phone .wordmark .name{display:none}.wordmark .short{display:none}.phone .wordmark .short{display:inline}
+.right{display:flex;align-items:center;gap:6px}
+.pill{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line-strong);background:var(--card2);border-radius:999px;padding:5px 11px 5px 9px;font-size:13.5px;font-weight:600;color:var(--ink);text-decoration:none}
+.pill .ico{color:var(--accent)}.pill b{color:var(--accent);font-weight:700}
+.iconbtn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border:1px solid var(--line-strong);background:var(--card2);color:var(--muted);border-radius:999px}
+.filming .topbar,.filming .foot,.filming .hint,.filming .kbd{visibility:hidden}
+/* stage */
+main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px clamp(16px,4vw,32px);min-height:calc(100dvh - var(--header-h))}
+.phone main{min-height:640px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.q{font-family:var(--display);font-weight:600;letter-spacing:-.03em;font-variation-settings:"wdth" 96;font-size:clamp(2rem,6.5vw,4rem);line-height:1.05;margin:0;text-wrap:balance}
+.tools{display:flex;justify-content:center;align-items:center;gap:8px;margin:0 0 26px}.q.accent{color:var(--accent);margin-bottom:34px}
+.chip{display:inline-flex;align-items:center;gap:7px;height:40px;padding:0 14px 0 12px;border:1px solid var(--line-strong);background:var(--card2);border-radius:999px;font-size:14px;font-weight:600;color:var(--ink);cursor:pointer}
+.chip .ico{color:var(--accent)}.chip .cv{color:var(--muted);margin-left:-3px}
+.btn{font:inherit;font-weight:600;border-radius:999px;border:1px solid transparent;padding:12px 24px;cursor:pointer;line-height:1;display:inline-flex;align-items:center;gap:8px;text-decoration:none}
+.btn-primary{background:var(--btn);color:var(--btn-ink)}.btn-ghost{background:none;color:var(--muted);border-color:var(--line-strong)}
+.btn-xl{font-size:18px;padding:17px 46px}.btn-icon{padding:12px;min-width:54px;justify-content:center}
+.row{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap}
+.row .btn{font-size:17px;padding:16px 28px}.row .btn-xl{font-size:18px;padding:17px 46px}.die-btn{width:18px;height:18px;color:currentColor}
+.reset{display:inline-block;margin-top:22px;font-size:13.5px;font-weight:600;color:var(--muted);text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--line-strong)}
+.reset:hover{color:var(--ink);text-decoration-color:var(--ink)}
+.filming .reset{visibility:visible}
+.kbd{margin-top:18px;font-size:12.5px;color:var(--muted)}.kbd kbd{font:inherit;border:1px solid var(--line-strong);border-radius:6px;padding:1px 6px;margin:0 2px}
+.phone .kbd{display:none}
+.hint{font-size:14px;color:var(--muted);margin:26px 0 0;max-width:44ch}
+.label{display:inline-flex;gap:14px;align-items:center;font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.02em}
+.label .ico{color:var(--accent)}
+.topic{font-family:var(--display);font-weight:600;letter-spacing:-.035em;font-variation-settings:"wdth" 96;line-height:1.02;color:var(--accent);text-wrap:balance;margin:22px 0 44px;font-size:clamp(2.6rem,11vw,8.5rem)}
+.topic-mid{font-size:clamp(1.6rem,4.4vw,3.1rem);line-height:1.1;margin:0 0 30px}
+.clock{position:relative;width:min(56vw,300px);aspect-ratio:1;margin:4px auto 30px}.phone .clock{width:230px}
+.clock svg{width:100%;height:100%;transform:rotate(-90deg)}.clock .track{stroke:var(--line);stroke-width:8;fill:none}
+.clock .arc{stroke:var(--accent);stroke-width:8;fill:none;stroke-linecap:round;stroke-dasharray:283;stroke-dashoffset:120}
+.clock.ending .arc{stroke:var(--warn)}
+.clock .time{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--display);font-weight:600;font-size:clamp(3rem,10vw,5.6rem);letter-spacing:-.04em;font-variant-numeric:tabular-nums;line-height:1}
+.clock .what{position:absolute;left:0;right:0;bottom:22%;font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.notes-row{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin:6px 0 34px}
+.note{width:190px;height:150px;background:var(--note);color:var(--note-ink);border-radius:3px;padding:14px 14px;font:600 17px/1.3 var(--sans);text-align:left;box-shadow:0 8px 24px rgb(0 0 0/.12);position:relative}
+.note:nth-child(1){transform:rotate(-1.2deg)}.note:nth-child(2){transform:rotate(.9deg)}.note:nth-child(3){transform:rotate(-.6deg)}
+.note .ph{opacity:.5}.note .cnt{position:absolute;right:10px;bottom:8px;font-size:11px;font-weight:600;opacity:.55}
+.phone .note{width:100%;height:auto;min-height:64px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:0 0 34px}
+.nchip{background:var(--note);color:var(--note-ink);border-radius:3px;padding:7px 11px;font-size:13px;font-weight:600}
+.stats{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:30px 0 36px}
+.stat{min-width:150px;padding:18px 22px;border:1px solid var(--line);border-radius:14px;background:var(--card);text-align:center}
+.stat .n{font-family:var(--display);font-weight:600;font-size:44px;letter-spacing:-.03em;line-height:1;display:inline-flex;align-items:center;gap:6px}
+.stat .n .ico{color:var(--accent)}.stat .l{margin-top:6px;font-size:13px;color:var(--muted);font-weight:600}
+.phone .stat{min-width:100px;padding:14px}.phone .stat .n{font-size:32px}
+/* footer */
+.foot{flex:none;border-top:1px solid var(--line);padding:34px clamp(16px,4vw,32px) 40px;font-size:13.5px;color:var(--muted)}
+.foot-grid{max-width:80rem;margin:0 auto;display:grid;gap:32px;grid-template-columns:1.6fr 1fr 1fr 1fr}.phone .foot-grid{grid-template-columns:1fr 1fr}
+.foot-col{display:flex;flex-direction:column;gap:8px}.foot-col b{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink)}
+.foot a{color:inherit;text-decoration:none}.foot-bottom{max-width:80rem;margin:32px auto 0;padding-top:20px;border-top:1px solid var(--line);font-size:12px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+/* pages */
+main.page{display:block;text-align:left;justify-content:flex-start;max-width:960px;width:100%;margin:0 auto;padding:28px clamp(16px,4vw,32px) 64px;min-height:0}
+.crumb{font-size:13px;color:var(--muted);font-weight:600;margin-bottom:14px}.crumb a{color:inherit;text-decoration:none}
+.lede{font-size:17px;color:var(--muted);max-width:60ch;margin:12px 0 22px}
+.cards{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));margin-top:26px}.phone .cards{grid-template-columns:1fr}
+.card{display:block;padding:18px 18px 16px;border:1px solid var(--line);border-radius:14px;background:var(--card);color:inherit;text-decoration:none}
+.card .ico{color:var(--accent)}.card .cn{display:block;font-weight:600;margin-top:10px;font-size:16px}.card .cb{display:block;font-size:13px;color:var(--muted);margin-top:4px;line-height:1.45}.card .cc{display:block;font-size:12px;color:var(--muted);margin-top:10px;font-weight:600}
+.style-h{display:flex;align-items:center;gap:10px;margin:34px 0 10px;font:600 15px var(--sans)}.style-h .ico{color:var(--accent)}.style-h .c{color:var(--muted);font-weight:600;font-size:13px}
+.tlist{list-style:none;margin:0;padding:0;columns:2;column-gap:32px}.phone .tlist{columns:1}
+.tlist li{padding:9px 2px;border-bottom:1px solid var(--line);font-size:15.5px;break-inside:avoid}
+.more{display:flex;flex-wrap:wrap;gap:8px;margin-top:36px}
+.overlay{position:absolute;inset:0;background:rgb(0 0 0/.45);z-index:6}
+.sheet{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:7;width:min(420px,calc(100% - 32px));max-height:88%;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;text-align:left;box-shadow:0 24px 60px rgb(0 0 0/.35)}
+.phone .sheet{left:0;top:auto;bottom:0;transform:none;width:100%;border-radius:14px 14px 0 0}
+.sheet h2{margin:0;font:600 20px var(--display);letter-spacing:-.02em}.sheet .sub{margin:4px 0 16px;font-size:14px;color:var(--muted)}
+.opts{display:flex;flex-direction:column}.opt{display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border:0;border-radius:10px;background:none;font:600 15px var(--sans);color:var(--ink);text-align:left;cursor:pointer;text-decoration:none}
+.opt .ico{color:var(--accent)}.opt span{flex:1}.opt.on{background:var(--card2)}.opt:hover{background:var(--card2)}
+.yours{margin:8px 0;padding:8px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.yl{margin:0;padding:0 12px 4px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.sheet-foot{display:flex;justify-content:flex-end;margin-top:20px}
+.field{margin-bottom:20px}.fh{display:flex;justify-content:space-between;font-size:14px;font-weight:600;margin-bottom:6px}.fh span{color:var(--muted)}.fl{display:block;font-size:14px;font-weight:600;margin-bottom:6px}
+.field input[type=range]{width:100%;accent-color:var(--accent)}.field select{width:100%;padding:10px 12px;border:1px solid var(--line-strong);border-radius:10px;background:var(--card2);color:var(--ink);font:600 15px var(--sans)}
+.hintline{margin:6px 0 0;font-size:13px;color:var(--muted)}.hintline kbd{font:inherit;border:1px solid var(--line-strong);border-radius:6px;padding:1px 6px;margin:0 3px 0 0}
+.check{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;margin:0 0 16px}.check input{accent-color:var(--accent)}
+.acct{position:absolute;right:clamp(14px,4vw,28px);top:56px;z-index:5;min-width:232px;padding:6px;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 16px 40px rgb(0 0 0/.18);text-align:left;font-size:14px}
+.acct a{display:block;padding:9px 12px;border-radius:10px;color:var(--ink);text-decoration:none}.acct a:hover{background:var(--card2);color:var(--accent-strong)}
+.acct .theme{margin-top:4px;border-top:1px solid var(--line);padding:8px 12px 10px}.acct .theme b{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+.seg3{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;padding:2px;background:var(--card2);border:1px solid var(--line);border-radius:10px}
+.seg3 span{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 4px 6px;border-radius:8px;font-size:11.5px;font-weight:600;color:var(--muted)}.seg3 span.on{background:var(--card);color:var(--accent-strong);box-shadow:0 1px 2px rgb(0 0 0/.1)}
+[hidden]{display:none!important}
+
+/* streak page */
+.intro .label{display:block;margin:0 0 6px}
+.headline{font-family:var(--display);font-weight:600;letter-spacing:-.03em;font-variation-settings:"wdth" 96;font-size:clamp(2.2rem,7vw,4.4rem);line-height:1.05;margin:0;display:flex;align-items:center;gap:.18em}
+.headline .ico{color:var(--accent);width:.8em;height:.8em}
+.stats.left{justify-content:flex-start;margin:26px 0 8px}
+.sect{margin-top:40px}.sect-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:0 0 12px;flex-wrap:wrap}
+.sect-h h2{margin:0;font:600 15px var(--sans)}.sect-h .c{font-size:13px;color:var(--muted);font-weight:600}.sect-h .c a{color:inherit}
+.strip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;max-width:520px}
+.day{border:1px solid var(--line);border-radius:12px;background:var(--card);padding:12px 8px 10px;text-align:center}
+.day b{display:block;font:600 11px var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.day span{display:block;margin:6px auto 0;width:28px;height:28px;border-radius:8px;background:var(--card2);border:1px solid var(--line)}
+.day.on span{background:var(--accent);border-color:var(--accent)}.day.today{border-color:var(--line-strong)}
+.cal{--cell:12px;--gap:3px;display:flex;gap:8px;align-items:flex-start}
+.cal-wd{display:grid;grid-template-rows:repeat(7,var(--cell));gap:var(--gap);margin-top:17px;font:600 10px var(--sans);color:var(--muted)}
+.cal-wd span{line-height:var(--cell)}
+.cal-scroll{flex:1;min-width:0;overflow-x:auto;scrollbar-width:thin}
+.cal-months{display:grid;grid-auto-flow:column;grid-auto-columns:var(--cell);gap:var(--gap);height:14px;font:600 10px var(--sans);color:var(--muted);white-space:nowrap}
+.grid{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,var(--cell));grid-auto-columns:var(--cell);gap:var(--gap)}
+.grid>:first-child{grid-row:var(--first-row)}
+.grid i{display:block;border-radius:2px;background:var(--card2);border:1px solid var(--line)}
+.grid i.on{background:var(--accent);border-color:var(--accent)}.grid i.frozen{border:1px dashed var(--accent);background:transparent}
+.grid i.today{outline:1px solid var(--line-strong);outline-offset:1px}
+.key{display:flex;gap:18px;flex-wrap:wrap;margin:12px 0 0;font-size:13px;color:var(--muted)}.key span{display:inline-flex;align-items:center;gap:7px}
+.sw{width:12px;height:12px;border-radius:2px;background:var(--accent);display:inline-block}.sw.held{background:transparent;border:1px dashed var(--accent)}
+.recent{list-style:none;margin:0;padding:0;max-width:640px}
+.recent li{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:11px 2px;border-bottom:1px solid var(--line);font-size:15.5px}
+.recent li:last-child{border-bottom:0}.recent .m{font-size:12.5px;color:var(--muted);flex:none;display:inline-flex;gap:12px;font-weight:600}
+.recent .m .ico{color:var(--accent);vertical-align:-3px;margin-right:4px}
+.phone .recent .m .g{display:none}
+.pitch{margin:22px 0 0;font-size:14px;color:var(--muted);max-width:52ch;line-height:1.55}.pitch a{color:var(--accent-strong);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+[data-theme=dark] .pitch a{color:var(--accent)}
+.share{display:flex;gap:10px;align-items:center;flex-wrap:wrap;max-width:640px}
+.share input{flex:1;min-width:220px;padding:11px 14px;border:1px solid var(--line-strong);border-radius:999px;background:var(--card2);color:var(--ink);font:500 14px var(--sans)}
+.foot-line{margin:36px 0 0;font-size:13.5px;color:var(--muted);max-width:60ch;line-height:1.55}.foot-line a{color:var(--ink);font-weight:600}
+.empty{font-size:16px;color:var(--muted);margin:14px 0 0;max-width:48ch}
+</style></head><body>
+<div class="mockbar"><b>Mock</b><span class="seg"><button data-tab="free" class="on">Free, this device</button><button data-tab="pro">Pro, signed in</button><button data-tab="empty">Nothing yet</button></span>
+<span class="seg"><button data-theme-set="light">Light</button><button data-theme-set="dark">Dark</button></span>
+<span class="seg"><button data-width="desktop" class="on">Desktop</button><button data-width="phone">Phone</button></span>
+<span class="seg"><button data-notes class="on">Notes</button></span></div>
+<div class="notes"><h2>Streak page: what changes from v0, and why</h2><ul>
+<li><b>The three tiles are the done screen's tiles.</b> v0 drew a second, flatter stats row here; the page you land on from the flame now looks like the screen that sent you, and one component serves both.</li>
+<li><b>Free gets a five-day strip, not a five-square heatmap.</b> The rule is five days (owner's call, card 16), so the calendar is five named days you can read from a sofa: today ringed, spoken days filled. The year heatmap is Pro's: a week per column, time left to right, month names over the columns, a dashed square for a day the freeze held. Every window is the plan's number, never the template's.</li>
+<li><b>Recent shows the genre beside the time.</b> A list of sentences with "2d ago" told you when; the genre glyph tells you what you have been practising, which is what a person scanning the list wants to know. On a phone the genre drops and the time stays.</li>
+<li><b>The pitch is one sentence and only when true.</b> "Pro would have held it at N" appears only when the Pro rule really would, and payments are on. Nothing on the page is taken away to sell it; the streak itself stays free.</li>
+<li><b>Share sits after the button, not before.</b> The primary action is back into the tool. Share appears only signed in and with runs: the link and "Open it", nothing else. Turning it off lives in Additional settings.</li>
+<li><b>One column, left-aligned, 960px</b>, the genre page's frame, so the two content pages read alike. Phone: the tiles wrap, the strip stays five across, the year grid scrolls to today.</li>
+</ul></div>
+<div class="frame">
+<header class="topbar"><div class="topbar-in"><a class="wordmark" href="#"><svg class="die" viewBox="0 0 32 32" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4.6 26.4 10.6 26.4 21.4 16 27.4 5.6 21.4 5.6 10.6z"/><path d="M5.6 10.6 16 16 26.4 10.6M16 16v11.4"/></g><g fill="currentColor"><circle cx="16" cy="10.45" r="1.5"/><circle cx="8.9" cy="15.55" r="1.5"/><circle cx="12.71" cy="22.15" r="1.5"/><circle cx="21.2" cy="18.85" r="1.5"/><circle cx="23.11" cy="15.55" r="1.5"/><circle cx="19.29" cy="22.15" r="1.5"/></g></svg><span class="name">impromptu<span>.talk</span></span><span class="short">i<span>.</span>t</span></a><div class="right"><a class="pill pillslot" href="#"><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg><b>3</b></a><button class="iconbtn" aria-label="Account"><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button></div></div></header>
+<section data-phase="free"><main class="page">
+<div class="intro"><p class="label">Your streak</p><h1 class="headline"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>Day 3.</h1></div>
+<div class="stats left"><div class="stat"><span class="n"><svg class="ico" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>3</span><span class="l">day streak</span></div><div class="stat"><span class="n">7</span><span class="l">topics</span></div><div class="stat"><span class="n">9</span><span class="l">minutes spoken</span></div></div>
+<section class="sect"><div class="sect-h"><h2>Last 5 days</h2><span class="c">Free tracks five days. <a href="#">Pro keeps a year</a></span></div>
+<div class="strip"><div class="day"><b>Wed</b><span></span></div><div class="day"><b>Thu</b><span></span></div><div class="day on"><b>Fri</b><span></span></div><div class="day on"><b>Sat</b><span></span></div><div class="day on today"><b>Today</b><span></span></div></div></section>
+<section class="sect"><div class="sect-h"><h2>Recent</h2><span class="c">Showing your last 5 of 7. <a href="#">Pro keeps all of them</a></span></div><ul class="recent"><li><span>Saying no at work</span><span class="m"><span class="g"><svg class="ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg>Career &amp; work</span><span>2h ago</span></span></li><li><span>A promotion you did not want</span><span class="m"><span class="g"><svg class="ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg>Career &amp; work</span><span>1d ago</span></span></li><li><span>Ceiling fans</span><span class="m"><span class="g"><svg class="ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="12" height="12" x="2" y="10" rx="2" ry="2"/><path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6"/><path d="M6 18h.01"/><path d="M10 14h.01"/><path d="M15 6h.01"/><path d="M18 9h.01"/></svg>General</span><span>1d ago</span></span></li><li><span>Meetings should be optional.</span><span class="m"><span class="g"><svg class="ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg>Career &amp; work</span><span>2d ago</span></span></li><li><span>The friend you text first</span><span class="m"><span class="g"><svg class="ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/></svg>Relationships</span><span>2d ago</span></span></li></ul></section>
+<div class="row" style="justify-content:flex-start;margin-top:36px"><a class="btn btn-primary btn-xl" href="#">Keep it going</a></div>
+<p class="pitch">A missed day ended the one before this. <a href="#">Pro would have held it at 6</a>: two missed days a month, and the ones already behind you are repaired the moment you have it.</p>
+<p class="foot-line">This streak lives on this device only. Clearing your browser data clears it. <a href="#">Keep it with an account</a>.</p>
+</main></section><section data-phase="pro" hidden><main class="page">
+<div class="intro"><p class="label">Your streak</p><h1 class="headline"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>Day 41.</h1></div>
+<div class="stats left"><div class="stat"><span class="n"><svg class="ico" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>41</span><span class="l">day streak</span></div><div class="stat"><span class="n">63</span><span class="l">topics</span></div><div class="stat"><span class="n">88</span><span class="l">minutes spoken</span></div></div>
+<section class="sect"><div class="sect-h"><h2>Last year</h2><span class="c">Longest 41 days</span></div>
+<div class="cal"><div class="cal-wd"><span style="grid-row:1">Mon</span><span style="grid-row:3">Wed</span><span style="grid-row:5">Fri</span></div><div class="cal-scroll" id="calScroll"><div class="cal-months" id="months"></div><div class="grid" id="grid"></div></div></div>
+<p class="key"><span><i class="sw"></i> a day you spoke</span><span><i class="sw held"></i> a missed day the freeze held</span></p></section>
+<section class="sect"><div class="sect-h"><h2>Recent</h2><span class="c">Showing your last 8 of 63</span></div><ul class="recent"><li><span>Saying no at work</span><span class="m"><span class="g"><svg class="ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg>Career &amp; work</span><span>2h ago</span></span></li><li><span>A promotion you did not want</span><span class="m"><span class="g"><svg class="ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg>Career &amp; work</span><span>1d ago</span></span></li><li><span>Ceiling fans</span><span class="m"><span class="g"><svg class="ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="12" height="12" x="2" y="10" rx="2" ry="2"/><path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6"/><path d="M6 18h.01"/><path d="M10 14h.01"/><path d="M15 6h.01"/><path d="M18 9h.01"/></svg>General</span><span>1d ago</span></span></li><li><span>Meetings should be optional.</span><span class="m"><span class="g"><svg class="ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg>Career &amp; work</span><span>2d ago</span></span></li><li><span>The friend you text first</span><span class="m"><span class="g"><svg class="ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/></svg>Relationships</span><span>2d ago</span></span></li><li><span>Low tide</span><span class="m"><span class="g"><svg class="ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="12" height="12" x="2" y="10" rx="2" ry="2"/><path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6"/><path d="M6 18h.01"/><path d="M10 14h.01"/><path d="M15 6h.01"/><path d="M18 9h.01"/></svg>General</span><span>3d ago</span></span></li><li><span>Titles mean nothing.</span><span class="m"><span class="g"><svg class="ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg>Career &amp; work</span><span>5d ago</span></span></li><li><span>Your first job</span><span class="m"><span class="g"><svg class="ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg>Career &amp; work</span><span>6d ago</span></span></li></ul></section>
+<div class="row" style="justify-content:flex-start;margin-top:36px"><a class="btn btn-primary btn-xl" href="#">Keep it going</a></div>
+<section class="sect"><div class="sect-h"><h2>Share</h2></div><div class="share"><input type="text" readonly value="https://impromptu.talk/s/9f3ac2e1b7d04c8a" aria-label="Your public link"><a class="btn btn-ghost" href="#">Open it</a></div>
+<p class="pitch" style="margin-top:10px">Your streak, your totals and the last eight weeks, at a link only you hand out. Your name if you gave one, never your address.</p></section>
+<p class="foot-line">Signed in as Priya. This streak follows your account, on any device.</p>
+</main></section><section data-phase="empty" hidden><main class="page">
+<div class="intro"><p class="label">Your streak</p><h1 class="headline">Nothing yet.</h1></div>
+<p class="empty">Finish a round and it shows up here: the day, the topic, the minutes.</p>
+<div class="row" style="justify-content:flex-start;margin-top:32px"><a class="btn btn-primary btn-xl" href="#">Start</a></div>
+</main></section>
+<footer class="foot"><div class="foot-grid"><div><span class="wordmark"><svg class="die" viewBox="0 0 32 32" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4.6 26.4 10.6 26.4 21.4 16 27.4 5.6 21.4 5.6 10.6z"/><path d="M5.6 10.6 16 16 26.4 10.6M16 16v11.4"/></g><g fill="currentColor"><circle cx="16" cy="10.45" r="1.5"/><circle cx="8.9" cy="15.55" r="1.5"/><circle cx="12.71" cy="22.15" r="1.5"/><circle cx="21.2" cy="18.85" r="1.5"/><circle cx="23.11" cy="15.55" r="1.5"/><circle cx="19.29" cy="22.15" r="1.5"/></g></svg><span class="name">impromptu<span>.talk</span></span></span><p style="margin:10px 0 6px;max-width:32ch">A random topic, a minute to think, a minute to talk.</p><p style="margin:0;font-size:12px">&copy; 2026 impromptu.talk</p></div><div class="foot-col"><b>Product</b><a href="#">All genres</a><a href="#">Your streak</a><a href="#">Pro</a></div><div class="foot-col"><b>Company</b><a href="#">About us</a><a href="#">Contact us</a><a href="#">Affiliates</a><a href="#">hello@impromptu.talk</a></div><div class="foot-col"><b>Legal</b><a href="#">Privacy policy</a><a href="#">Terms and conditions</a><a href="#">Refund policy</a></div></div><div class="foot-bottom"><span>No account needed - your streak lives in this browser.</span><span>Proudly made in India</span></div></footer>
+</div>
+<script>
+const root=document.documentElement;
+function show(id){document.querySelectorAll('[data-phase]').forEach(s=>s.hidden=s.dataset.phase!==id);document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('on',b.dataset.tab===id));
+document.querySelectorAll('.pillslot').forEach(p=>p.hidden=id==='empty');endCal();}
+function theme(t){root.dataset.theme=t;document.querySelectorAll('[data-theme-set]').forEach(b=>b.classList.toggle('on',b.dataset.themeSet===t));}
+function width(w){document.body.classList.toggle('phone',w==='phone');document.querySelectorAll('[data-width]').forEach(b=>b.classList.toggle('on',b.dataset.width===w));endCal();}
+function notes(){const n=document.querySelector('.notes');n.hidden=!n.hidden;document.querySelector('[data-notes]').classList.toggle('on',!n.hidden);}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-tab],[data-theme-set],[data-width],[data-notes]');if(!t)return;
+if(t.dataset.tab)show(t.dataset.tab);if(t.dataset.themeSet)theme(t.dataset.themeSet);if(t.dataset.width)width(t.dataset.width);if(t.hasAttribute('data-notes'))notes();});
+/* a year of squares ending today, seeded so the mock reads the same every time */
+(function(){const g=document.getElementById('grid'),m=document.getElementById('months');const days=365;const today=new Date();const start=new Date(today);start.setDate(today.getDate()-(days-1));
+const firstRow=((start.getDay()+6)%7)+1;g.style.setProperty('--first-row',firstRow);let seed=7;const rnd=()=>{seed=(seed*9301+49297)%233280;return seed/233280};
+const cols=Math.floor((firstRow-1+days-1)/7)+1;const names=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+for(let n=0;n<days;n++){const d=new Date(start);d.setDate(start.getDate()+n);const i=document.createElement('i');const back=days-1-n;
+let on=false,frozen=false;if(back<41){on=!(back===9||back===10||back===23);frozen=!on}else if(back<120){on=rnd()<.55}else{on=rnd()<.25}
+if(on)i.className='on';else if(frozen)i.className='frozen';if(n===days-1)i.className+=' today';i.title=d.toDateString();g.appendChild(i);
+const col=Math.floor((firstRow-1+n)/7)+1;if(d.getDate()===1&&col<cols){const s=document.createElement('span');s.style.gridColumn=col;s.textContent=names[d.getMonth()];m.appendChild(s);}}})();
+function endCal(){const c=document.getElementById('calScroll');if(c)c.scrollLeft=c.scrollWidth;}
+theme(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');endCal();
+</script></body></html>
