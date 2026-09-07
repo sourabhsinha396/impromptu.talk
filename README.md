@@ -49,6 +49,13 @@ cd frontend && pnpm test && pnpm lint
 
 http://localhost:8009/re-admin/ with the superuser made above. Every table, editable.
 
+## Spend
+
+Two things here cost money on use, and both are capped twice.
+
+- Generating topics: five per account per calendar month, counted from the `generations` table (`backend/apps/topics/generate.py`). Set a **hard spend limit on the OpenRouter key** in their dashboard as well - that is the cap that holds if this one has a bug. No key means the feature is off: the pane is not drawn and the route 404s.
+- Mail and the Slack webhook are per event and free at this volume, but the same rule applies: a key that can be reached is a key that can be spent, so the test settings blank every one of them.
+
 ## Docs
 
 `docs/SPEC.md` is every settled product decision, `docs/PRICING.md` everything with money in it, `docs/DECISIONS.md` the dated log of what v1 decided on its own, and `docs/tech/v0-parity.md` the checklist of what has landed.

@@ -161,6 +161,18 @@ DODO_PRODUCTS = {
     "lifetime": os.environ.get("DODO_PRODUCT_LIFETIME", "").strip(),
 }
 
+# Generating topics from a sentence (card 30). Empty is the supported off
+# state: the pane is not drawn, the route 404s, and nothing on the editor
+# mentions it. The model is a setting rather than code because it is an
+# address at the provider's end, like a product id; how many generations
+# an account gets is product policy and lives in `apps/topics/generate.py`.
+# Spend is capped twice: by that allowance, and by a hard limit set on the
+# key in the provider's dashboard, which is the one that holds if the
+# first has a bug.
+OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "").strip()
+OPENROUTER_BASE_URL = os.environ.get("OPENROUTER_BASE_URL", "").strip() or "https://openrouter.ai/api/v1"
+OPENROUTER_MODEL = os.environ.get("OPENROUTER_MODEL", "").strip() or "google/gemini-2.5-flash-lite"
+
 # A Slack incoming webhook, for the handful of events somebody would act
 # on today; `apps/common/slack.py` holds the list and the test a seventh
 # has to pass. Empty is the supported off state and logs the line instead

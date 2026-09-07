@@ -54,3 +54,9 @@ DODO_BASE_URL = "https://test.invalid"
 # with several hundred invented ones. `tests/conftest.py` records what was
 # sent on top of this, and `test_slack.py` asserts both halves.
 SLACK_WEBHOOK_URL = ""
+
+# Blank, so no test can spend whatever a developer's .env holds; every
+# test that generates runs against `openrouter.RecordingGateway`, and a
+# test that wants the feature on sets the key itself.
+OPENROUTER_API_KEY = ""
+OPENROUTER_BASE_URL = "https://openrouter.invalid"

@@ -17,7 +17,16 @@ export type OwnedGenre = {
       it from a list instead of retyping it into existence. */
   own_styles: string[];
 };
-export type Mine = { genres: OwnedGenre[]; max_genres: number; max_topics: number };
+export type Mine = {
+  genres: OwnedGenre[];
+  max_genres: number;
+  max_topics: number;
+  /** Whether the model key is set at all. */
+  can_generate: boolean;
+  /** Zero both when the allowance is spent and when there is no key, so a
+      page asks one question and reads `can_generate` for which. */
+  generations_left: number;
+};
 export type SharedGenre = {
   name: string;
   icon: string;
@@ -27,7 +36,13 @@ export type SharedGenre = {
   topics: OwnedTopic[];
 };
 
-export const NO_GENRES: Mine = { genres: [], max_genres: 10, max_topics: 200 };
+export const NO_GENRES: Mine = {
+  genres: [],
+  max_genres: 10,
+  max_topics: 200,
+  can_generate: false,
+  generations_left: 0,
+};
 
 /** Every genre this account owns. Empty for a stranger and for a backend
     that is not answering, so the page draws rather than fails. */

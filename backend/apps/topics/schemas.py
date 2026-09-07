@@ -1,5 +1,6 @@
 from ninja import Field, Schema
 
+from apps.topics.generate import MAX_PROMPT
 from apps.topics.owned import MAX_STYLE
 
 
@@ -65,11 +66,18 @@ class OwnedGenreOut(Schema):
 
 class MineOut(Schema):
     """Every genre this account owns, with the caps beside them so the
-    page can say "3 of 10" without holding a second copy of the rule."""
+    page can say "3 of 10" without holding a second copy of the rule.
+
+    `generations_left` is zero both when the allowance is spent and when
+    there is no model key at all, so a page can ask one question;
+    `can_generate` is what says which of the two it is.
+    """
 
     genres: list[OwnedGenreOut]
     max_genres: int
     max_topics: int
+    can_generate: bool
+    generations_left: int
 
 
 class SharedGenreOut(Schema):
@@ -105,3 +113,16 @@ class TopicIn(Schema):
 
 class ShareOut(Schema):
     token: str | None
+
+
+class GenerateIn(Schema):
+    prompt: str = Field(max_length=MAX_PROMPT)
+
+
+class GeneratedOut(Schema):
+    """The genre as it now stands, how many lines landed, and what is left
+    of the allowance, so the page never has to ask a second time."""
+
+    genre: OwnedGenreOut
+    added: int
+    generations_left: int

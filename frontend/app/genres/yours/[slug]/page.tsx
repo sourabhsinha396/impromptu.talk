@@ -30,7 +30,8 @@ export default async function EditorRoute({ params }: Params) {
       genre={genre}
       styles={bank.styles}
       isPro={user.is_pro}
-      canGenerate={false}
+      canGenerate={mine.can_generate}
+      generationsLeft={mine.generations_left}
       maxTopics={mine.max_topics}
     />
   );

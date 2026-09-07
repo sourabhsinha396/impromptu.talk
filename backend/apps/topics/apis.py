@@ -1,15 +1,18 @@
-from django.http import HttpResponse
+from django.http import Http404, HttpResponse
 from ninja import Router, Status
 from ninja.errors import HttpError
 
 from apps.authentication.security import session_auth
 from apps.common.ratelimit import throttle
 from apps.payments import services as payments
-from apps.topics import owned
+from apps.topics import generate as generation
+from apps.topics import openrouter, owned
 from apps.topics.bank import STYLES
 from apps.topics.models import Genre, Topic
 from apps.topics.schemas import (
     BankOut,
+    GeneratedOut,
+    GenerateIn,
     GenreIn,
     MineOut,
     OwnedGenreOut,
@@ -86,6 +89,8 @@ def mine(request, response: HttpResponse):
         "genres": [_genre(genre) for genre in owned.mine(request.user)],
         "max_genres": owned.MAX_GENRES,
         "max_topics": owned.MAX_TOPICS,
+        "can_generate": openrouter.enabled(),
+        "generations_left": generation.left(request.user),
     }
 
 
@@ -134,6 +139,35 @@ def drop(request, slug: str, topic_id: int):
     genre = owned.by_slug(request.user, slug)
     owned.remove_topic(genre, topic_id)
     return _genre(genre)
+
+
+@api.post("/mine/{slug}/generate", auth=session_auth, response=GeneratedOut)
+# Slower and dearer than anything else here, so it is throttled in front
+# of the allowance as well: the allowance is the month's ceiling and this
+# is the minute's.
+@throttle("genre-generate", "10/hour")
+def write_topics(request, slug: str, payload: GenerateIn):
+    """Ask a model for twenty lines and add what comes back.
+
+    404 without a key, the same 404 as any route that does not exist,
+    rather than a button that is drawn and then refuses. The allowance is
+    spent whether or not the model answers, so a failure is a 502 and the
+    count on the page goes down: an account that could retry a failure
+    for free would have no ceiling at all.
+    """
+    if not openrouter.enabled():
+        raise Http404
+    _writer(request)
+    genre = owned.by_slug(request.user, slug)
+    try:
+        added, remaining = generation.generate(request.user, genre, payload.prompt)
+    except ValueError as exc:
+        raise HttpError(400, str(exc)) from exc
+    except generation.NoAllowanceLeft as exc:
+        raise HttpError(400, str(exc)) from exc
+    except openrouter.ModelError as exc:
+        raise HttpError(502, f"{exc} Nothing was added; that attempt still counts.") from exc
+    return {"genre": _genre(genre), "added": added, "generations_left": remaining}
 
 
 @api.post("/mine/{slug}/share", auth=session_auth, response=ShareOut)

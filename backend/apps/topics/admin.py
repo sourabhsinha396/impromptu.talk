@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from apps.topics.models import Genre, Topic
+from apps.topics.models import Generation, Genre, Topic
 
 
 class Shared(admin.SimpleListFilter):
@@ -43,3 +43,15 @@ class TopicAdmin(admin.ModelAdmin):
     list_filter = ("genre", "genre__owner", "style", "is_active")
     search_fields = ("text",)
     ordering = ("genre", "sort_order", "id")
+
+
+@admin.register(Generation)
+class GenerationAdmin(admin.ModelAdmin):
+    """What the model was asked and what it cost, which is the only place
+    the spend is visible before the provider's own dashboard."""
+
+    list_display = ("created_at", "user", "genre", "prompt", "model", "topics", "completion_tokens", "error")
+    list_filter = ("model",)
+    search_fields = ("prompt", "user__email", "error")
+    raw_id_fields = ("user", "genre")
+    date_hierarchy = "created_at"

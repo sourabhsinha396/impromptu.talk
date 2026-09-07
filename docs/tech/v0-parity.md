@@ -28,7 +28,7 @@ Ticked as of 2026-09-07, after cards 01 to 26.
 | `GET /pro`, `POST /pro` (currency) | `/pro` | 25 | [ ] |
 | `POST /pro/checkout`, `GET /pro/done` | `/api/v1/payments/checkout`, `/api/v1/payments/settle`, `/pro/done` | 26 | [x] The overlay is a dialog over the page, with the hosted checkout as the fallback on every failure |
 | `GET`/`POST /packs`, `GET /packs/{slug}`, topics add/edit/delete, `/delete` | `/genres/yours`, `/genres/yours/[slug]`, `v1/topics/mine` endpoints | 29 | [x] |
-| `POST /packs/{slug}/generate` | `/api/v1/topics/.../generate` | 30 | [ ] |
+| `POST /packs/{slug}/generate` | `POST /api/v1/topics/mine/{slug}/generate` | 30 | [x] |
 | (new) share an owned genre, `/g/[token]` | | 29 | [ ] |
 | `GET /affiliate`, `GET /affiliate/referrals`, `POST /affiliate/paypal` | same | 31 | [ ] |
 | `GET /administration`, `/staged-topic`, `GET`/`POST /pro`, `POST /pro/revoke`, `GET`/`POST /payouts`, `GET`/`POST /outreach` | same paths | 32 | [ ] |
@@ -150,7 +150,7 @@ Ticked as of 2026-09-07, after cards 01 to 26.
 - [x] Coined style: as typed, max 24, only in owned genres, built-in name gets the built-in, paste cannot coin (29). The paste gains a default style for untagged lines, which v0 had no equivalent of
 - [x] Editor: paste, inline edit, delete, share on and off, delete genre; the list is `/genres/yours`, not `/packs`; Pro required section (29). Adding is one card with a segment, the second half of which lands on 30
 - [x] Sharing: `/g/[token]`, noindex, "Practise this" into the picker for that visit, nothing copied and nothing written down (29, 08, 13)
-- [ ] Generate five from a prompt, five a month from rows, failed call spends one, off without a key (30)
+- [x] Generate twenty from a prompt, five a month counted from rows, failed call spends one, off without a key (30). Plain urllib rather than the `openai` SDK, `DECISIONS.md`
 - [x] Yours in the picker first with Pro, last without, never removed (13); lapsed subscriber keeps genres (29)
 
 ### Affiliates

@@ -25,16 +25,19 @@ export function Editor({
   styles,
   isPro,
   canGenerate,
+  generationsLeft,
   maxTopics,
 }: {
   genre: OwnedGenre;
   styles: Style[];
   isPro: boolean;
-  /** Card 30 sets the model key; with none there is no second way in. */
+  /** Whether the model key is set. With none there is no second way in. */
   canGenerate: boolean;
+  generationsLeft: number;
   maxTopics: number;
 }) {
   const [genre, setGenre] = useState(initial);
+  const [left, setLeft] = useState(generationsLeft);
   const [error, setError] = useState("");
   const base = `/api/v1/topics/mine/${encodeURIComponent(genre.slug)}`;
 
@@ -76,6 +79,37 @@ export function Editor({
     }
   }
 
+  /* The allowance is spent whether or not the model answers, so the count
+     comes back with the failure too and the page shows it going down. An
+     account that could retry a failure for free would have no ceiling. */
+  async function generate(prompt: string) {
+    setError("");
+    try {
+      const response = await fetch(`${base}/generate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt }),
+      });
+      const answer = (await response.json().catch(() => null)) as {
+        genre?: OwnedGenre;
+        added?: number;
+        generations_left?: number;
+        detail?: string;
+      } | null;
+      if (!response.ok) {
+        setError(answer?.detail ?? FAILED);
+        setLeft((spent) => Math.max(0, spent - 1));
+        return false;
+      }
+      if (answer?.genre) setGenre(answer.genre);
+      setLeft(answer?.generations_left ?? left);
+      return true;
+    } catch {
+      setError(FAILED);
+      return false;
+    }
+  }
+
   return (
     <main className="mx-auto w-full max-w-[960px] flex-1 px-[clamp(16px,4vw,32px)] pt-7 pb-16">
       <p className="mb-3.5 text-[13px] font-semibold text-muted">
@@ -107,7 +141,9 @@ export function Editor({
         <AddTopics
           styles={styles}
           canGenerate={canGenerate}
+          left={left}
           onPaste={(text, defaultStyle) => write("POST", `${base}/topics`, { text, default_style: defaultStyle })}
+          onGenerate={generate}
         />
       )}
 
@@ -139,17 +175,22 @@ export function Editor({
 function AddTopics({
   styles,
   canGenerate,
+  left,
   onPaste,
+  onGenerate,
 }: {
   styles: Style[];
   canGenerate: boolean;
+  left: number;
   onPaste: (text: string, defaultStyle: string) => Promise<boolean>;
+  onGenerate: (prompt: string) => Promise<boolean>;
 }) {
   /* Paste is the default way in because it always works: describing needs
      the model key and an allowance, and a default that is sometimes
      missing is not a default. */
   const [way, setWay] = useState<"paste" | "describe">("paste");
   const [text, setText] = useState("");
+  const [prompt, setPrompt] = useState("");
   const [defaultStyle, setDefaultStyle] = useState("just-talk");
   const [busy, setBusy] = useState(false);
   const real = styles.filter((style) => style.key !== "surprise");
@@ -162,6 +203,15 @@ function AddTopics({
     setBusy(true);
     try {
       if (await onPaste(text, defaultStyle)) setText("");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function describe() {
+    setBusy(true);
+    try {
+      if (await onGenerate(prompt)) setPrompt("");
     } finally {
       setBusy(false);
     }
@@ -219,10 +269,28 @@ function AddTopics({
           </div>
         </>
       ) : (
-        <p className="text-[13.5px] text-muted">
-          Say what you want to practise and twenty topics come back, yours to edit or delete. This lands with the next
-          card.
-        </p>
+        <>
+          <p className="mb-3 text-[13.5px] text-muted">
+            Say what you want to practise and twenty topics come back, yours to edit or delete.
+          </p>
+          <input
+            value={prompt}
+            maxLength={300}
+            placeholder="Behavioural questions for a first engineering job"
+            onChange={(event) => setPrompt(event.target.value)}
+            className="w-full rounded-[10px] border border-line-strong bg-card2 px-3.5 py-2.5 text-[15px] text-ink"
+          />
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+            {/* The count sits beside the button that spends it, on the page
+                before the press rather than as a refusal after it. */}
+            <span className="text-[13.5px] font-semibold text-muted">
+              {left === 0 ? "None left this month" : `${left} generation${left === 1 ? "" : "s"} left this month`}
+            </span>
+            <Button size="sm" disabled={busy || left === 0 || prompt.trim() === ""} onClick={describe}>
+              {busy ? "Writing them" : "Generate 20 topics"}
+            </Button>
+          </div>
+        </>
       )}
     </section>
   );

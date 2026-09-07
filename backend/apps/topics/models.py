@@ -80,3 +80,35 @@ class Topic(models.Model):
 
     def __str__(self) -> str:
         return self.text
+
+
+class Generation(models.Model):
+    """One ask of the model, kept whether or not it produced anything.
+
+    The row is the ceiling. The allowance is counted from these rather
+    than held as a column, for the reason the streak gives at length: a
+    stored count drifts the first time a retry or a clock change
+    surprises it. A failed call keeps its row too, with the reason in
+    `error` and no topics, because an account that can retry a failure
+    for free has no ceiling at all.
+
+    The genre is SET_NULL rather than CASCADE: deleting a genre must not
+    delete the evidence of what it cost to fill.
+    """
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="generations")
+    genre = models.ForeignKey(Genre, null=True, blank=True, on_delete=models.SET_NULL, related_name="generations")
+    prompt = models.CharField(max_length=300)
+    model = models.CharField(max_length=80, blank=True)
+    topics = models.PositiveIntegerField(default=0)
+    prompt_tokens = models.PositiveIntegerField(default=0)
+    completion_tokens = models.PositiveIntegerField(default=0)
+    error = models.CharField(max_length=300, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        db_table = "generations"
+        ordering = ("-created_at", "-id")
+
+    def __str__(self) -> str:
+        return f"{self.prompt[:40]} ({self.topics} topics)"
