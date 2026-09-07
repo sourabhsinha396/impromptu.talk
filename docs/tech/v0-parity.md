@@ -111,8 +111,9 @@ Ticked as of 2026-09-06, after cards 01 to 13.
 
 ### Streak
 
-- [ ] Derived from sessions, never stored; the visitor's local day via the UTC offset (16)
-- [ ] Whose runs count: an account across devices; an unclaimed device only its own (16)
+- [x] Derived from runs, never stored; each row's own local day via its stored offset; today from the request's clock (16)
+- [x] Whose runs count: an account across devices; an unclaimed device only its own (16)
+- [x] The rule is the plan's: free five days and no freezes, Pro the plan's length with two freezes a month; one summary per request feeds the pill, the done screen and `/streak` (16, owner's change from v0)
 - [ ] Pro freeze rule: two missed days a calendar month, all or nothing, repairs gaps behind you (16)
 - [ ] `/streak`: current streak, totals, eight-week and one-year calendars ending today (17)
 - [ ] Share token minted once, `/s/[token]` noindex, no off switch on the site (18)

@@ -33,3 +33,19 @@ export async function currentUser(): Promise<SessionUser | null> {
     return null;
   }
 }
+
+export type StreakSummary = { streak: number; topics: number; minutes: number };
+
+/** The streak, topics and minutes for the header pill, the same numbers
+    the round is told when it records. Zeros when the backend is
+    unreachable, which is what a stranger sees anyway. Today is the
+    timezone cookie's day, read by the backend off the forwarded cookies. */
+export async function streakSummary(): Promise<StreakSummary> {
+  try {
+    const response = await backendFetch("/api/v1/runs/summary");
+    if (!response.ok) return { streak: 0, topics: 0, minutes: 0 };
+    return (await response.json()) as StreakSummary;
+  } catch {
+    return { streak: 0, topics: 0, minutes: 0 };
+  }
+}

@@ -24,15 +24,15 @@ The difference between the shapes is what it takes to believe somebody has Pro. 
 - **Two more plans are given, not sold**: complimentary forever and a complimentary month, what an operator hands out at `/administration/pro`. They are plans rather than a lifetime row priced at nothing, because the plan is what an account page prints and what revenue is counted off, and a gift filed as a sale is a number somebody has to correct by hand. Neither has a product id, which is the same thing that switches a real plan off, so neither can reach a checkout.
 - **A plan is on sale only when both the provider key and its product id are set.** Missing either leaves the card reading "not open yet" rather than half-working. With no key at all, Pro is not linked from the menu or the footer.
 
-**Pro is**: the full practice history, owned genres and their sharing, the streak freeze rule, the colour, the model-generated topics allowance.
+**Pro is**: the full practice history, the streak tracked for as long as the plan lasts with the freeze rule, owned genres and their sharing, the colour, the model-generated topics allowance.
 
 ---
 
 ## 2. Free forever, and what was rejected
 
-**Free forever: the streak, unlimited practice runs, every built-in genre.** Each has a reason, and "we need revenue" is not a good enough argument to reverse any of them.
+**Free forever: a five-day streak, unlimited practice runs, every built-in genre.** Each has a reason, and "we need revenue" is not a good enough argument to reverse any of them.
 
-- The streak is the funnel, not the product. The reference product in this space converted a tenth of its users with the streak entirely free, and its operating rule is that any monetisation change that hurts retention is rolled back. Sell the freeze, never the streak.
+- The streak is the funnel, not the product. The reference product in this space converted a tenth of its users with the streak entirely free, and its operating rule is that any monetisation change that hurts retention is rolled back. Free keeps a streak, and what Pro sells is its length: free tracks five days (owner's call, 2026-09-07, changing v0's unbounded free streak), so the number never reads above five and a missed day ends it; Pro tracks as many days as the plan lasts, thirty for a month or the pass, 365 for a year and for lifetime, and gets the freeze rule. When Pro lapses the free rule takes over and the number drops to what five days can show. Nothing is deleted at either boundary: the rows stay, only the rule changes.
 - Unlimited runs, because the loop is the whole product and a run costs nothing to serve.
 - Every built-in genre, including any exam or profession genre that ever exists, because those pages are the growth engine. Paywalling them would block the best search channel the site has.
 
@@ -92,7 +92,7 @@ One price per plan is stored, in USD cents, and every other one is derived at re
 
 ## 6. The rules behind Pro
 
-**Streak freezes are a counting rule, not an inventory.** A Pro streak survives two missed days a calendar month. Two covers a weekend away, which is what people actually lose streaks to; per calendar month rather than per streak, so a long streak keeps being forgiven; small enough that practising every other day still breaks, which a streak that never breaks would not be worth having. There is no table, no balance and no SKU, because an inventory that can be spent, refunded, granted and drift out of step with the runs it protects is exactly the stored state the streak code exists to avoid. It cannot disagree with the sessions table, buying Pro repairs the gaps already behind you, and there is nothing to draw a "two left" control for.
+**The streak's length and its freezes are counting rules, not stored state.** Free counts at most five days back; a Pro plan counts as many days as it lasts, a year at most. A Pro streak survives two missed days a calendar month. Two covers a weekend away, which is what people actually lose streaks to; per calendar month rather than per streak, so a long streak keeps being forgiven; small enough that practising every other day still breaks, which a streak that never breaks would not be worth having. There is no table, no balance and no SKU, because an inventory that can be spent, refunded, granted and drift out of step with the runs it protects is exactly the stored state the streak code exists to avoid. It cannot disagree with the runs table, buying Pro repairs the gaps already behind you, and there is nothing to draw a "two left" control for.
 
 **Lifetime is safe because of the allowance.** History costs nothing at the margin, and the one thing that costs per use is metered below, so a $39 buyer's spend is bounded by rate and not by purchase.
 

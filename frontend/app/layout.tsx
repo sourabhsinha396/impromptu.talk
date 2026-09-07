@@ -8,7 +8,7 @@ import { Chat } from "@/components/site/chat";
 import { Footer } from "@/components/site/footer";
 import { Header } from "@/components/site/header";
 import { analyticsConfig } from "@/lib/analytics";
-import { currentUser } from "@/lib/api";
+import { currentUser, streakSummary } from "@/lib/api";
 import { DEVICE_COOKIE, deviceIdFrom, timezoneInit } from "@/lib/cookies";
 import { OG_IMAGE } from "@/lib/metadata";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/site";
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const [user, country, jar] = await Promise.all([currentUser(), visitorCountry(), cookies()]);
+  const [user, country, jar, practice] = await Promise.all([currentUser(), visitorCountry(), cookies(), streakSummary()]);
   const analytics = analyticsConfig();
   const crispWebsiteId = process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID ?? "";
 
@@ -69,10 +69,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         )}
         {crispWebsiteId && <Chat websiteId={crispWebsiteId} email={user?.email} name={user?.name} />}
         <div className="flex min-h-screen flex-col">
-          {/* The streak arrives with the streak cards; until then there is
-              none to show, and the pill stays absent as it does for a
-              stranger. */}
-          <Header user={user} streak={0} />
+          {/* Read once per page, server-side, off the same cookies the
+              round writes against; the pill is absent until there is a
+              streak. It catches up with a round on the next navigation,
+              as v0's did. */}
+          <Header user={user} streak={practice.streak} />
           {children}
           <Footer signedIn={user !== null} inIndia={country === "IN"} />
         </div>

@@ -86,3 +86,13 @@ def test_the_limit_is_per_device_not_per_address(client, db):
     assert refused.status_code == 429
     assert int(refused["Retry-After"]) >= 1
     assert post(Client()).status_code == 200
+
+
+def test_the_header_reads_the_same_numbers_the_round_was_told(client, db):
+    client.cookies["impromptu_tz"] = "Asia%2FKolkata"
+    told = post(client).json()
+    response = client.get(f"{RUNS}/summary")
+    assert response.status_code == 200
+    assert response.json() == told == {"streak": 1, "topics": 1, "minutes": 1}
+    assert response["Cache-Control"] == "private, no-store"
+    assert Client().get(f"{RUNS}/summary").json() == {"streak": 0, "topics": 0, "minutes": 0}
