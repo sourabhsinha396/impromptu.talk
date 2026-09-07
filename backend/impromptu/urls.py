@@ -3,6 +3,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.urls import path
 from ninja import NinjaAPI
 
+from apps.administration.apis import api as administration_api
 from apps.affiliates.apis import api as affiliates_api
 from apps.authentication.apis import api as auth_api
 from apps.common import ratelimit
@@ -19,6 +20,7 @@ api.add_router("v1/topics", topics_api)
 api.add_router("v1/runs", runs_api)
 api.add_router("v1/payments", payments_api)
 api.add_router("v1/affiliates", affiliates_api)
+api.add_router("v1/administration", administration_api)
 
 
 @api.exception_handler(ratelimit.RateLimited)

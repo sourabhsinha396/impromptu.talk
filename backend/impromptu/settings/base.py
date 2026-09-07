@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     "apps.runs",
     "apps.payments",
     "apps.affiliates",
+    "apps.administration",
 ]
 
 MIDDLEWARE = [
