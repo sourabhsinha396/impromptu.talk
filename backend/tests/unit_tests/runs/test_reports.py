@@ -122,6 +122,23 @@ class TestWhatIsStored:
             transcribe.use_gateway(None)
 
 
+class TestWhatIsReported:
+    def test_a_transcript_of_punctuation_reports_no_pace_rather_than_nought(self, db, groq):
+        groq.text = ". . ."
+        row = reports.make(RunFactory(spoken_seconds=60), SPOKE, audio=AUDIO)
+        shown = reports.render(row)
+        assert shown["words"] is None
+        assert shown["pace"] is None
+
+    def test_a_free_round_never_reports_a_filler_count(self, db, groq):
+        # Whisper deletes them before anybody asks, so a zero would be an
+        # undercount presented as a fact.
+        row = reports.make(RunFactory(spoken_seconds=60), SPOKE, audio=AUDIO)
+        shown = reports.render(row)
+        assert shown["words"] == 6
+        assert shown["fillers"] is None
+
+
 class TestWhoseAllowanceItIs:
     def test_an_account_spans_devices_and_a_stranger_only_sees_its_own(self, db, user, groq):
         reports.make(RunFactory(user=user, spoken_seconds=60), SPOKE, audio=AUDIO)

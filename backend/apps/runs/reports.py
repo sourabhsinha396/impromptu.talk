@@ -139,7 +139,11 @@ def render(row: Report, *, pro: bool = False) -> dict:
     because a year of trend cannot afford to parse a year of JSON.
     """
     measured = analysis.timing(row.segments, row.run.spoken_seconds)
-    transcribed = bool(row.transcript)
+    # Whether anything was actually said, which is not the same question as
+    # whether a transcript came back: a provider handed ". . ." for a tone
+    # and the page reported nought words a minute as though it were a fact
+    # about the speaker.
+    said = row.words > 0 or row.fillers > 0
     return {
         "heard": measured.heard,
         "speaking_seconds": measured.speaking_seconds,
@@ -151,8 +155,10 @@ def render(row: Report, *, pro: bool = False) -> dict:
         "trail_off": measured.trail_off,
         # Null rather than zero: nobody said no words, the round simply was
         # not transcribed, and a page has to be able to tell those apart.
-        "words": row.words if transcribed else None,
-        "pace": row.pace if transcribed else None,
+        "words": row.words if said else None,
+        # Pace needs words to pace. Nought a minute is never the answer; it
+        # means nobody counted, and the page should say nothing instead.
+        "pace": row.pace if row.words else None,
         # Only a provider that keeps disfluencies may report a filler
         # count. Whisper deletes them before anybody asks, so a zero from
         # Groq would be a systematic undercount presented as a fact.

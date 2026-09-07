@@ -74,6 +74,12 @@ class TestWords:
         assert words("", 60) is None
         assert words("   ", 60) is None
 
+    def test_a_transcript_holding_no_words_is_the_same_as_none(self):
+        # Groq answers a pure tone with ". . .", which is not a round of
+        # nought words a minute; it is a round nobody counted.
+        assert words(". . .", 60) is None
+        assert words("...!?", 60) is None
+
     def test_fillers_are_counted_and_then_left_out_of_the_count_and_the_pace(self):
         measured = words("um so uh we begin", 60)
         assert measured.fillers == 2

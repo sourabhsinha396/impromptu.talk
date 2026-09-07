@@ -227,19 +227,35 @@ export class Listener {
       // words still arrive, and only the timeline is missing.
     }
 
-    this.type = pickType();
-    if (this.type) {
-      try {
-        this.recorder = new MediaRecorder(this.stream, { mimeType: this.type });
-        this.recorder.ondataavailable = (event) => {
-          if (event.data.size) this.chunks.push(event.data);
-        };
-        this.recorder.start();
-      } catch {
-        this.recorder = null;
-      }
-    }
     return true;
+  }
+
+  /** The speaking minute starts here.
+
+      Split from `start` so the permission prompt lands on the topic screen
+      rather than on the clock. A browser asking for the microphone at the
+      instant somebody is meant to begin talking would cost them the
+      seconds they are being measured on, and it only ever happens on the
+      first round, which is the worst one to spoil.
+
+      Zeroing the levels here is what makes the timeline start at the first
+      spoken second rather than at the permission dialog, and holding the
+      recorder until now is what keeps prep out of the transcript and off
+      the bill. */
+  mark(): void {
+    this.levels = [];
+    this.chunks = [];
+    this.type = pickType();
+    if (!this.stream || !this.type) return;
+    try {
+      this.recorder = new MediaRecorder(this.stream, { mimeType: this.type });
+      this.recorder.ondataavailable = (event) => {
+        if (event.data.size) this.chunks.push(event.data);
+      };
+      this.recorder.start();
+    } catch {
+      this.recorder = null;
+    }
   }
 
   /** Stops everything and hands back what was heard. Safe to call twice

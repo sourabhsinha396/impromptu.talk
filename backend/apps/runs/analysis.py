@@ -239,6 +239,11 @@ def words(transcript: str, speaking_seconds: float) -> Words | None:
         return None
 
     tokens = _WORD.findall(transcript.lower())
+    # A transcript can be non-empty and still hold nothing anybody said:
+    # Groq answers a tone with ". . .". That is no more a round of nought
+    # words a minute than an empty one is, so it reports nothing.
+    if not tokens:
+        return None
     fillers = sum(1 for token in tokens if token in FILLERS)
     # Fillers are not words anybody said on purpose, so they are counted
     # and then left out of the count and the pace. A minute of "um" is not

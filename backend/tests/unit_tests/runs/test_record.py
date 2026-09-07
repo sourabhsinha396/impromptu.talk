@@ -27,9 +27,11 @@ def post(client, **over):
 def test_a_stranger_records_a_run_and_gets_the_scoreboard(client, db):
     response = post(client)
     assert response.status_code == 200
-    assert response.json() == {"streak": 1, "topics": 1, "minutes": 1}
-    assert DEVICE_COOKIE in response.cookies
     row = Run.objects.get()
+    # The id rides along so the browser can attach a report to the round it
+    # just finished; the pill's own answer never carries one.
+    assert response.json() == {"id": row.pk, "streak": 1, "topics": 1, "minutes": 1}
+    assert DEVICE_COOKIE in response.cookies
     assert (row.genre_slug, row.spoken_seconds, row.user) == ("general", 60, None)
     assert len(row.device_id) == 32
 
@@ -65,7 +67,8 @@ def test_a_value_no_person_could_have_produced_is_refused_at_the_edge(client, db
 def test_runs_add_up_for_one_device_and_devices_are_isolated(client, db):
     post(client)
     post(client, spoken_seconds=120)
-    assert post(client).json() == {"streak": 1, "topics": 3, "minutes": 4}
+    told = post(client).json()
+    assert {key: told[key] for key in ("streak", "topics", "minutes")} == {"streak": 1, "topics": 3, "minutes": 4}
     assert post(Client()).json()["topics"] == 1
 
 
@@ -93,6 +96,8 @@ def test_the_header_reads_the_same_numbers_the_round_was_told(client, db):
     told = post(client).json()
     response = client.get(f"{RUNS}/summary")
     assert response.status_code == 200
-    assert response.json() == told == {"streak": 1, "topics": 1, "minutes": 1}
+    numbers = {"streak": 1, "topics": 1, "minutes": 1}
+    assert response.json() == numbers
+    assert {key: told[key] for key in numbers} == numbers
     assert response["Cache-Control"] == "private, no-store"
     assert Client().get(f"{RUNS}/summary").json() == {"streak": 0, "topics": 0, "minutes": 0}

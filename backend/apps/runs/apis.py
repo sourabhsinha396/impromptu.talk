@@ -10,7 +10,7 @@ from apps.common.ratelimit import throttle
 from apps.payments import services as payments
 from apps.runs import history, reports, services, sharing, streaks
 from apps.runs.models import Run
-from apps.runs.schemas import HistoryOut, ReportOut, RunIn, SharedOut, ShareOut, SummaryOut
+from apps.runs.schemas import HistoryOut, RecordedOut, ReportOut, RunIn, SharedOut, ShareOut, SummaryOut
 
 api = Router(tags=["runs"])
 
@@ -31,7 +31,7 @@ def _scoreboard(summary: streaks.Summary) -> dict:
     return {"streak": summary.streak, "topics": summary.topics, "minutes": summary.minutes}
 
 
-@api.post("", response=SummaryOut)
+@api.post("", response=RecordedOut)
 # Keyed on the device rather than the address: a classroom behind one
 # address is many speakers, and nothing may stand in front of the
 # practice loop.
@@ -41,8 +41,8 @@ def record(request, payload: RunIn):
     done screen shows next. Open to strangers on purpose: the streak is
     the reason to come back tomorrow, and it starts before an account."""
     did, user = _who(request)
-    services.record(did, user, payload)
-    return _scoreboard(streaks.summary(did, payload.tz_offset, user, _rule(user)))
+    row = services.record(did, user, payload)
+    return {"id": row.pk, **_scoreboard(streaks.summary(did, payload.tz_offset, user, _rule(user)))}
 
 
 @api.get("/summary", response=SummaryOut)

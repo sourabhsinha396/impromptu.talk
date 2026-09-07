@@ -1,8 +1,10 @@
+import { RoundReport } from "@/components/round/report";
 import { Ring } from "@/components/round/ring";
 import { Button } from "@/components/site/button";
 import { FlameIcon, GenreIcon, MinutesIcon, PauseIcon, PlayIcon, StyleIcon, TopicsIcon } from "@/components/site/icons";
 import { LogoMark } from "@/components/site/logo";
 import type { Topic } from "@/lib/bank";
+import type { Report } from "@/lib/report";
 import { MAX_NOTE } from "@/lib/round/engine";
 
 /* The phases inside the round, as approved in docs/mocks/home.html. Each
@@ -206,11 +208,15 @@ export type Summary = { streak: number; topics: number; minutes: number };
 
 export function DonePhase({
   summary,
+  report,
+  spokenSeconds,
   signedIn,
   onAgain,
   onSame,
 }: {
   summary: Summary | null;
+  report: Report | "off" | null;
+  spokenSeconds: number;
   signedIn: boolean;
   onAgain: () => void;
   onSame: () => void;
@@ -219,12 +225,18 @@ export function DonePhase({
   return (
     <>
       <p className="font-display text-headline font-semibold">{headline}</p>
+      {/* The minute comes before the tiles. The streak is already in the
+          header pill on every page; the done screen's own job is to say
+          something about the sixty seconds that just happened. */}
+      <div className="mx-auto mt-8 w-full max-w-[640px]">
+        <RoundReport report={report} length={spokenSeconds} />
+      </div>
       {summary && (
         <div className="mx-auto mt-8 mb-9 w-full max-w-[640px]">
           <Stats streak={summary.streak} topics={summary.topics} minutes={summary.minutes} />
         </div>
       )}
-      <div className={`${ROW} ${summary ? "" : "mt-8"}`}>
+      <div className={ROW}>
         <Button size="lg" onClick={onAgain}>
           <LogoMark className="size-[1em]" />
           Spin again

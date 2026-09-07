@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 import { GenreSheet } from "@/components/round/genre-sheet";
 import { Idle } from "@/components/round/idle";
@@ -8,9 +8,11 @@ import { DonePhase, PrepPhase, SpeakPhase, TopicPhase, type Summary } from "@/co
 import { Reel } from "@/components/round/reel";
 import { SettingsSheet } from "@/components/round/settings-sheet";
 import { track } from "@/lib/analytics";
+import { attach, type Report } from "@/lib/report";
 import type { Bank } from "@/lib/bank";
 import { Engine, type Effect } from "@/lib/round/engine";
 import { Sound } from "@/lib/round/sound";
+import { Listener, NOTHING } from "@/lib/round/voice";
 
 /* The round on the page. The engine owns every rule; this component makes
    one, subscribes to it, renders whatever phase it is in, and hands back
@@ -35,14 +37,19 @@ function safeStorage(): Storage | null {
    shows. A failed write fails quietly and the done screen shows no
    numbers; the round already happened, and it is not the visitor's
    problem. */
-async function record(payload: Extract<Effect, { type: "record" }>["payload"]): Promise<Summary | null> {
+/* The run's answer carries its id as well as the numbers, so the report
+   can be attached to the round it describes. The done screen is handed
+   only the numbers, since the tiles have no use for a row id. */
+type Recorded = Summary & { id: number };
+
+async function record(payload: Extract<Effect, { type: "record" }>["payload"]): Promise<Recorded | null> {
   try {
     const response = await fetch("/api/v1/runs", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
-    return response.ok ? ((await response.json()) as Summary) : null;
+    return response.ok ? ((await response.json()) as Recorded) : null;
   } catch {
     return null;
   }
@@ -65,7 +72,16 @@ export function Round({
   const [engine, setEngine] = useState<Engine | null>(null);
   const [sound, setSound] = useState<Sound | null>(null);
   const [summary, setSummary] = useState<Summary | null>(null);
+  /* Three states, not two: null is waiting on the transcriber, "off" is a
+     round with no microphone behind it, and neither should draw the same
+     thing. Without the third the placeholder would pulse forever for
+     everybody who declined the prompt. */
+  const [report, setReport] = useState<Report | "off" | null>(null);
   const [sheet, setSheet] = useState<"genre" | "settings" | null>(null);
+  /* One listener for the life of the page. In a ref because nothing
+     renders differently for it existing: it is a microphone, not state. */
+  const listener = useRef<Listener | null>(null);
+  if (listener.current === null && typeof window !== "undefined") listener.current = new Listener();
 
   useEffect(() => {
     const made = new Engine({
@@ -79,7 +95,19 @@ export function Round({
       else if (effect.type === "track") track(effect.name, effect.props);
       else if (effect.type === "record") {
         setSummary(null);
-        void record(effect.payload).then(setSummary);
+        setReport(null);
+        /* Stopped before the run is written, so the recording is closed
+           while the POST is in flight rather than after it. */
+        const heard = listener.current?.stop() ?? Promise.resolve(NOTHING);
+        void record(effect.payload).then(async (answer) => {
+          setSummary(answer);
+          if (!answer) return;
+          const listened = await heard;
+          /* A refused or missing microphone has nothing to report, and the
+             round trip could only ever answer "we could not hear you". */
+          if (!listened.segments.length && !listened.audio) return setReport("off");
+          setReport((await attach(answer.id, listened)) ?? "off");
+        });
       }
     });
     if (made.arrive(new URLSearchParams(window.location.search))) {
@@ -94,6 +122,23 @@ export function Round({
   }, [bank]);
 
   useSyncExternalStore(engine?.subscribe ?? noop, engine?.snapshot ?? (() => 0), () => 0);
+
+  /* The microphone opens when the topic lands and the timeline starts when
+     the speaking does. Split so the permission prompt, which only ever
+     appears on somebody's first round, arrives while they are reading the
+     topic instead of at the instant they are meant to start talking. */
+  const phase = engine?.phase;
+  useEffect(() => {
+    const ears = listener.current;
+    if (!ears) return;
+    if (phase === "topic") void ears.start();
+    else if (phase === "speak") ears.mark();
+    else if (phase === "idle") void ears.stop();
+  }, [phase]);
+
+  /* Leaving the page with the microphone open is the one thing here that
+     outlives the round. */
+  useEffect(() => () => void listener.current?.stop(), []);
 
   /* Camera mode: the chrome hides while thinking and speaking. */
   const filming = engine?.filming ?? false;
@@ -231,6 +276,8 @@ export function Round({
       {engine.phase === "done" && (
         <DonePhase
           summary={summary}
+          report={report}
+          spokenSeconds={engine.spokeFor}
           signedIn={signedIn}
           onAgain={armed(() => engine.spin())}
           onSame={() => engine.sameTopic()}

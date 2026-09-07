@@ -26,6 +26,18 @@ class SummaryOut(Schema):
     minutes: int
 
 
+class RecordedOut(SummaryOut):
+    """The run POST's answer, which is the summary plus the row's id.
+
+    Its own schema rather than an id on `SummaryOut`, because the header
+    pill reads that one on every page and has no run to name. The id is
+    here so the browser can attach the report to the round it just
+    finished, on its own call.
+    """
+
+    id: int
+
+
 class DayOut(Schema):
     date: str
     count: int
