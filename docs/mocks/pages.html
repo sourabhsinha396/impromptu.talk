@@ -20,7 +20,7 @@
 /* the document frame, shared by all five pages */
 main.doc{display:block;max-width:720px;width:100%;margin:0 auto;padding:44px clamp(16px,4vw,32px) 72px;flex:1}
 .label{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
-.headline{font-family:var(--display);font-weight:600;letter-spacing:-.03em;font-size:clamp(2.1rem,6vw,3.2rem);line-height:1.03;margin:0 0 6px;text-wrap:balance}
+.headline{font-family:var(--display);font-weight:600;letter-spacing:-.02em;font-size:clamp(1.9rem,5vw,2.6rem);line-height:1.03;margin:0 0 6px;text-wrap:balance}
 .updated{font-size:13px;color:var(--muted);margin:18px 0 0}
 .prose{font-size:16.5px;line-height:1.65;margin-top:26px}
 .prose h2{font-family:var(--display);font-weight:600;font-size:21px;letter-spacing:-.02em;margin:34px 0 8px}
@@ -38,6 +38,8 @@ main.doc{display:block;max-width:720px;width:100%;margin:0 auto;padding:44px cla
 <span class="seg"><button data-width="desktop" class="on">Desktop</button><button data-width="phone">Phone</button></span>
 <span class="seg"><button data-notes class="on">Notes</button></span></div>
 <div class="notes"><h2>The five pages: one frame, and the facts v1 changed</h2><ul>
+<li><b>The heading is the page's name.</b> Owner's call, 2026-09-07: a document somebody opens to check a fact does not want a line of voice above the answer, so "Privacy Policy" and "Terms and Conditions" rather than "Almost nothing." and "The short version." The small label above the headline went with them; it only ever repeated the name.</li>
+<li><b>A policy explains itself and nothing else.</b> The refund page no longer says what is free, what Pro is or which shapes renew: that is the pricing page's job, and repeating it is a page that has to be read past.</li>
 <li><b>One document frame for all five.</b> 720px, a small label, the headline in the display face, then prose at 66 characters a line. v0's pages each carried their own width and heading sizes; a policy that looks like a different site on every page is a policy nobody finishes.</li>
 <li><b>Every number in the copy is v1's, not v0's.</b> A thousand topics across ten genres, four styles, a five day streak free. v0's pages said 800 across 20 and were already wrong on the day they shipped.</li>
 <li><b>The affiliate rate in the terms is read from the backend</b>, the same constant settlement pays. It is the one number in this prose that money depends on.</li>
@@ -51,8 +53,7 @@ main.doc{display:block;max-width:720px;width:100%;margin:0 auto;padding:44px cla
 <button class="iconbtn" aria-label="Account"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button></div></header>
 
 <section data-phase="about"><main class="doc">
-<p class="label">About us</p>
-<h1 class="headline">One topic you did not choose.</h1>
+<h1 class="headline">About</h1>
 <div class="prose">
 <p>impromptu.talk is a practice tool for speaking off the cuff. You press one button, a topic you did not pick lands in front of you, and you get a minute to think and a minute to talk. That is the whole product.</p>
 <h2>Why it exists</h2>
@@ -74,8 +75,7 @@ main.doc{display:block;max-width:720px;width:100%;margin:0 auto;padding:44px cla
 </main></section>
 
 <section data-phase="contact" hidden><main class="doc">
-<p class="label">Contact us</p>
-<h1 class="headline">Write to us.</h1>
+<h1 class="headline">Contact</h1>
 <div class="prose">
 <p>One inbox, read by a person: <a href="#">hello@impromptu.talk</a>. We usually reply within two working days.</p>
 <h2>Faster than email</h2>
@@ -91,8 +91,7 @@ main.doc{display:block;max-width:720px;width:100%;margin:0 auto;padding:44px cla
 </main></section>
 
 <section data-phase="refunds" hidden><main class="doc">
-<p class="label">Refund policy</p>
-<h1 class="headline">Seven days, no questions.</h1>
+<h1 class="headline">Refund Policy</h1>
 <p class="updated">Last updated 7 September 2026.</p>
 <div class="prose">
 <p>Almost all of impromptu.talk is free: the round, all thousand topics, the timers and a five day streak. The one thing you can buy is <a href="#">Pro</a>. It is sold two ways, and which one you are buying is on the card you buy it from, on your receipt, and in <a href="#">your account</a> afterwards.</p>

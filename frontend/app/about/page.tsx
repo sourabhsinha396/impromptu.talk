@@ -6,9 +6,9 @@ import { pageMetadata } from "@/lib/metadata";
 import { CONTACT_EMAIL, SITE_NAME } from "@/lib/site";
 
 export const metadata: Metadata = pageMetadata({
-  title: "About us",
+  title: "About",
   description:
-    "Why impromptu.talk exists: one random topic, a minute to think, a minute to talk. Free, no account, a thousand topics across ten genres.",
+    "What impromptu.talk is: a random topic, a minute to think, a minute to talk. Free, no account, a thousand topics across ten genres.",
   path: "/about",
 });
 
@@ -18,45 +18,44 @@ export const metadata: Metadata = pageMetadata({
    the count in one sentence rather than in four. */
 export default function AboutRoute() {
   return (
-    <Doc label="About us" headline="One topic you did not choose.">
+    <Doc name="About">
       <p>
-        {SITE_NAME} is a practice tool for speaking off the cuff. You press one button, a topic you did not pick lands
-        in front of you, and you get a minute to think and a minute to talk. That is the whole product.
+        {SITE_NAME} is a practice tool for speaking without preparation. You press one button, a topic you did not
+        choose appears, and you get a minute to think and a minute to talk.
       </p>
 
       <h2>Why it exists</h2>
       <p>
-        Most people are not bad at speaking. The fix is reps, and reps are hard to get alone, because the hard part is
-        being handed a subject you would never have chosen.
+        Speaking off the cuff improves with repetition, and repetition is hard to arrange alone, because the difficult
+        part is being handed a subject you would not have chosen. The topic is random for that reason: choosing your
+        own removes the difficulty you came to practise.
       </p>
-      <p>So the topic is random on purpose. Choosing your own quietly removes the difficulty you came to practise.</p>
 
-      <h2>How it works</h2>
+      <h2>What it includes</h2>
       <ul>
         <li>
-          A thousand topics across <A href="/genres">ten genres</A>: everyday life, work and interviews, money, tech,
-          science, health, philosophy and culture.
+          A thousand topics across <A href="/genres">ten genres</A>, covering everyday life, work and interviews,
+          money, technology, science, health, philosophy and culture.
         </li>
-        <li>Four styles. The same topic can be an open answer, a hot take, an explanation or a story.</li>
-        <li>Prep and speaking lengths you can change, a minute each to start.</li>
-        <li>A streak, counted from the rounds you finish, that starts before you have an account.</li>
+        <li>Four styles, so the same topic can be an open answer, an argument, an explanation or a story.</li>
+        <li>Prep and speaking lengths you can change, set to a minute each by default.</li>
+        <li>A streak counted from completed rounds, which works before you have an account.</li>
       </ul>
 
       <h2>What it costs</h2>
       <p>
-        Nothing, for the part you came for. There is no sign-up wall and no trial: an account is optional and carries
-        your streak between devices.
+        The round, the topic bank and a five day streak are free, with no registration required. An account is optional
+        and carries your streak between devices.
       </p>
       <p>
-        One thing is paid. <A href="/pro">Pro</A> keeps your whole history rather than the last few days, lets you
-        write <A href="/genres/yours">your own genres</A> and colours the page.
+        <A href="/pro">Pro</A> is the paid tier. It retains your full practice history, allows you to write your own
+        genres, and unlocks the accent colours.
       </p>
 
-      <h2>Who made it</h2>
+      <h2>Who runs it</h2>
       <p>
-        A small independent project, built and run by one person. Bugs, topic suggestions and complaints land in the
-        same inbox: <A href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</A>. More on{" "}
-        <A href="/contact">the contact page</A>.
+        An independent project, built and run by one person. Bugs, topic suggestions and complaints all reach the same
+        address: <A href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</A>. See <A href="/contact">contact</A>.
       </p>
 
       <div className="mt-7 flex flex-wrap items-center gap-3">
