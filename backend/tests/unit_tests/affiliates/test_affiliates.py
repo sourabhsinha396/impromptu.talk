@@ -13,7 +13,7 @@ from django.test import Client, override_settings
 from apps.affiliates import services
 from apps.affiliates.models import Payout
 from apps.common.referrals import REFERRAL_COOKIE
-from apps.payments import checkout, dodo
+from apps.payments import dodo
 from apps.payments.models import Purchase
 from tests.unit_tests import factories
 
