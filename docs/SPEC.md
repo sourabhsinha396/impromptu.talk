@@ -32,7 +32,7 @@ Everything else hangs off that loop and must never get in front of it.
 
 v1 is v0 rebuilt on Next.js and Django Ninja, in the shape of `../algoholic`, so that voice analysis and model-based feedback have somewhere to live later. Three rules govern every card, stated in full in `AGENTS.md`:
 
-1. **Parity first, and the look is not the parity.** Every v0 feature ships in v1 before any new one is discussed. v0 is the spec and the baseline and is read-only: port behaviour, rules, copy, algorithms and tests; never copy files, and never copy the UI. Every surface is redesigned from a mock the owner approves ([`UI.md`](UI.md)).
+1. **Parity first, and v0 is the record, not the authority.** Every v0 feature ships in v1 before any new one is discussed, so nothing is dropped. v0 had bad decisions and the rebuild improves them, in the UI, the backend and the tables alike; a v0 choice is kept because it is right, never because v0 made it, and a changed one is logged in [`DECISIONS.md`](DECISIONS.md). v0 is read-only: read its behaviour, rules, copy, algorithms and tests; never copy files, never copy the UI. Every surface is redesigned from a mock the owner approves ([`UI.md`](UI.md)).
 2. **Simple product.** An improvement earns its place by removing something. Django's own auth, sessions, hashers, migrations, mail and admin replace hand-rolled ones; shadcn replaces hand-rolled sheets and menus; a pure TypeScript run engine replaces DOM script. No caching layers, no queues, no webhooks.
 3. **The ten-second rule** above.
 

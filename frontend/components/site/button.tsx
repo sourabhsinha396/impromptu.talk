@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
    different accent. lib/palette.test.ts pins this. */
 
 type Variant = "primary" | "ghost";
-type Size = "sm" | "md" | "xl" | "icon";
+type Size = "sm" | "md" | "lg" | "xl" | "icon";
 
 const VARIANTS: Record<Variant, string> = {
   primary: "bg-btn text-btn-ink hover:bg-btn-strong disabled:hover:bg-btn",
@@ -25,14 +25,18 @@ const VARIANTS: Record<Variant, string> = {
   ghost: "border-line-strong text-muted hover:bg-card2 hover:text-ink",
 };
 
-/* Three sizes and a square. xl is the round's own button, wide enough to
-   be the obvious thing on a screen filmed from across a room. */
+/* Four sizes and a square. lg is every button in a round's row, primary
+   and ghost alike, so a row reads as one choice with a default and the
+   fill alone says which. xl is for a button standing on its own, like
+   Spin on the first screen, wide enough to be the obvious thing on a
+   screen filmed from across a room. */
 /* Each size names its line-height too: a text utility carries its own,
    and it would beat the base's `leading-none` and quietly add ten pixels
    to the xl button, which is the one whose height every row copies. */
 const SIZES: Record<Size, string> = {
   sm: "px-3.5 py-2 text-[13.5px]/none",
   md: "px-6 py-3 text-base/none",
+  lg: "px-7 py-4 text-[17px]/none",
   xl: "px-[46px] py-[17px] text-lg/none",
   icon: "p-3",
 };

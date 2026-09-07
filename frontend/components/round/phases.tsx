@@ -44,10 +44,9 @@ function Reset({ onReset, label = "Reset" }: { onReset: () => void; label?: stri
   );
 }
 
-/* One height for every button in a row led by the xl primary: three heights
-   in one row read as three unrelated things, one height reads as one choice
-   with a default. The primary keeps its width and its larger type. */
-const ROW = "flex flex-wrap items-center justify-center gap-3 *:min-h-[54px]";
+/* Every button in a row is the same size; the fill alone says which one
+   is the default. */
+const ROW = "flex flex-wrap items-center justify-center gap-3";
 
 export function TopicPhase({
   topic,
@@ -82,15 +81,15 @@ export function TopicPhase({
       </div>
       <p className="mt-5 mb-11 font-display text-topic font-semibold text-accent text-balance">{topic.text}</p>
       <div className={ROW}>
-        <Button size="xl" onClick={onThink}>
+        <Button size="lg" onClick={onThink}>
           {thinkLabel(prepSeconds)}
         </Button>
         {prepSeconds > 0 && (
-          <Button variant="ghost" onClick={onSpeakNow}>
+          <Button size="lg" variant="ghost" onClick={onSpeakNow}>
             Speak now
           </Button>
         )}
-        <Button variant="ghost" onClick={onSpin} aria-label="Spin for another topic">
+        <Button size="lg" variant="ghost" onClick={onSpin} aria-label="Spin for another topic">
           <LogoMark className="size-[18px]" />
           Spin
         </Button>
@@ -104,7 +103,7 @@ type Clock = { fraction: number; text: string; ending: boolean; paused: boolean 
 
 function PauseButton({ paused, onPause }: { paused: boolean; onPause: () => void }) {
   return (
-    <Button variant="ghost" onClick={onPause} aria-pressed={paused}>
+    <Button size="lg" variant="ghost" onClick={onPause} aria-pressed={paused}>
       {paused ? <PlayIcon /> : <PauseIcon />}
       {paused ? "Resume" : "Pause"}
     </Button>
@@ -152,7 +151,7 @@ export function PrepPhase({
         ))}
       </div>
       <div className={ROW}>
-        <Button size="xl" onClick={onSpeakNow}>
+        <Button size="lg" onClick={onSpeakNow}>
           Speak now
         </Button>
         <PauseButton paused={clock.paused} onPause={onPause} />
@@ -193,7 +192,7 @@ export function SpeakPhase({
         </div>
       )}
       <div className={ROW}>
-        <Button size="xl" onClick={onDone}>
+        <Button size="lg" onClick={onDone}>
           Done
         </Button>
         <PauseButton paused={clock.paused} onPause={onPause} />
@@ -228,11 +227,11 @@ export function DonePhase({
         </div>
       )}
       <div className={`${ROW} ${summary ? "" : "mt-8"}`}>
-        <Button size="xl" onClick={onAgain}>
+        <Button size="lg" onClick={onAgain}>
           <LogoMark className="size-[18px]" />
           Spin again
         </Button>
-        <Button variant="ghost" onClick={onSame}>
+        <Button size="lg" variant="ghost" onClick={onSame}>
           Same topic
         </Button>
       </div>
