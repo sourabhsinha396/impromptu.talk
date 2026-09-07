@@ -1,0 +1,424 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mock: the case you made</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..600&family=Plus+Jakarta+Sans:wght@400..700&display=swap" rel="stylesheet"><style>
+:root{color-scheme:light;--surface:#fff;--card:#fff;--card2:oklch(.965 .008 120);--ink:#1c1917;--muted:#57534e;--line:#e7e5e4;--line-strong:#918b87;
+--accent-h:120;--accent-c:.12;--accent-l:.5;--accent-l-strong:.42;--accent:oklch(var(--accent-l) var(--accent-c) var(--accent-h));--accent-strong:oklch(var(--accent-l-strong) var(--accent-c) var(--accent-h));
+--btn:#1c1917;--btn-ink:#fff;--btn-strong:#000;--note:oklch(.93 .13 118);--note-ink:oklch(.32 .06 120);--warn:oklch(.62 .2 30);
+--sans:"Plus Jakarta Sans",ui-sans-serif,system-ui,sans-serif;--display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;--header-h:60px}
+[data-theme=dark]{color-scheme:dark;--surface:#080808;--card:#161616;--card2:#101010;--ink:#f5f5f4;--muted:#a8a29e;--line:#292524;--line-strong:#6b6560;
+--accent-l:.796;--accent-l-strong:.86;--btn:#f5f5f4;--btn-ink:#111110;--btn-strong:#fff;--note:oklch(.86 .15 120);--note-ink:oklch(.2 .04 120);--warn:oklch(.75 .19 30)}
+*{box-sizing:border-box}html,body{margin:0}body{background:#3f3d3a;font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased}
+.mockbar{position:sticky;top:0;z-index:50;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:10px 16px;background:#26241f;color:#d6d3d1;font:600 12px/1 var(--sans);letter-spacing:.02em}
+.mockbar b{color:#fff;font-weight:700;margin-right:6px}.mockbar .seg{display:inline-flex;border:1px solid #57534e;border-radius:999px;overflow:hidden}
+.mockbar button{all:unset;cursor:pointer;padding:7px 12px;color:#d6d3d1}.mockbar button.on{background:#f5f5f4;color:#1c1917}
+.frame{margin:18px auto;max-width:1100px;background:var(--surface);color:var(--ink);box-shadow:0 20px 60px rgb(0 0 0/.35);position:relative;overflow:hidden}
+.phone .frame{max-width:390px}
+.framelabel{max-width:1100px;margin:26px auto 0;color:#d6d3d1;font:600 12px var(--sans);letter-spacing:.04em;text-transform:uppercase}
+.phone .framelabel{max-width:390px}
+.notes{max-width:1100px;margin:0 auto 40px;background:#fffbea;color:#3b2f0b;border-radius:14px;padding:18px 22px;font-size:14px;line-height:1.55}
+.notes h2{margin:0 0 8px;font:600 15px var(--sans)}.notes h3{margin:16px 0 6px;font:600 14px var(--sans)}.notes ul{margin:0;padding-left:18px}.notes li{margin:5px 0}.notes[hidden]{display:none}
+.notes code{background:#f3e9b8;padding:1px 5px;border-radius:4px;font-size:12.5px}
+.ico{flex:none}
+.topbar{height:var(--header-h);display:flex;align-items:center;padding:10px clamp(14px,4vw,28px);border-bottom:1px solid var(--accent)}
+.topbar-in{flex:1;display:flex;align-items:center;justify-content:space-between;max-width:80rem;margin-inline:auto}
+.wordmark{display:inline-flex;align-items:center;gap:8px;font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:-.02em;font-variation-settings:"wdth" 96;color:var(--ink);text-decoration:none}
+.wordmark i{color:var(--muted);font-weight:400;font-style:normal}.die{width:19px;height:19px;color:var(--accent)}
+.right{display:flex;align-items:center;gap:6px}
+.pill{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line-strong);background:var(--card2);border-radius:999px;padding:5px 11px;font-size:13.5px;font-weight:600}
+.pill b{color:var(--accent)}.pill .ico{color:var(--accent)}
+.iconbtn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border:1px solid var(--line-strong);background:var(--card2);color:var(--muted);border-radius:999px}
+.btn{font:inherit;font-weight:600;border-radius:999px;border:1px solid transparent;padding:14px 26px;cursor:pointer;line-height:1;display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-size:16px}
+.btn-primary{background:var(--btn);color:var(--btn-ink)}.btn-ghost{background:none;color:var(--muted);border-color:var(--line-strong)}
+[hidden]{display:none!important}
+
+/* the page */
+main{max-width:720px;margin:0 auto;padding:28px clamp(16px,4vw,32px) 56px}
+.crumb{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--muted);margin:0 0 6px}
+.crumb a{color:inherit;text-decoration:underline;text-underline-offset:4px}.crumb .g{display:inline-flex;align-items:center;gap:4px}.crumb .g .ico{color:var(--accent)}
+h1{font-family:var(--display);font-weight:600;letter-spacing:-.03em;font-variation-settings:"wdth" 96;font-size:clamp(1.6rem,4vw,2.2rem);line-height:1.1;margin:0}
+.sect{margin:34px 0 0}
+.sect-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:0 0 10px}
+.sect-h h2{font-family:var(--display);font-weight:600;letter-spacing:-.02em;font-variation-settings:"wdth" 96;font-size:17px;margin:0}
+.sect-h .c{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right}
+.line{font-size:14px;font-weight:600;margin:14px 0 0}
+.nums{font-size:12.5px;color:var(--muted);margin:6px 0 0;font-variant-numeric:tabular-nums}
+.faded{opacity:.5}
+.asbuilt{border:1px dashed var(--line-strong);border-radius:14px;display:grid;place-items:center;font-size:12.5px;color:var(--muted);padding:14px 16px;text-align:center;line-height:1.5}
+.tip{position:absolute;pointer-events:none;background:var(--card);border:1px solid var(--line-strong);border-radius:10px;padding:7px 10px;font-size:12px;line-height:1.4;box-shadow:0 8px 24px rgb(0 0 0/.14);max-width:34ch;z-index:5;display:none;color:var(--ink)}
+.tip b{display:block;font-size:12.5px;margin-bottom:2px}.tip span{color:var(--muted)}
+
+/* the minute, as built */
+.bar{position:relative;height:40px}
+.bar svg{display:block;width:100%;height:40px;overflow:visible}
+.bar i{position:absolute;top:50%;width:8px;height:8px;transform:translate(-50%,-50%);border-radius:999px;background:var(--warn);border:2px solid var(--surface);box-shadow:0 0 0 1px var(--warn);cursor:default}
+.clocks{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:4px;font-variant-numeric:tabular-nums}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:11.5px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;vertical-align:-1px;margin-right:5px}
+.legend i.dot{border-radius:999px;width:8px;height:8px;background:var(--warn)}
+.legend .wave{display:inline-flex;align-items:center;gap:1px;height:12px;vertical-align:-2px;margin-right:5px}
+.legend .wave b{display:block;width:2px;border-radius:2px;background:var(--accent)}
+.legend .ln{display:inline-block;width:14px;height:0;border-top:1.5px solid var(--line-strong);vertical-align:middle;margin-right:5px}
+.legend .ln.gap{border-top:3px solid var(--warn)}
+
+/* the case you made */
+.case{position:relative}
+.verdict{font-size:14px;line-height:1.5;margin:0}
+.verdict b{font-weight:600;margin-right:4px}
+.verdict b.yes{color:var(--accent-strong)}.verdict b.half{color:var(--ink)}.verdict b.no{color:var(--warn)}
+.strip{position:relative;height:46px;margin-top:16px}
+.strip .s{position:absolute;top:26px;height:14px;border-radius:3px;cursor:default}
+.strip .s.point{background:var(--accent-strong)}
+.strip .s.reason{background:var(--accent)}
+.strip .s.example{background:var(--accent);opacity:.42}
+.strip .s.aside{background:var(--line)}
+.strip .s.setup{border:1.5px dashed var(--line-strong);background:transparent}
+.strip .s.close{background:var(--ink)}
+.strip .flag{position:absolute;top:2px;font-size:11.5px;font-weight:600;color:var(--accent-strong);white-space:nowrap;font-variant-numeric:tabular-nums;line-height:1}
+.strip .flag i{position:absolute;left:0;top:14px;width:1px;height:10px;background:var(--accent-strong)}
+.strip .flag.end{transform:translateX(-100%)}.strip .flag.end i{left:auto;right:0}
+.strip .flag.none{color:var(--warn);right:0}.strip .flag.none i{display:none}
+.legend i.point{background:var(--accent-strong)}.legend i.reason{background:var(--accent)}.legend i.example{background:var(--accent);opacity:.42}
+.legend i.aside{background:var(--line)}.legend i.setup{border:1.5px dashed var(--line-strong);background:transparent}.legend i.close{background:var(--ink)}
+.next{font-size:13.5px;line-height:1.55;margin:16px 0 0}
+.next b{font-weight:600}
+
+/* free: one fixed sample, blurred */
+.sample .blur{filter:blur(5px);pointer-events:none;user-select:none}
+.sample .veil{position:absolute;inset:0;display:grid;place-items:center}
+.veil div{background:var(--card);border:1px solid var(--line-strong);border-radius:14px;padding:14px 18px;text-align:center;font-size:13.5px;line-height:1.5;box-shadow:0 8px 24px rgb(0 0 0/.12);max-width:36ch;margin:0 16px}
+.veil b{display:block;font-weight:600}
+.veil a{color:var(--accent-strong);font-weight:600}
+[data-theme=dark] .veil a{color:var(--accent)}
+
+/* the streak page's progress */
+.cards2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;position:relative}
+.phone .cards2{grid-template-columns:1fr}
+.card{border:1px solid var(--line);background:var(--card);border-radius:14px;padding:14px 16px 12px;min-width:0}
+.card .h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:12.5px}
+.card .h b{font-weight:600}.card .h span{font-weight:600;font-variant-numeric:tabular-nums}
+.card .m{font-size:11.5px;color:var(--muted);margin:2px 0 0}
+.squares{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin-top:12px}
+.squares i{display:block;aspect-ratio:1;border-radius:3px;background:var(--line);cursor:default}
+.squares i.yes{background:var(--accent)}
+.squares i.half{background:linear-gradient(to top,var(--accent) 50%,var(--line) 50%)}
+.squares i.no{background:color-mix(in oklab,var(--warn) 38%,transparent)}
+.ends{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:6px}
+.mini{margin-top:8px;height:52px}.mini svg{display:block;width:100%;height:52px;overflow:visible}
+.mini .band{fill:var(--accent);opacity:.12}.mini .path{fill:none;stroke:var(--accent);stroke-width:2;stroke-linejoin:round}
+.mini .area{fill:var(--accent);opacity:.1}.mini .pt{fill:var(--accent);stroke:var(--card);stroke-width:2}.mini .pt.out{fill:var(--warn)}
+.mini text{font:600 10.5px var(--sans);fill:var(--muted)}
+.subh{font-size:12.5px;font-weight:600;margin:22px 0 0}
+.subh span{color:var(--muted);font-weight:400}
+</style></head><body>
+<div class="mockbar"><b>Mock</b><span class="seg"><button data-tab="half" class="on">Pro, this round</button><button data-tab="yes">Pro, a good one</button><button data-tab="no">Pro, missed it</button><button data-tab="free">Free</button></span>
+<span class="seg"><button data-theme-set="light" class="on">Light</button><button data-theme-set="dark">Dark</button></span>
+<span class="seg"><button data-width="desk" class="on">Desktop</button><button data-width="phone">Phone</button></span>
+<span class="seg"><button data-notes class="on">Notes</button></span></div>
+
+<div class="notes"><h2>The case you made: what changes and why</h2>
+<p style="margin:0 0 8px">Everything on the round page today says how somebody spoke. Nothing on it can say whether they did what the topic asked. Run 30 is the case: "Argue for owning one good pen" got a story about a pen fight, the page reported 143 words a minute and one um, and the one thing a learner needed to hear was not on it. <code>SPEC.md</code> §14 deferred exactly this ("model-based critique of the argument, paid, via OpenRouter, fed the deterministic report"); on the owner's call today it moves to the front, Pro only, and Free sees a blurred sample of the same components. Two frames below: the round page with its new first section, then the bottom of the streak page with its new row.</p>
+<h3>What the model does, and what it never does</h3>
+<ul>
+<li><b>It is asked for structure, not prose.</b> It gets the topic, the sentences as the report already splits them, and the delivery facts (time to start, pace, the longest gap, whether the round ended on a full stop). It answers with a role for every sentence, one of six words; whether the topic was answered, one of three (yes, half, no); one sentence of verdict; one sentence to do next time. That is the whole answer, and it is stored once on the report row when the report attaches. Read a round in a year and it says the same thing, because nothing is asked twice.</li>
+<li><b>Never a score, never a rewrite, never a paragraph.</b> The three logged refusals hold. The verdict word is code from the category, the same word for the same category every time; only the two sentences are the model's, and each is capped at twenty-two words.</li>
+<li><b>Everything drawn is arithmetic over the roles and what is already stored.</b> The sentences already have word timings, so a role per sentence puts each role on the minute at its second. The point's clock, "answered 3 of your last 10", the ten squares and the time-to-your-point trend are all code over stored rows. The model draws nothing.</li>
+<li><b>Fed the delivery report so it cannot contradict it.</b> The next-time line on the good round says start the close ten seconds earlier, because the model was told the bell cut the last sentence. Without that it would have praised the ending.</li>
+</ul>
+<h3>The section, top to bottom</h3>
+<ul>
+<li><b>First on the page, above pace.</b> The topic asked for something; this is whether it was given. How the minute sounded comes after what it said.</li>
+<li><b>The verdict.</b> A word in the accent when the topic was answered, in ink when half, in the warm colour when missed; then the model's one sentence. "Half answered" is a real state, and the commonest: the point made in the first breath and then abandoned for the story, which is what run 30 did.</li>
+<li><b>The sentences on the minute.</b> Every sentence is a block from its first word to its last, coloured by what it was doing. The point in the strong accent, a reason in the accent, an example paler, an aside grey, a wind-up hollow and dashed (talk that has not started yet), the close in ink. Run 30 reads at a glance: one short strong block at 0:02, then forty-eight seconds of pale example, and nothing in ink at the end. Hover a block for the sentence.</li>
+<li><b>The point, flagged at its second.</b> "Your point, 0:02" stands over the block that made it. When no sentence made one, "no point made" sits at the right end in warm, which is the whole finding for the third tab.</li>
+<li><b>A legend of only the roles this round used.</b> Six squares under every round would be a lesson; three under this one is a key.</li>
+<li><b>Next time.</b> One sentence, plain, about the case and not the delivery, since the bands already carry delivery advice behind "What to do". This one is not behind a disclosure: it is the reason the section exists.</li>
+</ul>
+<h3>The six roles</h3>
+<ul>
+<li><b>The point</b>: the sentence that does what the topic asked. The claim for an argument, the thing itself for an explanation, the premise for a story.</li>
+<li><b>A reason</b>: why the point holds. <b>An example</b>: a story or a case that shows it. Both are support; the colours say which kind, because a minute of examples with no reason and a minute of reasons with no example are different habits.</li>
+<li><b>Wind-up</b>: restating the topic, saying that it matters, clearing the throat in words. The stall band catches silence before the first word; this catches the ten seconds of talk before the first thought, which the bands cannot see.</li>
+<li><b>An aside</b>: off the point. <b>The close</b>: the sentence that lands it again or wraps up.</li>
+</ul>
+<h3>On the streak page</h3>
+<ul>
+<li><b>Two cards under the three trend cards</b>, one row, so a phone stacks them and a laptop does not wrap two and one. <b>Answered the topic</b>: ten squares for the last ten rounds, oldest to latest, filled when answered, half filled when half, a warm tint when missed; the number is how many were answered. <b>Time to your point</b>: the same card as time to start, seconds on the clock until the point was made, lower is better, the comfortable stretch under 12 seconds shaded. Rounds with no point have no time and are left off this line; the squares beside it already show them.</li>
+<li>Both are the "am I improving" question about the case, which is the question the progress page is for. The three cards today are all about delivery.</li>
+</ul>
+<h3>Free</h3>
+<ul>
+<li><b>The same section and the same row, from one fixed sample round, blurred, with one line.</b> The sample is the promotion story on the second tab, the same round for everybody, and its header says "a sample". Not their own round blurred: the model never ran on a free round, so there is nothing of theirs to blur, and a blur over something unseen reads as a bug rather than a door. The line is the streak page's own pitch pattern (a sentence and a link into <code>/pro</code>): "Pro reads what you said."</li>
+<li>Free's own round page keeps everything it has today, unblurred, above and below the sample.</li>
+</ul>
+<h3>Where it runs, and what it costs</h3>
+<ul>
+<li>Once, when the report attaches, for a Pro round that got a transcript. The done screen already fills the report in when it arrives; this adds a model call to that wait and nothing to the run POST. A refusal, an empty answer, an answer in the wrong shape or fifteen seconds of silence leaves the report exactly as it is, and the page shows no section rather than an apology.</li>
+<li><b>No new allowance.</b> The call needs a transcript, transcripts are already metered in minutes, and a Pro month is two hours of them; at the model's rate that ceiling is a few cents. The same client and the same model as topic generation (<code>apps/topics/openrouter.py</code>, Gemini 2.5 Flash-Lite via OpenRouter), moved to <code>apps/common/</code> now that two apps call it.</li>
+<li>Older Pro rounds from before this show no section. Nothing is read after the fact.</li>
+<li><b>Not on the done screen.</b> It stays a moment, and "See the full report" is already there. If you want the verdict line under the done screen's headline, say so; it is a line, not a card.</li>
+<li>The privacy page gains one sentence: a Pro transcript reaches a model. The transcript already reaches a transcriber, and the page says that.</li>
+</ul>
+<h3>To approve or change</h3>
+<ul><li>The section's place (first). The word "point" over "claim" (it has to fit a story and an explanation too). The six roles and their colours. "Answered it", "Half answered", "Missed it". The two cards. The sample and its one line.</li></ul>
+</div>
+
+<div class="framelabel">The round page</div>
+<div class="frame">
+<header class="topbar"><div class="topbar-in"><a class="wordmark" href="#"><svg class="die" viewBox="0 0 32 32" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4.6 26.4 10.6 26.4 21.4 16 27.4 5.6 21.4 5.6 10.6z"/><path d="M5.6 10.6 16 16 26.4 10.6M16 16v11.4"/></g><g fill="currentColor"><circle cx="16" cy="10.45" r="1.5"/><circle cx="8.9" cy="15.55" r="1.5"/><circle cx="12.71" cy="22.15" r="1.5"/><circle cx="21.2" cy="18.85" r="1.5"/><circle cx="23.11" cy="15.55" r="1.5"/><circle cx="19.29" cy="22.15" r="1.5"/></g></svg><span>impromptu<i>.talk</i></span></a><div class="right"><span class="pill"><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg><b>1</b></span><span class="iconbtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span></div></div></header>
+
+<main>
+<p class="crumb"><a href="#">Your streak</a><span aria-hidden>/</span><span>7 September</span><span class="g"><svg class="ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="12" height="12" x="2" y="10" rx="2" ry="2"/><path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6"/><path d="M6 18h.01"/><path d="M10 14h.01"/><path d="M15 6h.01"/><path d="M18 9h.01"/></svg><span id="genre">General</span></span></p>
+<h1 id="topic"></h1>
+
+<section class="sect faded" style="margin-top:28px">
+  <div class="bar" id="bar" role="img"></div>
+  <div class="clocks"><span>0:00</span><span id="endclock"></span></div>
+  <div class="legend" id="barkey"></div>
+  <p class="line" id="headline"></p>
+  <p class="nums" id="nums"></p>
+</section>
+
+<section class="sect case" id="case">
+  <div class="sect-h"><h2>The case you made</h2><span class="c" id="casec"></span></div>
+  <div class="blur" id="casebody">
+    <p class="verdict" id="verdict"></p>
+    <div class="strip" id="strip"></div>
+    <div class="clocks"><span>0:00</span><span id="stripend"></span></div>
+    <div class="legend" id="stripkey"></div>
+    <p class="next" id="next"></p>
+  </div>
+  <div class="veil" id="caseveil" hidden><div><b>Pro reads what you said.</b>Did you answer it, where your point came, what to do next time. <a href="#">See Pro</a></div></div>
+</section>
+
+<section class="sect faded"><div class="asbuilt" style="height:150px">Pace through the minute, the shape of your round, words you leaned on,<br>sentences, the three tiles, read it back: as built, unchanged</div></section>
+</main>
+</div>
+
+<div class="framelabel">The streak page, the progress section</div>
+<div class="frame">
+<main style="padding-top:22px">
+<div class="faded">
+  <section class="sect" style="margin-top:0"><div class="sect-h"><h2>Progress</h2><span class="c">10 rounds since 29 August</span></div>
+  <div class="asbuilt" style="height:120px">Time to start, longest gap, ums a minute: the three trend cards, as built</div></section>
+</div>
+<section class="sect" style="margin-top:0">
+  <p class="subh" id="subh">What you said</p>
+  <div class="cards2 case" id="cards">
+    <div class="blur" id="cardsbody" style="display:contents"></div>
+    <div class="veil" id="cardsveil" hidden><div><b>Pro reads what you said.</b>Whether you answered the topic, and how fast you got to the point. <a href="#">See Pro</a></div></div>
+  </div>
+</section>
+<section class="sect faded"><div class="asbuilt" style="height:96px">Your first minute, and your latest: as built</div></section>
+</main>
+</div>
+
+<div class="tip" id="tip"></div>
+
+<script>
+const AWK = 1.5;
+const POINT_BY = 12;
+const ROLE_WORD = { point: 'the point', reason: 'a reason', example: 'an example', aside: 'an aside', setup: 'wind-up', close: 'the close' };
+const ANSWER_WORD = { yes: 'Answered it.', half: 'Half answered.', no: 'Missed it.' };
+
+/* Ten rounds, oldest to latest, the latest being the round on the page.
+   Only the last entry differs between the Pro tabs. */
+const DAYS = ['29 Aug', '30 Aug', '31 Aug', '1 Sep', '2 Sep', '3 Sep', '4 Sep', '5 Sep', '6 Sep', '7 Sep'];
+const PAST = { answered: ['no', 'no', 'half', 'no', 'yes', 'half', 'yes', 'yes', 'half'], point: [null, null, 41, null, 14, 22, 9, 6, 12] };
+const history = (answered, point) => ({ answered: [...PAST.answered, answered], point: [...PAST.point, point] });
+
+const ROUNDS = {
+  half: {
+    topic: 'Argue for owning one good pen', genre: 'General', spoken: 58, first_word: 2.13, last_word: 54.73, longest: 2.65,
+    pauses: [{"at":2.98,"seconds":0.66},{"at":5.32,"seconds":0.65},{"at":10.13,"seconds":2.19,"awkward":true},{"at":14.18,"seconds":0.63},{"at":15.25,"seconds":0.9},{"at":16.93,"seconds":0.5},{"at":18.22,"seconds":0.99},{"at":20.39,"seconds":0.91},{"at":22.42,"seconds":0.34},{"at":25.78,"seconds":0.45},{"at":26.62,"seconds":0.91},{"at":29.85,"seconds":2.65,"awkward":true},{"at":33.08,"seconds":0.37},{"at":36.14,"seconds":0.46},{"at":38.21,"seconds":1.16},{"at":39.5,"seconds":0.84},{"at":43.72,"seconds":0.58},{"at":45.84,"seconds":2.32,"awkward":true},{"at":49.24,"seconds":0.52},{"at":50.43,"seconds":2.13,"awkward":true}],
+    fillers: [{ word: 'um', at: 41.08 }],
+    headline: '4 gaps long enough to notice.', nums: '4 long gaps  ·  0:02 to start  ·  143 wpm  ·  1 um',
+    answered: 'half',
+    verdict: 'You said a good pen matters at 0:02, then told the pen fight story and never came back to owning one.',
+    next: 'After the story, come back. One sentence on why one good pen is worth owning, then stop.',
+    sentences: [
+      { at: 2.13, end: 5.1, role: 'point', text: 'A good pen is very essential for a pen fight.' },
+      { at: 6.0, end: 26.5, role: 'example', text: 'I remember the days when I used to play pen fight with my friend named Mukesh, and I had a pen which was of my father, and it was having a steel body, very, very heavyweight pen, and that I used, and that I used to fight, and most of the time I used to win.' },
+      { at: 27.5, end: 29.8, role: 'example', text: 'The thing is that he quickly understood that I am winning because of my pen.' },
+      { at: 32.5, end: 37.7, role: 'example', text: 'And then his target became to defeat me using a 2 rupee penny.' },
+      { at: 38.0, end: 45.5, role: 'example', text: 'And yeah, um but I always had that advantage, and most of the time I won the fight.' },
+      { at: 45.6, end: 54.4, role: 'example', text: 'He was also very good with it, but eventually he lost most of the time.' },
+    ],
+    history: history('half', 2),
+  },
+  yes: {
+    topic: 'A promotion you did not want', genre: 'Career & work', spoken: 60, first_word: 2.79, last_word: 59.6, longest: 3.19,
+    pauses: [{"at":2.93,"seconds":0.35},{"at":3.59,"seconds":0.34},{"at":6.11,"seconds":0.34},{"at":6.76,"seconds":0.35},{"at":8.18,"seconds":2.07,"awkward":true},{"at":10.56,"seconds":0.35},{"at":11.61,"seconds":0.34},{"at":12.83,"seconds":0.34},{"at":13.6,"seconds":0.34},{"at":14.16,"seconds":0.35},{"at":15.71,"seconds":2.56,"awkward":true},{"at":19.4,"seconds":0.35},{"at":20.06,"seconds":0.34},{"at":22.07,"seconds":1.14},{"at":25.53,"seconds":3.19,"awkward":true},{"at":32.96,"seconds":1.8,"awkward":true},{"at":36.09,"seconds":0.34},{"at":39.26,"seconds":0.34},{"at":39.91,"seconds":0.35},{"at":41.07,"seconds":1.66,"awkward":true},{"at":43.92,"seconds":0.34},{"at":44.81,"seconds":0.52},{"at":46.61,"seconds":3.06,"awkward":true},{"at":49.89,"seconds":0.51},{"at":50.74,"seconds":0.51},{"at":51.89,"seconds":0.52},{"at":52.87,"seconds":0.52},{"at":56.99,"seconds":0.51},{"at":57.97,"seconds":0.52}],
+    fillers: [{ word: 'um', at: 3.28 }, { word: 'uh', at: 6.45 }, { word: 'um', at: 10.25 }, { word: 'um', at: 19.75 }, { word: 'uh', at: 23.87 }, { word: 'um', at: 29.4 }, { word: 'um', at: 39.6 }, { word: 'um', at: 52.41 }, { word: 'uh', at: 57.5 }],
+    headline: 'You said um 9 times. Pause instead.', nums: '6 long gaps  ·  0:03 to start  ·  128 wpm  ·  9 um',
+    answered: 'yes',
+    verdict: 'The story you were asked for: the point in the first sentence, three reasons, then what happened.',
+    next: 'Start the close ten seconds earlier, so the lesson lands before the bell.',
+    sentences: [
+      { at: 2.79, end: 8.0, role: 'point', text: 'So, um, I got offered a promotion last year and, uh, I did not want it.' },
+      { at: 10.2, end: 12.6, role: 'reason', text: 'Um, the thing is, I liked my job.' },
+      { at: 13.2, end: 15.5, role: 'reason', text: 'I liked, like, actually doing the work.' },
+      { at: 18.3, end: 21.9, role: 'reason', text: 'And the promotion was, um, basically managing people who did the work.' },
+      { at: 23.2, end: 25.4, role: 'example', text: 'So I said, uh, I said I would think about it.' },
+      { at: 28.7, end: 32.8, role: 'example', text: 'And then I, um, I avoided my manager for like two weeks, which, yeah, was not great.' },
+      { at: 34.8, end: 35.8, role: 'example', text: 'Eventually I told her the truth.' },
+      { at: 36.4, end: 40.9, role: 'example', text: 'I said I would rather be really good at this than, um, average at that.' },
+      { at: 42.7, end: 44.3, role: 'example', text: 'She was fine with it, actually.' },
+      { at: 45.3, end: 46.3, role: 'example', text: 'Better than fine.' },
+      { at: 49.7, end: 59.2, role: 'close', text: 'So, yeah, I think, um, I think the lesson is you can say no and, uh, and the world' },
+    ],
+    history: history('yes', 3),
+  },
+  no: {
+    topic: 'Explain compound interest to a child', genre: 'Money', spoken: 60, first_word: 3.4, last_word: 55.0, longest: 3.1,
+    pauses: [{ at: 7.2, seconds: 0.6 }, { at: 9.8, seconds: 0.8 }, { at: 13.5, seconds: 0.5 }, { at: 17.2, seconds: 0.8 }, { at: 21.0, seconds: 0.4 }, { at: 24.5, seconds: 1.6, awkward: true }, { at: 29.4, seconds: 0.7 }, { at: 33.0, seconds: 1.2 }, { at: 37.6, seconds: 0.5 }, { at: 41.7, seconds: 1.3 }, { at: 44.9, seconds: 0.4 }, { at: 46.9, seconds: 3.1, awkward: true }, { at: 52.3, seconds: 0.6 }],
+    fillers: [{ word: 'um', at: 12.1 }, { word: 'uh', at: 35.0 }],
+    headline: 'Your longest gap was 3 seconds.', nums: '2 long gaps  ·  0:03 to start  ·  121 wpm  ·  2 um',
+    answered: 'no',
+    verdict: 'You said compound interest matters and never said what it is.',
+    next: 'Say the thing itself first: interest that earns interest. Then one example a child could repeat.',
+    sentences: [
+      { at: 3.4, end: 9.8, role: 'setup', text: 'So compound interest is something you hear about a lot with banks and savings accounts.' },
+      { at: 10.6, end: 17.2, role: 'aside', text: 'My dad always said you should put money in the bank early, which I never really did.' },
+      { at: 18.0, end: 24.5, role: 'reason', text: 'Banks give you interest, which is like a little bit of extra money for keeping it there.' },
+      { at: 26.1, end: 33.0, role: 'aside', text: 'And I think the rates now are quite low, so people put money in other things, like stocks or property.' },
+      { at: 34.2, end: 41.7, role: 'setup', text: "Anyway, the compound part is basically the important bit, and it's why people say start early." },
+      { at: 43.0, end: 46.8, role: 'aside', text: 'I wish somebody had explained it to me properly when I was a kid, honestly.' },
+      { at: 50.0, end: 55.0, role: 'close', text: "So yeah, that's compound interest, more or less." },
+    ],
+    history: history('no', null),
+  },
+};
+
+const clock = s => { const w = Math.max(0, Math.round(s)); return `${Math.floor(w / 60)}:${String(w % 60).padStart(2, '0')}`; };
+const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text !== undefined) n.textContent = text; return n; };
+const tip = document.getElementById('tip');
+function showTip(html, x, y) { tip.innerHTML = html; tip.style.display = 'block'; tip.style.left = (x + 12) + 'px'; tip.style.top = (y + window.scrollY - 10) + 'px'; }
+function hideTip() { tip.style.display = 'none'; }
+document.addEventListener('scroll', hideTip, true);
+
+/* The minute as built on the round page, faded here for its place. */
+const HEIGHTS = [0.55, 0.9, 0.7, 1, 0.6, 0.85, 0.75, 0.95];
+function bar(d) {
+  const host = document.getElementById('bar'); host.replaceChildren();
+  const L = d.spoken; const marks = []; let k = 0;
+  const talk = (from, to) => { const a = from / L * 100, b = to / L * 100, w = b - a; if (w <= 0) return; let x = w < 1 ? a + w / 2 : a + 0.5; for (; x < b; x += 1) { const edge = x - a < 1 || b - x < 1; marks.push({ stroke: true, x, h: HEIGHTS[k++ % HEIGHTS.length] * (edge ? 0.5 : 1) }); } };
+  const quiet = (from, to, gap) => { if (to <= from) return; marks.push({ stroke: false, a: from / L * 100, b: to / L * 100, gap }); };
+  let cur = 0;
+  quiet(0, d.first_word, d.first_word >= AWK); cur = d.first_word;
+  for (const p of d.pauses) { talk(cur, p.at); quiet(p.at, p.at + p.seconds, p.awkward); cur = p.at + p.seconds; }
+  talk(cur, d.last_word);
+  const S = (tag, attrs) => { const n = document.createElementNS('http://www.w3.org/2000/svg', tag); for (const a in attrs) n.setAttribute(a, attrs[a]); return n; };
+  const svg = S('svg', { viewBox: '0 0 100 40', preserveAspectRatio: 'none', role: 'img' });
+  for (const m of marks) {
+    if (m.stroke) { svg.appendChild(S('line', { x1: m.x, x2: m.x, y1: 20 - m.h * 18, y2: 20 + m.h * 18, stroke: 'var(--accent)', 'stroke-width': 1.5, 'stroke-linecap': 'round', 'vector-effect': 'non-scaling-stroke' })); continue; }
+    svg.appendChild(S('line', { x1: m.a, x2: m.b, y1: 20, y2: 20, stroke: m.gap ? 'var(--warn)' : 'var(--line-strong)', 'stroke-width': m.gap ? 3 : 1.5, 'vector-effect': 'non-scaling-stroke' }));
+  }
+  host.appendChild(svg);
+  for (const f of d.fillers) { const i = el('i'); i.style.left = (f.at / L * 100) + '%'; host.appendChild(i); }
+  document.getElementById('endclock').textContent = clock(L);
+  const key = document.getElementById('barkey'); key.replaceChildren();
+  const wave = el('span'); const w = el('i', 'wave'); [8, 12, 10].forEach(h => { const b = el('b'); b.style.height = h + 'px'; w.appendChild(b); }); wave.append(w, 'talking'); key.appendChild(wave);
+  const k2 = (cls, label) => { const s = el('span'); s.append(el('i', cls), label); key.appendChild(s); };
+  k2('ln', 'a breath'); k2('ln gap', 'a gap you would notice'); if (d.fillers.length) k2('dot', 'an um');
+  document.getElementById('headline').textContent = d.headline;
+  document.getElementById('nums').textContent = d.nums;
+}
+
+/* The case: the verdict, the sentences on the minute by role, the point
+   flagged at its second, a key of only the roles used, and next time. */
+function theCase(d, sample) {
+  const yes = d.history.answered.filter(a => a === 'yes').length;
+  document.getElementById('casec').textContent = sample ? 'a sample' : `answered ${yes} of your last 10 rounds`;
+  const v = document.getElementById('verdict'); v.replaceChildren(el('b', d.answered, ANSWER_WORD[d.answered]), d.verdict);
+  const strip = document.getElementById('strip'); strip.replaceChildren();
+  const L = d.spoken;
+  for (const s of d.sentences) {
+    const b = el('span', 's ' + s.role); b.style.left = (s.at / L * 100) + '%'; b.style.width = `calc(${(s.end - s.at) / L * 100}% - 2px)`;
+    b.addEventListener('pointermove', e => showTip(`<b>${ROLE_WORD[s.role][0].toUpperCase() + ROLE_WORD[s.role].slice(1)} · ${clock(s.at)}</b><span>${s.text}</span>`, e.clientX, e.clientY));
+    b.addEventListener('pointerleave', hideTip);
+    strip.appendChild(b);
+  }
+  const point = d.sentences.find(s => s.role === 'point');
+  if (point) {
+    const late = point.at / L > 0.72;
+    const f = el('span', 'flag' + (late ? ' end' : ''), `your point, ${clock(point.at)}`); f.style.left = (point.at / L * 100) + '%'; f.appendChild(el('i')); strip.appendChild(f);
+  } else strip.appendChild(el('span', 'flag none', 'no point made'));
+  document.getElementById('stripend').textContent = clock(L);
+  const key = document.getElementById('stripkey'); key.replaceChildren();
+  for (const role of Object.keys(ROLE_WORD)) if (d.sentences.some(s => s.role === role)) { const s = el('span'); s.append(el('i', role), ROLE_WORD[role]); key.appendChild(s); }
+  const n = document.getElementById('next'); n.replaceChildren(el('b', '', 'Next time. '), d.next);
+}
+
+/* The two cards on the streak page. */
+function cards(h, sample) {
+  const host = document.getElementById('cardsbody'); host.replaceChildren();
+  const yes = h.answered.filter(a => a === 'yes').length;
+  const a = el('div', 'card');
+  const ah = el('div', 'h'); ah.append(el('b', '', 'Answered the topic'), el('span', '', `${yes} of 10`)); a.appendChild(ah);
+  a.appendChild(el('p', 'm', 'your last 10 rounds'));
+  const sq = el('div', 'squares');
+  h.answered.forEach((v, i) => { const s = el('i', v); s.addEventListener('pointermove', e => showTip(`<b>${DAYS[i]}</b><span>${ANSWER_WORD[v].replace('.', '')}</span>`, e.clientX, e.clientY)); s.addEventListener('pointerleave', hideTip); sq.appendChild(s); });
+  a.appendChild(sq);
+  const ends = el('div', 'ends'); ends.append(el('span', '', 'oldest'), el('span', '', 'latest')); a.appendChild(ends);
+  host.appendChild(a);
+
+  const b = el('div', 'card');
+  const had = h.point.filter(p => p != null);
+  const first = had[0], last = had[had.length - 1];
+  const bh = el('div', 'h'); bh.append(el('b', '', 'Time to your point'), el('span', '', `${last}s`)); b.appendChild(bh);
+  b.appendChild(el('p', 'm', last < first ? `down from ${first}s` : last > first ? `up from ${first}s` : `steady at ${first}s`));
+  const mini = el('div', 'mini'); b.appendChild(mini); host.appendChild(b);
+  drawMini(mini, h.point);
+  document.getElementById('subh').replaceChildren('What you said', sample ? el('span', '', '  ·  a sample') : '');
+}
+
+function drawMini(host, values) {
+  host.replaceChildren();
+  const W = Math.max(200, host.clientWidth || 300), H = 52, top = 6, maxY = Math.max(POINT_BY * 2, ...values.filter(v => v != null));
+  const x = i => i / (values.length - 1) * W;
+  const y = v => top + (1 - v / maxY) * (H - top);
+  const S = (tag, attrs, text) => { const n = document.createElementNS('http://www.w3.org/2000/svg', tag); for (const a in attrs) n.setAttribute(a, attrs[a]); if (text !== undefined) n.textContent = text; return n; };
+  const svg = S('svg', { viewBox: `0 0 ${W} ${H}` });
+  svg.appendChild(S('rect', { class: 'band', x: 0, y: y(POINT_BY), width: W, height: H - y(POINT_BY) }));
+  const pts = values.map((v, i) => v == null ? null : [x(i), y(v)]).filter(Boolean);
+  const line = pts.map((p, i) => `${i ? 'L' : 'M'}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
+  svg.appendChild(S('path', { class: 'area', d: `${line} L${pts[pts.length - 1][0].toFixed(1)},${H} L${pts[0][0].toFixed(1)},${H} Z` }));
+  svg.appendChild(S('path', { class: 'path', d: line }));
+  values.forEach((v, i) => { if (v == null) return; svg.appendChild(S('circle', { class: 'pt' + (v > POINT_BY ? ' out' : ''), cx: x(i), cy: y(v), r: 3.5 })); });
+  svg.appendChild(S('text', { x: W - 2, y: y(POINT_BY) - 4, 'text-anchor': 'end' }, `under ${POINT_BY}s`));
+  host.appendChild(svg);
+}
+
+let current = 'half';
+function show(id) {
+  current = id;
+  const free = id === 'free';
+  const page = free ? ROUNDS.half : ROUNDS[id];
+  const shown = free ? ROUNDS.yes : ROUNDS[id];
+  document.getElementById('topic').textContent = page.topic;
+  document.getElementById('genre').textContent = page.genre;
+  bar(page);
+  theCase(shown, free);
+  cards(shown.history, free);
+  document.getElementById('case').classList.toggle('sample', free);
+  document.getElementById('cards').classList.toggle('sample', free);
+  document.getElementById('caseveil').hidden = !free;
+  document.getElementById('cardsveil').hidden = !free;
+  document.querySelectorAll('[data-tab]').forEach(b => b.classList.toggle('on', b.dataset.tab === id));
+}
+function theme(t) { document.documentElement.dataset.theme = t; document.querySelectorAll('[data-theme-set]').forEach(b => b.classList.toggle('on', b.dataset.themeSet === t)); }
+function width(w) { document.body.classList.toggle('phone', w === 'phone'); document.querySelectorAll('[data-width]').forEach(b => b.classList.toggle('on', b.dataset.width === w)); show(current); }
+window.addEventListener('resize', () => show(current));
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-tab],[data-theme-set],[data-width],[data-notes]'); if (!t) return;
+  if (t.dataset.tab) show(t.dataset.tab);
+  if (t.dataset.themeSet) theme(t.dataset.themeSet);
+  if (t.dataset.width) width(t.dataset.width);
+  if (t.hasAttribute('data-notes')) { const n = document.querySelector('.notes'); n.hidden = !n.hidden; t.classList.toggle('on', !n.hidden); }
+});
+/* Deep links for review: argument.html#no,dark,phone,nonotes opens that state. */
+const hash = new Set(location.hash.replace('#', '').split(',').filter(Boolean));
+show(['yes', 'no', 'free'].find(k => hash.has(k)) || 'half');
+if (hash.has('dark')) theme('dark');
+if (hash.has('phone')) width('phone');
+if (hash.has('nonotes')) { document.querySelector('.notes').hidden = true; document.querySelector('[data-notes]').classList.remove('on'); }
+</script>
+</body></html>
