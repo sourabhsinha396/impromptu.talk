@@ -6,6 +6,7 @@ from ninja import NinjaAPI
 from apps.authentication.apis import api as auth_api
 from apps.common import ratelimit
 from apps.common.apis import api as common_api
+from apps.payments.apis import api as payments_api
 from apps.runs.apis import api as runs_api
 from apps.topics.apis import api as topics_api
 
@@ -15,6 +16,7 @@ api.add_router("v1/common", common_api)
 api.add_router("v1/auth", auth_api)
 api.add_router("v1/topics", topics_api)
 api.add_router("v1/runs", runs_api)
+api.add_router("v1/payments", payments_api)
 
 
 @api.exception_handler(ratelimit.RateLimited)

@@ -3,20 +3,20 @@ import { cookies, headers } from "next/headers";
 import { CURRENCY_COOKIE, TIMEZONE_COOKIE } from "@/lib/cookies";
 import { currencyCode, currencyFor, where } from "@/lib/geo";
 
-/* The country header is read only where a proxy sets it. Anywhere else it
-   is visitor-supplied, and both consequences are harmless (the wrong price
-   in a picker they can change, and a line of ours in the footer), which is
-   why this is a switch that defaults to off rather than a hard gate. It is
-   the first rung of the ladder, so turning it on is also what lets both
-   answers be right on the first request: the timezone below it arrives in
-   a cookie a script writes after first paint. */
-const TRUST_COUNTRY_HEADER = process.env.TRUST_COUNTRY_HEADER === "1";
-
 /** ISO 3166 alpha-2 for the visitor, or "" when nothing places them.
-    Server only: it reads the request. */
+    Server only: it reads the request.
+
+    `CF-IPCountry` is read on every request. The site sits behind
+    Cloudflare, which sets it, and where something else is in front the
+    header is visitor-supplied and both consequences are harmless: the
+    wrong currency in a picker they can change anyway, and a line of ours
+    in the footer. It was behind an env switch until the proxy was
+    settled; a flag with one true setting is a flag somebody forgets to
+    set, and the first rung of the ladder is what makes the answer right
+    on the first request, before the timezone cookie exists. */
 export async function visitorCountry(): Promise<string> {
   const [sent, jar] = await Promise.all([headers(), cookies()]);
-  const country = TRUST_COUNTRY_HEADER ? sent.get("cf-ipcountry") : null;
+  const country = sent.get("cf-ipcountry");
   /* A cookie value may not carry a bare slash, so the script percent-encodes
      the zone and `Asia/Kolkata` arrives as `Asia%2FKolkata`. Undone here,
      because an encoded zone matches no entry in the table and would fail as

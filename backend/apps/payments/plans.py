@@ -97,11 +97,11 @@ CATALOGUE: tuple[Plan, ...] = (
     ),
     Plan(
         code=PASS,
-        # "Monthly", the same word the subscription card uses, on purpose:
-        # both pills then name a duration, and the card above them is what
-        # says whether it renews. Calling it "30 days" made it read as a
-        # different kind of thing rather than the same length on other terms.
-        name="Monthly",
+        # v0 called this "Monthly" too, so both pills named a duration and
+        # the card above them was what said whether it renews. Two pills
+        # reading "Monthly" side by side is a riddle, and the card is not a
+        # big enough clue (owner's call, docs/DECISIONS.md).
+        name="30 day pass",
         unit="once",
         usd_cents=800,
         period=None,

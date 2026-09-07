@@ -127,3 +127,48 @@ export async function resetLinkLive(token: string): Promise<boolean> {
     return false;
   }
 }
+
+/* The pricing page, priced by the backend. The page prints what it is
+   handed and does no arithmetic: the table, the multipliers and the
+   rounding are product policy and live on one side of the wire. */
+export type Market = { currency: string; country: string; name: string };
+export type PricedPlan = {
+  code: string;
+  name: string;
+  unit: string;
+  note: string;
+  recurring: boolean;
+  price: string;
+  amount_minor: number;
+  tracks: number;
+  refusal: string;
+};
+export type Card = { kind: string; title: string; plans: PricedPlan[] };
+export type Catalogue = {
+  selling: boolean;
+  currency: string;
+  currencies: Market[];
+  cards: Card[];
+  free_days: number;
+};
+
+const NOTHING_FOR_SALE: Catalogue = {
+  selling: false,
+  currency: "USD",
+  currencies: [],
+  cards: [],
+  free_days: 5,
+};
+
+/** What Pro costs this visitor. A backend that is not answering reads as
+    nothing for sale, which draws the page saying so rather than failing
+    the one page somebody came to read a price on. */
+export async function catalogue(currency: string): Promise<Catalogue> {
+  try {
+    const response = await backendFetch(`/api/v1/payments/plans?currency=${encodeURIComponent(currency)}`);
+    if (!response.ok) return NOTHING_FOR_SALE;
+    return (await response.json()) as Catalogue;
+  } catch {
+    return NOTHING_FOR_SALE;
+  }
+}

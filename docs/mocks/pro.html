@@ -1,0 +1,294 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mock: pro</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..600&family=Plus+Jakarta+Sans:wght@400..700&display=swap" rel="stylesheet"><style>
+:root{color-scheme:light;--surface:#fff;--card:#fff;--card2:oklch(.965 .008 120);--ink:#1c1917;--muted:#57534e;--line:#e7e5e4;--line-strong:#918b87;
+--accent-h:120;--accent-c:.12;--accent-l:.5;--accent-l-strong:.42;--accent:oklch(var(--accent-l) var(--accent-c) var(--accent-h));--accent-strong:oklch(var(--accent-l-strong) var(--accent-c) var(--accent-h));
+--btn:#1c1917;--btn-ink:#fff;--btn-strong:#000;--note:oklch(.93 .13 118);--note-ink:oklch(.32 .06 120);--warn:oklch(.62 .2 30);
+--sans:"Plus Jakarta Sans",ui-sans-serif,system-ui,sans-serif;--display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;--header-h:60px}
+[data-theme=dark]{color-scheme:dark;--surface:#080808;--card:#161616;--card2:#101010;--ink:#f5f5f4;--muted:#a8a29e;--line:#292524;--line-strong:#6b6560;
+--accent-l:.796;--accent-l-strong:.86;--btn:#f5f5f4;--btn-ink:#111110;--btn-strong:#fff;--note:oklch(.86 .15 120);--note-ink:oklch(.2 .04 120);--warn:oklch(.75 .19 30)}
+*{box-sizing:border-box}html,body{margin:0}body{background:#3f3d3a;font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased}
+.mockbar{position:sticky;top:0;z-index:50;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:10px 16px;background:#26241f;color:#d6d3d1;font:600 12px/1 var(--sans);letter-spacing:.02em}
+.mockbar b{color:#fff;font-weight:700;margin-right:6px}.mockbar .seg{display:inline-flex;border:1px solid #57534e;border-radius:999px;overflow:hidden}
+.mockbar button{all:unset;cursor:pointer;padding:7px 12px;color:#d6d3d1}.mockbar button.on{background:#f5f5f4;color:#1c1917}
+.frame{margin:18px auto;max-width:1280px;min-height:calc(100vh - 80px);background:var(--surface);color:var(--ink);box-shadow:0 20px 60px rgb(0 0 0/.35);display:flex;flex-direction:column;position:relative;overflow:hidden}
+.phone .frame{max-width:390px;min-height:780px}
+.frame>section{flex:none}
+.notes{max-width:1280px;margin:0 auto 40px;background:#fffbea;color:#3b2f0b;border-radius:14px;padding:18px 22px;font-size:14px;line-height:1.55}
+.notes h2{margin:0 0 8px;font:600 15px var(--sans)}.notes ul{margin:0;padding-left:18px}.notes li{margin:4px 0}.notes[hidden]{display:none}
+.ico{flex:none}
+/* chrome */
+.topbar{height:var(--header-h);display:flex;padding:10px clamp(14px,4vw,28px);border-bottom:1px solid var(--accent);flex:none}
+.topbar-in{flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:80rem;margin-inline:auto}
+.wordmark{display:inline-flex;align-items:center;gap:8px;font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:-.02em;color:var(--ink);text-decoration:none;font-variation-settings:"wdth" 96}
+.wordmark span span{color:var(--muted);font-weight:400}.die{width:21px;height:21px;color:var(--accent)}
+.phone .wordmark .name{display:none}.wordmark .short{display:none}.phone .wordmark .short{display:inline}
+.right{display:flex;align-items:center;gap:6px}
+.pill{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line-strong);background:var(--card2);border-radius:999px;padding:5px 11px 5px 9px;font-size:13.5px;font-weight:600;color:var(--ink);text-decoration:none}
+.pill .ico{color:var(--accent)}.pill b{color:var(--accent);font-weight:700}
+.iconbtn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border:1px solid var(--line-strong);background:var(--card2);color:var(--muted);border-radius:999px}
+.btn{font:inherit;font-weight:600;border-radius:999px;border:1px solid transparent;padding:12px 24px;cursor:pointer;line-height:1;display:inline-flex;align-items:center;gap:8px;text-decoration:none}
+.btn-primary{background:var(--btn);color:var(--btn-ink)}.btn-ghost{background:none;color:var(--muted);border-color:var(--line-strong)}
+.btn-ghost:hover{color:var(--ink);border-color:var(--ink)}
+.btn-sm{font-size:14px;padding:10px 18px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+[hidden]{display:none!important}
+/* footer */
+.foot{flex:none;border-top:1px solid var(--line);padding:34px clamp(16px,4vw,32px) 40px;font-size:13.5px;color:var(--muted)}
+.foot-grid{max-width:80rem;margin:0 auto;display:grid;gap:32px;grid-template-columns:1.6fr 1fr 1fr 1fr}.phone .foot-grid{grid-template-columns:1fr 1fr}
+.foot-col{display:flex;flex-direction:column;gap:8px}.foot-col b{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink)}
+.foot a{color:inherit;text-decoration:none}.foot-bottom{max-width:80rem;margin:32px auto 0;padding-top:20px;border-top:1px solid var(--line);font-size:12px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+
+/* pricing page */
+main.page{display:block;text-align:left;max-width:960px;width:100%;margin:0 auto;padding:34px clamp(16px,4vw,32px) 72px}
+.headline{font-family:var(--display);font-weight:600;letter-spacing:-.03em;font-variation-settings:"wdth" 96;font-size:clamp(2.2rem,7vw,3.4rem);line-height:1.05;margin:0}
+.lede{font-size:17px;color:var(--muted);margin:10px 0 0}
+.held{margin:22px 0 0;padding:12px 16px;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:12px;background:var(--card2);font-size:14.5px;font-weight:600}
+.held a{color:var(--accent-strong)}
+/* The picker sits on the heading row, because it changes every number
+   below it, and a control that reads as a footnote is found after
+   somebody has decided the price is wrong. */
+.pickrow{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:34px 0 14px}
+.pickrow h2{margin:0;font-family:var(--display);font-weight:600;letter-spacing:-.02em;font-size:23px}
+.cur{position:relative}
+.cur-btn{display:inline-flex;align-items:center;gap:9px;padding:8px 12px;border:1px solid var(--line-strong);border-radius:999px;background:var(--card2);color:var(--ink);font:600 14px var(--sans);cursor:pointer}
+.cur-btn .chev{color:var(--muted)}
+.flag{width:20px;height:14px;border-radius:2px;object-fit:cover;flex:none;box-shadow:0 0 0 1px rgb(0 0 0/.08)}
+.cur-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:8;min-width:132px;padding:6px;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 16px 40px rgb(0 0 0/.18)}
+.cur-menu button{all:unset;box-sizing:border-box;display:flex;width:100%;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;font-size:14px;font-weight:600;color:var(--ink);cursor:pointer}
+.cur-menu button:hover{background:var(--card2)}
+.cur-menu button.on{background:var(--card2)}
+.cur-menu .code{margin-left:auto;color:var(--muted);font-size:13px}
+/* Two cards, and one of them is picked: the list under them is the
+   picked plan's, so what changes between plans is read once rather than
+   printed four times. */
+.plans{display:grid;gap:16px;grid-template-columns:1fr 1fr}
+.phone .plans{grid-template-columns:1fr}
+.plan{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:20px;cursor:pointer}
+.plan.on{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.plan-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;min-height:32px}
+.plan-name{margin:0;font:600 16px var(--sans)}
+.seg2{display:inline-flex;padding:2px;gap:2px;background:var(--card2);border:1px solid var(--line);border-radius:999px}
+.seg2 button{all:unset;box-sizing:border-box;cursor:pointer;padding:6px 13px;border-radius:999px;font-size:13px;font-weight:600;color:var(--muted)}
+.seg2 button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 2px rgb(0 0 0/.12)}
+.price{display:flex;align-items:baseline;gap:7px;margin:18px 0 0;font-family:var(--display);font-weight:600;letter-spacing:-.03em;font-variation-settings:"wdth" 96;font-size:clamp(2.3rem,5.5vw,3rem);line-height:1}
+.price span{font-family:var(--sans);font-size:15px;font-weight:600;letter-spacing:0;color:var(--muted)}
+.plan .btn{width:100%;justify-content:center;margin-top:18px;font-size:16px;padding:14px 24px}
+.plan-note{margin:10px 0 0;font-size:13px;color:var(--muted)}
+.shut{margin:18px 0 0;padding:13px 14px;border:1px solid var(--line);border-left:3px solid var(--ink);border-radius:10px;background:var(--card2);font-size:14px;font-weight:600;line-height:1.45}
+/* What the picked plan gets you. Two lines of it change with the plan,
+   which is the whole reason it is one list under the cards instead of a
+   copy inside each. */
+.gets{margin:18px 0 0;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:18px 20px}
+.gets h3{margin:0 0 12px;font:600 14px var(--sans)}
+.gets h3 b{color:var(--accent-strong)}
+.gets ul{list-style:none;margin:0;padding:0;display:grid;gap:9px 26px;grid-template-columns:1fr 1fr}
+.phone .gets ul{grid-template-columns:1fr}
+.gets li{display:flex;gap:9px;align-items:flex-start;font-size:14.5px;line-height:1.4}
+.gets li .ico{color:var(--accent);margin-top:3px;flex:none}
+.free-line{margin:14px 0 0;padding-top:12px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+/* The FAQ shape shadcn's accordion draws: a hairline per row, the whole
+   row is the trigger, one chevron that turns. */
+.faq{margin-top:44px}
+.faq h2{margin:0 0 4px;font-family:var(--display);font-weight:600;letter-spacing:-.02em;font-size:23px}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 2px;font-size:15.5px;font-weight:600;cursor:pointer;list-style:none}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary .chev{color:var(--muted);transition:transform .15s;flex:none}
+.faq details[open] summary .chev{transform:rotate(180deg)}
+.faq p{margin:0 0 16px;padding:0 2px;font-size:15px;color:var(--muted);max-width:66ch;line-height:1.5}
+.faq a{color:var(--accent-strong);font-weight:600}
+[hidden]{display:none!important}
+</style></head><body>
+<div class="mockbar"><b>Mock</b><span class="seg"><button data-tab="out" class="on">Signed out</button><button data-tab="inr">Rupees, lifetime</button><button data-tab="menu">Currency open</button><button data-tab="sub">A subscriber</button><button data-tab="life">Pro for life</button><button data-tab="shut">Not open yet</button></span>
+<span class="seg"><button data-theme-set="light">Light</button><button data-theme-set="dark">Dark</button></span>
+<span class="seg"><button data-width="desktop" class="on">Desktop</button><button data-width="phone">Phone</button></span>
+<span class="seg"><button data-notes class="on">Notes</button></span></div>
+<div class="notes"><h2>The Pro page: what changes from v0, and why</h2><ul>
+<li><b>Cards first, then what they get you.</b> The price is what somebody came to read; the list is what they read next, and it belongs to whichever plan is picked.</li>
+<li><b>The list changes with the plan, and only where it truly does.</b> Two of its six lines are the plan's streak and history length: a month on monthly and the pass, a year on annual and lifetime. The other four are the same on every plan, so they are said once. v0 printed the same seven lines inside both cards.</li>
+<li><b>Picking a card picks a plan.</b> One of the two is always on, and its segment says which of its two.</li>
+<li><b>The pill is a segment, not a dropdown.</b> Both options are worth seeing.</li>
+<li><b>The pass is called "30 day pass", not "Monthly".</b> v0 gave it the subscription's word on purpose, so both pills named a duration and the card above said whether it renewed. Two pills reading "Monthly" side by side is a riddle, and the card is not a big enough clue.</li>
+<li><b>Currency is a dropdown of codes with flags</b>, on the Plans row, because it changes every number below it. The code and not the country name: it is a third of the width and says the same thing, since what is being picked is what the price is written in. Five at a time, the one in use always among them.</li>
+<li><b>The questions are an accordion</b> (shadcn's shape: a hairline per row, the whole row is the trigger, one chevron that turns), with the first one open. v0 had three bullets in a list.</li>
+<li><b>Much less prose.</b> One short line under the headline. v0's page argued; this one prices.</li>
+<li><b>A card nobody can buy from says which reason it is</b> - already held, or not open yet. A card that goes quiet reads as broken.</li>
+<li><b>The typos are gone.</b> v0 shipped "Steak survives 2 missed days" and "Tacks 365 days of streak" on the live page.</li>
+<li><b>Nothing here depends on the overlay.</b> Every way it can fail ends at the ordinary checkout, which is what buys Pro.</li>
+<li><b>Flags are images, not emoji</b>, which is both what the no-emoji rule asks for and the only thing that renders on Windows. In the build they are eight small SVGs served from our own origin; here they come from a CDN.</li>
+</ul></div>
+<div class="frame">
+<header class="topbar"><div class="topbar-in"><a class="wordmark" href="#"><svg class="die" viewBox="0 0 32 32" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4.6 26.4 10.6 26.4 21.4 16 27.4 5.6 21.4 5.6 10.6z"/><path d="M5.6 10.6 16 16 26.4 10.6M16 16v11.4"/></g><g fill="currentColor"><circle cx="16" cy="10.45" r="1.5"/><circle cx="8.9" cy="15.55" r="1.5"/><circle cx="12.71" cy="22.15" r="1.5"/><circle cx="21.2" cy="18.85" r="1.5"/><circle cx="23.11" cy="15.55" r="1.5"/><circle cx="19.29" cy="22.15" r="1.5"/></g></svg><span class="name">impromptu<span>.talk</span></span><span class="short">i<span>.</span>t</span></a><div class="right"><a class="pill" href="#"><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg><b>12</b></a><button class="iconbtn" aria-label="Account"><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button></div></div></header>
+<section data-phase="out"><main class="page">
+<h1 class="headline">Pro.</h1>
+<p class="lede">Practising is free. Pro keeps what you make.</p>
+
+<div class="pickrow"><h2>Plans</h2><div class="cur"><button class="cur-btn" type="button" aria-haspopup="listbox" aria-label="Currency"><img class="flag" src="https://flagcdn.com/w40/us.png" alt="" aria-hidden="true">USD<span><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span></button></div></div>
+<div class="plans"><div class="plan on" data-card="sub">
+  <div class="plan-head"><p class="plan-name">Subscription</p>
+    <span class="seg2" data-seg="sub"><button class="on" data-plan="monthly">Monthly</button><button data-plan="annual">Annual</button></span>
+  </div>
+  <p class="price"><b data-slot="sub-price">$5</b><span data-slot="sub-unit">/month</span></p>
+  <button class="btn btn-primary" type="button">Subscribe for <span data-slot="sub-price2">$5</span></button>
+  <p class="plan-note" data-slot="sub-note">Renews every month. Cancel whenever you like.</p>
+</div><div class="plan" data-card="one">
+  <div class="plan-head"><p class="plan-name">One-time</p>
+    <span class="seg2" data-seg="one"><button class="on" data-plan="pass">30 day pass</button><button data-plan="lifetime">Lifetime</button></span>
+  </div>
+  <p class="price"><b data-slot="one-price">$8</b><span data-slot="one-unit">once</span></p>
+  <button class="btn btn-primary" type="button">Pay <span data-slot="one-price2">$8</span></button>
+  <p class="plan-note" data-slot="one-note">One month of Pro. Nothing renews.</p>
+</div></div>
+<section class="gets">
+  <h3>What you get with <b data-slot="gets-name">Monthly</b></h3>
+  <ul data-slot="gets-list"><li><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>30 days of streak, instead of 5</li><li><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>30 days of history</li><li><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>Your own genres, with your own topics</li><li><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>Share a genre by link</li><li><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>Topics written for you, five batches a month</li><li><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>Your pick of six colours</li></ul>
+  <p class="free-line">Free keeps the round, every genre, unlimited practice and a five day streak.</p>
+</section>
+<section class="faq"><h2>Questions</h2><details open><summary>What stays free?<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><p>The round, every genre in the bank, unlimited practice and a five day streak. No account needed. None of it is ever taken away to sell Pro.</p></details><details><summary>Do one-time payments renew?<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><p>No. Nothing to cancel, nothing to forget about.</p></details><details><summary>How do I cancel?<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><p>In <a href="#">your account</a>. Cancelling keeps the period you have paid for, so Pro runs out on the date it was always going to.</p></details><details><summary>What if it is not for me?<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><p>Seven days, no questions. See the <a href="#">refund policy</a>.</p></details><details><summary>Can I change currency?<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><p>Yes, above the cards. You are charged in the one shown on the button you press.</p></details></section>
+</main></section>
+<section data-phase="inr" hidden><main class="page">
+<h1 class="headline">Pro.</h1>
+<p class="lede">Practising is free. Pro keeps what you make.</p>
+
+<div class="pickrow"><h2>Plans</h2><div class="cur"><button class="cur-btn" type="button" aria-haspopup="listbox" aria-label="Currency"><img class="flag" src="https://flagcdn.com/w40/in.png" alt="" aria-hidden="true">INR<span><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span></button></div></div>
+<div class="plans"><div class="plan" data-card="sub">
+  <div class="plan-head"><p class="plan-name">Subscription</p>
+    <span class="seg2" data-seg="sub"><button class="on" data-plan="monthly">Monthly</button><button data-plan="annual">Annual</button></span>
+  </div>
+  <p class="price"><b data-slot="sub-price">₹150</b><span data-slot="sub-unit">/month</span></p>
+  <button class="btn btn-primary" type="button">Subscribe for <span data-slot="sub-price2">₹150</span></button>
+  <p class="plan-note" data-slot="sub-note">Renews every month. Cancel whenever you like.</p>
+</div><div class="plan on" data-card="one">
+  <div class="plan-head"><p class="plan-name">One-time</p>
+    <span class="seg2" data-seg="one"><button class="on" data-plan="pass">30 day pass</button><button data-plan="lifetime">Lifetime</button></span>
+  </div>
+  <p class="price"><b data-slot="one-price">₹250</b><span data-slot="one-unit">once</span></p>
+  <button class="btn btn-primary" type="button">Pay <span data-slot="one-price2">₹250</span></button>
+  <p class="plan-note" data-slot="one-note">One month of Pro. Nothing renews.</p>
+</div></div>
+<section class="gets">
+  <h3>What you get with <b data-slot="gets-name">Lifetime</b></h3>
+  <ul data-slot="gets-list"><li><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>A year of streak, instead of 5</li><li><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>A year of history</li><li><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>Your own genres, with your own topics</li><li><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>Share a genre by link</li><li><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>Topics written for you, five batches a month</li><li><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>Your pick of six colours</li></ul>
+  <p class="free-line">Free keeps the round, every genre, unlimited practice and a five day streak.</p>
+</section>
+<section class="faq"><h2>Questions</h2><details open><summary>What stays free?<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><p>The round, every genre in the bank, unlimited practice and a five day streak. No account needed. None of it is ever taken away to sell Pro.</p></details><details><summary>Do one-time payments renew?<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><p>No. Nothing to cancel, nothing to forget about.</p></details><details><summary>How do I cancel?<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><p>In <a href="#">your account</a>. Cancelling keeps the period you have paid for, so Pro runs out on the date it was always going to.</p></details><details><summary>What if it is not for me?<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><p>Seven days, no questions. See the <a href="#">refund policy</a>.</p></details><details><summary>Can I change currency?<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><p>Yes, above the cards. You are charged in the one shown on the button you press.</p></details></section>
+</main></section>
+<section data-phase="menu" hidden><main class="page">
+<h1 class="headline">Pro.</h1>
+<p class="lede">Practising is free. Pro keeps what you make.</p>
+
+<div class="pickrow"><h2>Plans</h2><div class="cur"><button class="cur-btn" type="button" aria-haspopup="listbox" aria-label="Currency"><img class="flag" src="https://flagcdn.com/w40/us.png" alt="" aria-hidden="true">USD<span><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span></button><div class="cur-menu"><button class="on" title="United States"><img class="flag" src="https://flagcdn.com/w40/us.png" alt="" aria-hidden="true">USD</button><button title="Eurozone"><img class="flag" src="https://flagcdn.com/w40/eu.png" alt="" aria-hidden="true">EUR</button><button title="India"><img class="flag" src="https://flagcdn.com/w40/in.png" alt="" aria-hidden="true">INR</button><button title="United Kingdom"><img class="flag" src="https://flagcdn.com/w40/gb.png" alt="" aria-hidden="true">GBP</button><button title="Brazil"><img class="flag" src="https://flagcdn.com/w40/br.png" alt="" aria-hidden="true">BRL</button></div></div></div>
+<div class="plans"><div class="plan on" data-card="sub">
+  <div class="plan-head"><p class="plan-name">Subscription</p>
+    <span class="seg2" data-seg="sub"><button class="on" data-plan="monthly">Monthly</button><button data-plan="annual">Annual</button></span>
+  </div>
+  <p class="price"><b data-slot="sub-price">$5</b><span data-slot="sub-unit">/month</span></p>
+  <button class="btn btn-primary" type="button">Subscribe for <span data-slot="sub-price2">$5</span></button>
+  <p class="plan-note" data-slot="sub-note">Renews every month. Cancel whenever you like.</p>
+</div><div class="plan" data-card="one">
+  <div class="plan-head"><p class="plan-name">One-time</p>
+    <span class="seg2" data-seg="one"><button class="on" data-plan="pass">30 day pass</button><button data-plan="lifetime">Lifetime</button></span>
+  </div>
+  <p class="price"><b data-slot="one-price">$8</b><span data-slot="one-unit">once</span></p>
+  <button class="btn btn-primary" type="button">Pay <span data-slot="one-price2">$8</span></button>
+  <p class="plan-note" data-slot="one-note">One month of Pro. Nothing renews.</p>
+</div></div>
+<section class="gets">
+  <h3>What you get with <b data-slot="gets-name">Monthly</b></h3>
+  <ul data-slot="gets-list"><li><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>30 days of streak, instead of 5</li><li><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>30 days of history</li><li><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>Your own genres, with your own topics</li><li><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>Share a genre by link</li><li><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>Topics written for you, five batches a month</li><li><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>Your pick of six colours</li></ul>
+  <p class="free-line">Free keeps the round, every genre, unlimited practice and a five day streak.</p>
+</section>
+<section class="faq"><h2>Questions</h2><details open><summary>What stays free?<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><p>The round, every genre in the bank, unlimited practice and a five day streak. No account needed. None of it is ever taken away to sell Pro.</p></details><details><summary>Do one-time payments renew?<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><p>No. Nothing to cancel, nothing to forget about.</p></details><details><summary>How do I cancel?<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><p>In <a href="#">your account</a>. Cancelling keeps the period you have paid for, so Pro runs out on the date it was always going to.</p></details><details><summary>What if it is not for me?<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><p>Seven days, no questions. See the <a href="#">refund policy</a>.</p></details><details><summary>Can I change currency?<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><p>Yes, above the cards. You are charged in the one shown on the button you press.</p></details></section>
+</main></section>
+<section data-phase="sub" hidden><main class="page">
+<h1 class="headline">Pro.</h1>
+<p class="lede">Practising is free. Pro keeps what you make.</p>
+<p class="held" role="status">Pro, monthly, until 4 March 2027. <a href="#">Your history</a>.</p>
+<div class="pickrow"><h2>Plans</h2><div class="cur"><button class="cur-btn" type="button" aria-haspopup="listbox" aria-label="Currency"><img class="flag" src="https://flagcdn.com/w40/us.png" alt="" aria-hidden="true">USD<span><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span></button></div></div>
+<div class="plans"><div class="plan"><div class="plan-head"><p class="plan-name">Subscription</p></div><p class="shut">You already have a subscription.</p></div><div class="plan on" data-card="one">
+  <div class="plan-head"><p class="plan-name">One-time</p>
+    <span class="seg2" data-seg="one"><button class="on" data-plan="pass">30 day pass</button><button data-plan="lifetime">Lifetime</button></span>
+  </div>
+  <p class="price"><b data-slot="one-price">$8</b><span data-slot="one-unit">once</span></p>
+  <button class="btn btn-primary" type="button">Pay <span data-slot="one-price2">$8</span></button>
+  <p class="plan-note" data-slot="one-note">One month of Pro. Nothing renews.</p>
+</div></div>
+<section class="gets">
+  <h3>What you get with <b data-slot="gets-name">30 day pass</b></h3>
+  <ul data-slot="gets-list"><li><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>30 days of streak, instead of 5</li><li><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>30 days of history</li><li><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>Your own genres, with your own topics</li><li><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>Share a genre by link</li><li><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>Topics written for you, five batches a month</li><li><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>Your pick of six colours</li></ul>
+  <p class="free-line">Free keeps the round, every genre, unlimited practice and a five day streak.</p>
+</section>
+<section class="faq"><h2>Questions</h2><details open><summary>What stays free?<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><p>The round, every genre in the bank, unlimited practice and a five day streak. No account needed. None of it is ever taken away to sell Pro.</p></details><details><summary>Do one-time payments renew?<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><p>No. Nothing to cancel, nothing to forget about.</p></details><details><summary>How do I cancel?<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><p>In <a href="#">your account</a>. Cancelling keeps the period you have paid for, so Pro runs out on the date it was always going to.</p></details><details><summary>What if it is not for me?<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><p>Seven days, no questions. See the <a href="#">refund policy</a>.</p></details><details><summary>Can I change currency?<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><p>Yes, above the cards. You are charged in the one shown on the button you press.</p></details></section>
+</main></section>
+<section data-phase="life" hidden><main class="page">
+<h1 class="headline">Pro.</h1>
+<p class="lede">Practising is free. Pro keeps what you make.</p>
+<p class="held" role="status">Pro for life. <a href="#">Your history</a>.</p>
+<div class="pickrow"><h2>Plans</h2><div class="cur"><button class="cur-btn" type="button" aria-haspopup="listbox" aria-label="Currency"><img class="flag" src="https://flagcdn.com/w40/us.png" alt="" aria-hidden="true">USD<span><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span></button></div></div>
+<div class="plans"><div class="plan"><div class="plan-head"><p class="plan-name">Subscription</p></div><p class="shut">You have Pro for life. Nothing more to buy.</p></div><div class="plan"><div class="plan-head"><p class="plan-name">One-time</p></div><p class="shut">You have Pro for life. Nothing more to buy.</p></div></div>
+
+<section class="faq"><h2>Questions</h2><details open><summary>What stays free?<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><p>The round, every genre in the bank, unlimited practice and a five day streak. No account needed. None of it is ever taken away to sell Pro.</p></details><details><summary>Do one-time payments renew?<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><p>No. Nothing to cancel, nothing to forget about.</p></details><details><summary>How do I cancel?<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><p>In <a href="#">your account</a>. Cancelling keeps the period you have paid for, so Pro runs out on the date it was always going to.</p></details><details><summary>What if it is not for me?<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><p>Seven days, no questions. See the <a href="#">refund policy</a>.</p></details><details><summary>Can I change currency?<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><p>Yes, above the cards. You are charged in the one shown on the button you press.</p></details></section>
+</main></section>
+<section data-phase="shut" hidden><main class="page">
+<h1 class="headline">Pro.</h1>
+<p class="lede">Practising is free. Pro keeps what you make.</p>
+
+<div class="pickrow"><h2>Plans</h2><div class="cur"><button class="cur-btn" type="button" aria-haspopup="listbox" aria-label="Currency"><img class="flag" src="https://flagcdn.com/w40/us.png" alt="" aria-hidden="true">USD<span><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span></button></div></div>
+<div class="plans"><div class="plan"><div class="plan-head"><p class="plan-name">Subscription</p></div><p class="shut">Not open yet. Come back shortly.</p></div><div class="plan"><div class="plan-head"><p class="plan-name">One-time</p></div><p class="shut">Not open yet. Come back shortly.</p></div></div>
+
+<section class="faq"><h2>Questions</h2><details open><summary>What stays free?<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><p>The round, every genre in the bank, unlimited practice and a five day streak. No account needed. None of it is ever taken away to sell Pro.</p></details><details><summary>Do one-time payments renew?<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><p>No. Nothing to cancel, nothing to forget about.</p></details><details><summary>How do I cancel?<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><p>In <a href="#">your account</a>. Cancelling keeps the period you have paid for, so Pro runs out on the date it was always going to.</p></details><details><summary>What if it is not for me?<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><p>Seven days, no questions. See the <a href="#">refund policy</a>.</p></details><details><summary>Can I change currency?<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><p>Yes, above the cards. You are charged in the one shown on the button you press.</p></details></section>
+</main></section>
+<footer class="foot"><div class="foot-grid"><div><span class="wordmark"><svg class="die" viewBox="0 0 32 32" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4.6 26.4 10.6 26.4 21.4 16 27.4 5.6 21.4 5.6 10.6z"/><path d="M5.6 10.6 16 16 26.4 10.6M16 16v11.4"/></g><g fill="currentColor"><circle cx="16" cy="10.45" r="1.5"/><circle cx="8.9" cy="15.55" r="1.5"/><circle cx="12.71" cy="22.15" r="1.5"/><circle cx="21.2" cy="18.85" r="1.5"/><circle cx="23.11" cy="15.55" r="1.5"/><circle cx="19.29" cy="22.15" r="1.5"/></g></svg><span class="name">impromptu<span>.talk</span></span></span><p style="margin:10px 0 6px;max-width:32ch">A random topic, a minute to think, a minute to talk.</p><p style="margin:0;font-size:12px">&copy; 2026 impromptu.talk</p></div><div class="foot-col"><b>Product</b><a href="#">All genres</a><a href="#">Your streak</a><a href="#">Pro</a></div><div class="foot-col"><b>Company</b><a href="#">About us</a><a href="#">Contact us</a><a href="#">Affiliates</a><a href="#">hello@impromptu.talk</a></div><div class="foot-col"><b>Legal</b><a href="#">Privacy policy</a><a href="#">Terms and conditions</a><a href="#">Refund policy</a></div></div><div class="foot-bottom"><span>Your runs are ours to keep for you now.</span><span>Proudly made in India</span></div></footer>
+</div>
+<script>
+const root=document.documentElement;
+const MONEY={USD:{monthly:'$5',annual:'$29',pass:'$8',lifetime:'$39'},INR:{monthly:'\u20b9150',annual:'\u20b9850',pass:'\u20b9250',lifetime:'\u20b91,150'}};
+const UNIT={monthly:'/month',annual:'/year',pass:'once',lifetime:'once'};
+const NOTE={monthly:'Renews every month. Cancel whenever you like.',annual:'Renews once a year. Cancel whenever you like.',pass:'One month of Pro. Nothing renews.',lifetime:'Paid once. Yours for as long as the site exists.'};
+const NAME={monthly:'Monthly',annual:'Annual',pass:'30 day pass',lifetime:'Lifetime'};
+const SPAN={monthly:['30 days of streak, instead of 5','30 days of history'],pass:['30 days of streak, instead of 5','30 days of history'],annual:['A year of streak, instead of 5','A year of history'],lifetime:['A year of streak, instead of 5','A year of history']};
+function show(id){document.querySelectorAll('[data-phase]').forEach(s=>s.hidden=s.dataset.phase!==id);document.querySelectorAll('.mockbar [data-tab]').forEach(b=>b.classList.toggle('on',b.dataset.tab===id));}
+function theme(t){root.dataset.theme=t;document.querySelectorAll('[data-theme-set]').forEach(b=>b.classList.toggle('on',b.dataset.themeSet===t));}
+function width(w){document.body.classList.toggle('phone',w==='phone');document.querySelectorAll('[data-width]').forEach(b=>b.classList.toggle('on',b.dataset.width===w));}
+function notes(){const n=document.querySelector('.notes');n.hidden=!n.hidden;document.querySelector('[data-notes]').classList.toggle('on',!n.hidden);}
+function plan(page,code){
+  const gets=page.querySelector('[data-slot="gets-list"]');
+  if(!gets)return;
+  page.querySelector('[data-slot="gets-name"]').textContent=NAME[code];
+  const items=gets.querySelectorAll('li');
+  SPAN[code].forEach((text,i)=>{items[i].lastChild.textContent=text;});
+}
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-tab],[data-theme-set],[data-width],[data-notes]');
+  if(t){e.preventDefault();
+    if(t.dataset.tab)show(t.dataset.tab);
+    if(t.dataset.themeSet)theme(t.dataset.themeSet);
+    if(t.dataset.width)width(t.dataset.width);
+    if(t.hasAttribute('data-notes'))notes();
+    return;}
+  const pill=e.target.closest('.seg2 button');
+  if(pill){const box=pill.closest('.seg2'),page=pill.closest('main'),kind=box.dataset.seg,code=pill.dataset.plan;
+    box.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b===pill));
+    const cur=page.querySelector('.cur-btn').lastChild.previousSibling.textContent.trim()==='' ? 'USD' : null;
+    const money=page.dataset.currency||'USD';
+    page.querySelector('[data-slot="'+kind+'-price"]').textContent=MONEY[money][code];
+    page.querySelector('[data-slot="'+kind+'-price2"]').textContent=MONEY[money][code];
+    page.querySelector('[data-slot="'+kind+'-unit"]').textContent=UNIT[code];
+    page.querySelector('[data-slot="'+kind+'-note"]').textContent=NOTE[code];
+    pick(pill.closest('.plan'));
+    return;}
+  const cardEl=e.target.closest('.plan[data-card]');
+  if(cardEl){pick(cardEl);return;}
+  const curBtn=e.target.closest('.cur-btn');
+  if(curBtn){const menu=curBtn.parentElement.querySelector('.cur-menu');if(menu)menu.remove();return;}
+});
+function pick(card){
+  const page=card.closest('main');
+  page.querySelectorAll('.plan[data-card]').forEach(c=>c.classList.toggle('on',c===card));
+  const chosen=card.querySelector('.seg2 button.on');
+  if(chosen)plan(page,chosen.dataset.plan);
+}
+document.querySelectorAll('main').forEach(m=>{m.dataset.currency=m.querySelector('[data-slot="sub-price"],[data-slot="one-price"]')&&m.innerHTML.indexOf('\u20b9')>=0?'INR':'USD';});
+theme(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+</script></body></html>
