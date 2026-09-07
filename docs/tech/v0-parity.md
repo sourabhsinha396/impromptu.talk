@@ -171,7 +171,7 @@ Ticked as of 2026-09-07, after cards 01 to 26.
 
 ### Pages
 
-- [ ] About, contact (with the form and its limit), privacy (states the replay masking), terms (the affiliate rate), refunds (33)
+- [x] About, contact (a mailto and the chat bubble, no form), privacy (the five cookies, the replay masking, the model prompts), terms (the affiliate rate read from the backend), refunds (33)
 
 ### Launch
 

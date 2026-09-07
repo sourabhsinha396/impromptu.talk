@@ -1,0 +1,126 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mock: about and the paperwork</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..600&family=Plus+Jakarta+Sans:wght@400..700&display=swap" rel="stylesheet"><style>
+:root{color-scheme:light;--surface:#fff;--card:#fff;--card2:oklch(.965 .008 120);--ink:#1c1917;--muted:#57534e;--line:#e7e5e4;--line-strong:#918b87;
+--accent-h:120;--accent-c:.12;--accent-l:.5;--accent-l-strong:.42;--accent:oklch(var(--accent-l) var(--accent-c) var(--accent-h));--accent-strong:oklch(var(--accent-l-strong) var(--accent-c) var(--accent-h));
+--btn:#1c1917;--btn-ink:#fff;--sans:"Plus Jakarta Sans",ui-sans-serif,system-ui,sans-serif;--display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;--header-h:60px}
+[data-theme=dark]{color-scheme:dark;--surface:#080808;--card:#161616;--card2:#101010;--ink:#f5f5f4;--muted:#a8a29e;--line:#292524;--line-strong:#6b6560;
+--accent-l:.796;--accent-l-strong:.86;--btn:#f5f5f4;--btn-ink:#111110}
+*{box-sizing:border-box}html,body{margin:0}body{background:#3f3d3a;font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased}
+.mockbar{position:sticky;top:0;z-index:50;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:10px 16px;background:#26241f;color:#d6d3d1;font:600 12px/1 var(--sans);letter-spacing:.02em}
+.mockbar b{color:#fff;font-weight:700;margin-right:6px}.mockbar .seg{display:inline-flex;border:1px solid #57534e;border-radius:999px;overflow:hidden}
+.mockbar button{all:unset;cursor:pointer;padding:7px 12px;color:#d6d3d1}.mockbar button.on{background:#f5f5f4;color:#1c1917}
+.frame{margin:18px auto;max-width:1280px;min-height:calc(100vh - 80px);background:var(--surface);color:var(--ink);box-shadow:0 20px 60px rgb(0 0 0/.35);display:flex;flex-direction:column;position:relative;overflow:hidden}
+.phone .frame{max-width:390px;min-height:780px}
+.notes{max-width:1280px;margin:0 auto 40px;background:#fffbea;color:#3b2f0b;border-radius:14px;padding:18px 22px;font-size:14px;line-height:1.55}
+.notes h2{margin:0 0 8px;font:600 15px var(--sans)}.notes ul{margin:0;padding-left:18px}.notes li{margin:4px 0}.notes[hidden]{display:none}
+.topbar{height:var(--header-h);display:flex;padding:10px clamp(14px,4vw,28px);border-bottom:1px solid var(--accent);flex:none}
+.topbar-in{flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:80rem;margin-inline:auto}
+.wordmark{display:inline-flex;align-items:center;gap:8px;font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:-.02em;color:var(--ink);text-decoration:none}
+.wordmark span span{color:var(--muted);font-weight:400}.die{width:21px;height:21px;color:var(--accent)}
+.iconbtn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border:1px solid var(--line-strong);background:var(--card2);color:var(--muted);border-radius:999px}
+/* the document frame, shared by all five pages */
+main.doc{display:block;max-width:720px;width:100%;margin:0 auto;padding:44px clamp(16px,4vw,32px) 72px;flex:1}
+.label{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+.headline{font-family:var(--display);font-weight:600;letter-spacing:-.03em;font-size:clamp(2.1rem,6vw,3.2rem);line-height:1.03;margin:0 0 6px;text-wrap:balance}
+.updated{font-size:13px;color:var(--muted);margin:18px 0 0}
+.prose{font-size:16.5px;line-height:1.65;margin-top:26px}
+.prose h2{font-family:var(--display);font-weight:600;font-size:21px;letter-spacing:-.02em;margin:34px 0 8px}
+.prose p{margin:0 0 16px;max-width:66ch}.prose ul{margin:0 0 16px;padding-left:20px;max-width:66ch}.prose li{margin:6px 0}
+.prose a{color:var(--accent-strong);text-decoration:none;font-weight:600}
+.prose code{background:var(--card2);border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:14px}
+.btn{font:inherit;font-weight:600;border-radius:999px;border:1px solid transparent;padding:12px 24px;cursor:pointer;line-height:1;display:inline-flex;align-items:center;gap:8px;text-decoration:none}
+.btn-primary{background:var(--btn);color:var(--btn-ink)}.btn-ghost{background:none;color:var(--muted);border-color:var(--line-strong)}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:28px}
+.foot{flex:none;border-top:1px solid var(--line);padding:26px clamp(16px,4vw,32px) 30px;font-size:13px;color:var(--muted)}
+[hidden]{display:none!important}
+</style></head><body>
+<div class="mockbar"><b>Mock</b><span class="seg"><button data-tab="about" class="on">About</button><button data-tab="contact">Contact</button><button data-tab="refunds">Refunds</button></span>
+<span class="seg"><button data-theme-set="light">Light</button><button data-theme-set="dark">Dark</button></span>
+<span class="seg"><button data-width="desktop" class="on">Desktop</button><button data-width="phone">Phone</button></span>
+<span class="seg"><button data-notes class="on">Notes</button></span></div>
+<div class="notes"><h2>The five pages: one frame, and the facts v1 changed</h2><ul>
+<li><b>One document frame for all five.</b> 720px, a small label, the headline in the display face, then prose at 66 characters a line. v0's pages each carried their own width and heading sizes; a policy that looks like a different site on every page is a policy nobody finishes.</li>
+<li><b>Every number in the copy is v1's, not v0's.</b> A thousand topics across ten genres, four styles, a five day streak free. v0's pages said 800 across 20 and were already wrong on the day they shipped.</li>
+<li><b>The affiliate rate in the terms is read from the backend</b>, the same constant settlement pays. It is the one number in this prose that money depends on.</li>
+<li><b>Contact is a mailto and the chat bubble, with no form.</b> A form needs a mail service, spam handling and somewhere to store what strangers type, and none of it makes a reply arrive sooner.</li>
+<li><b>Refunds never says "nothing renews".</b> v0's page did, and it was false for exactly the people it mattered to - subscribers. It says which shapes renew, and that cancelling keeps the period already paid for.</li>
+<li><b>Privacy says the new things out loud:</b> the five cookies, that a shared streak or a shared genre shows your name and never your address, that a prompt typed into the generator is sent to a model, and that analytics run in production only.</li>
+</ul></div>
+<div class="frame">
+<header class="topbar"><div class="topbar-in">
+<a class="wordmark" href="#"><svg class="die" viewBox="0 0 32 32" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4.6 26.4 10.6 26.4 21.4 16 27.4 5.6 21.4 5.6 10.6z"/><path d="M5.6 10.6 16 16 26.4 10.6M16 16v11.4"/></g><g fill="currentColor"><circle cx="16" cy="10.45" r="1.5"/><circle cx="8.9" cy="15.55" r="1.5"/><circle cx="12.71" cy="22.15" r="1.5"/><circle cx="21.2" cy="18.85" r="1.5"/><circle cx="23.11" cy="15.55" r="1.5"/><circle cx="19.29" cy="22.15" r="1.5"/></g></svg><span class="name">impromptu<span>.talk</span></span></a>
+<button class="iconbtn" aria-label="Account"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button></div></header>
+
+<section data-phase="about"><main class="doc">
+<p class="label">About us</p>
+<h1 class="headline">One topic you did not choose.</h1>
+<div class="prose">
+<p>impromptu.talk is a practice tool for speaking off the cuff. You press one button, a topic you did not pick lands in front of you, and you get a minute to think and a minute to talk. That is the whole product.</p>
+<h2>Why it exists</h2>
+<p>Most people are not bad at speaking. The fix is reps, and reps are hard to get alone, because the hard part is being handed a subject you would never have chosen.</p>
+<p>So the topic is random on purpose. Choosing your own quietly removes the difficulty you came to practise.</p>
+<h2>How it works</h2>
+<ul>
+<li>A thousand topics across ten genres: everyday life, work and interviews, money, tech, science, health, philosophy and culture.</li>
+<li>Four styles. The same topic can be an open answer, a hot take, an explanation or a story.</li>
+<li>Prep and speaking lengths you can change, a minute each to start.</li>
+</ul>
+<h2>What it costs</h2>
+<p>Nothing, for the part you came for. There is no sign-up wall and no trial. An account is optional and carries your streak between devices.</p>
+<p>One thing is paid: <a href="#">Pro</a> keeps your whole history, writes your own genres and colours the page.</p>
+<h2>Who made it</h2>
+<p>A small independent project, built and run by one person. Bugs, topic suggestions and complaints land in the same inbox: <a href="#">hello@impromptu.talk</a>.</p>
+<div class="row"><a class="btn btn-primary" href="#">Try a topic</a><a class="btn btn-ghost" href="#">Browse the genres</a></div>
+</div>
+</main></section>
+
+<section data-phase="contact" hidden><main class="doc">
+<p class="label">Contact us</p>
+<h1 class="headline">Write to us.</h1>
+<div class="prose">
+<p>One inbox, read by a person: <a href="#">hello@impromptu.talk</a>. We usually reply within two working days.</p>
+<h2>Faster than email</h2>
+<p>The chat bubble in the corner of every page is the quickest way to ask something short.</p>
+<h2>What to include</h2>
+<ul>
+<li>For a refund: the address used at checkout and the date of the payment.</li>
+<li>For a bug: what you pressed, and what happened instead.</li>
+<li>For a topic that should not be in the bank: the words, so it can be found.</li>
+</ul>
+<p>There is no contact form here on purpose. A form needs a mail service, spam handling and somewhere to keep what strangers type, and none of that would make a reply arrive sooner.</p>
+</div>
+</main></section>
+
+<section data-phase="refunds" hidden><main class="doc">
+<p class="label">Refund policy</p>
+<h1 class="headline">Seven days, no questions.</h1>
+<p class="updated">Last updated 7 September 2026.</p>
+<div class="prose">
+<p>Almost all of impromptu.talk is free: the round, all thousand topics, the timers and a five day streak. The one thing you can buy is <a href="#">Pro</a>. It is sold two ways, and which one you are buying is on the card you buy it from, on your receipt, and in <a href="#">your account</a> afterwards.</p>
+<h2>Pro</h2>
+<ul>
+<li><b>Seven days, no questions.</b> Ask within seven days of the payment and it is refunded in full.</li>
+<li><b>A subscription renews until you cancel it.</b> Monthly and yearly both do. Cancelling stops the next charge and keeps the period already paid for, so Pro runs out on the date it was always going to.</li>
+<li><b>A 30 day pass and a lifetime never renew.</b> There is nothing to cancel and nothing to forget about.</li>
+<li>After seven days, ask anyway. Pro is a record of practice you did yourself, not a download; if it has not been worth it, say so.</li>
+</ul>
+<h2>When something is broken</h2>
+<p>If a paid feature does not do what its page said, that is a refund whenever you notice it, not within seven days.</p>
+<h2>How to ask</h2>
+<p>Write to <a href="#">hello@impromptu.talk</a> with the address used at checkout and the date of the payment. Refunds are answered within three working days and the money goes back the way it came.</p>
+</div>
+</main></section>
+
+<footer class="foot">No account needed - your streak lives in this browser.</footer>
+</div>
+<script>
+const root=document.documentElement;
+function show(id){document.querySelectorAll('[data-phase]').forEach(s=>s.hidden=s.dataset.phase!==id);
+document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('on',b.dataset.tab===id));}
+function theme(t){root.dataset.theme=t;document.querySelectorAll('[data-theme-set]').forEach(b=>b.classList.toggle('on',b.dataset.themeSet===t));}
+function width(w){document.body.classList.toggle('phone',w==='phone');document.querySelectorAll('[data-width]').forEach(b=>b.classList.toggle('on',b.dataset.width===w));}
+function notes(){const n=document.querySelector('.notes');n.hidden=!n.hidden;document.querySelector('[data-notes]').classList.toggle('on',!n.hidden);}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-tab],[data-theme-set],[data-width],[data-notes]');if(!t)return;
+if(t.dataset.tab)show(t.dataset.tab);if(t.dataset.themeSet)theme(t.dataset.themeSet);if(t.dataset.width)width(t.dataset.width);if(t.hasAttribute('data-notes'))notes();});
+theme(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+</script>
+</body></html>
