@@ -83,8 +83,9 @@ const PRO: Report = {
 describe("RoundDetail", () => {
   it("opens the read-back and counts every word said, fillers included, in the donut", () => {
     render(<RoundDetail report={PRO} length={58} />);
-    // No click: the page is the record, so the words are on it.
-    expect(screen.getByText(/fight\./)).toBeInTheDocument();
+    // No click: the page is the record, so the words are on it, with the
+    // fillers marked where they were said.
+    expect(screen.getByText("Um,")).toBeInTheDocument();
     expect(screen.getByText("of 13 words")).toBeInTheDocument();
     expect(screen.getByText("2 of 13 words · 1 um beside a gap")).toBeInTheDocument();
   });

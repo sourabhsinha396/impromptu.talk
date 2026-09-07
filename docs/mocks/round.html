@@ -135,11 +135,16 @@ h1{font-family:var(--display);font-weight:600;letter-spacing:-.03em;font-variati
 .small{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
 
 /* sentences */
-.sent{display:flex;align-items:flex-end;gap:6px;height:104px;padding:20px 0 1px;border-bottom:1px solid var(--line)}
-.sent i{flex:1;max-width:24px;background:var(--accent);border-radius:4px 4px 0 0;position:relative;cursor:default;min-height:3px}
-.sent i.long{background:var(--warn)}
-.sent i b{position:absolute;left:50%;transform:translateX(-50%);top:-17px;font:600 11px var(--sans);color:var(--ink);font-variant-numeric:tabular-nums}
-.sentx{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:5px}
+.sent{display:flex;flex-direction:column;gap:6px}
+.sent .row{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr) 2rem;gap:0 12px;align-items:center;cursor:default}
+.sent .row.compact{grid-template-columns:minmax(0,1fr) 2rem}
+.sent .words{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sent .track{position:relative;height:10px}.sent .row.compact .track{height:6px}
+.sent .track b{position:absolute;top:0;bottom:0;left:0;background:var(--accent);border-radius:0 4px 4px 0}
+.sent .track b.long{background:var(--warn)}
+.sent .track u{position:absolute;top:-3px;bottom:-3px;width:1px;background:var(--line-strong)}
+.sent .n{font-size:11.5px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+.sentx{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:6px}
 
 /* tiles */
 .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
@@ -179,7 +184,7 @@ h1{font-family:var(--display);font-weight:600;letter-spacing:-.03em;font-variati
 <li><b>Pace through the minute.</b> Words a minute in each ten seconds, with the comfortable 130 to 170 band shaded. Run 30 shows what one number hides: 156, 120, <b>210</b>, 78, 126, 75. A sprint at 0:20 and a fade from 0:40, and the single "235 wpm" said neither. The line under it is written by code from the peak and the trough, never by a model.</li>
 <li><b>The shape of your round.</b> The radar from the owner's screenshot, five axes: pace, start, gaps, sentences, fillers. The dashed pentagon is the comfortable range, the filled shape is today, the thin outline is your usual over the last twelve rounds (Pro). Beside it the same measures as bars in their real units, because "143 wpm" and "2.65s" are what a person understands and the radar is only the picture of them; on every bar the hollow ring is your usual. The caption says how many of the five are in range and which is furthest out. No average: an average of seconds and words a minute is a number with nothing behind it.</li>
 <li><b>Words you leaned on, as a donut.</b> ReUI's donut with a centre total. The ring is every word you said, the warm slices are fillers, the accent slices the words you lean on, the quiet remainder is the rest of your minute; the centre reads "18 of 129 words", and hovering a slice makes the centre answer with that word's count. The list beside it carries every count, never just the top three. <b>The "ums a minute" band is gone:</b> a cluster you can see needs no rate beside it (owner's call). Then <b>said more than once</b>: phrases of two or more words that came back ("most of the time" three times), and <b>restarts</b>, a two-word run begun twice within four seconds ("and that I used, and that I used"), which is the sound of losing the sentence and is the thing nobody notices in themselves.</li>
-<li><b>Sentences.</b> One thin column per sentence, its word count as the height, anything past 35 words in warm. Run 30 has one sentence of 56 words strung on "and". Impromptu speech fails this way more than any other and no count of pauses shows it.</li>
+<li><b>Sentences.</b> One bar per sentence, first to last, its length the word count, anything past 35 words in warm, with the sentence's own words beside it so the bar says which one ran on. Bars across and not columns up (owner's call on the built page: columns left the right side empty). Run 30 has one sentence of 56 words strung on "and". Impromptu speech fails this way more than any other and no count of pauses shows it.</li>
 <li><b>Three tiles</b> for the facts that are not a scale: when you started, when you finished and whether on a full stop, how many different words. A three-column grid, never two and one.</li>
 <li><b>Read it back, open.</b> On this page it is the record, so it is not behind a link. Pauses inline where they fell, fillers and leaned-on words marked as today, restarts dotted underneath.</li>
 </ul>
@@ -520,16 +525,20 @@ function lean(d) {
   if (!d.repeats.length && !d.restarts.length) rep.appendChild(el('p', 'plain', 'Nothing said twice, no restarts.'));
 }
 
+/* One bar per sentence, first to last, with the sentence's own words beside
+   it (owner's call: columns left the right side empty, and a sentence is
+   text). Past twelve the words go and the bars thin out. */
 function sentences(d) {
   const host = document.getElementById('sent'); host.replaceChildren();
-  const n = d.sentence_words; const max = Math.max(...n, 20);
+  const n = d.sentence_words; const max = Math.max(...n, 45); const compact = n.length > 12;
   n.forEach((w, i) => {
-    const i_ = el('i', w > 35 ? 'long' : ''); i_.style.height = Math.max(3, w / max * 100) + '%';
-    if (w === Math.max(...n)) i_.appendChild(el('b', '', String(w)));
-    i_.addEventListener('pointermove', e => showTip(i_, `<b>${w} words</b><span>${d.sentences[i].length > 90 ? d.sentences[i].slice(0, 90) + '…' : d.sentences[i]}</span>`, e.clientX, e.clientY));
-    i_.addEventListener('pointerleave', hideTip);
-    host.appendChild(i_);
+    const row = el('div', 'row' + (compact ? ' compact' : '')); row.title = `${w} words: ${d.sentences[i]}`;
+    if (!compact) row.appendChild(el('span', 'words', d.sentences[i]));
+    const track = el('div', 'track'); const edge = el('u'); edge.style.left = (35 / max * 100) + '%'; track.appendChild(edge);
+    const bar = el('b', w > 35 ? 'long' : ''); bar.style.width = (w / max * 100) + '%'; track.appendChild(bar);
+    row.append(track, el('span', 'n', String(w))); host.appendChild(row);
   });
+  document.querySelector('.sentx').innerHTML = '<span>first to last</span><span>the line is 35 words</span>';
   const avg = Math.round(n.reduce((a, b) => a + b, 0) / n.length);
   document.getElementById('sentc').textContent = `${n.length} sentences · ${avg} words each`;
   const long = n.filter(w => w > 35).length;

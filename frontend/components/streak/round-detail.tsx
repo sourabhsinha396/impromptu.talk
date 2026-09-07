@@ -536,33 +536,46 @@ function sentenceAside(report: Report): string {
   return `${counts.length} sentence${counts.length === 1 ? "" : "s"} · ${mean} words each`;
 }
 
-/* One thin column per sentence, its word count as the height, the run-on
-   in warm. The longest is labelled; the rest are what the hover is for. */
+/* Past this many sentences the words beside each bar go, and the bars
+   thin out, so a ten-minute round is a strip and not a wall. */
+const SENTENCES_WITH_WORDS = 12;
+
+/* One bar per sentence, first to last, its length the word count, the
+   run-on in warm, and the sentence's own words beside it so the bar says
+   which one it was. Bars run across rather than up (owner's call): six
+   columns left most of the width empty, and a sentence is text, which
+   reads along a line. The hairline is the run-on edge. */
 function Sentences({ report }: { report: Report }) {
   const counts = report.sentences.map((sentence) => sentence.words);
-  const top = Math.max(...counts, 20);
-  const longest = Math.max(...counts);
+  const top = Math.max(...counts, RUN_ON + 10);
+  const compact = report.sentences.length > SENTENCES_WITH_WORDS;
+  const edge = `${(RUN_ON / top) * 100}%`;
   return (
     <>
-      <div className="flex h-[104px] items-end gap-1.5 border-b border-line pt-5 pb-px">
+      <div className={compact ? "space-y-1" : "space-y-1.5"}>
         {report.sentences.map((sentence, index) => (
           <div
             key={index}
             title={`${sentence.words} words: ${sentence.text}`}
-            className={`relative min-h-[3px] max-w-6 flex-1 rounded-t-[4px] ${sentence.words > RUN_ON ? "bg-warn" : "bg-accent"}`}
-            style={{ height: `${Math.max(3, (sentence.words / top) * 100)}%` }}
+            className={`grid items-center gap-x-3 ${
+              compact ? "grid-cols-[minmax(0,1fr)_2rem]" : "grid-cols-[minmax(0,2fr)_minmax(0,3fr)_2rem]"
+            }`}
           >
-            {sentence.words === longest && (
-              <b className="absolute -top-[17px] left-1/2 -translate-x-1/2 text-[11px] font-semibold tabular-nums text-ink">
-                {sentence.words}
-              </b>
-            )}
+            {!compact && <span className="truncate text-[12px] text-muted">{sentence.text}</span>}
+            <div className={`relative ${compact ? "h-1.5" : "h-2.5"}`}>
+              <span className="absolute inset-y-[-3px] w-px bg-line-strong" style={{ left: edge }} aria-hidden />
+              <span
+                className={`absolute inset-y-0 left-0 rounded-r-[4px] ${sentence.words > RUN_ON ? "bg-warn" : "bg-accent"}`}
+                style={{ width: `${(sentence.words / top) * 100}%` }}
+              />
+            </div>
+            <span className="text-right text-[11.5px] tabular-nums text-muted">{sentence.words}</span>
           </div>
         ))}
       </div>
-      <div className="mt-1 flex justify-between text-[11px] text-muted">
-        <span>first</span>
-        <span>last</span>
+      <div className="mt-1.5 flex justify-between text-[11px] text-muted">
+        <span>first to last</span>
+        <span>the line is {RUN_ON} words</span>
       </div>
     </>
   );
