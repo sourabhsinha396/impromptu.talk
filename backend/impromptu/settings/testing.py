@@ -60,3 +60,9 @@ SLACK_WEBHOOK_URL = ""
 # test that wants the feature on sets the key itself.
 OPENROUTER_API_KEY = ""
 OPENROUTER_BASE_URL = "https://openrouter.invalid"
+
+# Same reason, and it matters more here: audio is billed by the minute, so
+# a suite that could reach a real transcriber is one loop away from a bill.
+# Every test runs against `transcribe.RecordingGateway`.
+GROQ_API_KEY = ""
+ASSEMBLY_AI_API_KEY = ""

@@ -175,6 +175,16 @@ OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "").strip()
 OPENROUTER_BASE_URL = os.environ.get("OPENROUTER_BASE_URL", "").strip() or "https://openrouter.ai/api/v1"
 OPENROUTER_MODEL = os.environ.get("OPENROUTER_MODEL", "").strip() or "google/gemini-2.5-flash-lite"
 
+# The two transcribers behind the delivery report, one per tier, because
+# they genuinely differ in what they can do. Groq's whisper-large-v3-turbo
+# is the free tier and, being Whisper, normalises "um" and "uh" away, so
+# free honestly shows no filler count. AssemblyAI with disfluencies on is
+# Pro's, and detects 0.987 of fillers on non-native English against
+# Deepgram's 0.713. Either blank switches its tier down to a timing-only
+# report rather than breaking a round.
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "").strip()
+ASSEMBLY_AI_API_KEY = os.environ.get("ASSEMBLY_AI_API_KEY", "").strip()
+
 # A Slack incoming webhook, for the handful of events somebody would act
 # on today; `apps/common/slack.py` holds the list and the test a seventh
 # has to pass. Empty is the supported off state and logs the line instead

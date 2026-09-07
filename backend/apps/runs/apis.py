@@ -1,13 +1,16 @@
+import json
+
 from django.http import Http404, HttpResponse
-from ninja import Router, Status
+from ninja import File, Form, Router, Status, UploadedFile
 
 from apps.authentication.security import session_auth
 from apps.common.clock import request_offset
 from apps.common.devices import device_id
 from apps.common.ratelimit import throttle
 from apps.payments import services as payments
-from apps.runs import history, services, sharing, streaks
-from apps.runs.schemas import HistoryOut, RunIn, SharedOut, ShareOut, SummaryOut
+from apps.runs import history, reports, services, sharing, streaks
+from apps.runs.models import Run
+from apps.runs.schemas import HistoryOut, ReportOut, RunIn, SharedOut, ShareOut, SummaryOut
 
 api = Router(tags=["runs"])
 
@@ -102,3 +105,58 @@ def shared_page(request, token: str, response: HttpResponse):
         raise Http404
     response["Cache-Control"] = "private, no-store"
     return sharing.shared(who, request_offset(request))
+
+
+# A minute of mono Opus is a few hundred kilobytes and the longest round
+# allowed is ten minutes, so this is the runaway ceiling and not a limit
+# anybody meets. Refused before the file is read into memory.
+MAX_AUDIO = 12 * 1024 * 1024
+
+
+def _is_pro(user) -> bool:
+    """Pro is what picks the transcriber and the allowance. The same
+    question the streak rule asks, and asked the same way."""
+    return bool(payments.streak_days(user))
+
+
+@api.post("/{int:run_id}/report", response=ReportOut)
+# The allowance is the real ceiling; this only stops a loop from filling a
+# disk before the allowance has a chance to say no.
+@throttle("reports", "120/hour", key=lambda request, **kwargs: device_id(request))
+def attach_report(request, run_id: int, segments: Form[str], audio: File[UploadedFile | None] = None):
+    """The report on a round, on its own call rather than folded into the
+    run.
+
+    The run POST answers instantly with day N and the streak, because that
+    is the retention loop and nothing may stand in front of it. Transcribing
+    takes seconds, so it happens here: the done screen shows the tiles at
+    once and fills the report in when it arrives, and a provider having a
+    day costs somebody their report and never their streak.
+
+    Open to strangers, like the run it describes. A stranger practises and
+    a stranger gets the timing half, which costs nothing to serve.
+    """
+    did, user = _who(request)
+    # Owned by the same rule as everything else, and 404 rather than 403:
+    # whether a run id exists is not a stranger's business.
+    run = Run.objects.filter(services.owned_by(did, user), pk=run_id).first()
+    if run is None:
+        raise Http404
+    if hasattr(run, "report"):
+        raise Http404
+
+    try:
+        timeline = json.loads(segments)
+        pairs = [(float(a), float(b)) for a, b in timeline]
+    except (TypeError, ValueError):
+        # A timeline no browser could have produced is refused at the edge,
+        # the same as any other body: only a value no person could make.
+        pairs = []
+
+    blob = None
+    if audio is not None and audio.size and audio.size <= MAX_AUDIO:
+        blob = audio.read()
+
+    pro = _is_pro(user)
+    row = reports.make(run, pairs, pro=pro, audio=blob, filename=audio.name if audio else "round.webm")
+    return reports.render(row, pro=pro)

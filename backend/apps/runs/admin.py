@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from apps.runs.models import Run
+from apps.runs.models import Report, Run
 
 
 @admin.register(Run)
@@ -14,5 +14,24 @@ class RunAdmin(admin.ModelAdmin):
     list_filter = ("genre_slug",)
     search_fields = ("topic_text", "device_id", "user__email")
     raw_id_fields = ("user",)
+    date_hierarchy = "created_at"
+    ordering = ("-created_at",)
+
+
+@admin.register(Report)
+class ReportAdmin(admin.ModelAdmin):
+    """What a round sounded like, beside the run it describes.
+
+    `provider` is the column worth reading here: blank means the report
+    cost nothing and is timing alone, and anything else means the round
+    spent allowance, whether or not a transcript came back. That is also
+    what `apps/runs/reports.py` sums the monthly ceiling from, so a row
+    edited here moves somebody's allowance.
+    """
+
+    list_display = ("created_at", "run", "provider", "audio_seconds", "words", "fillers", "opening_stall")
+    list_filter = ("provider",)
+    search_fields = ("transcript", "run__device_id", "run__user__email")
+    raw_id_fields = ("run",)
     date_hierarchy = "created_at"
     ordering = ("-created_at",)

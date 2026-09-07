@@ -1,0 +1,102 @@
+"""`POST /api/v1/runs/{id}/report`, the report on a round.
+
+Its own call rather than folded into the run, so a transcriber having a
+slow day costs somebody their report and never their streak. What is
+tested here is the boundary rather than the arithmetic, which
+`test_analysis.py` and `test_reports.py` already hold: whose run it is,
+what a second report does, and that a stranger still gets the half that
+costs nothing.
+"""
+
+import json
+
+import pytest
+from django.test import Client
+
+from apps.runs import transcribe
+from apps.runs.models import Report, Run
+
+RUNS = "/api/v1/runs"
+SPOKE = json.dumps([[1.0, 55.0]])
+
+
+@pytest.fixture
+def groq(settings):
+    settings.GROQ_API_KEY = "test-key"
+    gateway = transcribe.RecordingGateway()
+    transcribe.use_gateway(gateway)
+    yield gateway
+    transcribe.use_gateway(None)
+
+
+def a_run(client) -> int:
+    body = {
+        "topic_text": "Low tide",
+        "genre_slug": "general",
+        "prep_seconds": 60,
+        "speak_seconds": 60,
+        "spoken_seconds": 60,
+    }
+    client.post(RUNS, body, content_type="application/json")
+    return Run.objects.latest("id").pk
+
+
+def test_a_stranger_gets_the_timing_half_with_no_audio_and_no_account(client, db):
+    run_id = a_run(client)
+    answer = client.post(f"{RUNS}/{run_id}/report", {"segments": SPOKE})
+    assert answer.status_code == 200
+
+    body = answer.json()
+    assert body["heard"] is True
+    assert body["opening_stall"] == 1.0
+    # Nothing transcribed it, so the words are absent rather than zero.
+    assert body["words"] is None
+    assert body["fillers"] is None
+
+
+def test_audio_is_transcribed_and_the_words_arrive(client, db, groq):
+    run_id = a_run(client)
+    body = client.post(f"{RUNS}/{run_id}/report", {"segments": SPOKE, "audio": _clip()}).json()
+    assert groq.calls
+    assert body["words"] == 6
+    assert body["crutch_words"] == [{"word": "like", "count": 1}, {"word": "so", "count": 1}]
+    # Groq is Whisper and deletes fillers, so a count from it is withheld
+    # rather than reported as zero.
+    assert body["fillers"] is None
+    assert body["seconds_left"] == 4 * 60
+
+
+def test_another_device_cannot_attach_a_report_to_a_run_it_does_not_own(client, db):
+    run_id = a_run(client)
+    stranger = Client()
+    answer = stranger.post(f"{RUNS}/{run_id}/report", {"segments": SPOKE})
+    # 404 rather than 403: whether a run id exists is not their business.
+    assert answer.status_code == 404
+    assert Report.objects.count() == 0
+
+
+def test_a_run_gets_one_report_and_a_second_post_is_refused(client, db, groq):
+    run_id = a_run(client)
+    assert client.post(f"{RUNS}/{run_id}/report", {"segments": SPOKE, "audio": _clip()}).status_code == 200
+    assert client.post(f"{RUNS}/{run_id}/report", {"segments": SPOKE, "audio": _clip()}).status_code == 404
+    # And the second attempt never reached a provider, so it spent nothing.
+    assert len(groq.calls) == 1
+
+
+def test_a_run_that_never_existed_is_a_404(client, db):
+    assert client.post(f"{RUNS}/999999/report", {"segments": SPOKE}).status_code == 404
+
+
+def test_a_timeline_no_browser_could_have_made_is_survived(client, db):
+    run_id = a_run(client)
+    answer = client.post(f"{RUNS}/{run_id}/report", {"segments": "not json at all"})
+    assert answer.status_code == 200
+    # No timeline means nothing was heard, which is the muted-microphone
+    # answer and not a 500.
+    assert answer.json()["heard"] is False
+
+
+def _clip():
+    from django.core.files.uploadedfile import SimpleUploadedFile
+
+    return SimpleUploadedFile("round.webm", b"not really audio", content_type="audio/webm")

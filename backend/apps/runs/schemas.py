@@ -78,3 +78,45 @@ class SharedOut(Schema):
     days: int
     calendar: list[DayOut]
     recent: list[SharedTopicOut]
+
+
+class PauseOut(Schema):
+    at: float
+    seconds: float
+    awkward: bool
+
+
+class CrutchOut(Schema):
+    word: str
+    count: int
+
+
+class ReportOut(Schema):
+    """What the done screen draws. The timing half is always here and the
+    word half is null when nothing transcribed the round, so a page can
+    tell a smaller report from a report full of zeroes and say so.
+
+    Pauses are recomputed from the stored segments rather than read off a
+    column, so moving `analysis.AWKWARD_PAUSE` changes what history says
+    it was rather than only what the next round says."""
+
+    heard: bool
+    speaking_seconds: float
+    opening_stall: float
+    pauses: list[PauseOut]
+    longest_pause: float
+    awkward_pauses: int
+    speaking_ratio: float
+    trail_off: float
+
+    words: int | None = None
+    pace: int | None = None
+    fillers: int | None = None
+    filler_rate: float | None = None
+    crutch_words: list[CrutchOut] = []
+    transcript: str = ""
+
+    # Seconds of transcription left this calendar month, so the page can
+    # say what is left rather than let somebody discover it by finishing a
+    # round and getting a smaller report than the last one.
+    seconds_left: int = 0
