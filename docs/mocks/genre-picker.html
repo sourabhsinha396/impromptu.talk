@@ -1,0 +1,140 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mock: the genre picker, making and managing</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..600&family=Plus+Jakarta+Sans:wght@400..700&display=swap" rel="stylesheet"><style>
+:root{color-scheme:light;--surface:#fff;--card:#fff;--card2:oklch(.965 .008 120);--ink:#1c1917;--muted:#57534e;--line:#e7e5e4;--line-strong:#918b87;
+--accent-h:120;--accent-c:.12;--accent-l:.5;--accent-l-strong:.42;--accent:oklch(var(--accent-l) var(--accent-c) var(--accent-h));--accent-strong:oklch(var(--accent-l-strong) var(--accent-c) var(--accent-h));
+--btn:#1c1917;--btn-ink:#fff;--sans:"Plus Jakarta Sans",ui-sans-serif,system-ui,sans-serif;--display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif}
+[data-theme=dark]{color-scheme:dark;--surface:#080808;--card:#161616;--card2:#101010;--ink:#f5f5f4;--muted:#a8a29e;--line:#292524;--line-strong:#6b6560;--accent-l:.796;--accent-l-strong:.86;--btn:#f5f5f4;--btn-ink:#111110}
+*{box-sizing:border-box}html,body{margin:0}body{background:#3f3d3a;font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased}
+.mockbar{position:sticky;top:0;z-index:50;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:10px 16px;background:#26241f;color:#d6d3d1;font:600 12px/1 var(--sans);letter-spacing:.02em}
+.mockbar b{color:#fff;font-weight:700;margin-right:6px}.mockbar .seg{display:inline-flex;border:1px solid #57534e;border-radius:999px;overflow:hidden}
+.mockbar button{all:unset;cursor:pointer;padding:7px 12px;color:#d6d3d1}.mockbar button.on{background:#f5f5f4;color:#1c1917}
+.notes{max-width:1280px;margin:18px auto 24px;background:#fffbea;color:#3b2f0b;border-radius:14px;padding:18px 22px;font-size:14px;line-height:1.55}
+.notes h2{margin:0 0 8px;font:600 15px var(--sans)}.notes h3{margin:16px 0 6px;font:700 13px var(--sans);letter-spacing:.04em;text-transform:uppercase}
+.notes ul{margin:0;padding-left:18px}.notes li{margin:5px 0}.notes[hidden]{display:none}
+.stage{max-width:1280px;margin:0 auto 60px;display:grid;gap:22px;grid-template-columns:repeat(auto-fill,minmax(430px,1fr))}
+body.phone .stage{grid-template-columns:1fr;max-width:430px}
+.pane{background:var(--surface);border-radius:14px;box-shadow:0 20px 60px rgb(0 0 0/.35);overflow:hidden}
+.pane.hide{display:none}
+.pane-h{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;padding:14px 18px 0}
+.pane-h b{font:600 15px var(--display);color:var(--ink)}.pane-h span{font-size:12.5px;color:var(--muted);font-weight:600}
+.pane-h em{font-style:normal;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-strong);border:1px solid var(--accent);border-radius:999px;padding:2px 8px}
+.pad{padding:14px 18px 22px}
+.sheet{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;max-height:660px;overflow:auto}
+.sheet h2{margin:0;font:600 20px var(--display);letter-spacing:-.02em}.sheet .sub{margin:4px 0 16px;font-size:14px;color:var(--muted)}
+.opts{display:flex;flex-direction:column}
+.opt{display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border:0;border-radius:10px;background:none;font:600 15px var(--sans);color:var(--ink);text-align:left;cursor:pointer;text-decoration:none;position:relative}
+.opt>.ico{color:var(--accent);flex:none}.opt .nm{flex:1;min-width:0}.opt.on{background:var(--card2)}.opt:hover{background:var(--card2)}
+.opt .go{color:var(--muted)}
+.yours{margin:8px 0;padding:8px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.yl{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0;padding:0 12px 4px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.yl a{display:inline-flex;align-items:center;gap:5px;color:var(--accent-strong);text-decoration:none;letter-spacing:.04em}
+.pen{position:absolute;right:6px;top:50%;transform:translateY(-50%);display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:999px;border:0;background:none;color:var(--muted);cursor:pointer;opacity:0}
+.opt:hover .pen,.pen:focus{opacity:1}.pen:hover{background:var(--card2);color:var(--accent-strong);box-shadow:inset 0 0 0 1px var(--line)}
+body.phone .pen{opacity:1}
+.opt.haspen{padding-right:44px}
+.count{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.04em}
+.hintrow{margin:2px 0 0;padding:2px 12px 0;font-size:12.5px;color:var(--muted)}
+.sheet-foot{display:flex;justify-content:flex-end;margin-top:20px}
+.btn{font:inherit;font-weight:600;border-radius:999px;border:1px solid transparent;padding:11px 22px;cursor:pointer;line-height:1;display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-size:15px}
+.btn-primary{background:var(--btn);color:var(--btn-ink)}
+.callout{margin:14px 18px 0;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;background:var(--card2);padding:10px 14px;font-size:13px;line-height:1.5;color:var(--muted)}
+.callout b{color:var(--ink)}
+[hidden]{display:none!important}
+</style></head><body>
+<div class="mockbar"><b>Mock</b><span class="seg">
+<button data-set="all" class="on">All</button><button data-set="today">Today</button><button data-set="a">A pencil</button><button data-set="b">B manage</button><button data-set="c">C one row</button><button data-set="d">D both</button><button data-set="e">E first time</button></span>
+<span class="seg"><button data-theme-set="light">Light</button><button data-theme-set="dark">Dark</button></span>
+<span class="seg"><button data-width="desktop" class="on">Desktop</button><button data-width="phone">Phone</button></span>
+<span class="seg"><button data-notes class="on">Notes</button></span></div>
+
+<div class="notes"><h2>Making and managing your own genres, from inside the picker</h2>
+<p style="margin:0 0 10px">The picker is where somebody feels "these ten do not fit me", so it is where making and managing have to be readable. Five drawings of the same moment. D is the recommendation.</p>
+<h3>What is wrong today</h3><ul>
+<li><b>The glyph lies.</b> GenAI was saved with the square-pen icon, so the row's identity glyph reads as an edit button. Every other row uses that column for identity too, so one column now means two things and neither is trustworthy. Whatever else changes, an action never sits in the identity column: it goes to the right edge, where the check already lives.</li>
+<li><b>Two shapes, one look.</b> A genre row picks and closes; "Make your own genre" leaves the round and loads a page. They are drawn identically, so the second one is a trapdoor. A leaving row needs a visible tell, a chevron at the right edge.</li>
+<li><b>Create is the only verb.</b> Once you have a genre, "make your own" is the wrong door and there is no other. Adding a topic to GenAI means guessing that the create link is also the edit link. This is the actual complaint, and every variant below fixes it.</li>
+<li><b>No handle on the group.</b> "Yours" is a label with nothing to press. It is the natural home for the one door that covers all of them.</li>
+</ul>
+<h3>The five</h3><ul>
+<li><b>Today.</b> What ships now, for comparison. Note how the genre's own icon is the thing that looks pressable.</li>
+<li><b>A: a pencil on the row.</b> Body picks, pencil edits, per genre. The clearest mapping there is, and it teaches which genres are yours because built-ins never carry one. Costs a second target inside a row; it wants 34px and it stays visible on touch, where hover does not exist.</li>
+<li><b>B: manage on the group's heading.</b> Rows stay pure selection, one door for all of them, nothing new to hit inside a row. Cheapest and safest. Weaker at teaching that a particular genre can be edited, and "manage" is a word about the system rather than about talking.</li>
+<li><b>C: one row, and the label changes with the state.</b> The suggestion, held to the copy rule. "Make or manage genre" is two verbs bolted together and it reads as admin; the same row can just say what is true: <b>Make your own genre</b> when you have none, <b>Add or edit your genres</b> once you do. One target, no new chrome. It still cannot point at one genre.</li>
+<li><b>D: the pencil and the heading, together.</b> The heading carries "Edit" for the group, each row carries a pencil for itself, and the bottom row goes back to being honestly about creating: "Make a new genre" with a plus. Three affordances, but they are the three questions a person actually has, and each is answered where it is asked. This is the one to build.</li>
+<li><b>E: the first time.</b> With nothing of your own there is nothing to manage, so every variant collapses to the same single row plus one line saying what it does. The line is worth its ink once, and only here: it is the only place the feature has to explain itself.</li>
+</ul>
+<h3>Small calls that ride along</h3><ul>
+<li><b>Check and pencil share the right edge.</b> On the selected row the check sits left of the pencil rather than the pencil moving; the check's column is the one that must not jump as you scroll.</li>
+<li><b>The count is a fact, not a warning.</b> "3 of 10" sits by the heading, muted. It says the cap once, here, instead of refusing later on the tenth.</li>
+<li><b>The pencil says whose it is.</b> Its label is "Edit GenAI", not "Edit", so a screen reader is not read three identical buttons.</li>
+<li><b>Leaving mid-round.</b> Every one of these doors abandons the sheet for a page. The editor's link carries the current genre back, so Done returns you to the picker with your pick intact rather than to a cold home.</li>
+<li><b>Without Pro nothing here is hidden.</b> The group still sits last, the pencil is still drawn on the genres you already made, and the page behind it is where the paywall speaks. A greyed pencil in a list is a worse teacher than a page that says what Pro does.</li>
+</ul></div>
+
+<div class="stage"></div>
+<script>
+const I={
+ general:'<rect width="12" height="12" x="2" y="10" rx="2" ry="2"/><path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6"/><path d="M6 18h.01"/><path d="M10 14h.01"/><path d="M15 6h.01"/><path d="M18 9h.01"/>',
+ everyday:'<path d="M10 2v2"/><path d="M14 2v2"/><path d="M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1"/><path d="M6 2v2"/>',
+ rel:'<path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/>',
+ career:'<path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/>',
+ money:'<rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/>',
+ tech:'<path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/>',
+ science:'<path d="M6 18h8"/><path d="M3 22h18"/><path d="M14 22a7 7 0 1 0 0-14h-1"/><path d="M9 14h2"/><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z"/><path d="M12 6V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3"/>',
+ health:'<path d="M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829z"/><path d="m2.5 21.5 1.4-1.4"/><path d="m20.1 3.9 1.4-1.4"/><path d="M5.343 21.485a2 2 0 1 0 2.829-2.828l1.767 1.768a2 2 0 1 0 2.829-2.829l-6.364-6.364a2 2 0 1 0-2.829 2.829l1.768 1.767a2 2 0 0 0-2.828 2.829z"/><path d="m9.6 14.4 4.8-4.8"/>',
+ phil:'<path d="M12 18V5"/><path d="M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4"/><path d="M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5"/><path d="M17.997 5.125a4 4 0 0 1 2.526 5.77"/><path d="M18 18a4 4 0 0 0 2-7.464"/><path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517"/><path d="M6 18a4 4 0 0 1-2-7.464"/><path d="M6.003 5.125a4 4 0 0 0-2.526 5.77"/>',
+ culture:'<path d="m12.296 3.464 3.02 3.956"/><path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3z"/><path d="M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m6.18 5.276 3.1 3.899"/>',
+ squarepen:'<path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z"/>',
+ mic:'<path d="M12 19v3"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><rect x="9" y="2" width="6" height="13" rx="3"/>',
+ pencil:'<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>',
+ plus:'<path d="M5 12h14"/><path d="M12 5v14"/>',
+ check:'<path d="M20 6 9 17l-5-5"/>',
+ chev:'<path d="m9 18 6-6-6-6"/>'};
+const ic=(k,c)=>'<svg class="ico '+(c||'')+'" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+I[k]+'</svg>';
+const BUILT=[['general','General'],['everyday','Everyday life'],['rel','Relationships'],['career','Career & work'],['money','Money & business'],['tech','Tech & AI'],['science','Science & climate'],['health','Health & mind'],['phil','Philosophy & ethics'],['culture','Culture']];
+const OWN=[['squarepen','GenAI',1],['mic','Interview questions',0],['culture','Standup practice',0]];
+
+function ownRow(g,pen){const icon=g[0],name=g[1],on=g[2];
+ return '<button class="opt '+(on?'on':'')+' '+(pen?'haspen':'')+'">'+ic(icon)+'<span class="nm">'+name+'</span>'+(on?ic('check'):'')+
+ (pen?'<span class="pen" role="button" tabindex="0" aria-label="Edit '+name+'" title="Edit '+name+'">'+ic('pencil')+'</span>':'')+'</button>';}
+function leave(icon,label){return '<a class="opt" href="#">'+ic(icon)+'<span class="nm">'+label+'</span>'+ic('chev','go')+'</a>';}
+
+const V={
+ today:{t:'Today',s:'What ships now',
+  y:'<p class="yl">Yours</p>'+OWN.slice(0,1).map(g=>ownRow(g,0)).join('')+'<a class="opt" href="#">'+ic('plus')+'<span class="nm">Make your own genre</span></a>',
+  note:'The row\'s own glyph is a pencil, so the identity column looks like an edit button. Nothing here edits.'},
+ a:{t:'A - a pencil on the row',s:'Body picks, pencil edits',
+  y:'<p class="yl">Yours</p>'+OWN.map(g=>ownRow(g,1)).join('')+leave('plus','Make your own genre'),
+  note:'One pencil per genre, right edge, always drawn on touch. Built-ins never carry one, so the list teaches which genres are yours.'},
+ b:{t:'B - manage on the heading',s:'Rows stay pure selection',
+  y:'<p class="yl">Yours <a href="#">Manage '+ic('chev')+'</a></p>'+OWN.map(g=>ownRow(g,0)).join('')+leave('plus','Make your own genre'),
+  note:'One door for all of them and nothing new inside a row. Cannot point at one genre, and "manage" is a word about the system.'},
+ c:{t:'C - one row, label follows the state',s:'The suggestion, held to the copy rule',
+  y:'<p class="yl">Yours</p>'+OWN.map(g=>ownRow(g,0)).join('')+leave('pencil','Add or edit your genres'),
+  note:'Same single row as today, saying what is true once you have some. Cheapest change; still cannot point at one genre.'},
+ d:{t:'D - both, and the doors split',s:'Recommended',
+  y:'<p class="yl"><span>Yours <span class="count">&middot; 3 of 10</span></span><a href="#">Edit '+ic('chev')+'</a></p>'+OWN.map(g=>ownRow(g,1)).join('')+leave('plus','Make a new genre'),
+  note:'Group edit on the heading, one pencil per genre, and the bottom row goes back to meaning only "new". Each question answered where it is asked.'},
+ e:{t:'E - the first time',s:'Nothing of your own yet',
+  y:'<p class="yl">Yours</p>'+leave('plus','Make your own genre')+'<p class="hintrow">Paste your own topics and practise them here.</p>',
+  note:'Nothing to manage, so every variant collapses to one row. The explaining line is worth its ink here and nowhere else.'}};
+
+const stage=document.querySelector('.stage');
+stage.innerHTML=Object.keys(V).map(function(k){const v=V[k];return '<div class="pane" data-v="'+k+'">'+
+ '<div class="pane-h"><b>'+v.t+'</b><span>'+v.s+'</span>'+(k==='d'?'<em>build this</em>':'')+'</div>'+
+ '<div class="callout">'+v.note+'</div>'+
+ '<div class="pad"><div class="sheet"><h2>Genre</h2><p class="sub">What you want to talk about.</p>'+
+ '<div class="yours">'+v.y+'</div>'+
+ '<div class="opts">'+BUILT.map(function(g){return '<button class="opt">'+ic(g[0])+'<span class="nm">'+g[1]+'</span></button>';}).join('')+'</div>'+
+ '<div class="sheet-foot"><a class="btn btn-primary" href="#">Done</a></div></div></div></div>';}).join('');
+
+const root=document.documentElement;
+function set(v){document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('hide',v!=='all'&&p.dataset.v!==v));
+ document.querySelectorAll('[data-set]').forEach(b=>b.classList.toggle('on',b.dataset.set===v));}
+function theme(t){root.dataset.theme=t;document.querySelectorAll('[data-theme-set]').forEach(b=>b.classList.toggle('on',b.dataset.themeSet===t));}
+function width(w){document.body.classList.toggle('phone',w==='phone');document.querySelectorAll('[data-width]').forEach(b=>b.classList.toggle('on',b.dataset.width===w));}
+document.addEventListener('click',function(e){const t=e.target.closest('[data-set],[data-theme-set],[data-width],[data-notes]');if(!t)return;
+ if(t.dataset.set)set(t.dataset.set);if(t.dataset.themeSet)theme(t.dataset.themeSet);if(t.dataset.width)width(t.dataset.width);
+ if(t.hasAttribute('data-notes')){const n=document.querySelector('.notes');n.hidden=!n.hidden;t.classList.toggle('on',!n.hidden);}});
+theme(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+</script>
+</body></html>

@@ -13,7 +13,7 @@ Ticked as of 2026-09-07, after cards 01 to 26.
 | `GET /genres` | `/genres` | 09 | [x] |
 | `GET /genre/{slug}` | `/genre/[slug]` | 09 | [x] |
 | `GET /topic/{slug}` answers 404 | same, by having no route | 09 | [x] pinned |
-| `GET /?topic=<slug>` deep link | same | 12 | [ ] |
+| `GET /?topic=<slug>` deep link | same | 12 | [x] |
 | `POST /api/sessions` | `POST /api/v1/runs` | 15 | [x] |
 | `GET /streak` | `/streak` | 17 | [x] |
 | `POST /streak/share` | `POST /api/v1/runs/share` | 18 | [x] |
@@ -25,15 +25,15 @@ Ticked as of 2026-09-07, after cards 01 to 26.
 | `GET`/`POST /forgot`, `GET`/`POST /reset/{token}` | `/forgot`, `/reset/[token]`, `POST /api/v1/auth/forgot`, `GET`/`POST /api/v1/auth/reset` | 20 | [x] |
 | `GET /account`, `POST /account/name`, `/password`, `/sessions`, `/accent` | `/account`, `/account/additional-settings`, `GET /api/v1/auth/account`, `PATCH /name`, `PATCH /accent`, `POST /password` | 23 | [x] The path is `additional-settings`, `DECISIONS.md`. The subscription section says "Everything is free right now" until 24 to 26; the affiliate section waits for the code's minting on 31 |
 | `POST /account/billing` (portal) | `/api/v1/payments/portal` | 26 | [x] |
-| `GET /pro`, `POST /pro` (currency) | `/pro` | 25 | [ ] |
+| `GET /pro`, `POST /pro` (currency) | `/pro`, currency by `?currency=` and the cookie | 25 | [x] |
 | `POST /pro/checkout`, `GET /pro/done` | `/api/v1/payments/checkout`, `/api/v1/payments/settle`, `/pro/done` | 26 | [x] The overlay is a dialog over the page, with the hosted checkout as the fallback on every failure |
 | `GET`/`POST /packs`, `GET /packs/{slug}`, topics add/edit/delete, `/delete` | `/genres/yours`, `/genres/yours/[slug]`, `v1/topics/mine` endpoints | 29 | [x] |
 | `POST /packs/{slug}/generate` | `POST /api/v1/topics/mine/{slug}/generate` | 30 | [x] |
-| (new) share an owned genre, `/g/[token]` | | 29 | [ ] |
+| (new) share an owned genre, `/g/[token]` | `/g/[token]`, `POST`/`DELETE /api/v1/topics/mine/{slug}/share` | 29 | [x] |
 | `GET /affiliate`, `GET /affiliate/referrals`, `POST /affiliate/paypal` | same, over `GET /api/v1/affiliates`, `/referrals`, `POST /paypal` | 31 | [x] |
-| `GET /administration`, `/staged-topic`, `GET`/`POST /pro`, `POST /pro/revoke`, `GET`/`POST /payouts`, `GET`/`POST /outreach` | same paths | 32 | [ ] |
+| `GET /administration`, `/staged-topic`, `GET`/`POST /pro`, `POST /pro/revoke`, `GET`/`POST /payouts`, `GET`/`POST /outreach` | same paths, over `/api/v1/administration/*` | 32 | [x] |
 | `/admin` (sqladmin, env password) | `/re-admin/` (Django admin, `is_staff`) | 01, 28 | [x] mounted; User, Genre, Topic registered; the rest per card |
-| `/about`, `/contact`, `/privacy`, `/terms`, `/refunds` | same | 33 | [ ] |
+| `/about`, `/contact`, `/privacy`, `/terms`, `/refunds` | same | 33 | [x] |
 | `GET /robots.txt`, `GET /sitemap.xml` | `robots.ts`, `sitemap.ts` | 05 | [x] |
 | 404, 405, 422, 500 as pages outside `/api` | `not-found.tsx`, `error.tsx`; forms re-render with a sentence | 05, 19 | [x] 404 and 500; sign up and sign in forms (19); the rest per card |
 
@@ -78,7 +78,7 @@ Ticked as of 2026-09-07, after cards 01 to 26.
 - [x] Per-page title, description, canonical, OG and Twitter cards from one helper; one OG image (05)
 - [x] Sitemap: home, `/genres`, `/pro`, `/affiliate`, the paperwork, the ten genre pages; no topics, no share pages, no operator paths (05)
 - [x] robots: `/streak`, `/administration`, `/pro/done`, `/affiliate/referrals` disallowed (05)
-- [ ] Weight: cold first visit at or under 209KB. **Measured 358KB on 2026-09-06**: fonts 160KB, HTML 7KB, CSS 6KB, framework script 186KB. Over budget; not chased yet (`DECISIONS.md`)
+- [ ] Weight: cold first visit at or under 209KB. **Measured 330KB on 2026-09-07** against a production build, gzipped, as a browser would fetch it: JS 231KB, fonts 58KB, HTML 32KB, CSS 9KB. The fonts were 155KB and are now instanced (card 34); what is left is React and Next's own floor of about 154KB (react-dom 70, the client runtime 44, the polyfill chunk 39) plus the inline bank. The budget is not reachable without trading one of those three, and that is the owner's call (`DECISIONS.md`)
 
 ### Content
 
@@ -106,7 +106,7 @@ Ticked as of 2026-09-07, after cards 01 to 26.
 - [x] Settings sheet: prep 0 to 30 min, speak 1 to 10 min, sounds; persisted; vanishes mid-round (13)
 - [x] Genre sheet: ten genres by role option, Yours as a link, first with Pro and last without (13; own genres fill it on 29)
 - [x] Staged topic per browser, read and cleared by the next draw, spin intact (12; the tool that writes it is 32)
-- [ ] Finished run posted once, per-device limit 120 per hour (15)
+- [x] Finished run posted once, per-device limit 120 per hour (15). Keyed on the device, since a classroom behind one address is many speakers
 - [x] Engine as a pure TypeScript module with fake-timer tests (10)
 
 ### Streak
@@ -114,7 +114,7 @@ Ticked as of 2026-09-07, after cards 01 to 26.
 - [x] Derived from runs, never stored; each row's own local day via its stored offset; today from the request's clock (16)
 - [x] Whose runs count: an account across devices; an unclaimed device only its own (16)
 - [x] The rule is the plan's: free five days and no freezes, Pro the plan's length with two freezes a month; one summary per request feeds the pill, the done screen and `/streak` (16, owner's change from v0)
-- [ ] Pro freeze rule: two missed days a calendar month, all or nothing, repairs gaps behind you (16)
+- [x] Pro freeze rule: two missed days a calendar month, all or nothing, repairs gaps behind you (16). A freeze never reaches the front of the chain: whether today counts is not something an allowance may answer
 - [x] `/streak`: Day N with the flame, the three tiles, the plan's calendar ending today (a strip of five named days free, the heatmap on Pro), recent runs capped by the plan with the count said, the pitch only when true, the footer line by sign-in state, one button back to the tool, noindex (17). The share section lands with card 18; the payments switch that hides the Pro links lands with card 25
 - [x] Share token minted once from the streak page, `/s/[token]` noindex, eight weeks for everybody, only bank topics named; the off switch lives in additional settings (18, 23)
 - [x] Retention report: day-2 and day-7 cohorts in UTC days, as `retention_report` (15)
