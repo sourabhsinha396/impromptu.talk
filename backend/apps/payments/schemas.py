@@ -50,6 +50,8 @@ class CatalogueOut(Schema):
     """
 
     selling: bool
+    #: "test" or "live", the word the checkout SDK wants, off the base URL.
+    mode: str
     currency: str
     currencies: list[MarketOut]
     cards: list[CardOut]

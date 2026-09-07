@@ -45,6 +45,7 @@ def catalogue(request, currency: str = ""):
 
     return {
         "selling": plans.selling(),
+        "mode": plans.mode(),
         "currency": code,
         "currencies": [pricing.MARKETS[name] for name in pricing.visible(code)],
         "cards": [

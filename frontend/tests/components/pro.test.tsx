@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+import { forget, initialize, openDialog } from "@/components/pro/overlay";
 import { Plans } from "@/components/pro/plans";
 import type { Catalogue, PricedPlan } from "@/lib/api";
 
@@ -30,6 +31,7 @@ function plan(over: Partial<PricedPlan> & { code: string; name: string }): Price
 
 const CATALOGUE: Catalogue = {
   selling: true,
+  mode: "test",
   currency: "USD",
   currencies: [
     { currency: "USD", country: "US", name: "United States" },
@@ -121,7 +123,7 @@ describe("the plans", () => {
     expect(screen.getByRole("alert")).toHaveTextContent("Not open yet.");
   });
 
-  it("leaves for the checkout it is handed, rather than routing to a page of ours", async () => {
+  it("leaves for the checkout it is handed when there is no dialog to open", async () => {
     const url = "https://test.checkout.dodopayments.com/session/cks_1";
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({ url }), { status: 200 })));
     const location = { href: "" };
@@ -137,5 +139,33 @@ describe("the plans", () => {
     await userEvent.click(screen.getByRole("button", { name: "Currency" }));
     await userEvent.click(await screen.findByRole("menuitem", { name: "INR" }));
     expect(push).toHaveBeenCalledWith("/pro?currency=INR");
+  });
+});
+
+describe("the checkout dialog", () => {
+  afterEach(() => forget());
+
+  it("opens over the page once the SDK is up", () => {
+    const open = vi.fn();
+    vi.stubGlobal("DodoPaymentsCheckout", { DodoPayments: { Initialize: vi.fn(), Checkout: { open } } });
+    expect(initialize("test")).toBe(true);
+    expect(openDialog("https://checkout/1")).toBe(true);
+    expect(open).toHaveBeenCalledWith({ checkoutUrl: "https://checkout/1" });
+  });
+
+  it("says no when the script never arrived, so the caller navigates instead", () => {
+    // A blocked CDN, an ad blocker, a browser that refused it: the page
+    // is exactly the page it was before, and the button still buys Pro.
+    expect(initialize("test")).toBe(false);
+    expect(openDialog("https://checkout/1")).toBe(false);
+  });
+
+  it("says no when the SDK throws rather than leaving the button dead", () => {
+    const thrower = () => {
+      throw new Error("no");
+    };
+    vi.stubGlobal("DodoPaymentsCheckout", { DodoPayments: { Initialize: thrower, Checkout: { open: thrower } } });
+    expect(initialize("test")).toBe(false);
+    expect(openDialog("https://checkout/1")).toBe(false);
   });
 });

@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { CurrencyPicker } from "@/components/pro/currency-picker";
+import { openDialog, OverlayScript } from "@/components/pro/overlay";
 import { Button } from "@/components/site/button";
 import { CheckIcon } from "@/components/site/icons";
 import type { Card, Catalogue, PricedPlan } from "@/lib/api";
@@ -42,6 +43,7 @@ export function Plans({ catalogue, signedIn }: { catalogue: Catalogue; signedIn:
 
   return (
     <>
+      {catalogue.selling && <OverlayScript mode={catalogue.mode} />}
       <div className="mt-[34px] mb-3.5 flex flex-wrap items-center justify-between gap-4">
         <h2 className="font-display text-[23px] font-semibold tracking-[-0.02em]">Plans</h2>
         <CurrencyPicker currency={catalogue.currency} markets={catalogue.currencies} />
@@ -139,7 +141,12 @@ function PlanCard({
             {plan.price}
             <span className="font-sans text-[15px] font-semibold tracking-normal text-muted">{plan.unit}</span>
           </p>
-          <Buy plan={plan} currency={currency} signedIn={signedIn} verb={plan.recurring ? "Subscribe for" : "Pay"} />
+          <Buy
+            plan={plan}
+            currency={currency}
+            signedIn={signedIn}
+            verb={plan.recurring ? "Subscribe for" : "Pay"}
+          />
           <p className="mt-2.5 text-[13px] text-muted">{plan.note}</p>
         </>
       )}
@@ -184,7 +191,17 @@ function Segment({
     belong to an account before it opens. Signed in it asks our own route
     for a checkout and follows where it says. The overlay lands on card
     26 over exactly this: whatever fails, this button is what buys Pro. */
-function Buy({ plan, currency, signedIn, verb }: { plan: PricedPlan; currency: string; signedIn: boolean; verb: string }) {
+function Buy({
+  plan,
+  currency,
+  signedIn,
+  verb,
+}: {
+  plan: PricedPlan;
+  currency: string;
+  signedIn: boolean;
+  verb: string;
+}) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
@@ -211,8 +228,14 @@ function Buy({ plan, currency, signedIn, verb }: { plan: PricedPlan; currency: s
         setBusy(false);
         return;
       }
-      /* A full navigation, not a router push: the checkout is theirs, not
-         a page of ours. Busy stays set, because the browser is leaving. */
+      /* The dialog if the SDK is up, and the hosted page if it is not.
+         Either way this is what buys Pro; the overlay only saves a page
+         load. Busy is released on the dialog, which leaves this page
+         standing, and held on the navigation, which does not. */
+      if (openDialog(answer.url)) {
+        setBusy(false);
+        return;
+      }
       window.location.href = answer.url;
     } catch {
       setError("Could not open a checkout. Try again.");

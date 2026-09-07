@@ -192,3 +192,8 @@ def sellable(codes: tuple[str, ...]) -> list[Plan]:
     """The plans of one card that are actually on sale, in catalogue order.
     An empty list is what makes a card say it is not open."""
     return [PLANS[code] for code in codes if on_sale(code)]
+
+
+def mode() -> str:
+    """The word the checkout SDK wants for the host we talk to."""
+    return "live" if "live." in settings.DODO_BASE_URL else "test"

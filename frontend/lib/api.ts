@@ -154,6 +154,8 @@ export type PricedPlan = {
 export type Card = { kind: string; title: string; plans: PricedPlan[] };
 export type Catalogue = {
   selling: boolean;
+  /** "test" or "live", the word the checkout dialog wants. */
+  mode: string;
   currency: string;
   currencies: Market[];
   cards: Card[];
@@ -162,6 +164,7 @@ export type Catalogue = {
 
 const NOTHING_FOR_SALE: Catalogue = {
   selling: false,
+  mode: "test",
   currency: "USD",
   currencies: [],
   cards: [],

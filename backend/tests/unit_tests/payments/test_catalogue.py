@@ -96,3 +96,9 @@ def test_the_pass_is_not_called_monthly(client, shop_open, db):
     # Two pills reading "Monthly" side by side is a riddle.
     assert names["pass"] == "30 day pass"
     assert names["monthly"] == "Monthly"
+
+
+def test_the_page_is_told_which_mode_the_overlay_should_open_in(client, shop_open, db):
+    assert client.get(PLANS).json()["mode"] == "test"
+    with override_settings(DODO_BASE_URL="https://live.dodopayments.com"):
+        assert client.get(PLANS).json()["mode"] == "live"

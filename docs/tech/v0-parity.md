@@ -26,7 +26,7 @@ Ticked as of 2026-09-07, after cards 01 to 26.
 | `GET /account`, `POST /account/name`, `/password`, `/sessions`, `/accent` | `/account`, `/account/additional-settings`, `GET /api/v1/auth/account`, `PATCH /name`, `PATCH /accent`, `POST /password` | 23 | [x] The path is `additional-settings`, `DECISIONS.md`. The subscription section says "Everything is free right now" until 24 to 26; the affiliate section waits for the code's minting on 31 |
 | `POST /account/billing` (portal) | `/api/v1/payments/portal` | 26 | [x] |
 | `GET /pro`, `POST /pro` (currency) | `/pro` | 25 | [ ] |
-| `POST /pro/checkout`, `GET /pro/done` | `/api/v1/payments/checkout`, `/api/v1/payments/settle`, `/pro/done` | 26 | [x] The overlay SDK is not ported; the page navigates to the hosted checkout, `DECISIONS.md` |
+| `POST /pro/checkout`, `GET /pro/done` | `/api/v1/payments/checkout`, `/api/v1/payments/settle`, `/pro/done` | 26 | [x] The overlay is a dialog over the page, with the hosted checkout as the fallback on every failure |
 | `GET`/`POST /packs`, `GET /packs/{slug}`, topics add/edit/delete, `/delete` | `/packs`, `/packs/[slug]`, `v1/topics` owned-genre endpoints | 29 | [ ] |
 | `POST /packs/{slug}/generate` | `/api/v1/topics/.../generate` | 30 | [ ] |
 | (new) share an owned genre, `/g/[token]` | | 29 | [ ] |
