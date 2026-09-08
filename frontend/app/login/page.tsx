@@ -10,7 +10,7 @@ import { pageMetadata } from "@/lib/metadata";
 
 export const metadata: Metadata = pageMetadata({
   title: "Sign in",
-  description: "Sign in to impromptu.talk to pick your streak up on any device.",
+  description: "Sign in to yapholic.com to pick your streak up on any device.",
   path: "/login",
 });
 

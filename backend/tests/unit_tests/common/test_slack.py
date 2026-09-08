@@ -13,7 +13,7 @@ to say since when.
 import urllib.error
 
 from apps.common import slack
-from impromptu.settings import testing
+from yapholic.settings import testing
 
 
 def test_the_suite_holds_no_webhook_and_the_recorder_is_what_is_in_play(channel):

@@ -15,7 +15,7 @@ export function Header({ user, streak }: { user: SessionUser | null; streak: num
   return (
     <header className="flex h-(--header-h) shrink-0 border-b border-accent px-[clamp(14px,4vw,28px)] py-2.5 filming:invisible">
       <div className="flex min-w-0 flex-1 items-center justify-between gap-3 md:mx-auto md:max-w-[80rem]">
-        <Link href="/" aria-label="impromptu.talk home" className="min-w-0 no-underline">
+        <Link href="/" aria-label="yapholic home" className="min-w-0 no-underline">
           <Wordmark collapse />
         </Link>
         <div className="flex items-center gap-1.5">

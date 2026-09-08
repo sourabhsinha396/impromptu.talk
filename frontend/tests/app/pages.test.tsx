@@ -64,9 +64,9 @@ describe("about and contact", () => {
 
   it("gives one address and no form, which is the whole decision on that page", () => {
     const { container } = render(<ContactRoute />);
-    expect(screen.getByRole("link", { name: "hello@impromptu.talk" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "hello@yapholic.com" })).toHaveAttribute(
       "href",
-      "mailto:hello@impromptu.talk",
+      "mailto:hello@yapholic.com",
     );
     expect(container.querySelector("form")).toBeNull();
     expect(container.querySelector("textarea")).toBeNull();

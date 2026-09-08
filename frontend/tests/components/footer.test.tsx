@@ -29,12 +29,12 @@ describe("Footer", () => {
 
   it("puts the name, what it does and who owns it together, with the year", () => {
     render(<Footer signedIn={false} inIndia={false} year={2026} />);
-    expect(screen.getByText(/© 2026 impromptu\.talk/)).toBeInTheDocument();
+    expect(screen.getByText(/© 2026 yapholic\.com/)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "All genres" })).toHaveAttribute("href", "/genres");
     expect(screen.getByRole("link", { name: "Refund policy" })).toHaveAttribute("href", "/refunds");
-    expect(screen.getByRole("link", { name: "hello@impromptu.talk" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "hello@yapholic.com" })).toHaveAttribute(
       "href",
-      "mailto:hello@impromptu.talk",
+      "mailto:hello@yapholic.com",
     );
   });
 });

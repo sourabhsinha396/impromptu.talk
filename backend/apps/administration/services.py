@@ -22,7 +22,7 @@ RECENT = 200
 # an easy answer.
 TEMPLATE = """Hi {name},
 
-Your reels on impromptu are the reason I'm writing. I built impromptu.talk.
+Your reels on impromptu are the reason I'm writing. I built yapholic.com.
 
 Sign up, reply with the email you used, and I'll put you on lifetime Pro.
 That lets you write your own topics, so followers could practise "{name}'s topics" instead of my generic ones.

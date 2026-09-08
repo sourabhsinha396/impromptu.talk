@@ -9,7 +9,7 @@ import uuid
 
 from django.conf import settings
 
-DEVICE_COOKIE = "impromptu_device"
+DEVICE_COOKIE = "yapholic_device"
 DEVICE_MAX_AGE = 60 * 60 * 24 * 730
 
 

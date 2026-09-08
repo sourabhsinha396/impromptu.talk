@@ -15,7 +15,7 @@
 module.exports = {
   apps: [
     {
-      name: "impromptu-frontend",
+      name: "yapholic-frontend",
       cwd: __dirname,
       script: "node_modules/next/dist/bin/next",
       // Named, because that file has no extension for pm2 to guess from.

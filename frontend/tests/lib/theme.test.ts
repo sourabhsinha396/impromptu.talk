@@ -9,12 +9,12 @@ afterEach(() => {
 
 describe("theme", () => {
   it("applies a stored choice before first paint, under the key v0 used, and ignores junk", () => {
-    localStorage.setItem("impromptu.theme", "dark");
+    localStorage.setItem("yapholic.theme", "dark");
     new Function(themeInit)();
     expect(document.documentElement.dataset.theme).toBe("dark");
 
     delete document.documentElement.dataset.theme;
-    localStorage.setItem("impromptu.theme", "purple");
+    localStorage.setItem("yapholic.theme", "purple");
     new Function(themeInit)();
     expect(document.documentElement.dataset.theme).toBeUndefined();
   });

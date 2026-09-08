@@ -4,7 +4,7 @@
    is happy to treat as another origin. Our own paths only, and the tool
    when nothing asked for anywhere. */
 
-const ORIGIN = "http://impromptu.invalid";
+const ORIGIN = "http://yapholic.invalid";
 
 export function safeNext(value: unknown, fallback = "/"): string {
   if (typeof value !== "string" || !value.startsWith("/") || value.startsWith("//") || value.includes("\\")) {

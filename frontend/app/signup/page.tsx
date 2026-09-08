@@ -10,7 +10,7 @@ import { pageMetadata } from "@/lib/metadata";
 
 export const metadata: Metadata = pageMetadata({
   title: "Create an account",
-  description: "Keep your impromptu.talk streak when the browser forgets. Free, and your practice comes with you.",
+  description: "Keep your yapholic.com streak when the browser forgets. Free, and your practice comes with you.",
   path: "/signup",
 });
 

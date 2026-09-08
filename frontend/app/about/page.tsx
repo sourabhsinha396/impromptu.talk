@@ -8,7 +8,7 @@ import { CONTACT_EMAIL, SITE_NAME } from "@/lib/site";
 export const metadata: Metadata = pageMetadata({
   title: "About",
   description:
-    "What impromptu.talk is: a random topic, a minute to think, a minute to talk. Free, no account, a thousand topics across ten genres.",
+    "What yapholic.com is: a random topic, a minute to think, a minute to talk. Free, no account, a thousand topics across ten genres.",
   path: "/about",
 });
 

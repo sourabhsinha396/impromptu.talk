@@ -19,7 +19,7 @@ from django.conf import settings
 logger = logging.getLogger(__name__)
 
 TIMEOUT = 20
-USER_AGENT = "impromptu.talk (+https://impromptu.talk)"
+USER_AGENT = "yapholic.com (+https://yapholic.com)"
 
 # The provider's own vocabulary, kept verbatim rather than translated at
 # the edge: a status nobody has seen before should read strangely in a log

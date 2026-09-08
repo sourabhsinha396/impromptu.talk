@@ -6,7 +6,7 @@ import type { Referrals } from "@/lib/affiliates";
 
 const PAGE: Referrals = {
   code: "priya",
-  link: "https://impromptu.talk?ref=priya",
+  link: "https://yapholic.com?ref=priya",
   paypal_email: "priya@paypal.com",
   percent: 30,
   minimum_payout: "$10.00",

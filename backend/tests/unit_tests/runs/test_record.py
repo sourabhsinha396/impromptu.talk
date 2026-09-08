@@ -92,7 +92,7 @@ def test_the_limit_is_per_device_not_per_address(client, db):
 
 
 def test_the_header_reads_the_same_numbers_the_round_was_told(client, db):
-    client.cookies["impromptu_tz"] = "Asia%2FKolkata"
+    client.cookies["yapholic_tz"] = "Asia%2FKolkata"
     told = post(client).json()
     response = client.get(f"{RUNS}/summary")
     assert response.status_code == 200

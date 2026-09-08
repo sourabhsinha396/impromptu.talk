@@ -28,7 +28,7 @@ from apps.payments import services as payments
 
 api = Router(tags=["auth"])
 
-OAUTH_COOKIE = "impromptu_oauth"
+OAUTH_COOKIE = "yapholic_oauth"
 OAUTH_COOKIE_AGE = 600
 
 

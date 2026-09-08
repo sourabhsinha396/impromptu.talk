@@ -8,12 +8,12 @@ from django.core.mail import EmailMultiAlternatives
 
 from apps.common import mail
 from apps.common.mail import BrevoEmailBackend
-from impromptu.settings import testing
+from yapholic.settings import testing
 
 
 def a_message():
     message = EmailMultiAlternatives(
-        subject="Hello", body="Hi", to=["a@b.com"], from_email="impromptu.talk <no-reply@impromptu.talk>"
+        subject="Hello", body="Hi", to=["a@b.com"], from_email="yapholic.com <no-reply@yapholic.com>"
     )
     message.attach_alternative("<p>Hi</p>", "text/html")
     return message
@@ -33,7 +33,7 @@ def test_sends_the_shape_brevo_expects_with_the_key_in_the_header_only(monkeypat
     assert url.endswith("/v3/smtp/email")
     assert headers["api-key"] == "key-123"
     assert body == {
-        "sender": {"email": "no-reply@impromptu.talk", "name": "impromptu.talk"},
+        "sender": {"email": "no-reply@yapholic.com", "name": "yapholic.com"},
         "to": [{"email": "a@b.com"}],
         "subject": "Hello",
         "textContent": "Hi",

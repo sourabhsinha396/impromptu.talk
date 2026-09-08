@@ -6,7 +6,7 @@ import { pageMetadata } from "@/lib/metadata";
 
 export const metadata: Metadata = pageMetadata({
   title: "Forgotten your password?",
-  description: "Send yourself a link to choose a new impromptu.talk password.",
+  description: "Send yourself a link to choose a new yapholic.com password.",
   path: "/forgot",
 });
 

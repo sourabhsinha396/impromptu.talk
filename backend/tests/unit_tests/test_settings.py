@@ -10,18 +10,18 @@ from django.core.exceptions import ImproperlyConfigured
 
 PRODUCTION_ENV = {
     "SECRET_KEY": "some-secret",
-    "ALLOWED_HOSTS": "impromptu.example",
+    "ALLOWED_HOSTS": "yapholic.example",
     "POSTGRES_HOST": "db",
     "DODO_API_KEY": "live-key",
-    "STORAGE_BUCKET": "impromptu",
+    "STORAGE_BUCKET": "yapholic",
     "S3_ACCESS_KEY_ID": "some-key-id",
     "S3_SECRET_ACCESS_KEY": "some-secret-key",
-    "STORAGE_PUBLIC_BASE_URL": "https://cdn.impromptu.example",
+    "STORAGE_PUBLIC_BASE_URL": "https://cdn.yapholic.example",
 }
 
 
 def load_production():
-    spec = importlib.util.find_spec("impromptu.settings.production")
+    spec = importlib.util.find_spec("yapholic.settings.production")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
@@ -84,7 +84,7 @@ def test_the_app_itself_runs_on_postgres(monkeypatch):
     and this is the pin that keeps a SQLite fallback from creeping back
     into base.py."""
     monkeypatch.delenv("POSTGRES_HOST", raising=False)
-    spec = importlib.util.find_spec("impromptu.settings.local")
+    spec = importlib.util.find_spec("yapholic.settings.local")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     database = module.DATABASES["default"]
@@ -93,7 +93,7 @@ def test_the_app_itself_runs_on_postgres(monkeypatch):
 
 
 def test_session_cookie_is_prefixed_and_lax():
-    assert settings.SESSION_COOKIE_NAME == "impromptu_session"
+    assert settings.SESSION_COOKIE_NAME == "yapholic_session"
     assert settings.SESSION_COOKIE_SAMESITE == "Lax"
 
 
@@ -107,10 +107,10 @@ def test_exactly_one_proxy_hop_is_trusted():
 
 def load_local():
     # local.py does `from .base import *`, and a plain re-import would
-    # reuse the already-cached impromptu.settings.base module rather than
+    # reuse the already-cached yapholic.settings.base module rather than
     # re-reading the env vars this test just changed.
-    sys.modules.pop("impromptu.settings.base", None)
-    spec = importlib.util.find_spec("impromptu.settings.local")
+    sys.modules.pop("yapholic.settings.base", None)
+    spec = importlib.util.find_spec("yapholic.settings.local")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
@@ -124,8 +124,8 @@ def test_static_files_serve_off_disk_with_no_bucket_configured(monkeypatch):
 
 
 def test_static_files_serve_from_the_cdn_once_a_bucket_is_set(monkeypatch):
-    monkeypatch.setenv("STORAGE_BUCKET", "impromptu")
-    monkeypatch.setenv("STORAGE_PUBLIC_BASE_URL", "https://cdn.impromptu.example")
+    monkeypatch.setenv("STORAGE_BUCKET", "yapholic")
+    monkeypatch.setenv("STORAGE_PUBLIC_BASE_URL", "https://cdn.yapholic.example")
     module = load_local()
-    assert module.STATIC_URL == "https://cdn.impromptu.example/static/"
+    assert module.STATIC_URL == "https://cdn.yapholic.example/static/"
     assert module.STORAGES["staticfiles"]["BACKEND"] == "storages.backends.s3.S3Storage"

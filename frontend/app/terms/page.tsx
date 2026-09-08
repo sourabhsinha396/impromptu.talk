@@ -7,7 +7,7 @@ import { CONTACT_EMAIL, SITE_NAME } from "@/lib/site";
 
 export const metadata: Metadata = pageMetadata({
   title: "Terms and Conditions",
-  description: "The terms that apply to using impromptu.talk, its topics, paid features and affiliate programme.",
+  description: "The terms that apply to using yapholic.com, its topics, paid features and affiliate programme.",
   path: "/terms",
 });
 

@@ -121,7 +121,7 @@ describe("the round on the page", () => {
      round after it. It is now said on the topic screen, before the clock,
      where fixing it still costs nothing. */
   it("says the microphone cannot be heard before the clock, when the round is listening", async () => {
-    localStorage.setItem("impromptu.prefs", JSON.stringify({ mic: "on" }));
+    localStorage.setItem("yapholic.prefs", JSON.stringify({ mic: "on" }));
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("{}", { status: 500 })));
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     render(<Round bank={bank} signedIn={false} />);

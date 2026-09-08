@@ -21,7 +21,7 @@ describe("proxy", () => {
   });
 
   it("lets a session cookie through", () => {
-    const response = proxy(requestFor("/account", { cookie: "impromptu_session=abc" }));
+    const response = proxy(requestFor("/account", { cookie: "yapholic_session=abc" }));
     expect(response.headers.get("location")).toBeNull();
   });
 
@@ -36,7 +36,7 @@ describe("proxy", () => {
 
   it("turns ?ref= into the referral cookie for sixty days", () => {
     const response = proxy(requestFor("/genre/general?ref=Priya42"));
-    const cookie = response.cookies.get("impromptu_ref");
+    const cookie = response.cookies.get("yapholic_ref");
     expect(cookie?.value).toBe("priya42");
     expect(cookie?.maxAge).toBe(60 * 60 * 24 * 60);
     expect(cookie?.httpOnly).toBe(true);
@@ -47,12 +47,12 @@ describe("proxy", () => {
   it("keeps the referral cookie on a redirect to sign in", () => {
     const response = proxy(requestFor("/account?ref=priya"));
     expect(response.headers.get("location")).toContain("/login");
-    expect(response.cookies.get("impromptu_ref")?.value).toBe("priya");
+    expect(response.cookies.get("yapholic_ref")?.value).toBe("priya");
   });
 
   it("remembers a picked currency for a year, and only a pick", () => {
     const response = proxy(requestFor("/pro?currency=inr"));
-    const cookie = response.cookies.get("impromptu_currency");
+    const cookie = response.cookies.get("yapholic_currency");
     expect(cookie?.value).toBe("INR");
     expect(cookie?.maxAge).toBe(60 * 60 * 24 * 365);
     // Not httpOnly: nothing is decided by holding it, and the picker lets
@@ -60,13 +60,13 @@ describe("proxy", () => {
     expect(cookie?.httpOnly).toBeFalsy();
     // A currency nobody quotes in never becomes a cookie, or a market
     // nobody sells in would be asked for on the next page.
-    expect(proxy(requestFor("/pro?currency=AED")).cookies.get("impromptu_currency")).toBeUndefined();
-    expect(proxy(requestFor("/pro?currency=USD", { method: "POST" })).cookies.get("impromptu_currency")).toBeUndefined();
+    expect(proxy(requestFor("/pro?currency=AED")).cookies.get("yapholic_currency")).toBeUndefined();
+    expect(proxy(requestFor("/pro?currency=USD", { method: "POST" })).cookies.get("yapholic_currency")).toBeUndefined();
   });
 
   it("ignores a ref that is not a code, and any ref on a post", () => {
-    expect(proxy(requestFor("/?ref=x;%20Path=/")).cookies.get("impromptu_ref")).toBeUndefined();
-    expect(proxy(requestFor("/?ref=priya", { method: "POST" })).cookies.get("impromptu_ref")).toBeUndefined();
+    expect(proxy(requestFor("/?ref=x;%20Path=/")).cookies.get("yapholic_ref")).toBeUndefined();
+    expect(proxy(requestFor("/?ref=priya", { method: "POST" })).cookies.get("yapholic_ref")).toBeUndefined();
   });
 
   it("runs on pages and not on the API rewrite or Next's assets", () => {

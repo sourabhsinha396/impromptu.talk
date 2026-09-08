@@ -1,6 +1,6 @@
-# impromptu conventions
+# yapholic conventions
 
-impromptu.talk: a random topic, a minute to think, a minute to talk. This repo is v1, the rebuild of v0 (FastAPI + Jinja, at `../zpersonal/0-lessworked/impromptuv0`) on Next.js + Django Ninja, in the shape of `../algoholic`. Read `docs/SPEC.md` and `docs/PRICING.md` for every settled product decision, `docs/DECISIONS.md` for the dated log of the calls v1 makes on its own, and `docs/tech/v0-parity.md` for what has landed and what has not. This file is the rulebook: what is true everywhere, all the time. Where another doc disagrees with this one, this one wins.
+yapholic.com: a random topic, a minute to think, a minute to talk. This repo is v1, the rebuild of v0 (FastAPI + Jinja, at `../zpersonal/0-lessworked/impromptuv0`) on Next.js + Django Ninja, in the shape of `../algoholic`. Read `docs/SPEC.md` and `docs/PRICING.md` for every settled product decision, `docs/DECISIONS.md` for the dated log of the calls v1 makes on its own, and `docs/tech/v0-parity.md` for what has landed and what has not. This file is the rulebook: what is true everywhere, all the time. Where another doc disagrees with this one, this one wins.
 
 ## The three rules
 
@@ -23,9 +23,9 @@ Frontend, from `frontend/`:
 
 Backend, from `backend/`:
 
-- `docker compose up --build` is how the backend runs: Postgres 17, Redis 8 and the `web` service (the API) on 8009, migrated on boot. `apps/` and `impromptu/` are bind-mounted and reload on edit; a dependency change needs `--build` again. Copy `.env.example` to `.env` first.
+- `docker compose up --build` is how the backend runs: Postgres 17, Redis 8 and the `web` service (the API) on 8009, migrated on boot. `apps/` and `yapholic/` are bind-mounted and reload on edit; a dependency change needs `--build` again. Copy `.env.example` to `.env` first.
 - Management commands run in the container: `docker compose exec web python manage.py <cmd>`. The bank is seeded once by hand with `seed_topics`, and again only after editing `backend/data/topics/` or the genre list; nothing seeds on boot.
-- The database and Redis are not published on the host, so their ports never collide with the neighbouring stacks. Reach them through the container: `docker compose exec db psql -U impromptu impromptu`.
+- The database and Redis are not published on the host, so their ports never collide with the neighbouring stacks. Reach them through the container: `docker compose exec db psql -U yapholic yapholic`.
 - The app is on Postgres everywhere it runs. The only SQLite in the project is the in-memory one tests use, pinned by test.
 
 Tests and lint, from `backend/` on the host:
@@ -43,8 +43,8 @@ Ports are 3009 and 8009. algoholic keeps 3007/8007 and v0 keeps 8078, so all thr
 - **Product policy lives in code, not env.** Env holds only secrets and addresses. Prices, limits and rules are code, reviewed like code.
 - **Production refuses to boot misconfigured.** A missing SECRET_KEY, ALLOWED_HOSTS or POSTGRES_HOST raises at startup, pinned by tests.
 - **Tests hold no credentials by construction.** Testing settings blank every provider key; a developer's `.env` cannot leak a live key into a run.
-- **Sessions, not JWT.** The cookie is `impromptu_session`, HttpOnly, SameSite Lax, prefixed so localhost ports do not share sessions with neighbouring apps.
-- **Five cookies, all prefixed.** `impromptu_session` and the signed `impromptu_device` are the backend's (`apps/common/devices.py` writes the device one on every API response); `impromptu_ref`, `impromptu_tz` and `impromptu_currency` are the frontend's (`frontend/lib/cookies.ts`, set by `proxy.ts` and an inline script). The currency one is the only one that is not httpOnly, because nothing is decided by holding it. Nothing else is stored in the browser except the theme.
+- **Sessions, not JWT.** The cookie is `yapholic_session`, HttpOnly, SameSite Lax, prefixed so localhost ports do not share sessions with neighbouring apps.
+- **Five cookies, all prefixed.** `yapholic_session` and the signed `yapholic_device` are the backend's (`apps/common/devices.py` writes the device one on every API response); `yapholic_ref`, `yapholic_tz` and `yapholic_currency` are the frontend's (`frontend/lib/cookies.ts`, set by `proxy.ts` and an inline script). The currency one is the only one that is not httpOnly, because nothing is decided by holding it. Nothing else is stored in the browser except the theme.
 - **Rate limits are declared beside their routes** with `apps.common.ratelimit.throttle`; the ninja surface is csrf-exempt and the admin is not. Neither lives in env.
 - **The browser never calls the backend directly.** Every browser request rides the `/api` rewrite in `frontend/app/api/[...path]/route.ts`. Server components call the backend origin with forwarded cookies.
 - **Design tokens live in `globals.css` only, and little else does.** It holds the tokens, the four `@font-face` rules and a short base layer; everything else is Tailwind utilities, shadcn copied in, and Magic UI on marketing surfaces. Components use token utilities, never raw hex. The accent colours what you read; the primary button is ink and its colour never moves.

@@ -10,7 +10,7 @@ somebody's old post is not the new account's problem.
 
 import re
 
-REFERRAL_COOKIE = "impromptu_ref"
+REFERRAL_COOKIE = "yapholic_ref"
 
 # What a code may look like: lowercase letters and digits, nothing else.
 # The frontend refuses anything else before it becomes a cookie, and this

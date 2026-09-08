@@ -2,7 +2,7 @@
 
 The round posts its own offset in minutes, exact, from the browser. Pages
 that only read (the header pill, the streak page) arrive with nothing
-but the `impromptu_tz` cookie, a zone name a script wrote before first
+but the `yapholic_tz` cookie, a zone name a script wrote before first
 paint, percent-encoded because a cookie value may not carry a bare slash.
 Turned into today's offset here with the standard library, so the day a
 streak is counted to is the visitor's and not the server's.
@@ -12,7 +12,7 @@ import datetime as dt
 from urllib.parse import unquote
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
-TIMEZONE_COOKIE = "impromptu_tz"
+TIMEZONE_COOKIE = "yapholic_tz"
 
 
 def offset_minutes(zone: str, *, now: dt.datetime | None = None) -> int:

@@ -25,7 +25,7 @@ def test_starting_the_door_redirects_to_google_and_sets_a_nonce_cookie(client):
     response = client.get(START, {"next": "/streak"})
     assert response.status_code == 302
     assert response["Location"].startswith(google_auth.AUTHORIZE_URL)
-    assert "impromptu_oauth" in response.cookies
+    assert "yapholic_oauth" in response.cookies
 
 
 @ON

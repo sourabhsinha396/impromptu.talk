@@ -12,7 +12,7 @@ from apps.payments.apis import api as payments_api
 from apps.runs.apis import api as runs_api
 from apps.topics.apis import api as topics_api
 
-api = NinjaAPI(title="impromptu", docs_decorator=staff_member_required)
+api = NinjaAPI(title="yapholic", docs_decorator=staff_member_required)
 
 api.add_router("v1/common", common_api)
 api.add_router("v1/auth", auth_api)
@@ -34,8 +34,8 @@ def rate_limited(request, exc):
 
 # The console names itself, so a tab open beside a neighbouring stack's
 # admin is not a coin toss.
-admin.site.site_header = "impromptu"
-admin.site.site_title = "impromptu"
+admin.site.site_header = "yapholic"
+admin.site.site_title = "yapholic"
 admin.site.index_title = "Tables"
 
 urlpatterns = [

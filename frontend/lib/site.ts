@@ -11,7 +11,7 @@
  * and stays in code.
  */
 
-export const SITE_NAME = "impromptu.talk";
+export const SITE_NAME = "yapholic.com";
 
 export const SITE_TAGLINE = "A random topic. A minute to think. A minute to talk.";
 
@@ -39,4 +39,4 @@ export const OWNER = process.env.NEXT_PUBLIC_COMPANY_NAME || SITE_NAME;
 
 /* The one address anyone is invited to write to: the contact page, the
    legal documents and the footer of every page. */
-export const CONTACT_EMAIL = process.env.NEXT_PUBLIC_COMPANY_EMAIL || "hello@impromptu.talk";
+export const CONTACT_EMAIL = process.env.NEXT_PUBLIC_COMPANY_EMAIL || "hello@yapholic.com";

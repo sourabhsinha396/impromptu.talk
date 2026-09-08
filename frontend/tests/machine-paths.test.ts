@@ -11,7 +11,7 @@ const ROOT = path.resolve(import.meta.dirname, "..", "..");
    interpolate ${VAR} out of their own config, so a path written this way
    reads as portable and is not: on the deploy host the variable is
    missing and the tool refuses before it does anything. Compose's
-   ${POSTGRES_USER:-impromptu} is fine and stays fine, because what is
+   ${POSTGRES_USER:-yapholic} is fine and stays fine, because what is
    named here is one machine and not a setting. */
 const PATTERNS = [
   /\$\{?(LOCALAPPDATA|APPDATA|USERPROFILE|HOMEDRIVE|HOMEPATH|PROGRAMFILES|PROGRAMDATA|SYSTEMROOT)\b/i,

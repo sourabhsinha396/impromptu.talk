@@ -5,7 +5,7 @@
    before anything renders. The same key as v0, so a returning visitor keeps
    their choice across the rebuild. */
 
-export const THEME_KEY = "impromptu.theme";
+export const THEME_KEY = "yapholic.theme";
 
 export type Theme = "system" | "light" | "dark";
 

@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
    face at 400: the one place that weight is drawn, which is why the font
    file spans it.
 
-   `collapse` is the header's: on a phone the name gives way to "i.t" so the
+   `collapse` is the header's: on a phone the name gives way to "y.t" so the
    streak pill and the account mark keep their room. */
 export function Wordmark({ collapse = false, className }: { collapse?: boolean; className?: string }) {
   return (
@@ -19,11 +19,11 @@ export function Wordmark({ collapse = false, className }: { collapse?: boolean; 
     >
       <LogoMark className="size-[21px] shrink-0 text-accent" />
       <span className={collapse ? "hidden sm:inline" : undefined}>
-        impromptu<span className="font-normal text-muted">.talk</span>
+        yapholic
       </span>
       {collapse && (
         <span className="sm:hidden" aria-hidden>
-          i<span className="font-normal text-muted">.</span>t
+          y<span className="font-normal text-muted">.</span>t
         </span>
       )}
     </span>

@@ -44,7 +44,7 @@ MIDDLEWARE = [
     "apps.common.devices.DeviceCookieMiddleware",
 ]
 
-ROOT_URLCONF = "impromptu.urls"
+ROOT_URLCONF = "yapholic.urls"
 
 TEMPLATES = [
     {
@@ -61,7 +61,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "impromptu.wsgi.application"
+WSGI_APPLICATION = "yapholic.wsgi.application"
 
 # Postgres everywhere the app runs, from `docker compose up` in backend/;
 # the only SQLite in the project is the in-memory one tests run on. The
@@ -72,9 +72,9 @@ WSGI_APPLICATION = "impromptu.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("POSTGRES_DB", "impromptu"),
-        "USER": os.environ.get("POSTGRES_USER", "impromptu"),
-        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "impromptu"),
+        "NAME": os.environ.get("POSTGRES_DB", "yapholic"),
+        "USER": os.environ.get("POSTGRES_USER", "yapholic"),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "yapholic"),
         "HOST": os.environ.get("POSTGRES_HOST") or "db",
         "PORT": os.environ.get("POSTGRES_PORT") or "5432",
     }
@@ -96,7 +96,7 @@ PASSWORD_HASHERS = [
 
 # Prefixed so localhost ports do not share sessions with the neighbouring
 # apps (algoholic on 3007/8007, v0 on 8078).
-SESSION_COOKIE_NAME = "impromptu_session"
+SESSION_COOKIE_NAME = "yapholic_session"
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 30
 SESSION_COOKIE_SAMESITE = "Lax"
 
@@ -117,7 +117,7 @@ RATELIMIT_TRUSTED_PROXY_HOPS = 1
 FRONTEND_ORIGIN = os.environ.get("FRONTEND_ORIGIN") or "http://localhost:3009"
 
 # What the site calls itself in a mail. Copy, so code.
-SITE_NAME = "impromptu.talk"
+SITE_NAME = "yapholic.com"
 
 # Mail goes through Brevo when a key is set and to the console when it is
 # not, so a checkout with no key prints the message and a laptop with one
@@ -128,7 +128,7 @@ BREVO_API_KEY = os.environ.get("BREVO_API_KEY", "").strip()
 EMAIL_BACKEND = (
     "apps.common.mail.BrevoEmailBackend" if BREVO_API_KEY else "django.core.mail.backends.console.EmailBackend"
 )
-DEFAULT_FROM_EMAIL = f"{SITE_NAME} <{os.environ.get('MAIL_FROM_ADDRESS') or 'no-reply@impromptu.talk'}>"
+DEFAULT_FROM_EMAIL = f"{SITE_NAME} <{os.environ.get('MAIL_FROM_ADDRESS') or 'no-reply@yapholic.com'}>"
 
 # Google sign-in. Both empty is the supported off state, not a
 # misconfiguration: `apps/authentication/google.py` 404s its own routes

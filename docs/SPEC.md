@@ -1,4 +1,4 @@
-# impromptu.talk - product spec
+# yapholic.com - product spec
 
 A random topic. A minute to think. A minute to talk. Every day.
 
@@ -134,7 +134,7 @@ The engine is a pure TypeScript module with no DOM in it, tested with fake timer
 
 ## 6. Accounts
 
-- **Email and password**, minimum eight characters and no other rule. A name is optional at signup and can be set later in settings. Django's own user, sessions (30 days, HttpOnly, SameSite Lax, cookie `impromptu_session`) and Argon2 hashing. A form that refuses re-renders with one sentence and the typing intact, never a bare 422; only a value no person could have typed is refused at the edge.
+- **Email and password**, minimum eight characters and no other rule. A name is optional at signup and can be set later in settings. Django's own user, sessions (30 days, HttpOnly, SameSite Lax, cookie `yapholic_session`) and Argon2 hashing. A form that refuses re-renders with one sentence and the typing intact, never a bare 422; only a value no person could have typed is refused at the edge.
 - **The anonymous device is claimed** at every sign-in, through the login signal so no door can forget: every run carrying the current device id and no user gets the user set. A device with anonymous history signing into an account with its own history keeps both. Signing out rotates the device cookie so nothing is left behind.
 - **`?next=` is honoured** after sign-in, for our own paths only.
 - **Password reset** sends one link, valid for an hour; every link sent in the hour works until one is used, and using one ends the rest along with every session. A Google-only account gains a password this way. Mail goes through the transactional provider, and every non-production environment prints it to the console instead.
@@ -169,7 +169,7 @@ Where a stranger feels "these do not fit me" is while choosing a genre, so the w
 
 ## 9. Affiliates
 
-Every account has a link, `impromptu.talk?ref=<code>`, minted on the first look at `/account` or `/affiliate` and never changed, and it earns 30% of what a purchase actually charged. The rules are in [`PRICING.md`](PRICING.md) §7. `/affiliate` is the pitch and is public; `/affiliate/referrals` is one person's own numbers and is not.
+Every account has a link, `yapholic.com?ref=<code>`, minted on the first look at `/account` or `/affiliate` and never changed, and it earns 30% of what a purchase actually charged. The rules are in [`PRICING.md`](PRICING.md) §7. `/affiliate` is the pitch and is public; `/affiliate/referrals` is one person's own numbers and is not.
 
 ---
 
@@ -192,7 +192,7 @@ Two consoles, and they are not the same thing. **`/re-admin/`** is Django's admi
 
 ## 12. Chrome and pages
 
-- **Header**: the die and the wordmark, "impromptu" in ink and ".talk" in the display face at 400, collapsing to "i.t" on a phone; the streak pill; the account menu. The band runs full width and carries the hairline; the row inside stops at 80rem.
+- **Header**: the die and the wordmark, "yapholic" in ink and ".talk" in the display face at 400, collapsing to "y.t" on a phone; the streak pill; the account menu. The band runs full width and carries the hairline; the row inside stops at 80rem.
 - **Footer**: the brand column (wordmark, blurb, copyright with the owner, which is the company name or the site's own when there is none), then Product (All genres, Your streak, Pro), Company (About, Contact, Affiliates, the contact address), Legal (Privacy, Terms, Refunds). The bottom line differs by sign-in state: a stranger is told no account is needed and their streak lives in this browser; somebody signed in is told something else, because by then their runs are rows on our server. "Proudly made in India" is addressed, not broadcast: shown to a visitor in India and to nobody else, and no signal means no line.
 - **Where a visitor is** is answered in one place off three signals, best first: a country header when a proxy sets it, the timezone cookie a script writes before first paint, the region of Accept-Language. It answers which of the eight markets, never where on earth.
 - **Errors are pages.** A dead URL or a 500 outside `/api` is a page of ours, status kept, with the one true sentence and the tool's button on it. Never a JSON blob for a visitor who expected a page, and never a soft 404 that gets a dead URL indexed.

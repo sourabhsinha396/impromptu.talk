@@ -1,22 +1,22 @@
-name: impromptu
+name: yapholic
 
 services:
   db:
     image: postgres:17-alpine
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-impromptu}
-      POSTGRES_USER: ${POSTGRES_USER:-impromptu}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-impromptu}
+      POSTGRES_DB: ${POSTGRES_DB:-yapholic}
+      POSTGRES_USER: ${POSTGRES_USER:-yapholic}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-yapholic}
     # No host port on purpose: 5432 on the host collided with the other
     # projects' stacks running side by side. Reach it through the container
-    # (`docker compose exec db psql -U impromptu impromptu`).
+    # (`docker compose exec db psql -U yapholic yapholic`).
     volumes:
       - db-data:/var/lib/postgresql/data
     healthcheck:
       # Named database on purpose: with nothing named, pg_isready knocks on a
       # database called $POSTGRES_USER, which exists only while the two words
       # are the same, and writes a FATAL to the log every interval otherwise.
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-impromptu} -d ${POSTGRES_DB:-impromptu}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-yapholic} -d ${POSTGRES_DB:-yapholic}"]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -40,16 +40,16 @@ services:
       PYTHONUNBUFFERED: "1"
     command: >
       sh -c "python manage.py migrate &&
-      if [ \"$DJANGO_SETTINGS_MODULE\" = \"impromptu.settings.local\" ]; then
+      if [ \"$DJANGO_SETTINGS_MODULE\" = \"yapholic.settings.local\" ]; then
         python manage.py runserver 0.0.0.0:8009;
       else
-        gunicorn impromptu.wsgi:application --bind 0.0.0.0:8009;
+        gunicorn yapholic.wsgi:application --bind 0.0.0.0:8009;
       fi"
     ports:
       - "${WEB_PORT:-8009}:8009"
     volumes:
       - ./apps:/app/apps
-      - ./impromptu:/app/impromptu
+      - ./yapholic:/app/yapholic
       # The bank, so editing a file and running seed_topics needs no rebuild.
       - ./data:/app/data
     depends_on:

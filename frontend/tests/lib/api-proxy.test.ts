@@ -10,14 +10,14 @@ describe("forwardApiRequest", () => {
       new Response('{"status":"ok"}', {
         headers: {
           "content-type": "application/json",
-          "set-cookie": "impromptu_device=fresh; HttpOnly; Path=/; SameSite=Lax",
+          "set-cookie": "yapholic_device=fresh; HttpOnly; Path=/; SameSite=Lax",
         },
       }),
     );
     vi.stubGlobal("fetch", sent);
     const request = new Request("http://localhost:3009/api/v1/auth/login?next=%2Faccount", {
       method: "POST",
-      headers: { cookie: "impromptu_session=current; impromptu_device=old", "content-type": "application/json" },
+      headers: { cookie: "yapholic_session=current; yapholic_device=old", "content-type": "application/json" },
       body: '{"email":"speaker@example.com"}',
     });
 
@@ -25,10 +25,10 @@ describe("forwardApiRequest", () => {
     const upstream = sent.mock.calls[0]?.[0] as Request;
 
     expect(upstream.url).toBe("http://127.0.0.1:8009/api/v1/auth/login?next=%2Faccount");
-    expect(upstream.headers.get("cookie")).toBe("impromptu_session=current; impromptu_device=old");
+    expect(upstream.headers.get("cookie")).toBe("yapholic_session=current; yapholic_device=old");
     expect(upstream.method).toBe("POST");
     expect(await upstream.text()).toBe('{"email":"speaker@example.com"}');
-    expect(response.headers.get("set-cookie")).toContain("impromptu_device=fresh");
+    expect(response.headers.get("set-cookie")).toContain("yapholic_device=fresh");
   });
 
   it("sends a GET without a body", async () => {

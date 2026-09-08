@@ -3,8 +3,8 @@
    across the rebuild. v0 called the style "format"; that key is read once
    and written back as style. */
 
-export const PREFS_KEY = "impromptu.prefs";
-export const STAGE_KEY = "impromptu.staged";
+export const PREFS_KEY = "yapholic.prefs";
+export const STAGE_KEY = "yapholic.staged";
 
 export const SURPRISE = "surprise";
 

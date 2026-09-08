@@ -6,7 +6,7 @@ import { CONTACT_EMAIL, SITE_NAME } from "@/lib/site";
 
 export const metadata: Metadata = pageMetadata({
   title: "Privacy Policy",
-  description: "What impromptu.talk stores, why, who else can see it, and how to have it removed.",
+  description: "What yapholic.com stores, why, who else can see it, and how to have it removed.",
   path: "/privacy",
 });
 

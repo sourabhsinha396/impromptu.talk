@@ -46,7 +46,7 @@ describe("the shared page", () => {
      matters is what it says and what it does not. */
   it("names the person and their numbers, eight weeks, and the bank topics as links into a round", () => {
     render(<SharedPage shared={priya} />);
-    expect(screen.getByText("Priya on impromptu.talk")).toBeInTheDocument();
+    expect(screen.getByText("Priya on yapholic.com")).toBeInTheDocument();
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Day 41.");
     expect(screen.getByText("day streak").previousSibling).toHaveTextContent("41");
     expect(screen.getByRole("heading", { name: "Last eight weeks" })).toBeInTheDocument();
@@ -82,7 +82,7 @@ describe("the shared page", () => {
 
   it("calls a person with no name a speaker and a person with no streak just getting started", () => {
     render(<SharedPage shared={{ ...priya, name: "", streak: 0, recent: [] }} />);
-    expect(screen.getByText("A speaker on impromptu.talk")).toBeInTheDocument();
+    expect(screen.getByText("A speaker on yapholic.com")).toBeInTheDocument();
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Just getting started.");
     expect(screen.queryByRole("heading", { name: "Recently practised" })).not.toBeInTheDocument();
   });

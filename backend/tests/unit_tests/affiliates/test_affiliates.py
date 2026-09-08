@@ -105,8 +105,8 @@ class TestTheCode:
         assert body["minimum_payout"] == "$10.00"
 
     def test_the_link_is_the_site_with_one_word_after_it(self, priya, settings):
-        settings.FRONTEND_ORIGIN = "https://impromptu.talk"
-        assert signed_in(priya).get(PROGRAMME).json()["link"] == "https://impromptu.talk?ref=priya"
+        settings.FRONTEND_ORIGIN = "https://yapholic.com"
+        assert signed_in(priya).get(PROGRAMME).json()["link"] == "https://yapholic.com?ref=priya"
 
 
 class TestWhoGetsCredited:

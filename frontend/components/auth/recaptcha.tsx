@@ -19,13 +19,13 @@ type RecaptchaApi = {
 declare global {
   interface Window {
     grecaptcha?: RecaptchaApi;
-    __impromptuRecaptchaOnLoad?: () => void;
+    __yapholicRecaptchaOnLoad?: () => void;
   }
 }
 
 const SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 const SCRIPT_ID = "google-recaptcha-v2";
-const ONLOAD_CALLBACK = "__impromptuRecaptchaOnLoad" as const;
+const ONLOAD_CALLBACK = "__yapholicRecaptchaOnLoad" as const;
 let loading: Promise<RecaptchaApi> | null = null;
 
 /* The script tag's own `load` event fires once the file has downloaded,

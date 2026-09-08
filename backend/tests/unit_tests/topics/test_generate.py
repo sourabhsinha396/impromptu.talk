@@ -49,7 +49,7 @@ def ask(client, prompt="behavioural questions for a first job"):
 
 class TestTheSuiteCannotSpend:
     def test_the_key_is_blank_and_the_gateway_is_the_recorder(self, model):
-        from impromptu.settings import testing
+        from yapholic.settings import testing
 
         assert testing.OPENROUTER_API_KEY == ""
         assert openrouter.gateway() is model

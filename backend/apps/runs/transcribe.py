@@ -53,7 +53,7 @@ TIMEOUT = 45
 POLL_TIMEOUT = 40
 POLL_EVERY = 1.5
 
-USER_AGENT = "impromptu.talk (+https://impromptu.talk)"
+USER_AGENT = "yapholic.com (+https://yapholic.com)"
 
 GROQ_MODEL = "whisper-large-v3-turbo"
 

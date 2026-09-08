@@ -4,14 +4,14 @@
    cookies are written on this side, because a link lands on a page and
    only the browser knows its own clock. */
 
-export const SESSION_COOKIE = "impromptu_session";
-export const REFERRAL_COOKIE = "impromptu_ref";
-export const TIMEZONE_COOKIE = "impromptu_tz";
+export const SESSION_COOKIE = "yapholic_session";
+export const REFERRAL_COOKIE = "yapholic_ref";
+export const TIMEZONE_COOKIE = "yapholic_tz";
 /* A currency somebody picked, which is a different thing from one we
    guessed. Only a pick is remembered: a guess that wrote itself down
    would harden a wrong one into a preference nobody chose, and the
    ladder can guess again on every request for free. */
-export const CURRENCY_COOKIE = "impromptu_currency";
+export const CURRENCY_COOKIE = "yapholic_currency";
 
 /* Sixty days: somebody who read a post, tried the free round for a few
    weeks and then bought is still credited to the person who sent them,
@@ -48,7 +48,7 @@ export const timezoneInit =
    still shown it when they come back to buy. */
 export const CURRENCY_MAX_AGE = 60 * 60 * 24 * 365;
 
-export const DEVICE_COOKIE = "impromptu_device";
+export const DEVICE_COOKIE = "yapholic_device";
 
 /* The backend signs the device cookie as `id:timestamp:signature` and is
    the only side that verifies it. The id in front is read here for one

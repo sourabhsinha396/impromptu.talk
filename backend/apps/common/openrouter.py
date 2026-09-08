@@ -39,7 +39,7 @@ TIMEOUT = 45
 
 # The same lesson as the payment provider's edge: name the client, or a
 # default urllib agent gets an edge refusal nobody can read.
-USER_AGENT = "impromptu.talk (+https://impromptu.talk)"
+USER_AGENT = "yapholic.com (+https://yapholic.com)"
 
 
 class ModelError(Exception):

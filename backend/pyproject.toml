@@ -1,5 +1,5 @@
 [project]
-name = "impromptu-backend"
+name = "yapholic-backend"
 version = "0.1.0"
 requires-python = ">=3.12,<3.14"
 dependencies = [
@@ -23,7 +23,7 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE = "impromptu.settings.testing"
+DJANGO_SETTINGS_MODULE = "yapholic.settings.testing"
 testpaths = ["tests/unit_tests"]
 addopts = "--strict-markers --tb=short --no-migrations --durations=10 --durations-min=0.2"
 
