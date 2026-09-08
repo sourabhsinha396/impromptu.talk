@@ -162,7 +162,15 @@ describe("the round", () => {
     // v0 never knew about the microphone, so a returning visitor's prefs
     // carry no answer and get "ask": nothing opens the microphone until
     // somebody says so.
-    expect(engine.prefs).toEqual({ genre: "career", prep: 120, speak: 600, style: "hot-take", sound: false, mic: "ask" });
+    expect(engine.prefs).toEqual({
+      genre: "career",
+      prep: 120,
+      speak: 600,
+      style: "hot-take",
+      sound: false,
+      mic: "ask",
+      filming: false,
+    });
     engine.chooseGenre("general");
     expect(engine.prefs.style).toBe("hot-take");
     engine.chooseStyle("IELTS style");

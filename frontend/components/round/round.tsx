@@ -266,6 +266,7 @@ export function Round({
               onLength={(which, seconds) => engine.setLength(which, seconds)}
               onStyle={(key) => engine.chooseStyle(key)}
               onSound={(on) => engine.setSound(on)}
+              onFilming={(on) => engine.setFilming(on)}
               onMic={(on) => (on ? void turnOnMic() : engine.setMic("off"))}
             />
           </>
@@ -336,6 +337,7 @@ export function Round({
           runId={runId}
           spokenSeconds={engine.spokeFor}
           signedIn={signedIn}
+          filming={prefs.filming}
           onAgain={armed(() => engine.spin())}
           onSame={() => engine.sameTopic()}
         />

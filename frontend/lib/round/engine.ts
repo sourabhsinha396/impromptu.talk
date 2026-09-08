@@ -343,6 +343,16 @@ export class Engine {
     this.changed();
   }
 
+  /** The report drawn to be filmed, or the reading one. Only the drawing
+      changes: the round, what is measured and what is stored are the
+      same either way. */
+  setFilming(on: boolean): void {
+    this.prefs.filming = on;
+    savePrefs(this.store, this.prefs);
+    this.effect({ type: "track", name: "filming_toggled", props: { on } });
+    this.changed();
+  }
+
   setSound(on: boolean): void {
     this.prefs.sound = on;
     savePrefs(this.store, this.prefs);

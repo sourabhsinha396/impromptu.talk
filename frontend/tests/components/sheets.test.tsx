@@ -105,6 +105,11 @@ describe("the sheets", () => {
     expect(screen.queryByLabelText("Talking time")).not.toBeInTheDocument();
     await user.click(screen.getByLabelText("Mute sound effects"));
     expect(saved().sound).toBe(false);
+    /* The other switch on that page: the report drawn to be filmed.
+       Off until somebody asks for it. */
+    expect(saved().filming).toBe(false);
+    await user.click(screen.getByLabelText("Report sized for filming"));
+    expect(saved().filming).toBe(true);
     await user.click(screen.getByRole("button", { name: "Settings" }));
     expect(screen.getByLabelText("Talking time")).toBeInTheDocument();
 

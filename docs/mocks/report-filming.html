@@ -15,7 +15,6 @@
 .framecap{max-width:1000px;margin:10px auto 0;color:#a8a29e;font:400 13px/1.5 var(--sans)}
 .far .frame{transform:scale(.4);transform-origin:top center}
 .far .stage{height:262px}
-.far .framecap{margin-top:0}
 section[data-phase]{flex:1;min-height:0;position:relative}
 .cropguide{display:none;position:absolute;inset:0;margin:auto;height:100%;aspect-ratio:9/16;outline:2px dashed rgb(255 255 255/.85);box-shadow:0 0 0 9999px rgb(0 0 0/.55);pointer-events:none;z-index:20}
 .crop .cropguide{display:block}
@@ -23,13 +22,10 @@ section[data-phase]{flex:1;min-height:0;position:relative}
 .notes{max-width:1000px;margin:26px auto 30px;background:#fffbea;color:#3b2f0b;border-radius:14px;padding:18px 22px;font-size:14px;line-height:1.55}
 .notes h2{margin:0 0 8px;font:600 15px var(--sans)}.notes h3{margin:18px 0 6px;font:600 14px var(--sans)}
 .notes ul{margin:0;padding-left:18px}.notes li{margin:6px 0}.notes[hidden]{display:none}
-.notes code{background:#f3e9b8;padding:1px 5px;border-radius:4px;font-size:12.5px}
 .verdict{margin:14px 0 0;padding:12px 14px;border-radius:10px;background:#2a2a28;color:#e7e5e4;font-size:13.5px;line-height:1.55}
-.verdict.good{background:#14361d;color:#d7f0dd}
-.spacer{height:34px}
 
 /* ---------------------------------------------------------- the chrome */
-.topbar{height:var(--header-h);display:flex;align-items:center;padding:10px clamp(14px,4vw,28px);border-bottom:1px solid var(--accent)}
+.topbar{height:var(--header-h);display:flex;align-items:center;padding:10px clamp(14px,4vw,28px);border-bottom:1px solid var(--accent);flex:none}
 .topbar-in{flex:1;display:flex;align-items:center;justify-content:space-between;max-width:80rem;margin-inline:auto}
 .wordmark{display:inline-flex;align-items:center;gap:8px;font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:-.02em;font-variation-settings:"wdth" 96}
 .wordmark i{color:var(--muted);font-weight:400;font-style:normal}.die{width:19px;height:19px;color:var(--accent)}
@@ -37,11 +33,10 @@ section[data-phase]{flex:1;min-height:0;position:relative}
 .pill b{color:var(--accent)}
 .avatar{width:32px;height:32px;border-radius:999px;border:1px solid var(--line-strong);display:inline-flex;align-items:center;justify-content:center;color:var(--muted);margin-left:10px}
 .tools{display:inline-flex;gap:10px;align-items:center}
-
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;border:1px solid transparent;font:600 15px var(--sans);text-decoration:none;cursor:pointer;padding:11px 22px}
 .btn-primary{background:var(--btn);color:var(--btn-ink)}
 .btn-ghost{background:transparent;color:var(--ink);border-color:var(--line-strong)}
-.btn-big{font-size:19px;padding:13px 30px}
+.btn-big{font-size:18px;padding:13px 28px}
 .row{display:flex;gap:12px;justify-content:center;align-items:center}
 .link{color:var(--accent-strong);font-weight:600;text-decoration:underline;text-underline-offset:4px}
 
@@ -65,58 +60,47 @@ section[data-phase]{flex:1;min-height:0;position:relative}
 .band .tip{font-size:11.5px;color:var(--muted);margin:7px 0 0}
 .axis{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:5px;font-variant-numeric:tabular-nums}
 
-/* ---------------------------------------------------------- shared filming pieces */
-.film{height:100%;display:flex;flex-direction:column;align-items:center;padding:14px 24px 14px}
-.filmtop{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:600;color:var(--muted)}
+/* ---------------------------------------------------------- the filming report */
+.film{height:100%;display:flex;flex-direction:column;padding:14px 18px 16px;overflow-y:auto}
+.filmhead{display:flex;align-items:baseline;justify-content:space-between;gap:20px;flex:none}
+.topicline{font-family:var(--display);font-weight:600;letter-spacing:-.02em;font-variation-settings:"wdth" 96;color:var(--accent);margin:0;line-height:1.15;font-size:21px}
+.filmtop{display:flex;align-items:center;gap:9px;font-size:15px;font-weight:600;color:var(--muted);flex:none}
 .filmtop b{color:var(--ink)}
 .dot{width:5px;height:5px;border-radius:999px;background:var(--line-strong)}
-.topicline{font-family:var(--display);font-weight:600;letter-spacing:-.02em;font-variation-settings:"wdth" 96;color:var(--accent);margin:4px 0 0;line-height:1.15}
-.wave{width:100%;display:block}
-.said{font-family:var(--display);font-weight:600;letter-spacing:-.03em;font-variation-settings:"wdth" 96;line-height:1.1;margin:0}
 
-/* meters, the filming version of a band */
-.meter{width:100%}
-.meter .mh{display:flex;justify-content:space-between;align-items:baseline}
-.meter .ml{font-size:17px;font-weight:700}
-.meter .mv{font-size:17px;font-weight:700;font-variant-numeric:tabular-nums}
-.meter .mv.out{color:var(--warn)}
-.mtrack{position:relative;height:13px;border-radius:999px;background:var(--line);margin-top:7px}
+.board{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:1.45fr 1fr 1.05fr;gap:11px;margin-top:11px;flex:1;min-height:0}
+.card{border:1.5px solid var(--line);border-radius:16px;background:var(--card2);padding:12px 14px;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.card h3{margin:0 0 6px;font:700 14px var(--sans);color:var(--muted)}
+.card .big{font-family:var(--display);font-weight:600;font-size:40px;line-height:1;letter-spacing:-.02em}
+.card .big.out{color:var(--warn)}
+.card .big.good{color:var(--accent-strong)}
+.card .say{font-size:15px;line-height:1.35;margin:7px 0 0}
+.card .say.muted{color:var(--muted)}
+.card .tip{font-size:14px;line-height:1.35;color:var(--muted);margin:auto 0 0;padding-top:8px}
+.span2{grid-column:span 2}
+.valrow{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.unit{font-size:15px;font-weight:600;color:var(--muted);text-align:right}
+.mtrack{position:relative;height:13px;border-radius:999px;background:var(--line);margin-top:10px;flex:none}
 .mtrack .good{position:absolute;top:0;bottom:0;border-radius:999px;background:color-mix(in oklab,var(--accent) 38%,transparent)}
-.mtrack .mark{position:absolute;top:50%;width:26px;height:26px;border-radius:999px;background:var(--ink);transform:translate(-50%,-50%);border:4px solid var(--surface)}
+.mtrack .mark{position:absolute;top:50%;width:24px;height:24px;border-radius:999px;background:var(--ink);transform:translate(-50%,-50%);border:4px solid var(--card2)}
 .mtrack .mark.out{background:var(--warn)}
+.scale{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-top:6px}
+.wave{width:100%;display:block}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
+.chip{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:6px 12px;font-size:15px;font-weight:600;background:color-mix(in oklab,var(--accent) 20%,transparent)}
+.chip.warm{background:color-mix(in oklab,var(--warn) 22%,transparent)}
+.chip b{font-variant-numeric:tabular-nums}
+.quote{font-size:14.5px;line-height:1.35;color:var(--muted);margin:6px 0 0}
+.filmfoot{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:12px;flex:none}
 
-/* ---------------------------------------------------------- A, the column */
-.colwrap{width:322px;height:100%;display:flex;flex-direction:column;align-items:center;text-align:center}
-.colwrap .topicline{font-size:19px}
-.colwrap .wavebox{width:100%;margin-top:10px}
-.colwrap .said{font-size:26px;margin-top:12px}
-.colwrap .meters{width:100%;margin-top:14px;display:flex;flex-direction:column;gap:12px;text-align:left}
-.colwrap .fix{margin:10px 0 0;font-size:14.5px;line-height:1.35;color:var(--muted);text-align:left;width:100%}
-.colwrap .foot{margin-top:auto;padding-top:10px;display:flex;flex-direction:column;align-items:center;gap:6px}
-
-/* ---------------------------------------------------------- B, one at a time */
-.cards{width:100%;height:100%;position:relative}
-.card{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 40px}
-.card.on{display:flex}
-.card .kicker{font-size:17px;font-weight:700;color:var(--muted);letter-spacing:.02em;margin:0 0 18px}
-.card .big{font-family:var(--display);font-weight:600;letter-spacing:-.03em;font-size:56px;line-height:1.05;margin:0}
-.card .under{font-size:20px;color:var(--muted);margin:16px 0 0}
-.quad{display:grid;grid-template-columns:1fr 1fr;gap:26px 60px;width:100%;max-width:620px}
-.quad .q .n{font-family:var(--display);font-weight:600;font-size:60px;line-height:1}
-.quad .q .n.out{color:var(--warn)}
-.quad .q .l{font-size:18px;color:var(--muted);margin-top:2px}
-.dots{position:absolute;left:0;right:0;bottom:16px;display:flex;justify-content:center;gap:8px}
-.dots i{width:9px;height:9px;border-radius:999px;background:var(--line-strong);opacity:.5}
-.dots i.on{background:var(--accent);opacity:1}
-
-/* ---------------------------------------------------------- C, the full screen */
-.wide{width:100%;max-width:900px;display:flex;flex-direction:column;height:100%}
-.wide .head{display:flex;align-items:baseline;justify-content:space-between;gap:20px}
-.wide .topicline{font-size:23px;margin:0}
-.wide .said{font-size:44px;margin:20px 0 0}
-.wide .meters{display:grid;grid-template-columns:repeat(4,1fr);gap:30px;margin-top:30px}
-.wide .fix{margin:18px 0 0;font-size:18px;color:var(--muted)}
-.wide .foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:16px}
+/* the column: the same cards at the width the crop leaves */
+.colframe{height:100%}
+.colframe .board{grid-template-columns:1fr;grid-template-rows:none;grid-auto-rows:auto;flex:none}
+.colframe .span2{grid-column:span 1}
+.colframe .film{padding:12px 14px 14px;align-items:center}
+.colframe .filmhead,.colframe .board,.colframe .filmfoot{width:322px}
+.colframe .topicline{font-size:19px}
+.colframe .card .big{font-size:36px}
 
 /* ---------------------------------------------------------- the setting */
 .sheetstage{height:100%;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgb(0 0 0/.45)}
@@ -135,9 +119,8 @@ section[data-phase]{flex:1;min-height:0;position:relative}
 <div class="mockbar"><b>Mock</b>
 <span class="seg">
 <button data-tab="today" class="on">Today</button>
-<button data-tab="a">A &middot; The column</button>
-<button data-tab="b">B &middot; One at a time</button>
-<button data-tab="c">C &middot; The full screen</button>
+<button data-tab="board">The board</button>
+<button data-tab="column">The column</button>
 <button data-tab="setting">The setting</button>
 </span>
 <span class="seg"><button data-theme-set="light">Light</button><button data-theme-set="dark">Dark</button></span>
@@ -161,7 +144,7 @@ section[data-phase]{flex:1;min-height:0;position:relative}
 <div class="stats"><div class="stat"><div class="n">7</div><div class="l">day streak</div></div><div class="stat"><div class="n">23</div><div class="l">topics</div></div><div class="stat"><div class="n">24</div><div class="l">minutes spoken</div></div></div>
 <div class="row"><a class="btn btn-primary" href="#">Spin again</a><a class="btn btn-ghost" href="#">Same topic</a></div>
 <div class="report">
-<svg class="wave" data-wave data-h="40" data-stroke="1.5" data-gap="3" data-dot="8" viewBox="0 0 100 40" preserveAspectRatio="none" style="height:40px"></svg>
+<svg class="wave" data-wave data-stroke="1.5" data-gap="3" data-dot="8" viewBox="0 0 100 40" preserveAspectRatio="none" style="height:40px"></svg>
 <div class="axis"><span>0:00</span><span>1:00</span></div>
 <p class="sentence">Your longest gap was 6 seconds.</p>
 <p class="nums">1 long gap &nbsp;&middot;&nbsp; 0:02 to start &nbsp;&middot;&nbsp; 143 wpm &nbsp;&middot;&nbsp; 4 um</p>
@@ -176,88 +159,158 @@ section[data-phase]{flex:1;min-height:0;position:relative}
 </div>
 </section>
 
-<!-- ------------------------------------------------------------ A -->
-<section data-phase="a" hidden>
+<!-- ------------------------------------------------------------ the board -->
+<section data-phase="board" hidden>
 <div class="film">
-<div class="colwrap">
-<div class="filmtop"><b>Day 7</b><i class="dot"></i><span>1 minute</span></div>
-<p class="topicline">Meetings should be optional.</p>
-
-<div class="wavebox">
-<svg class="wave" data-wave data-h="70" data-stroke="4" data-gap="9" data-dot="13" viewBox="0 0 100 40" preserveAspectRatio="none" style="height:70px"></svg>
-</div>
-
-<p class="said">Your longest gap was 6 seconds.</p>
-
-<div class="meters">
-<div class="meter"><div class="mh"><span class="ml">Longest gap</span><span class="mv out">6s</span></div><div class="mtrack"><i class="good" style="left:0;width:25%"></i><i class="mark out" style="left:60%"></i></div></div>
-<div class="meter"><div class="mh"><span class="ml">Pace</span><span class="mv">143 wpm</span></div><div class="mtrack"><i class="good" style="left:44%;width:25%"></i><i class="mark" style="left:52%"></i></div></div>
-<div class="meter"><div class="mh"><span class="ml">Time to start</span><span class="mv">2s</span></div><div class="mtrack"><i class="good" style="left:0;width:33%"></i><i class="mark" style="left:17%"></i></div></div>
-<div class="meter"><div class="mh"><span class="ml">Ums a minute</span><span class="mv">4</span></div><div class="mtrack"><i class="good" style="left:0;width:33%"></i><i class="mark" style="left:33%"></i></div></div>
-</div>
-
-<p class="fix">Say the next point half-formed. A wobble costs less than a hole.</p>
-
-<div class="foot">
-<a class="btn btn-primary btn-big" href="#">Spin again</a>
-<a class="link" href="#" style="font-size:14px">Read it back</a>
-</div>
-</div>
-</div>
-</section>
-
-<!-- ------------------------------------------------------------ B -->
-<section data-phase="b" hidden>
-<div class="film" style="padding:0">
-<div class="cards">
-<div class="card on" data-card>
-<p class="kicker">Your minute</p>
-<svg class="wave" data-wave data-h="150" data-stroke="6" data-gap="12" data-dot="18" viewBox="0 0 100 40" preserveAspectRatio="none" style="height:150px;width:100%"></svg>
-<p class="under">A 6 second gap at 0:34. Four ums, three of them early.</p>
-</div>
-<div class="card" data-card>
-<p class="kicker">The numbers</p>
-<div class="quad">
-<div class="q"><div class="n out">6s</div><div class="l">longest gap</div></div>
-<div class="q"><div class="n">143</div><div class="l">words a minute</div></div>
-<div class="q"><div class="n">2s</div><div class="l">to start</div></div>
-<div class="q"><div class="n">4</div><div class="l">ums a minute</div></div>
-</div>
-</div>
-<div class="card" data-card>
-<p class="kicker">Next time</p>
-<p class="big">Say the next point half-formed.</p>
-<p class="under">A wobble costs less than a hole.</p>
-</div>
-<div class="dots"><i class="on"></i><i></i><i></i></div>
-</div>
-</div>
-</section>
-
-<!-- ------------------------------------------------------------ C -->
-<section data-phase="c" hidden>
-<div class="film">
-<div class="wide">
-<div class="head">
+<div class="filmhead">
 <p class="topicline">Meetings should be optional.</p>
 <span class="filmtop"><b>Day 7</b><i class="dot"></i><span>1 minute</span></span>
 </div>
 
-<svg class="wave" data-wave data-h="205" data-stroke="5" data-gap="12" data-dot="18" viewBox="0 0 100 40" preserveAspectRatio="none" style="height:205px;margin-top:22px"></svg>
-
-<p class="said">Your longest gap was 6 seconds.</p>
-
-<div class="meters">
-<div class="meter"><div class="mh"><span class="ml">Longest gap</span><span class="mv out">6s</span></div><div class="mtrack"><i class="good" style="left:0;width:25%"></i><i class="mark out" style="left:60%"></i></div></div>
-<div class="meter"><div class="mh"><span class="ml">Pace</span><span class="mv">143</span></div><div class="mtrack"><i class="good" style="left:44%;width:25%"></i><i class="mark" style="left:52%"></i></div></div>
-<div class="meter"><div class="mh"><span class="ml">To start</span><span class="mv">2s</span></div><div class="mtrack"><i class="good" style="left:0;width:33%"></i><i class="mark" style="left:17%"></i></div></div>
-<div class="meter"><div class="mh"><span class="ml">Ums a minute</span><span class="mv">4</span></div><div class="mtrack"><i class="good" style="left:0;width:33%"></i><i class="mark" style="left:33%"></i></div></div>
+<div class="board">
+<div class="card span2">
+<h3>Your minute</h3>
+<svg class="wave" data-wave data-stroke="4" data-gap="10" data-dot="14" viewBox="0 0 100 40" preserveAspectRatio="none" style="height:92px;margin-top:6px"></svg>
+<p class="say muted" style="margin-top:auto">A 6 second gap at 0:34. Four ums, three in the first half.</p>
 </div>
 
-<p class="fix">Say the next point half-formed. A wobble costs less than a hole.</p>
+<div class="card">
+<h3>Answered the topic</h3>
+<div class="big good">Yes</div>
+<p class="say">You made the case and stayed on it.</p>
+<p class="tip">Your point landed at 0:12.</p>
+</div>
 
-<div class="foot">
-<a class="link" href="#" style="font-size:16px">Read it back</a>
+<div class="card">
+<h3>The shape</h3>
+<svg data-radar viewBox="0 0 120 120" style="width:100%;flex:1;min-height:0;margin-top:2px"></svg>
+<p class="tip" style="padding-top:4px">4 of 5 comfortable.</p>
+</div>
+
+<div class="card">
+<h3>Longest gap</h3>
+<div class="valrow"><span class="big out">6s</span><span class="unit">1 long gap</span></div>
+<div class="mtrack"><i class="good" style="left:0;width:25%"></i><i class="mark out" style="left:60%"></i></div>
+<div class="scale"><span>none</span><span>10s</span></div>
+</div>
+
+<div class="card">
+<h3>Pace</h3>
+<div class="valrow"><span class="big">143</span><span class="unit">words a minute</span></div>
+<div class="mtrack"><i class="good" style="left:44%;width:25%"></i><i class="mark" style="left:52%"></i></div>
+<div class="scale"><span>slow</span><span>fast</span></div>
+</div>
+
+<div class="card">
+<h3>Time to start</h3>
+<div class="valrow"><span class="big">2s</span><span class="unit">to your first word</span></div>
+<div class="mtrack"><i class="good" style="left:0;width:33%"></i><i class="mark" style="left:17%"></i></div>
+<div class="scale"><span>straight in</span><span>12s</span></div>
+</div>
+
+<div class="card">
+<h3>Ums a minute</h3>
+<div class="valrow"><span class="big">4</span><span class="unit">4 in the round</span></div>
+<div class="mtrack"><i class="good" style="left:0;width:33%"></i><i class="mark" style="left:33%"></i></div>
+<div class="scale"><span>none</span><span>12</span></div>
+</div>
+
+<div class="card span2">
+<h3>Words you lean on</h3>
+<div class="chips">
+<span class="chip warm">um <b>4</b></span>
+<span class="chip">actually <b>3</b></span>
+<span class="chip">basically <b>2</b></span>
+<span class="chip">like <b>2</b></span>
+</div>
+<p class="tip">138 words, 96 of them different.</p>
+</div>
+
+<div class="card">
+<h3>Restarts</h3>
+<div class="valrow"><span class="big">2</span><span class="unit">and one repeat</span></div>
+<p class="quote">"I think we should - we should just cancel it."</p>
+</div>
+
+<div class="card">
+<h3>Sentences</h3>
+<div class="valrow"><span class="big out">41</span><span class="unit">longest, in words</span></div>
+<p class="tip">Nine sentences, one run-on. You landed the last one.</p>
+</div>
+</div>
+
+<div class="filmfoot">
+<p class="say muted" style="margin:0">Next time: say the next point half-formed. A wobble costs less than a hole.</p>
+<span class="row"><a class="link" href="#" style="font-size:15px">Read it back</a><a class="btn btn-primary btn-big" href="#">Spin again</a></span>
+</div>
+</div>
+</section>
+
+<!-- ------------------------------------------------------------ the column -->
+<section data-phase="column" hidden>
+<div class="colframe">
+<div class="film">
+<div class="filmhead" style="flex-direction:column;align-items:flex-start;gap:2px">
+<span class="filmtop"><b>Day 7</b><i class="dot"></i><span>1 minute</span></span>
+<p class="topicline">Meetings should be optional.</p>
+</div>
+
+<div class="board">
+<div class="card span2">
+<h3>Your minute</h3>
+<svg class="wave" data-wave data-stroke="4" data-gap="10" data-dot="14" viewBox="0 0 100 40" preserveAspectRatio="none" style="height:80px;margin-top:6px"></svg>
+<p class="say muted" style="margin-top:8px">A 6 second gap at 0:34. Four ums.</p>
+</div>
+
+<div class="card">
+<h3>Answered the topic</h3>
+<div class="big good">Yes</div>
+<p class="say">You made the case and stayed on it. Your point landed at 0:12.</p>
+</div>
+
+<div class="card">
+<h3>Longest gap</h3>
+<div class="valrow"><span class="big out">6s</span><span class="unit">1 long gap</span></div>
+<div class="mtrack"><i class="good" style="left:0;width:25%"></i><i class="mark out" style="left:60%"></i></div>
+<p class="tip">Say the next point half-formed. A wobble costs less than a hole.</p>
+</div>
+
+<div class="card">
+<h3>Pace</h3>
+<div class="valrow"><span class="big">143</span><span class="unit">words a minute</span></div>
+<div class="mtrack"><i class="good" style="left:44%;width:25%"></i><i class="mark" style="left:52%"></i></div>
+</div>
+
+<div class="card">
+<h3>Time to start</h3>
+<div class="valrow"><span class="big">2s</span><span class="unit">to your first word</span></div>
+<div class="mtrack"><i class="good" style="left:0;width:33%"></i><i class="mark" style="left:17%"></i></div>
+</div>
+
+<div class="card">
+<h3>Ums a minute</h3>
+<div class="valrow"><span class="big">4</span><span class="unit">4 in the round</span></div>
+<div class="mtrack"><i class="good" style="left:0;width:33%"></i><i class="mark" style="left:33%"></i></div>
+</div>
+
+<div class="card">
+<h3>Words you lean on</h3>
+<div class="chips">
+<span class="chip warm">um <b>4</b></span>
+<span class="chip">actually <b>3</b></span>
+<span class="chip">basically <b>2</b></span>
+<span class="chip">like <b>2</b></span>
+</div>
+</div>
+
+<div class="card">
+<h3>Sentences</h3>
+<div class="valrow"><span class="big out">41</span><span class="unit">longest, in words</span></div>
+<p class="tip">Nine sentences, one run-on. Two restarts.</p>
+</div>
+</div>
+
+<div class="filmfoot" style="justify-content:center">
 <a class="btn btn-primary btn-big" href="#">Spin again</a>
 </div>
 </div>
@@ -273,7 +326,7 @@ section[data-phase]{flex:1;min-height:0;position:relative}
 <label class="check"><input type="checkbox"> Mute sound effects</label>
 <p class="hintline">The spin, the tick while you think and the chime at each change.</p>
 <label class="check" style="margin-top:16px"><input type="checkbox" checked> Report sized for filming</label>
-<p class="hintline">Bigger type and thicker lines, for a laptop screen filmed on a phone.</p>
+<p class="hintline">The whole report in big cards, for a laptop screen filmed on a phone.</p>
 <div class="page-row"><button class="opt"><svg class="cv" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg><span>Settings</span></button></div>
 <div class="sheet-foot"><a class="btn btn-primary" href="#">Done</a></div>
 </div>
@@ -285,105 +338,97 @@ section[data-phase]{flex:1;min-height:0;position:relative}
 
 <div class="notes">
 <h2>The report, sized for filming</h2>
-<p>Same round, same numbers, four drawings of it. The round: a minute on "Meetings should be optional." with a six second gap at 0:34, two seconds to start, 143 words a minute and four ums. Every number below is that one round, so the only thing changing between tabs is the drawing.</p>
-<p><b>Why this exists.</b> People film this. They hold a laptop up to a phone, or sit a phone on a stand pointed at the screen, and the reel is a vertical crop of the middle of that screen. Today's report is built for somebody reading a laptop at arm's length: a 40 pixel wave, 12.5 pixel numbers, four bands in two columns, sitting under the buttons at the bottom of the screen with nothing to spare - and the real done screen carries the read-back and the link to the full report under that, so those are already off the bottom. On a phone camera, at 40 percent scale, through one more round of compression, none of it is legible. Turn on <b>What the phone sees</b> and <b>As filmed</b> together on the Today tab: the crop takes about a third of the screen width, and the part of the report inside it is a grey smear.</p>
+<p>One round drawn three ways. The round: a minute on "Meetings should be optional." with a six second gap at 0:34, two seconds to start, 143 words a minute, four ums, two restarts and one run-on sentence. Every number below is that round, so the only thing changing between tabs is the drawing.</p>
 
-<h3>What every filming drawing keeps</h3>
+<p><b>Why this exists.</b> People film this. They hold a laptop up to a phone, or sit a phone on a stand pointed at the screen, and the reel is a vertical crop of the middle of that screen. Today's report is drawn for somebody reading a laptop at arm's length: a 40 pixel wave, 12.5 pixel numbers, four bands in two columns, sitting under the buttons at the bottom of the screen with nothing to spare, and the read-back and the link to the full report already off the bottom. Turn on <b>What the phone sees</b> and <b>As filmed</b> together over the Today tab: the crop takes about a third of the screen width, and what is inside it is a grey smear.</p>
+
+<h3>What changes</h3>
 <ul>
-<li><b>The same measures.</b> The wave, the sentence, the longest gap, pace, time to start and ums a minute, each against its comfortable stretch. Nothing new is measured and nothing is dropped; only the drawing changes.</li>
-<li><b>One screen, no scrolling.</b> The frame here is the laptop screen and it clips: anything below the fold does not exist to somebody holding the laptop with both hands.</li>
-<li><b>Nothing thinner than 4 pixels.</b> A camera loses a hairline and a compressor eats what is left. The wave's strokes go from 1.5 to 4, the gap from 3 to 9, the band track from 6 to 14, the marker from 12 to 26.</li>
-<li><b>Colour carries the verdict, not grey.</b> The one measure outside its stretch is warm, in the value as well as on the track. Muted grey text is the first thing a camera loses, so it holds only what nobody needs to read.</li>
-<li><b>The read-back stays a link.</b> A paragraph of transcript is unreadable on camera at any size. It is there for the person, not the shot.</li>
+<li><b>Every measure is a card.</b> A box with a title, one big number and its comfortable stretch under it. A box is what survives a camera: an edge and a fill hold at any distance, where a row of text on a white field does not.</li>
+<li><b>The whole reading, not the summary.</b> The done screen's four bands become ten cards: the minute, whether you answered the topic, the shape against your usual, the four measures, the words you lean on, restarts, sentences. All of it is arithmetic over what is already stored for the round, the same numbers the round's own page draws, so nothing new is measured and no second call is made.</li>
+<li><b>Nothing thinner than four pixels.</b> A camera loses a hairline and a compressor eats what is left. The wave's strokes go from 1.5 to 4, the gap from 3 to 10, the track from 6 to 13, the marker from 12 to 24, and a card is a filled box with a 1.5 pixel edge rather than a line on white.</li>
+<li><b>Colour carries the verdict.</b> A measure outside its stretch is warm in the number as well as on the track, and the answered card is the accent. Muted grey holds only what nobody needs to read from across the room.</li>
+<li><b>The read-back stays a link.</b> A paragraph of transcript cannot be read on camera at any size. It is there for the person, not for the shot.</li>
+<li><b>One screen, no scrolling</b> on a laptop. The frame here is a laptop screen and it clips: anything below the fold does not exist to somebody holding the machine with both hands.</li>
 </ul>
 
-<h3>A &middot; The column <em>(the recommendation)</em></h3>
+<h3>The board <em>(a laptop, and what gets filmed)</em></h3>
 <ul>
-<li>Everything in a 322 pixel column down the middle, inside the 352 pixel 9:16 crop of this screen with a margin either side. Turn on <b>What the phone sees</b> and nothing important is outside the dashes.</li>
-<li>Order is what a viewer of the reel needs in that order: the topic, the minute, the one sentence, then the four measures, then what to do next time. The streak is a word in the top line, not three tiles: the header pill already carries it on every page.</li>
-<li>Reads with no interaction, which matters when both hands are holding a laptop.</li>
-<li>Costs: the wave is 322 pixels wide instead of 640, so a one second event is 5 pixels; and this is the busiest of the three, so it is the one that most needs the type sizes to hold.</li>
+<li>Ten cards in a four column grid, sized so the last row ends at the bottom edge. Two cards are double width because their content is wide: the minute and the words you lean on.</li>
+<li>The order is what a viewer needs in that order: the minute, whether the minute answered the topic, the shape, the four measures, the words, the sentences. Next time is one line at the foot, beside Spin again.</li>
+<li>It does not fit a 9:16 crop and is not meant to: somebody filming a laptop head-on frames the screen, and this is the drawing for that shot and for a screen recording.</li>
 </ul>
 
-<h3>B &middot; One at a time</h3>
+<h3>The column <em>(the crop, and a phone)</em></h3>
 <ul>
-<li>Three screens - your minute, the numbers, next time - at 56 to 60 pixel type, advancing every four seconds. The most legible drawing by a distance: at 40 percent scale it is still readable.</li>
-<li>Costs: it takes twelve seconds to say what A says at once, a viewer who joins late sees a third of it, and a screen that moves on its own is a screen somebody has to wait for. Also the first thing on this site that animates without being asked to.</li>
-</ul>
-
-<h3>C &middot; The full screen</h3>
-<ul>
-<li>The whole 900 pixels: the wave full width, the four measures in a row, the sentence at 38 pixels. Most information per second, and the wave is wide enough that the gap at 0:34 sits where you can point at it.</li>
-<li>Costs: it does not survive a vertical crop. This is the one for somebody screen-recording or filming in landscape, not for a reel.</li>
+<li>The same cards in one column at 322 pixels, the width of the 9:16 crop of this screen. Nothing is redrawn: the grid goes to one column exactly as it does on a phone, so this is one design and not two.</li>
+<li>It runs past the fold and scrolls, which a reel does anyway: the wave and the verdict are the first screen, the measures the second.</li>
 </ul>
 
 <h3>The setting</h3>
 <ul>
-<li>Named <b>Report sized for filming</b>, in the Additional settings page of the round's sheet (the tab above). The site already says "sized for a phone filming a laptop" about the topic, so this is the same sentence about the report.</li>
-<li>Not "big fonts": it is not a zoom. The layout, the order, the stroke weights and what is dropped all change.</li>
-<li>Off by default, and it changes only the report - the round itself is already sized for filming.</li>
+<li>Named <b>Report sized for filming</b>, on the Additional settings page of the round's sheet. The site already says "sized for a phone filming a laptop" about the topic, so this is the same sentence about the report.</li>
+<li>Not "big fonts": it is not a zoom. The layout, the order, the stroke weights and how much of the reading is shown all change.</li>
+<li>Off by default, and it changes only the report. The round itself is already sized for filming.</li>
 </ul>
 
-<div class="verdict">Pick one, or say which pieces of B and C should land in A. A is drawn as the one to build: it is the only drawing that fits the crop people actually post, and it needs nobody to press anything.</div>
+<div class="verdict">Building this: the board on a laptop, the same cards in one column on a phone or inside the crop, behind the Additional settings switch. A card whose numbers a round does not have is not drawn, so a free round shows the measures and no verdict rather than a box saying nothing.</div>
 </div>
 
 <script>
-/* The wave, drawn once per svg from the same round, so the picture is the
-   same in every variant and only the weights change. Deterministic. */
+/* The wave, drawn from the same round into every svg, so the picture is
+   the same everywhere and only the weights change. Deterministic. */
 function noise(i){const x=Math.sin(i*12.9898)*43758.5453;return x-Math.floor(x)}
+const NS="http://www.w3.org/2000/svg";
+function el(svg,name,attrs){const n=document.createElementNS(NS,name);for(const k in attrs)n.setAttribute(k,attrs[k]);svg.appendChild(n);return n}
 function drawWave(svg){
   const stroke=+svg.dataset.stroke, gapW=+svg.dataset.gap, dot=+svg.dataset.dot;
-  const ns="http://www.w3.org/2000/svg";
-  const talk=[[2,34],[40,58]], breath=[[0,2]], gaps=[[34,40]], ums=[8,15,30,46], len=60;
-  const add=(el,attrs)=>{const n=document.createElementNS(ns,el);for(const k in attrs)n.setAttribute(k,attrs[k]);svg.appendChild(n);return n};
-  breath.concat(gaps).forEach((seg,i)=>{
-    const warm=i>=breath.length;
-    add("line",{x1:seg[0]/len*100,x2:seg[1]/len*100,y1:20,y2:20,stroke:warm?"var(--warn)":"var(--line-strong)","stroke-width":warm?gapW:Math.max(1.5,stroke*.5),"vector-effect":"non-scaling-stroke","stroke-linecap":"round"});
-  });
+  const talk=[[2,34],[40,58]], ums=[8,15,30,46], len=60;
+  el(svg,"line",{x1:0,x2:2/len*100,y1:20,y2:20,stroke:"var(--line-strong)","stroke-width":Math.max(1.5,stroke*.5),"vector-effect":"non-scaling-stroke","stroke-linecap":"round"});
+  el(svg,"line",{x1:34/len*100,x2:40/len*100,y1:20,y2:20,stroke:"var(--warn)","stroke-width":gapW,"vector-effect":"non-scaling-stroke","stroke-linecap":"round"});
   talk.forEach(seg=>{
     for(let t=seg[0];t<seg[1];t+=.55){
       const h=.3+.7*noise(t*7.3);
-      add("line",{x1:t/len*100,x2:t/len*100,y1:20-h*18,y2:20+h*18,stroke:"var(--accent)","stroke-width":stroke,"vector-effect":"non-scaling-stroke","stroke-linecap":"round"});
+      el(svg,"line",{x1:t/len*100,x2:t/len*100,y1:20-h*18,y2:20+h*18,stroke:"var(--accent)","stroke-width":stroke,"vector-effect":"non-scaling-stroke","stroke-linecap":"round"});
     }
   });
-  /* Its own box, so the dots sit on the wave and not on whatever the
-     wave happens to be standing in. */
+  /* Its own box, so the ums sit on the wave and not on whatever the wave
+     happens to be standing in. */
   const box=document.createElement("div");
   box.style.cssText="position:relative;width:100%";
   svg.parentElement.insertBefore(box,svg);
   box.appendChild(svg);
   ums.forEach(t=>{
     const s=document.createElement("span");
-    s.style.cssText=`position:absolute;top:50%;left:${t/len*100}%;width:${dot}px;height:${dot}px;margin:${-dot/2}px 0 0 ${-dot/2}px;border-radius:999px;background:var(--warn);box-shadow:0 0 0 3px var(--surface)`;
+    s.style.cssText="position:absolute;top:50%;left:"+(t/len*100)+"%;width:"+dot+"px;height:"+dot+"px;margin:"+(-dot/2)+"px 0 0 "+(-dot/2)+"px;border-radius:999px;background:var(--warn);box-shadow:0 0 0 3px var(--card2)";
     box.appendChild(s);
   });
 }
+/* The shape: five measures, this round filled, your usual as an outline. */
+function drawRadar(svg){
+  const now=[100,100,40,55,100], usual=[92,78,70,60,88], c=60, r=44;
+  const pt=(i,v)=>{const a=(-90+i*72)*Math.PI/180;const d=r*v/100;return [c+d*Math.cos(a),c+d*Math.sin(a)]};
+  [100,66,33].forEach(ring=>{
+    el(svg,"polygon",{points:[0,1,2,3,4].map(i=>pt(i,ring).join(",")).join(" "),fill:"none",stroke:"var(--line)","stroke-width":1.5});
+  });
+  [0,1,2,3,4].forEach(i=>{const p=pt(i,100);el(svg,"line",{x1:c,y1:c,x2:p[0],y2:p[1],stroke:"var(--line)","stroke-width":1.5})});
+  el(svg,"polygon",{points:[0,1,2,3,4].map(i=>pt(i,usual[i]).join(",")).join(" "),fill:"none",stroke:"var(--line-strong)","stroke-width":2,"stroke-dasharray":"4 4"});
+  el(svg,"polygon",{points:[0,1,2,3,4].map(i=>pt(i,now[i]).join(",")).join(" "),fill:"color-mix(in oklab,var(--accent) 45%,transparent)",stroke:"var(--accent-strong)","stroke-width":3,"stroke-linejoin":"round"});
+}
 document.querySelectorAll("[data-wave]").forEach(drawWave);
+document.querySelectorAll("[data-radar]").forEach(drawRadar);
 
 const CAPS={
-  today:"As built today. The report sits under the buttons at reading size: a 40 pixel wave, 12.5 pixel numbers, bands in two columns. Turn on the crop and it is mostly outside the shot.",
-  a:"A. One column the width of the crop, read top to bottom with nothing to press.",
-  b:"B. Three screens at 56 pixel type, four seconds each. The most legible and the slowest.",
-  c:"C. The whole screen, for landscape or a screen recording. Does not survive a vertical crop.",
+  today:"As built today. The report sits under the buttons at reading size: a 40 pixel wave, 12.5 pixel numbers, bands in two columns. Turn on the crop and almost none of it is in the shot.",
+  board:"The board. Ten cards, one laptop screen, no scrolling. The whole reading, not the summary.",
+  column:"The column. The same cards at the width the crop leaves, one per row. It scrolls, as a phone does.",
   setting:"Where it is turned on: the Additional settings page of the round's sheet."
 };
 const root=document.documentElement;
-let timer=null;
-function cards(on){
-  clearInterval(timer);
-  if(!on)return;
-  let i=0;
-  timer=setInterval(()=>{
-    i=(i+1)%3;
-    document.querySelectorAll("[data-card]").forEach((c,n)=>c.classList.toggle("on",n===i));
-    document.querySelectorAll(".dots i").forEach((d,n)=>d.classList.toggle("on",n===i));
-  },4000);
-}
 function show(id){
   document.querySelectorAll("[data-phase]").forEach(s=>s.hidden=s.dataset.phase!==id);
   document.querySelectorAll("[data-tab]").forEach(b=>b.classList.toggle("on",b.dataset.tab===id));
   document.querySelector("[data-cap]").textContent=CAPS[id]||"";
-  cards(id==="b");
 }
 function theme(t){root.dataset.theme=t;document.querySelectorAll("[data-theme-set]").forEach(b=>b.classList.toggle("on",b.dataset.themeSet===t));}
 document.addEventListener("click",e=>{

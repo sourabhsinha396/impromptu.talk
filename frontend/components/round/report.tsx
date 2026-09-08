@@ -10,6 +10,7 @@ import {
   headline,
   marked,
   waveform,
+  PITCH,
   type Band,
   type FillerAt,
   type Report,
@@ -102,15 +103,30 @@ const TONE: Record<"breath" | "gap", { stroke: string; width: number }> = {
    Drawn in percent with the strokes kept at their pixel width, so the
    same round is the same picture at every size. The heights are a texture
    and not loudness: nothing here knows how loud anybody was. */
-export function MinuteBar({ report, length, ticks = [] }: { report: Report; length: number; ticks?: FillerAt[] }) {
-  const marks = waveform(blocks(report, length));
+export function MinuteBar({
+  report,
+  length,
+  ticks = [],
+  film = false,
+}: {
+  report: Report;
+  length: number;
+  ticks?: FillerAt[];
+  /* Drawn to be filmed: taller, and every stroke at a weight a phone
+     camera and a compressor leave behind. Nothing else about the picture
+     changes, so the same round is the same shape either way. */
+  film?: boolean;
+}) {
+  /* Wider apart when the strokes are three times as thick, or they merge
+     into a block on a phone: the same wave, drawn with a fatter pen. */
+  const marks = waveform(blocks(report, length), film ? PITCH * 2 : PITCH);
   return (
     <>
       <div className="relative w-full">
         <svg
           viewBox="0 0 100 40"
           preserveAspectRatio="none"
-          className="block h-10 w-full overflow-visible"
+          className={`block w-full overflow-visible ${film ? "h-24" : "h-10"}`}
           role="img"
           aria-label={`Your minute: ${report.pauses.length} pauses, longest ${report.longest_pause} seconds`}
         >
@@ -123,7 +139,7 @@ export function MinuteBar({ report, length, ticks = [] }: { report: Report; leng
                 y1={20 - mark.height * 18}
                 y2={20 + mark.height * 18}
                 stroke="var(--accent)"
-                strokeWidth={1.5}
+                strokeWidth={film ? 4 : 1.5}
                 strokeLinecap="round"
                 vectorEffect="non-scaling-stroke"
               />
@@ -135,7 +151,7 @@ export function MinuteBar({ report, length, ticks = [] }: { report: Report; leng
                 y1={20}
                 y2={20}
                 stroke={TONE[mark.tone].stroke}
-                strokeWidth={TONE[mark.tone].width}
+                strokeWidth={film ? TONE[mark.tone].width * 3 : TONE[mark.tone].width}
                 vectorEffect="non-scaling-stroke"
               >
                 <title>{mark.tone === "gap" ? `A ${mark.seconds}s gap` : `A ${mark.seconds}s breath`}</title>
@@ -147,12 +163,14 @@ export function MinuteBar({ report, length, ticks = [] }: { report: Report; leng
           <span
             key={index}
             title={`${tick.word} at ${clock(tick.at)}`}
-            className="absolute top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-warn ring-2 ring-surface"
+            className={`absolute top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-warn ${
+              film ? "size-3.5 ring-4 ring-card2" : "size-2 ring-2 ring-surface"
+            }`}
             style={{ left: `${Math.min(100, (tick.at / length) * 100)}%` }}
           />
         ))}
       </div>
-      <div className="mt-1 flex justify-between text-[11px] tabular-nums text-muted">
+      <div className={`mt-1 flex justify-between tabular-nums text-muted ${film ? "text-[13px]" : "text-[11px]"}`}>
         <span>0:00</span>
         <span>{clock(length)}</span>
       </div>

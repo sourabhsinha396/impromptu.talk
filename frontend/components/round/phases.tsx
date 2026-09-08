@@ -1,3 +1,4 @@
+import { FilmingReport } from "@/components/round/filming-report";
 import { Meter, MicCheck } from "@/components/round/mic";
 import { RoundReport } from "@/components/round/report";
 import { Ring } from "@/components/round/ring";
@@ -222,6 +223,7 @@ export function DonePhase({
   runId,
   spokenSeconds,
   signedIn,
+  filming,
   onAgain,
   onSame,
 }: {
@@ -232,10 +234,37 @@ export function DonePhase({
   runId: number | null;
   spokenSeconds: number;
   signedIn: boolean;
+  /** The report drawn to be filmed. Only ever when there is a report to
+      draw: a round nobody listened to has nothing to fill a screen with,
+      and the ordinary done screen is the honest one for it. */
+  filming: boolean;
   onAgain: () => void;
   onSame: () => void;
 }) {
   const headline = summary && summary.streak > 1 ? `Day ${summary.streak}.` : "Nice.";
+  const href = runId ? `/streak/${runId}` : undefined;
+
+  /* The report takes the screen and the streak becomes a word in its
+     head: three tiles and a headline above the fold would push the
+     reading off the bottom of a laptop, which is the whole problem this
+     drawing exists to fix. */
+  if (filming && report !== "off") {
+    return (
+      <div className="w-full max-w-[1100px]">
+        <FilmingReport report={report} length={spokenSeconds} day={summary?.streak} href={href} />
+        <div className={`${ROW} mt-6`}>
+          <Button size="lg" onClick={onAgain}>
+            <LogoMark className="size-[1em]" />
+            Spin again
+          </Button>
+          <Button size="lg" variant="ghost" onClick={onSame}>
+            Same topic
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <p className="font-display text-headline font-semibold">{headline}</p>
@@ -258,7 +287,7 @@ export function DonePhase({
           downward from there and has room to grow without ever pushing the
           round out of reach. */}
       <div className="mx-auto mt-10 w-full max-w-[640px]">
-        <RoundReport report={report} length={spokenSeconds} href={runId ? `/streak/${runId}` : undefined} />
+        <RoundReport report={report} length={spokenSeconds} href={href} />
       </div>
       {!signedIn && (
         <p className="mt-6 max-w-[44ch] text-sm text-muted">

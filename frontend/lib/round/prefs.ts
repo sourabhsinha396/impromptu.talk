@@ -16,9 +16,28 @@ export const SURPRISE = "surprise";
    appear because a person pressed a button that said it would. */
 export type Mic = "ask" | "on" | "off";
 
-export type Prefs = { genre: string; prep: number; speak: number; style: string; sound: boolean; mic: Mic };
+export type Prefs = {
+  genre: string;
+  prep: number;
+  speak: number;
+  style: string;
+  sound: boolean;
+  mic: Mic;
+  /** The report drawn to be filmed. Set once by somebody who points a
+      phone at their screen, so it lives behind Additional settings and
+      never on the front page of the sheet. */
+  filming: boolean;
+};
 
-export const DEFAULT_PREFS: Prefs = { genre: "general", prep: 60, speak: 60, style: SURPRISE, sound: true, mic: "ask" };
+export const DEFAULT_PREFS: Prefs = {
+  genre: "general",
+  prep: 60,
+  speak: 60,
+  style: SURPRISE,
+  sound: true,
+  mic: "ask",
+  filming: false,
+};
 
 /* The sliders' reach. Thinking may be none at all or up to half an hour (a
    long prep is how "deep research" is covered without a mode); talking is
@@ -52,6 +71,7 @@ export function loadPrefs(store: Store | null): Prefs {
     /* v0 wrote 1 and 0; both are read, and a missing value means on. */
     sound: saved.sound === undefined ? true : Boolean(saved.sound),
     mic: saved.mic === "on" || saved.mic === "off" ? saved.mic : "ask",
+    filming: saved.filming === true,
   };
 }
 

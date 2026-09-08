@@ -32,6 +32,7 @@ export function SettingsSheet({
   onStyle,
   onSound,
   onMic,
+  onFilming,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -42,6 +43,7 @@ export function SettingsSheet({
   onStyle: (key: string) => void;
   onSound: (on: boolean) => void;
   onMic: (on: boolean) => void;
+  onFilming: (on: boolean) => void;
 }) {
   const coined = ownStyles(bank, prefs.genre);
   const builtIn = bank.styles.find((style) => style.key === prefs.style);
@@ -76,6 +78,24 @@ export function SettingsSheet({
               </label>
               <p className="mt-1.5 text-[13px] text-muted">
                 The spin, the tick while you think and the chime at each change.
+              </p>
+            </div>
+
+            {/* For the people who point a phone at their screen. Set once
+                and never thought about again, which is what this page
+                holds. */}
+            <div>
+              <label className="flex cursor-pointer items-center gap-2.5 text-sm font-semibold">
+                <input
+                  type="checkbox"
+                  checked={prefs.filming}
+                  onChange={(event) => onFilming(event.target.checked)}
+                  className="size-4 accent-accent"
+                />
+                Report sized for filming
+              </label>
+              <p className="mt-1.5 text-[13px] text-muted">
+                The whole report in big cards, for a laptop screen filmed on a phone.
               </p>
             </div>
 
@@ -144,7 +164,7 @@ export function SettingsSheet({
                 Feedback after each round
               </label>
               <p className="mt-1.5 text-[13px] text-muted">
-                Your pauses, your pace and the words you lean on. We never keep the audio.
+                Get detailed analysis, requires mic access.
               </p>
             </div>
 
