@@ -3,8 +3,16 @@ import { Meter, MicCheck } from "@/components/round/mic";
 import { RoundReport } from "@/components/round/report";
 import { Ring } from "@/components/round/ring";
 import { Button } from "@/components/site/button";
-import { FlameIcon, GenreIcon, MinutesIcon, PauseIcon, PlayIcon, StyleIcon, TopicsIcon } from "@/components/site/icons";
-import { LogoMark } from "@/components/site/logo";
+import {
+  FlameIcon,
+  GenreIcon,
+  MinutesIcon,
+  PauseIcon,
+  PlayIcon,
+  SpinIcon,
+  StyleIcon,
+  TopicsIcon,
+} from "@/components/site/icons";
 import type { Topic } from "@/lib/bank";
 import type { Report } from "@/lib/report";
 import { MAX_NOTE } from "@/lib/round/engine";
@@ -99,7 +107,7 @@ export function TopicPhase({
           </Button>
         )}
         <Button size="lg" variant="ghost" onClick={onSpin} aria-label="Spin for another topic">
-          <LogoMark className="size-[1em]" />
+          <SpinIcon />
           Spin
         </Button>
       </div>
@@ -259,7 +267,7 @@ export function DonePhase({
         <FilmingReport report={report} length={spokenSeconds} day={summary?.streak} topic={topic} href={href} />
         <div className={`${ROW} mt-6`}>
           <Button size="lg" onClick={onAgain}>
-            <LogoMark className="size-[1em]" />
+            <SpinIcon />
             Spin again
           </Button>
           <Button size="lg" variant="ghost" onClick={onSame}>
@@ -280,7 +288,7 @@ export function DonePhase({
       )}
       <div className={ROW}>
         <Button size="lg" onClick={onAgain}>
-          <LogoMark className="size-[1em]" />
+          <SpinIcon />
           Spin again
         </Button>
         <Button size="lg" variant="ghost" onClick={onSame}>

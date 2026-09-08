@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import { ReportInvitation } from "@/components/round/report";
 import { Button } from "@/components/site/button";
 import { ChevronDownIcon, GenreIcon, SettingsIcon } from "@/components/site/icons";
@@ -10,6 +12,25 @@ export function speakingLength(seconds: number): string {
   if (seconds < 60) return `${seconds} seconds`;
   if (seconds % 60) return `${Math.floor(seconds / 60)} min ${seconds % 60}s`;
   return `${seconds / 60} minutes`;
+}
+
+/* Whether the gear has already turned in this page load. Module scope and
+   not state, because Idle unmounts the moment a round starts and mounts
+   again on every reset, so state would point at the gear once per visit to
+   the home screen rather than once per visit to the site. Client-side only:
+   it is set after mount, so the server's first paint never carries the
+   class, and a control that moves before it can be pressed would be worse
+   than one nobody notices. */
+let nudged = false;
+
+function useNudge(): boolean {
+  const [nudge, setNudge] = useState(false);
+  useEffect(() => {
+    if (nudged) return;
+    nudged = true;
+    setNudge(true);
+  }, []);
+  return nudge;
 }
 
 /* The first screen, as approved in docs/mocks/home.html: the genre chip
@@ -37,6 +58,8 @@ export function Idle({
   onMicYes?: () => void;
   onMicNo?: () => void;
 }) {
+  const nudge = useNudge();
+
   return (
     <main className="flex min-h-[calc(100dvh-var(--header-h))] flex-1 flex-col items-center justify-center px-[clamp(16px,4vw,32px)] py-6 text-center">
       <h1 className="sr-only">Impromptu speaking practice, a free random topic generator and timer</h1>
@@ -59,7 +82,7 @@ export function Idle({
           onClick={onSettings}
           className="inline-flex size-10 cursor-pointer items-center justify-center rounded-full border border-line-strong bg-card2 text-muted transition-colors hover:border-accent hover:text-ink"
         >
-          <SettingsIcon size={18} />
+          <SettingsIcon size={18} className={nudge ? "motion-safe:animate-nudge" : undefined} />
         </button>
       </div>
       <p className="font-display text-headline font-semibold text-accent text-balance">

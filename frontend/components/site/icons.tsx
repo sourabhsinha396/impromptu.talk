@@ -99,6 +99,13 @@ export const MicIcon = icon(Mic);
 export const MicOffIcon = icon(MicOff);
 export const BackIcon = icon(ArrowLeft);
 export const RotateIcon = icon(RotateCw);
+/* Spin, on the topic screen and on the two Spin agains. It was the logo
+   mark, which put the header's own die inside a button eight inches under
+   the header and read at 17 pixels as a plain box. The shuffle arrows say
+   the one thing the button does, which is draw another at random. It is
+   the same glyph as the surprise style below, and that is the point rather
+   than a collision: in both places it means the site picks, not you. */
+export const SpinIcon = icon(Shuffle);
 export const EditIcon = icon(Pencil);
 export const SunIcon = icon(Sun);
 export const MoonIcon = icon(Moon);

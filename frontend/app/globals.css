@@ -266,12 +266,13 @@
 
   --radius-card: 14px;
 
-  /* The one animation the site defines itself: a band of accent crossing a
-     placeholder while the report is being read back. Tailwind's own
-     `animate-pulse` was what the wait used before, and on white it moves
-     `--line` between full and half opacity, which is about one percent of
-     contrast: nobody could tell a waiting screen from a finished one. This
-     travels instead, so the movement is visible from across a room.
+  /* The first of the two animations the site defines itself: a band of
+     accent crossing a placeholder while the report is being read back.
+     Tailwind's own `animate-pulse` was what the wait used before, and on
+     white it moves `--line` between full and half opacity, which is about
+     one percent of contrast: nobody could tell a waiting screen from a
+     finished one. This travels instead, so the movement is visible from
+     across a room.
 
      Only ever used behind `motion-safe:`, so a placeholder asked to hold
      still is a plain shape and not a broken one. */
@@ -282,6 +283,24 @@
     }
     to {
       transform: translateX(100%);
+    }
+  }
+
+  /* The second: the settings gear on the first screen turning once, two
+     seconds after the page is live. How long you talk, which style, and
+     whether anybody is listening are all behind that gear, and on a screen
+     holding one button nobody goes looking for a second one. Two seconds is
+     long enough for the question to have been read and short enough to be
+     the same glance. The delay is here rather than in a timer, so nothing
+     on the page waits on JavaScript to point at itself.
+
+     Only ever used behind `motion-safe:`, and `components/round/idle.tsx`
+     holds it to once per page load: a control that turns every time you come
+     back to this screen is nagging rather than pointing. */
+  --animate-nudge: nudge 0.7s ease-in-out 2s 1;
+  @keyframes nudge {
+    to {
+      transform: rotate(360deg);
     }
   }
 }
