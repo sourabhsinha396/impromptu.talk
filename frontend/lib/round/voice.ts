@@ -14,7 +14,13 @@
    the timeline would be wrong at exactly the events being measured.
 
    The splitting logic below is pure and takes an array of numbers, so it
-   is tested without a microphone, a browser or a clock. */
+   is tested without a microphone, a browser or a clock.
+
+   `docs/tech/microphone-levels.md` holds what the thresholds below read on
+   real hardware, the two faults that made a working microphone report
+   silence, and how to measure it again. Read it before moving any of these
+   numbers: an ordinary voice on a cheap laptop array clears the speech
+   floor by twice and no more. */
 
 /** How often the level is sampled. Fifty a second is 20ms a frame, fine
     enough to place a pause to a twentieth of a second and coarse enough
