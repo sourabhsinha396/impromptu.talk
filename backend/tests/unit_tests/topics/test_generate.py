@@ -13,6 +13,7 @@ from django.test import Client, override_settings
 from django.utils import timezone
 
 from apps.common import openrouter
+from apps.payments.models import Purchase
 from apps.topics import generate
 from apps.topics.models import Generation, Topic
 from tests.unit_tests import factories
@@ -34,6 +35,8 @@ def model():
 
 @pytest.fixture
 def pro(user):
+    """Writing topics is Pro's, and Pro is a held row and nothing else."""
+    factories.PurchaseFactory(user=user, plan="lifetime")
     signed_in = Client()
     signed_in.force_login(user)
     signed_in.post(MINE, {"name": "Interview questions", "icon": "mic"}, content_type=JSON)
@@ -137,12 +140,11 @@ class TestWhoMay:
     def test_a_stranger_cannot_generate(self, client, db, model):
         assert client.post(f"{MINE}/whatever/generate", {"prompt": "x"}, content_type=JSON).status_code == 401
 
-    def test_without_pro_it_is_refused_like_every_other_write(self, pro, model):
-        with override_settings(
-            DODO_API_KEY="live",
-            DODO_PRODUCTS={"monthly": "m", "annual": "a", "pass": "p", "lifetime": "l"},
-        ):
-            assert ask(pro).status_code == 403
+    def test_without_pro_it_is_refused_like_every_other_write(self, pro, model, user):
+        # Pro ends by the held row going, which is what an expiry or a
+        # refund leaves behind. Whether the shop is open never came into it.
+        Purchase.objects.filter(user=user).delete()
+        assert ask(pro).status_code == 403
         assert Generation.objects.count() == 0
 
     def test_somebody_elses_genre_is_a_404(self, pro, model, db):

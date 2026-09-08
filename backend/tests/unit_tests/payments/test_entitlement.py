@@ -132,13 +132,15 @@ def test_a_pro_account_sees_further_back_than_the_free_five_days(user, shop_open
     assert len(pro["calendar"]) > len(free["calendar"])
 
 
-def test_with_nothing_for_sale_everybody_has_pros_features(user):
-    # The state the site ships in. Gating on a purchase nobody can make
-    # would be a lock on a door with no key cut for it, and it is also
-    # what hides "Get Pro" in the menu while there is no page to send
-    # anybody to.
+def test_a_shut_shop_entitles_nobody(user):
+    # It used to entitle everybody: `is_pro` read `not selling() or
+    # held(...)`, so a missing key handed Pro to every signed-in account,
+    # including the route that calls a model on somebody else's bill. A
+    # key going missing is exactly the moment entitlement should close
+    # rather than open, so production refuses to boot without one and this
+    # state now exists only where nothing is billable.
     assert plans.selling() is False
-    assert services.is_pro(user) is True
+    assert services.is_pro(user) is False
     assert services.held(user) is None
 
 

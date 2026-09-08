@@ -1,8 +1,8 @@
 """Production refuses to boot misconfigured.
 
-A missing host list, secret key or database host raises here, at
-startup, instead of failing quietly at request time. All three are
-pinned by tests.
+A missing host list, secret key, database host or payment key raises
+here, at startup, instead of failing quietly at request time. All four
+are pinned by tests.
 """
 
 import os
@@ -27,6 +27,13 @@ ALLOWED_HOSTS = [host.strip() for host in _required("ALLOWED_HOSTS").split(",") 
 # base.py defaults the database host to the compose service name. A
 # production host without one named has forgotten its .env, and must say so.
 _required("POSTGRES_HOST")
+
+# The payment provider, because `is_pro` is read before every billable
+# call and a missing key must never be the thing that decides who is
+# entitled to one (owner's call). Without this a production host that
+# forgot its .env would sell nothing and hand Pro to everybody who signed
+# up, which is the failure that arrives as a bill rather than as an error.
+DODO_API_KEY = _required("DODO_API_KEY")
 
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True

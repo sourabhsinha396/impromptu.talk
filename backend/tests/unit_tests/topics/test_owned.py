@@ -8,8 +8,9 @@ can do, and what a stranger holding a link may see.
 """
 
 import pytest
-from django.test import Client, override_settings
+from django.test import Client
 
+from apps.payments.models import Purchase
 from apps.topics import owned
 from apps.topics.models import Genre, Topic
 from tests.unit_tests import factories
@@ -17,18 +18,19 @@ from tests.unit_tests import factories
 MINE = "/api/v1/topics/mine"
 JSON = "application/json"
 
-# The shop shut means everything is free, which is the state the site
-# ships in; a test about what Pro closes has to open it first.
-SELLING = override_settings(
-    DODO_API_KEY="live",
-    DODO_PRODUCTS={"monthly": "prod_m", "annual": "prod_a", "pass": "prod_p", "lifetime": "prod_l"},
-)
+def lapse(user):
+    """Pro ends. The held row goes, which is what an expiry or a refund
+    leaves behind, and is now the only way to stop being Pro: the shop
+    being open or shut has nothing to do with who is entitled."""
+    Purchase.objects.filter(user=user).delete()
 
 
 @pytest.fixture
 def pro(user):
-    """Signed in, with Pro. Nothing is for sale in the test settings, so
-    an account is Pro by default and this client is the ordinary case."""
+    """Signed in, holding Pro. The purchase is explicit because Pro is a
+    held row and nothing else: an unconfigured shop used to stand in for
+    one, which meant these tests passed without ever entitling anybody."""
+    factories.PurchaseFactory(user=user, plan="lifetime")
     signed_in = Client()
     signed_in.force_login(user)
     return signed_in
@@ -92,8 +94,10 @@ class TestMakingOne:
         assert make(pro).status_code == 201
         assert make(pro).status_code == 400
 
+        them = factories.UserFactory(email="other@example.com")
+        factories.PurchaseFactory(user=them, plan="lifetime")
         other = Client()
-        other.force_login(factories.UserFactory(email="other@example.com"))
+        other.force_login(them)
         assert make(other).status_code == 201
 
     def test_a_genre_can_never_shadow_a_built_in(self, pro, db):
@@ -246,34 +250,34 @@ class TestWhatProCloses:
     def test_without_pro_making_pasting_and_sharing_are_refused(self, pro, user):
         make(pro)
         first = paste(pro, "interview-questions", "Tell me about yourself").json()["topics"][0]
-        with SELLING:
-            assert make(pro, name="Another").status_code == 403
-            assert paste(pro, "interview-questions", "One more").status_code == 403
-            assert pro.post(f"{MINE}/interview-questions/share").status_code == 403
-            assert pro.patch(
-                f"{MINE}/interview-questions/topics/{first['id']}",
-                {"text": "Edited", "style": ""},
-                content_type=JSON,
-            ).status_code == 403
+        lapse(user)
+        assert make(pro, name="Another").status_code == 403
+        assert paste(pro, "interview-questions", "One more").status_code == 403
+        assert pro.post(f"{MINE}/interview-questions/share").status_code == 403
+        assert pro.patch(
+            f"{MINE}/interview-questions/topics/{first['id']}",
+            {"text": "Edited", "style": ""},
+            content_type=JSON,
+        ).status_code == 403
 
-    def test_without_pro_the_genres_are_still_there_and_still_readable(self, pro):
+    def test_without_pro_the_genres_are_still_there_and_still_readable(self, pro, user):
         make(pro)
         paste(pro, "interview-questions", "Tell me about yourself")
         token = pro.post(f"{MINE}/interview-questions/share").json()["token"]
-        with SELLING:
-            assert len(pro.get(MINE).json()["genres"]) == 1
-            assert len(pro.get(f"{MINE}/interview-questions").json()["topics"]) == 1
-            # The link somebody was already sent keeps working, or
-            # sharing is a thing that quietly breaks other people's
-            # bookmarks when a subscription lapses.
-            assert Client().get(f"/api/v1/topics/shared/{token}").status_code == 200
+        lapse(user)
+        assert len(pro.get(MINE).json()["genres"]) == 1
+        assert len(pro.get(f"{MINE}/interview-questions").json()["topics"]) == 1
+        # The link somebody was already sent keeps working, or sharing is
+        # a thing that quietly breaks other people's bookmarks when a
+        # subscription lapses.
+        assert Client().get(f"/api/v1/topics/shared/{token}").status_code == 200
 
-    def test_without_pro_tidying_up_is_still_allowed(self, pro):
+    def test_without_pro_tidying_up_is_still_allowed(self, pro, user):
         """Nobody should be locked in with ten genres they cannot clear."""
         make(pro)
         first = paste(pro, "interview-questions", "Tell me about yourself").json()["topics"][0]
-        with SELLING:
-            assert pro.delete(f"{MINE}/interview-questions/topics/{first['id']}").status_code == 200
-            assert pro.delete(f"{MINE}/interview-questions/share").status_code == 200
-            assert pro.delete(f"{MINE}/interview-questions").status_code == 204
+        lapse(user)
+        assert pro.delete(f"{MINE}/interview-questions/topics/{first['id']}").status_code == 200
+        assert pro.delete(f"{MINE}/interview-questions/share").status_code == 200
+        assert pro.delete(f"{MINE}/interview-questions").status_code == 204
         assert Genre.objects.filter(owner__isnull=False).count() == 0

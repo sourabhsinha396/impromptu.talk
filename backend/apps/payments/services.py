@@ -64,15 +64,24 @@ def held(user, *, now: dt.datetime | None = None) -> Purchase | None:
 
 
 def is_pro(user, *, now: dt.datetime | None = None) -> bool:
-    """Whether Pro's features are open to this account.
+    """Whether Pro's features are open to this account: a held purchase
+    and nothing else.
 
-    Two ways to be true, and the second is not a loophole: with no
-    provider key there is nothing to sell, nothing links to the pricing
-    page, and the site says everything is free right now. Gating features
-    on a purchase nobody can make would be a lock on a door with no key
-    cut for it.
+    This used to read `not plans.selling() or held(...)`, so an unset
+    provider key handed Pro to every signed-in account. The reasoning was
+    that gating on a purchase nobody can make is a lock on a door with no
+    key cut for it, and as a product argument it was fine. As a spend
+    rule it was not: `is_pro` is what opens the one route that calls a
+    model on somebody else's account, and a key going missing is exactly
+    the moment it should close rather than open. Production now refuses
+    to boot without `DODO_API_KEY` (owner's call), so the shut-shop state
+    only exists in development and in tests, where nothing is billable.
+
+    `streak_days` already read the held row alone, which meant two
+    definitions of Pro sat side by side and disagreed whenever the shop
+    was shut. There is one now.
     """
-    return not plans.selling() or held(user, now=now) is not None
+    return held(user, now=now) is not None
 
 
 def plan_of(row: Purchase | None) -> plans.Plan | None:

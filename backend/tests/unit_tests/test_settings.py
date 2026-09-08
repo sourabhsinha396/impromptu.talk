@@ -7,7 +7,12 @@ import pytest
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 
-PRODUCTION_ENV = {"SECRET_KEY": "some-secret", "ALLOWED_HOSTS": "impromptu.example", "POSTGRES_HOST": "db"}
+PRODUCTION_ENV = {
+    "SECRET_KEY": "some-secret",
+    "ALLOWED_HOSTS": "impromptu.example",
+    "POSTGRES_HOST": "db",
+    "DODO_API_KEY": "live-key",
+}
 
 
 def load_production():
@@ -25,7 +30,10 @@ def configure(monkeypatch, **overrides):
             monkeypatch.setenv(name, value)
 
 
-@pytest.mark.parametrize("missing", ["SECRET_KEY", "ALLOWED_HOSTS", "POSTGRES_HOST"])
+# The payment key is here because `is_pro` reads it before every
+# billable call: a host that forgot its .env must not hand Pro to
+# everybody who signs up.
+@pytest.mark.parametrize("missing", ["SECRET_KEY", "ALLOWED_HOSTS", "POSTGRES_HOST", "DODO_API_KEY"])
 def test_production_refuses_to_boot_without(monkeypatch, missing):
     configure(monkeypatch, **{missing: None})
     with pytest.raises(ImproperlyConfigured, match=missing):

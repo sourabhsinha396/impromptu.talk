@@ -30,9 +30,9 @@ def test_the_settings_payload_says_a_password_exists_and_never_what_it_is(auth_c
         # Minted on this first look, from the front of the address: the
         # link is shown rather than asked for (card 31).
         "affiliate_code": "speaker",
-        # Nothing is for sale in a test run, so Pro's features are open to
-        # everybody and no plan is held.
-        "is_pro": True,
+        # Pro is a held purchase and nothing else. This account holds
+        # none, and an unconfigured shop no longer stands in for one.
+        "is_pro": False,
         "plan": None,
     }
 
@@ -56,6 +56,8 @@ def test_a_name_can_be_tidied_and_taken_back(auth_client, user):
 
 
 def test_a_colour_nobody_offers_becomes_the_default(auth_client, user):
+    # Keeping a colour is bought, so this account has to hold something.
+    factories.PurchaseFactory(user=user, plan="lifetime")
     auth_client.patch(ACCENT, {"accent": "violet"}, content_type=JSON)
     user.refresh_from_db()
     assert user.accent == "violet"
