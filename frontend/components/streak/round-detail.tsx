@@ -16,7 +16,7 @@ import {
 } from "recharts";
 
 import { Bands, Headline, MinuteBar, Transcript } from "@/components/round/report";
-import { CaseRead, Sample, SampleRead } from "@/components/streak/case";
+import { Sample, SampleRead, CaseRead } from "@/components/streak/case";
 import { WordCloud } from "@/components/streak/cloud";
 import { SAMPLE_LENGTH, SAMPLE_REPORT } from "@/lib/case";
 import { tally } from "@/lib/words";
@@ -93,17 +93,29 @@ export function RoundDetail({ report, length, pro }: { report: Report; length: n
         </Section>
       )}
 
-      <Section title="How the round went" aside={shapeCaption(rows)}>
-        <Dials rows={rows} />
-        <Bands rows={bars} />
-        {/* The bands draw your usual as a hollow ring and nothing on them
-            says so. The radar's key used to; this is what is left of it. */}
-        {report.usual && (
-          <p className="mt-3 text-[11.5px] text-muted">
-            The hollow dot on each bar is where you usually land, over your last {report.usual.rounds} rounds.
-          </p>
-        )}
-      </Section>
+      {pro ? (
+        <Section title="How the round went" aside={shapeCaption(rows)}>
+          <Dials rows={rows} />
+          <Bands rows={bars} />
+          {/* The bands draw your usual as a hollow ring and nothing on them
+              says so. The radar's key used to; this is what is left of it. */}
+          {report.usual && (
+            <p className="mt-3 text-[11.5px] text-muted">
+              The hollow dot on each bar is where you usually land, over your last {report.usual.rounds} rounds.
+            </p>
+          )}
+        </Section>
+      ) : (
+        <Section title="How the round went" aside="a sample">
+          <Sample
+            title="Pro measures every round."
+            line="Your pace, how fast you started, your longest pause, and your longest sentence, each against a comfortable range."
+          >
+            <Dials rows={axes(SAMPLE_REPORT)} />
+            <Bands rows={axes(SAMPLE_REPORT).filter((row) => !row.noBar)} />
+          </Sample>
+        </Section>
+      )}
 
       {report.words !== null && (
         <Section title="Words you used a lot" aside={leanAside(report)}>

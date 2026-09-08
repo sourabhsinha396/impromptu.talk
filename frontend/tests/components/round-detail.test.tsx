@@ -119,17 +119,20 @@ describe("RoundDetail", () => {
     expect(screen.getByText("of 11 words")).toBeInTheDocument();
   });
 
-  it("shows a free round a sample of the sentences and the tiles, never its own", () => {
+  it("shows a free round a sample of the shape, the sentences and the tiles, never its own", () => {
     // The blur is drawn from one fixed round for the reason the case
     // sample is: a blur over somebody's own numbers is a fault, and a
-    // free round's own tiles behind glass is a thing taken away rather
+    // free round's own numbers behind glass is a thing taken away rather
     // than a thing offered.
     render(<RoundDetail report={{ ...PRO, usual: null }} length={58} pro={false} />);
+    expect(screen.getByText("Pro measures every round.")).toBeInTheDocument();
     expect(screen.getByText("Pro measures every sentence.")).toBeInTheDocument();
-    // Two sections behind glass now, the case and this one, and both say
-    // so beside the heading rather than only on the card.
-    expect(screen.getAllByText("a sample")).toHaveLength(2);
-    // Its own longest sentence is 41 words; the sample's is 17.
+    // Three sections behind glass now, the case, the shape and the
+    // sentences, and all three say so beside the heading rather than only
+    // on the card.
+    expect(screen.getAllByText("a sample")).toHaveLength(3);
+    // Its own numbers do not leak past the blur: pace 143, longest sentence 41 words.
+    expect(screen.queryByText("143")).not.toBeInTheDocument();
     expect(screen.queryByText(/41 words/)).not.toBeInTheDocument();
   });
 
