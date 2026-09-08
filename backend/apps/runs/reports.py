@@ -40,6 +40,42 @@ FREE_MINUTES = 5
 # buyer maxing it every month takes over a decade to spend what they paid.
 PRO_MINUTES = 120
 
+# The longest round the product offers is ten minutes (SPEC: speak from 1
+# to 10 minutes). `MAX_SECONDS` on the row is two hours, which is the
+# sanity bound on a number rather than a length anybody can practise, so a
+# round claiming more than this was not made by the site. Its timing is
+# still read and stored; only the half that costs money is refused.
+#
+# This is also what keeps the AssemblyAI poll honest. Abandoning the poll
+# does not cancel the job, so audio longer than `POLL_TIMEOUT` can absorb
+# is billed in full and then thrown away. Ten minutes comes back in well
+# under the forty seconds that loop waits.
+MOST_SECONDS = 11 * 60
+
+# The most audio a second of round may carry.
+#
+# This is a plausibility check and not the ceiling on spend: a byte count
+# cannot bound a duration, because Opus encodes speech anywhere from
+# 6kbps to 128kbps and the same megabyte is a minute or twenty. What
+# bounds spend is the charge, which is the length the provider says it
+# heard. This only refuses the uploads that cannot belong to the round
+# they arrived with, before any of it is read into memory.
+#
+# Browsers record mono speech at 128kbps at most - Chrome's MediaRecorder
+# default, and Safari's AAC is lower - which is 16KB a second. Twice that
+# refuses no real recording.
+BYTES_A_SECOND = 32 * 1024
+
+# Container headers and a beat either side of the ticker, so a very short
+# round is not refused for its overhead.
+AUDIO_HEADROOM = 256 * 1024
+
+# And a flat backstop over the top of that, because the rule above scales
+# with the round and would otherwise let the longest one carry more than
+# the flat twelve megabytes it replaced. A ten-minute round at 128kbps is
+# 9.6MB, so this clears the longest real recording with room over.
+MAX_AUDIO = 12 * 1024 * 1024
+
 # How far the browser's timeline may run past the round before it is a
 # fault rather than rounding. The ticker stops a beat after the bell, so a
 # fraction of a second over is normal; seconds over is the browser's clock
@@ -110,8 +146,17 @@ def make(
 
     # Nothing heard is a dead or muted microphone. Sending that to a
     # transcriber spends allowance to be told there were no words.
-    if measured.heard and audio and _may_spend(run, pro):
+    #
+    # `may_send` is asked again here rather than only at the route. The
+    # route asks it of the upload's size so the bytes are never read; this
+    # asks it of the bytes, so the rule holds for any caller and cannot be
+    # lost by a route that forgets it. It is the one guard between a
+    # number the browser reported and a bill somebody else pays.
+    if measured.heard and audio and may_send(run, len(audio)) and _may_spend(run, pro):
         row.provider = transcribe.ASSEMBLYAI if pro else transcribe.GROQ
+        # The round's own length until the provider says otherwise: a
+        # call that never comes back still spends, and `may_send` has
+        # already bounded the blob against this same number.
         row.audio_seconds = run.spoken_seconds
         try:
             answer = transcribe.gateway(pro).transcribe(audio, filename)
@@ -121,6 +166,10 @@ def make(
             logger.warning("transcription failed for run %s: %s", run.pk, exc)
         else:
             row.provider = answer.provider
+            # What the provider actually heard, which is the only number
+            # here that nobody on the other end chose. Never less than the
+            # round claimed, so finishing early still costs the round.
+            row.audio_seconds = max(row.audio_seconds, round(answer.seconds))
             row.transcript = answer.text
             row.words_at = [list(word) for word in answer.words]
             row.fillers_at_transitions = analysis.at_transitions(list(answer.words), measured.pauses)
@@ -177,6 +226,32 @@ def _check_clock(run: Run, segments: list) -> None:
         logger.warning(
             "timeline overruns run %s: sound ends at %.2fs in a %ss round", run.pk, max(ends), run.spoken_seconds
         )
+
+
+def may_send(run: Run, size: int) -> bool:
+    """Whether audio this big can honestly belong to a round this long.
+
+    Asked before the upload is read into memory, because the answer needs
+    only its size. A refusal is a smaller report and never an error: the
+    timing half is computed from the timeline and costs nothing, exactly
+    as it is for a round with no microphone or no allowance left.
+    """
+    if run.spoken_seconds > MOST_SECONDS:
+        logger.warning(
+            "audio refused for run %s: a %ss round is longer than any the site offers", run.pk, run.spoken_seconds
+        )
+        return False
+    ceiling = min(MAX_AUDIO, AUDIO_HEADROOM + run.spoken_seconds * BYTES_A_SECOND)
+    if size > ceiling:
+        logger.warning(
+            "audio refused for run %s: %s bytes on a %ss round, over the %s ceiling",
+            run.pk,
+            size,
+            run.spoken_seconds,
+            ceiling,
+        )
+        return False
+    return True
 
 
 def _may_spend(run: Run, pro: bool) -> bool:

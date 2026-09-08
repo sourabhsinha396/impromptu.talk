@@ -131,3 +131,27 @@ class TestReadingOneBack:
         rows = client.get(f"{RUNS}/history").json()["recent"]
         assert [row["has_report"] for row in rows] == [False, True]
         assert rows[1]["id"] == first
+
+
+class TestWhatStandsInFrontOfTheBill:
+    """This is the one route that spends money, and both things guarding
+    it are the kind that break silently: a decorator dropped in a rebase,
+    and a body no browser sends."""
+
+    def test_the_paid_route_is_keyed_on_the_address_as_well_as_the_device(self):
+        from apps.runs.apis import attach_report
+
+        # A device id is a cookie this server mints on demand, so the
+        # device bucket resets for any client that stops sending one. The
+        # address bucket is the one that cannot be minted.
+        assert [mark["name"] for mark in attach_report.throttles] == ["reports-address", "reports"]
+
+    def test_more_segments_than_a_round_could_hold_are_refused_like_any_other_bad_body(self, client, db):
+        run_id = a_run(client)
+        flood = json.dumps([[0.0, 0.1]] * 200_000)
+        answer = client.post(f"{RUNS}/{run_id}/report", {"segments": flood})
+        assert answer.status_code == 200
+        # Refused, not truncated: the timeline is stored on the row and
+        # re-read on every render, so a bad one is slow forever after.
+        assert answer.json()["heard"] is False
+        assert Report.objects.get(run_id=run_id).segments == []

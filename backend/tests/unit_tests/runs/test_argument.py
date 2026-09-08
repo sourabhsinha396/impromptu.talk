@@ -255,3 +255,17 @@ class TestWhetherItIsGettingBetter:
         rounds = progress.progress(DEVICE).rounds
         assert [one.answered for one in rounds] == ["no", "no"]
         assert [one.point_at for one in rounds] == [None, None]
+
+
+class TestTheTranscriptCannotGrowThePromptWithoutABound:
+    """The prompt carries a line per sentence and the answer a role per
+    sentence, and only the answer had a ceiling. A transcript long enough
+    walks the prompt up while `MAX_TOKENS` truncates the array, so `parse`
+    refuses the shape and the input tokens are paid for and binned - the
+    failure gets quieter the more it costs."""
+
+    def test_more_sentences_than_a_round_could_hold_never_reaches_the_model(self, model):
+        said = sentences("This is a sentence. " * (argument.MOST_SENTENCES + 1))
+        delivery = argument.Delivery(stall=1.0, pace=140, longest_pause=0.5, ended_clean=True)
+        assert argument.read(TOPIC, said, delivery) is None
+        assert model.calls == []

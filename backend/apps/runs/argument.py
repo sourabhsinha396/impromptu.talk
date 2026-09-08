@@ -6,6 +6,11 @@ learner most needs to hear: run 30 answered "Argue for owning one good
 pen" with a story about a pen fight, and the report said 143 words a
 minute and one um.
 
+**Plain words.** The two sentences it writes are the only prose on the
+report, and they are read by somebody practising in a second language, so
+the prompt asks for everyday words and no idioms: everything the page
+writes for itself follows the same rule.
+
 **Structure, never prose.** The model is given the topic, the sentences
 the report already split, and how the minute was delivered, and it answers
 with a role for each sentence, one word for whether the topic was
@@ -58,6 +63,15 @@ TIMEOUT = 15
 # short lines, and a ten-minute round has a hundred sentences to name.
 MAX_TOKENS = 1200
 
+# The prompt carries one line per sentence and the answer must carry one
+# role per sentence, so both grow with the transcript and only the answer
+# has a ceiling. Past roughly three hundred roles the budget above runs
+# out mid-array, `parse` refuses the truncated shape, and the prompt has
+# been paid for to be thrown away - the failure gets quieter the more it
+# costs. A ten-minute round, the longest the site offers, has about a
+# hundred sentences.
+MOST_SENTENCES = 300
+
 # As near to the same answer twice as a model gets. What actually pins it
 # is that the answer is stored, but there is no reason to ask for variety
 # in a judgement.
@@ -95,6 +109,10 @@ SYSTEM = (
     '- "next": one sentence, at most 20 words, one thing to do differently '
     "next time. About the case they made. Never about pace, pauses or "
     "filler words, which they are already told about.\n\n"
+    "Write both sentences for somebody who is still learning English. "
+    "Everyday words, short sentences, no idioms and no figures of speech: "
+    "say \"you slowed down at the end\", never \"you faded\". A reader who "
+    "has to work out what a phrase means has learnt nothing from it.\n\n"
     "Never score them out of anything. Never rewrite their sentences. Never "
     "write more than the two sentences asked for. Judge only what is in "
     "front of you: a minute with no preparation is short, and a plain "
@@ -128,6 +146,12 @@ def enabled() -> bool:
 def read(topic: str, said: tuple[Sentence, ...], delivery: Delivery) -> Case | None:
     """One call, one case, or None and a line in the log."""
     if not enabled() or not said or not topic:
+        return None
+    if len(said) > MOST_SENTENCES:
+        # Refused rather than trimmed: a case read from the first three
+        # hundred sentences of a longer round would be a judgement on a
+        # round nobody spoke, presented beside the whole of it.
+        logger.warning("the case was not read: %s sentences is more than one round", len(said))
         return None
     try:
         answer = openrouter.gateway().complete(

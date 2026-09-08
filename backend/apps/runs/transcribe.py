@@ -67,6 +67,13 @@ class TranscribeError(Exception):
 class Transcript:
     text: str
     provider: str
+    # How long the audio actually was, as the provider measured it. This
+    # is the only honest number for the allowance to charge: the round's
+    # own length is reported by the browser, and bytes cannot answer the
+    # question at all, since Opus encodes speech anywhere from 6kbps to
+    # 128kbps and a megabyte is a minute or an hour depending. Zero from a
+    # provider that does not say, and from a call that never came back.
+    seconds: float = 0.0
     # (word, start, end) in seconds. AssemblyAI returns these on every
     # response and we were dropping them; they are what lets a pause be
     # drawn inside the sentence it interrupted rather than reported as a
@@ -136,7 +143,22 @@ class GroqGateway:
         text = (answer.get("text") or "").strip()
         if not text:
             raise TranscribeError("the transcriber returned nothing")
-        return Transcript(text=text, provider=GROQ, words=_timed_seconds(answer.get("words")))
+        return Transcript(
+            text=text,
+            provider=GROQ,
+            words=_timed_seconds(answer.get("words")),
+            seconds=_seconds(answer.get("duration")),
+        )
+
+
+def _seconds(value) -> float:
+    """What the provider says it heard, or nothing. Never negative and
+    never a string: this number is charged to somebody's allowance, so a
+    provider having a bad day must not credit them."""
+    try:
+        return max(0.0, float(value))
+    except (TypeError, ValueError):
+        return 0.0
 
 
 def _timed_seconds(words) -> tuple[tuple[str, float, float], ...]:
@@ -194,7 +216,16 @@ class AssemblyAIGateway:
                 text = (answer.get("text") or "").strip()
                 if not text:
                     raise TranscribeError("the transcriber heard nothing")
-                return Transcript(text=text, provider=ASSEMBLYAI, words=_timed(answer.get("words")))
+                return Transcript(
+                    text=text,
+                    provider=ASSEMBLYAI,
+                    words=_timed(answer.get("words")),
+                    # Seconds, like Whisper's. It is the word timings on
+                    # this provider that are milliseconds, which `_timed`
+                    # divides down; reading this one the same way would
+                    # charge a thousandth of what was heard.
+                    seconds=_seconds(answer.get("audio_duration")),
+                )
             if status == "error":
                 raise TranscribeError(str(answer.get("error") or "the transcriber failed"))
             if time.monotonic() >= deadline:
@@ -222,6 +253,7 @@ class RecordingGateway:
     text: str = "um so we should probably like begin"
     provider: str = GROQ
     words: tuple[tuple[str, float, float], ...] = ()
+    seconds: float = 0.0
     calls: list[dict] = field(default_factory=list)
     error: Exception | None = None
 
@@ -231,7 +263,7 @@ class RecordingGateway:
         self.calls.append({"bytes": len(blob), "filename": filename})
         if self.error:
             raise self.error
-        return Transcript(text=self.text, provider=self.provider, words=self.words)
+        return Transcript(text=self.text, provider=self.provider, words=self.words, seconds=self.seconds)
 
 
 def enabled(pro: bool) -> bool:

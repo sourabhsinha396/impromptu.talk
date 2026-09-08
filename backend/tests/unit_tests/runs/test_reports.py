@@ -164,3 +164,65 @@ class TestTheBrowserClockIsChecked:
         with caplog.at_level("WARNING", logger="apps.runs.reports"):
             reports.make(RunFactory(spoken_seconds=58), [(2.0, 58.6)])
         assert "overruns" not in caplog.text
+
+
+class TestAudioMustFitTheRoundItDescribes:
+    """The one failure in this codebase that arrives as a bill.
+
+    The allowance is charged `run.spoken_seconds`, which the browser
+    reports, while the audio was bounded only in bytes - and bytes are not
+    duration. Opus encodes speech at 6kbps, so the old twelve-megabyte
+    ceiling was four and a half hours of audio charged as whatever the
+    round said it was: a dollar twenty-six of AssemblyAI per request, and
+    nine thousand a month against one lifetime account. Tying the bytes to
+    the declared length is what closes it, because the length is also what
+    is charged.
+    """
+
+    def test_four_hours_of_audio_on_a_one_second_round_never_reaches_a_provider(self, db, groq):
+        run = RunFactory(spoken_seconds=1)
+        reports.make(run, [(0.0, 1.0)], audio=b"x" * (12 * 1024 * 1024))
+        assert groq.calls == []
+        assert reports.used(DEVICE, None) == 0
+
+    def test_a_real_ten_minute_round_at_the_browsers_own_bitrate_is_sent(self, db, groq):
+        # Chrome records mono Opus at 128kbps, so ten minutes is 9.6MB.
+        # The ceiling has to clear this or it costs somebody their report.
+        run = RunFactory(spoken_seconds=600)
+        reports.make(run, [(0.0, 590.0)], audio=b"x" * (96 * 100 * 1024))
+        assert len(groq.calls) == 1
+
+    def test_a_round_longer_than_any_the_site_offers_is_not_transcribed(self, db, groq):
+        # The row allows two hours, the product allows ten minutes, and
+        # AssemblyAI would bill the whole of an hour the poll then abandons.
+        run = RunFactory(spoken_seconds=7200)
+        reports.make(run, [(0.0, 7000.0)], audio=AUDIO)
+        assert groq.calls == []
+
+    def test_the_ceiling_is_asked_of_the_size_so_the_bytes_are_never_read(self, db):
+        assert reports.may_send(RunFactory(spoken_seconds=60), 20 * 1024 * 1024) is False
+        assert reports.may_send(RunFactory(spoken_seconds=60), 500 * 1024) is True
+
+
+class TestTheAllowanceIsChargedForAudioAndNotForAClaim:
+    """`spoken_seconds` is measured by the browser and posted by the
+    browser, so charging it made the price of a transcription something
+    the caller chose. Both providers report the duration they actually
+    heard, and that is the number nobody on the other end picks."""
+
+    def test_the_charge_is_what_the_provider_heard_not_what_the_round_claimed(self, db, settings):
+        settings.GROQ_API_KEY = "k"
+        # A round claiming one second, carrying twenty minutes of audio.
+        transcribe.use_gateway(transcribe.RecordingGateway(seconds=1200.0))
+        try:
+            reports.make(RunFactory(spoken_seconds=1), [(0.0, 1.0)], audio=AUDIO)
+            assert reports.used(DEVICE, None) == 1200
+        finally:
+            transcribe.use_gateway(None)
+
+    def test_finishing_early_still_costs_the_round_it_was(self, db, groq):
+        # The provider hears less than the round lasted, and the round is
+        # what was booked. Never a refund for a short answer.
+        groq.seconds = 12.0
+        reports.make(RunFactory(spoken_seconds=60), SPOKE, audio=AUDIO)
+        assert reports.used(DEVICE, None) == 60

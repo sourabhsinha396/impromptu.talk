@@ -169,10 +169,12 @@ def shared_page(request, token: str, response: HttpResponse):
     return sharing.shared(who, request_offset(request))
 
 
-# A minute of mono Opus is a few hundred kilobytes and the longest round
-# allowed is ten minutes, so this is the runaway ceiling and not a limit
-# anybody meets. Refused before the file is read into memory.
-MAX_AUDIO = 12 * 1024 * 1024
+# The browser samples at 50Hz and needs six frames of sound and a gap
+# either side to open a segment, so the densest a real ten-minute round
+# gets is a few thousand. This is the shape check, not a budget: the
+# timeline is stored as JSON on the row and read back on every render, so
+# a body with a million pairs in it is a slow page forever after.
+MOST_SEGMENTS = 5000
 
 
 def _is_pro(user) -> bool:
@@ -200,9 +202,16 @@ def stored_report(request, run_id: int, response: HttpResponse):
 
 
 @api.post("/{int:run_id}/report", response=ReportOut)
-# The allowance is the real ceiling; this only stops a loop from filling a
-# disk before the allowance has a chance to say no.
+# Two buckets, as sign-in keeps two. The device one is the friendly limit:
+# a classroom behind one address is many speakers and none of them may be
+# made to wait for another. But a device id is a cookie this server mints
+# on demand, so a client that simply never sends one gets a fresh device,
+# a fresh bucket and a fresh transcription allowance on every request -
+# which is to say no ceiling at all on the one route that spends money.
+# The address bucket is the one an attacker cannot mint, set high enough
+# that a full classroom transcribing every round never reaches it.
 @throttle("reports", "120/hour", key=lambda request, **kwargs: device_id(request))
+@throttle("reports-address", "300/hour")
 def attach_report(request, run_id: int, segments: Form[str], audio: File[UploadedFile | None] = None):
     """The report on a round, on its own call rather than folded into the
     run.
@@ -227,6 +236,8 @@ def attach_report(request, run_id: int, segments: Form[str], audio: File[Uploade
 
     try:
         timeline = json.loads(segments)
+        if len(timeline) > MOST_SEGMENTS:
+            raise ValueError("more segments than a round can hold")
         pairs = [(float(a), float(b)) for a, b in timeline]
     except (TypeError, ValueError):
         # A timeline no browser could have produced is refused at the edge,
@@ -234,7 +245,9 @@ def attach_report(request, run_id: int, segments: Form[str], audio: File[Uploade
         pairs = []
 
     blob = None
-    if audio is not None and audio.size and audio.size <= MAX_AUDIO:
+    # Asked of the size rather than the bytes, so an upload that cannot
+    # belong to this round is never read into memory.
+    if audio is not None and audio.size and reports.may_send(run, audio.size):
         blob = audio.read()
 
     pro = _is_pro(user)
