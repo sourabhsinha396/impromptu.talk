@@ -18,6 +18,7 @@ eight weeks, for the same reason (`PRICING.md` §6).
 import secrets
 
 from apps.authentication.models import User
+from apps.runs import progress as progress_of
 from apps.runs import streaks
 from apps.runs.history import history
 from apps.runs.models import Run
@@ -83,7 +84,49 @@ def shared(user, offset_minutes: int = 0, *, now=None) -> dict:
         "days": SHARED_DAYS,
         "calendar": [{"date": d.date.isoformat(), "count": d.count, "frozen": False} for d in shown.calendar],
         "recent": recent,
+        "progress": _progress(user, rule, now=now),
     }
+
+
+def _progress(user, rule: streaks.Rule, *, now=None) -> dict:
+    """The three lines and the two minutes, over the same eight weeks as
+    the calendar above them.
+
+    The window is the page's own and not the owner's plan, for the reason
+    the calendar's already is: the link is the growth surface and nothing
+    is sold on it (`PRICING.md` §6). Two windows on one page would be
+    worse than either, since the lines would describe a stretch of time
+    the calendar beside them does not.
+
+    Only what can be drawn. A point is five smoothed numbers and a
+    minute is the timeline of where there was a voice, so neither carries
+    a word anybody said; the rounds, the genres, the habit words and the
+    milestones stay on the streak page, where the person they are about
+    is the one reading.
+    """
+    shown = progress_of.progress("shared", user, rule, now=now)
+    return {
+        "enough": shown.enough,
+        "points": [
+            {
+                "at": p.at.isoformat(),
+                "stall": p.stall,
+                "gap": p.gap,
+                "fillers": p.fillers,
+                "silence": p.silence,
+                "restarts": p.restarts,
+            }
+            for p in shown.points
+        ],
+        "first": _minute(shown.first),
+        "latest": _minute(shown.latest),
+    }
+
+
+def _minute(minute) -> dict | None:
+    if minute is None:
+        return None
+    return {"at": minute.at.isoformat(), "seconds": minute.seconds, "segments": minute.segments}
 
 
 def _bank_topics(user, limit: int) -> list[dict]:

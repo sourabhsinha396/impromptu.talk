@@ -279,7 +279,7 @@
 
   --radius-card: 14px;
 
-  /* The first of the two animations the site defines itself: a band of
+  /* The first of the three animations the site defines itself: a band of
      accent crossing a placeholder while the report is being read back.
      Tailwind's own `animate-pulse` was what the wait used before, and on
      white it moves `--line` between full and half opacity, which is about
@@ -314,6 +314,30 @@
   @keyframes nudge {
     to {
       transform: rotate(360deg);
+    }
+  }
+
+  /* The third: a light running round the edge of the one control on a
+     screen worth pressing next, which is "See the full report" on the
+     done screen and on the filming board. A dot beside the words says
+     the same thing at the size of a dot; this says it at the size of the
+     whole control, which is what a button nobody was finding needed.
+
+     `offset-distance` along the control's own perimeter, not a gradient
+     turning behind it: a conic gradient sweeps by angle, so on a pill
+     twice as wide as it is tall the light crawls round the two ends and
+     races along the edges. This moves the same number of pixels a second
+     the whole way round. It is also why there is no dependency here -
+     `offset-distance` is a length, so CSS interpolates it on its own,
+     where the library version of this effect needs a JavaScript
+     animation runtime to do the same job.
+
+     Only ever used behind `motion-safe:`, so a control asked to hold
+     still keeps its ring and stops running it. */
+  --animate-beam: beam 5s linear infinite;
+  @keyframes beam {
+    to {
+      offset-distance: 100%;
     }
   }
 }

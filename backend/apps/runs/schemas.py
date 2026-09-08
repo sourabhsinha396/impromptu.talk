@@ -145,10 +145,30 @@ class SharedTopicOut(Schema):
     slug: str
 
 
+class SharedProgressOut(Schema):
+    """The two drawings a shared page carries: the three lines, and the
+    first and latest minutes.
+
+    Deliberately a smaller shape than `ProgressOut` rather than the same
+    one with fields blanked. Everything left out is read by name or by
+    date - the rounds, their genres, the words somebody leaned on, the
+    milestones and the run ids behind them - and a stranger with a link
+    has no business with any of it. Making it a separate schema means a
+    field added to the streak page's progress cannot arrive here by
+    accident.
+    """
+
+    enough: bool
+    points: list[PointOut] = []
+    first: MinuteOut | None = None
+    latest: MinuteOut | None = None
+
+
 class SharedOut(Schema):
     """One person's practice as a stranger may see it: the first name they
-    gave or nothing, never the email; the numbers; eight weeks; and only
-    the bank topics they practised, each a link into a round on it."""
+    gave or nothing, never the email; the numbers; eight weeks; only the
+    bank topics they practised, each a link into a round on it; and the
+    shape of the practice, which is the part worth sending."""
 
     name: str
     streak: int
@@ -157,6 +177,7 @@ class SharedOut(Schema):
     days: int
     calendar: list[DayOut]
     recent: list[SharedTopicOut]
+    progress: SharedProgressOut
 
 
 class PauseOut(Schema):

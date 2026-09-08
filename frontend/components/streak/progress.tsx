@@ -19,7 +19,7 @@ import {
 } from "@/lib/progress";
 import { CaseCards, SampleCards } from "@/components/streak/case";
 import { readRounds } from "@/lib/case";
-import { clock, minuteBlocks, movement, waveform, type Point, type Progress } from "@/lib/report";
+import { clock, minuteBlocks, movement, waveform, type Minute, type Point, type Progress } from "@/lib/report";
 import type { Bank } from "@/lib/bank";
 
 /* Whether somebody is getting better, drawn for the person practising.
@@ -32,9 +32,14 @@ import type { Bank } from "@/lib/bank";
    that, three lines over the window, the genres, the firsts, and the
    first minute above the latest as waves.
 
-   Recharts here and nowhere but /streak. The lines are a real chart;
-   everything else is dots on a track, a table and sentences, drawn by
-   hand because a track and a marker is not a chart.
+   Recharts here and nowhere else. The lines are a real chart; everything
+   else is dots on a track, a table and sentences, drawn by hand because
+   a track and a marker is not a chart.
+
+   Two pieces are exported for the shared page, which draws the same
+   three lines and the same two waves over its own eight weeks: `Trends`
+   and `SideBySide`. Everything else on this file is a sentence about
+   somebody addressed to that somebody, and a stranger reads none of it.
 
    Free keeps the lines and the waves, which its five-day window can
    fill. Then-and-now, the floor, the genres and the firsts need history
@@ -79,23 +84,19 @@ export function ProgressSection({ progress, pro, bank }: { progress: Progress; p
       <Sub aside={pro ? "over the last year" : `over the last ${rounds.length} round${rounds.length === 1 ? "" : "s"}`}>
         The three that matter
       </Sub>
-      <div className="grid gap-3.5 sm:grid-cols-3">
-        {LINES.map((line) => (
-          <Trend key={line.key} line={line} points={progress.points} />
-        ))}
-      </div>
+      <Trends points={progress.points} />
 
       <div className="mt-6 grid gap-6 sm:grid-cols-2 sm:gap-x-8">
         <Genres progress={progress} pro={pro} bank={bank} />
         <Firsts progress={progress} pro={pro} />
       </div>
 
-      <SideBySide progress={progress} />
+      <SideBySide first={progress.first} latest={progress.latest} title="Your first minute, and your latest" />
     </div>
   );
 }
 
-function Sub({ children, aside }: { children: React.ReactNode; aside?: string }) {
+export function Sub({ children, aside }: { children: React.ReactNode; aside?: string }) {
   return (
     <p className="mt-6 mb-2.5 text-[12.5px] font-semibold first:mt-0">
       {children}
@@ -310,7 +311,7 @@ function Floor({ progress, pro }: { progress: Progress; pro: boolean }) {
         Your quietest round of your last {shown.k} had{" "}
         <b className="font-semibold text-ink">{Math.round(shown.worstNow)} seconds</b> of silence. Your first{" "}
         {shown.k} averaged {Math.round(shown.avgThen)}.{" "}
-        {shown.beats ? "A bad day now is better than an ordinary day was." : "Keep going. This moves before the average does."}
+        {shown.beats ? "A bad day now is better than an ordinary day was." : ""}
       </p>
       <div className="mt-3 flex h-[54px] items-end gap-2.5">
         <div className="flex flex-1 flex-col justify-end gap-1 text-[11px] text-muted">
@@ -327,6 +328,19 @@ function Floor({ progress, pro }: { progress: Progress; pro: boolean }) {
 }
 
 /* ------------------------------------------------------------ the lines */
+
+/** The three, side by side. The heading over them is the caller's, because
+    the streak page says which window it drew and the shared page says a
+    different one. */
+export function Trends({ points }: { points: Point[] }) {
+  return (
+    <div className="grid gap-3.5 sm:grid-cols-3">
+      {LINES.map((line) => (
+        <Trend key={line.key} line={line} points={points} />
+      ))}
+    </div>
+  );
+}
 
 type Line = (typeof LINES)[number];
 /* What Recharts hands a custom dot. The value it passes for an area is a
@@ -527,13 +541,20 @@ function Firsts({ progress, pro }: { progress: Progress; pro: boolean }) {
    round page draws. The most convincing thing this product can show, and
    it costs nothing beyond what is already stored: a wave full of holes
    becoming one that is mostly voice, with no number to argue with. */
-function SideBySide({ progress }: { progress: Progress }) {
-  const { first, latest } = progress;
+export function SideBySide({
+  first,
+  latest,
+  title,
+}: {
+  first: Minute | null;
+  latest: Minute | null;
+  title: string;
+}) {
   if (!first || !latest || first.at === latest.at) return null;
   const scale = Math.max(first.seconds, latest.seconds);
   return (
-    <div className="mt-6">
-      <p className="text-[12.5px] font-semibold">Your first minute, and your latest</p>
+    <div className="mt-6 first:mt-0">
+      <p className="text-[12.5px] font-semibold">{title}</p>
       <div className="mt-2 space-y-1.5">
         <Wave label="First" minute={first} scale={scale} />
         <Wave label="Latest" minute={latest} scale={scale} />

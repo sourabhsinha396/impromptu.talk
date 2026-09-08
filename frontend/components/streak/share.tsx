@@ -27,7 +27,7 @@ export function Share({ url }: { url: string | null }) {
 
   return (
     <section className="mt-10">
-      <h2 className="mb-3 text-[15px] font-semibold">Share</h2>
+      <h2 className="mb-3 text-[15px] font-semibold">Share your progress, publicly:</h2>
       {url ? (
         <div className="flex max-w-[640px] flex-wrap items-center gap-2.5">
           <input

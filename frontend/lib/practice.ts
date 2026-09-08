@@ -3,7 +3,7 @@
    dates into a grid lives here, with no DOM in it, so it is a table of
    tests rather than a page nobody can check. */
 
-import type { Progress } from "@/lib/report";
+import type { Minute, Point, Progress } from "@/lib/report";
 
 export type Day = { date: string; count: number; frozen: boolean };
 export type Recent = { id: number; topic_text: string; genre_slug: string; at: string; has_report: boolean };
@@ -21,6 +21,17 @@ export type History = {
   progress: Progress;
 };
 
+/** The two drawings a shared page carries: the three lines, and the first
+    and latest minutes. A smaller shape than `Progress` and not the same
+    one with fields blanked, so a field added to the streak page's progress
+    cannot arrive on a stranger's page by accident. */
+export type SharedProgress = {
+  enough: boolean;
+  points: Point[];
+  first: Minute | null;
+  latest: Minute | null;
+};
+
 /** One person's practice as a stranger may see it. */
 export type Shared = {
   name: string;
@@ -30,6 +41,7 @@ export type Shared = {
   days: number;
   calendar: Day[];
   recent: { text: string; slug: string }[];
+  progress: SharedProgress;
 };
 
 /** A window short enough to draw as one line of days rather than as seven

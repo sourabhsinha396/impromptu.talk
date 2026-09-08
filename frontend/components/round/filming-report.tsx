@@ -1,5 +1,6 @@
 import { MinuteBar, Transcript, WAITING } from "@/components/round/report";
 import { Button } from "@/components/site/button";
+import { BorderBeam } from "@/components/site/border-beam";
 import { Ping } from "@/components/site/ping";
 import { Placeholder } from "@/components/site/placeholder";
 import {
@@ -181,10 +182,13 @@ export function FilmingReport({
           /* The same button as the reading report, at the board's scale:
              a control a camera keeps, where an underlined line of text at
              the foot of ten cards is the first thing a compressor throws
-             away. */
-          <Button href={href} variant="ghost" size="md">
+             away. The beam is slower here than on the done screen, since
+             this one is filmed and a fast sweep is what a compressor
+             smears. */
+          <Button href={href} variant="ghost" size="md" className="relative">
             See the full report
             <Ping size={14} />
+            <BorderBeam seconds={7} width={2.5} length={56} />
           </Button>
         )}
       </div>

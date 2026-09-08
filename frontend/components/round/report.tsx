@@ -1,3 +1,4 @@
+import { BorderBeam } from "@/components/site/border-beam";
 import { Button } from "@/components/site/button";
 import { MicIcon } from "@/components/site/icons";
 import { Ping } from "@/components/site/ping";
@@ -73,11 +74,14 @@ export function RoundReport({
 
            The ping rides inside the button now, at twelve pixels rather
            than eight, so what the button is for arrives before the words
-           are read (owner's call). */
+           are read (owner's call), and a beam runs round the edge, which
+           is the same job done at the size of the whole control rather
+           than of a dot. */
         <p className="mt-6 flex justify-center">
-          <Button href={href} variant="ghost" size="md">
+          <Button href={href} variant="ghost" size="md" className="relative">
             See the full report
             <Ping size={12} />
+            <BorderBeam />
           </Button>
         </p>
       )}
@@ -87,7 +91,7 @@ export function RoundReport({
 
 /** The words the wait says, in both drawings of the report, so the two
     cannot drift apart. */
-export const WAITING = "Analyzing your speech...";
+export const WAITING = "Analyzing your speech... Expected time - 15 seconds";
 
 /* The report as its own empty frame, while the round is being read back.
 

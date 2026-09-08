@@ -2,10 +2,13 @@
 is the only page a stranger can open about a named person, so the
 interesting assertions are the absences."""
 
+import datetime as dt
+
 from django.test import Client
 
 from apps.authentication.models import User
 from apps.runs import sharing
+from apps.runs.models import Report, Run
 from apps.runs.streaks import FREE_DAYS
 from tests.unit_tests import factories
 
@@ -65,6 +68,50 @@ def test_it_names_bank_topics_with_their_links_and_never_a_line_they_wrote_thems
     response = Client().get(f"{RUNS}/shared/{token}")
     assert response.json()["recent"] == [{"text": "Low tide", "slug": "low-tide"}]
     assert "divorce" not in response.content.decode()
+
+
+def test_the_charts_carry_numbers_and_a_timeline_and_never_a_word_anybody_said(auth_client, user, db):
+    """The drawings are why anybody sends the link and why the payload has
+    to be watched: they have to say a person got better without saying a
+    thing that person said."""
+    run(auth_client)
+    run(auth_client)
+    for one in Run.objects.filter(user=user):
+        Report.objects.create(
+            run=one,
+            segments=[[2.0, 55.0]],
+            opening_stall=2.0,
+            longest_pause=1.0,
+            transcript="the tide goes out twice a day and my rent is due",
+        )
+    token = auth_client.post(f"{RUNS}/share").json()["token"]
+    response = Client().get(f"{RUNS}/shared/{token}")
+    drawn = response.json()["progress"]
+    assert drawn["enough"] is True
+    assert len(drawn["points"]) == 2
+    assert drawn["first"]["segments"] == [[2.0, 55.0]]
+    assert set(drawn["points"][0]) == {"at", "stall", "gap", "fillers", "silence", "restarts"}
+    # Everything the streak page's progress carries and this must not: the
+    # rounds themselves, their genres, the habit words, the milestones and
+    # the run ids behind them.
+    assert set(drawn) == {"enough", "points", "first", "latest"}
+    assert "rent" not in response.content.decode()
+
+
+def test_the_charts_are_drawn_over_the_same_eight_weeks_as_the_calendar(auth_client, user, db):
+    """Two windows on one page would be worse than either: the lines would
+    describe a stretch of time the calendar above them does not."""
+    run(auth_client)
+    run(auth_client)
+    for one in Run.objects.filter(user=user):
+        Report.objects.create(run=one, segments=[[2.0, 55.0]], opening_stall=2.0, longest_pause=1.0)
+    Report.objects.update(created_at=dt.datetime.now(dt.UTC) - dt.timedelta(days=20))
+    token = auth_client.post(f"{RUNS}/share").json()["token"]
+    body = Client().get(f"{RUNS}/shared/{token}").json()
+    # Twenty days back is outside the free window and inside the page's own,
+    # so a free owner's link draws what the free streak page would not.
+    assert FREE_DAYS < 20 < sharing.SHARED_DAYS
+    assert len(body["progress"]["points"]) == 2
 
 
 def test_a_token_nobody_holds_is_a_page_that_never_existed(db):
