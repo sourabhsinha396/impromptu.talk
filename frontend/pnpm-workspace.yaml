@@ -1,0 +1,6 @@
+# pnpm 10 stopped reading the `pnpm` field in package.json, and this is
+# where overrides live now. Without it the pin below is ignored and only
+# the lockfile remembers it, so the next install that regenerates the
+# lockfile puts nwsapi 2.2.27 back and the menu tests take forty seconds.
+overrides:
+  nwsapi: 2.2.24

@@ -34,11 +34,6 @@
     "typescript": "^5.9.0",
     "vitest": "^4.0.0"
   },
-  "pnpm": {
-    "overrides": {
-      "nwsapi": "2.2.24"
-    }
-  },
   "browserslist": [
     "chrome >= 111",
     "edge >= 111",
