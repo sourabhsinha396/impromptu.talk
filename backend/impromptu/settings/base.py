@@ -203,7 +203,40 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 
-STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# Static files (the admin's own CSS and JS included) are served from an
+# S3-compatible bucket behind a CDN when one is configured, and off disk
+# by Django's own staticfiles app otherwise, which is what local
+# development and testing use. A bucket is the whole switch: production
+# requires one (see production.py), so a host that forgot its .env fails
+# at boot rather than serving an admin with no styling.
+STORAGE_BUCKET = os.environ.get("STORAGE_BUCKET", "").strip()
+S3_ACCESS_KEY_ID = os.environ.get("S3_ACCESS_KEY_ID", "").strip()
+S3_SECRET_ACCESS_KEY = os.environ.get("S3_SECRET_ACCESS_KEY", "").strip()
+S3_ENDPOINT_URL = os.environ.get("S3_ENDPOINT_URL", "").strip()
+STORAGE_PUBLIC_BASE_URL = os.environ.get("STORAGE_PUBLIC_BASE_URL", "").strip()
+
+if STORAGE_BUCKET:
+    STORAGES = {
+        "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+        "staticfiles": {"BACKEND": "storages.backends.s3.S3Storage"},
+    }
+    AWS_STORAGE_BUCKET_NAME = STORAGE_BUCKET
+    AWS_ACCESS_KEY_ID = S3_ACCESS_KEY_ID
+    AWS_SECRET_ACCESS_KEY = S3_SECRET_ACCESS_KEY
+    # Empty means the provider's own default endpoint (AWS S3 itself);
+    # set for an S3-compatible provider such as R2 or Spaces.
+    AWS_S3_ENDPOINT_URL = S3_ENDPOINT_URL or None
+    AWS_S3_CUSTOM_DOMAIN = STORAGE_PUBLIC_BASE_URL.removeprefix("https://").removeprefix("http://")
+    AWS_QUERYSTRING_AUTH = False
+    AWS_DEFAULT_ACL = None
+    STATIC_URL = f"{STORAGE_PUBLIC_BASE_URL}/static/"
+else:
+    STORAGES = {
+        "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+        "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+    }
+    STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

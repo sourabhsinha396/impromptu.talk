@@ -2,6 +2,7 @@
 fails at boot and a test run can never hold a real credential."""
 
 import importlib.util
+import sys
 
 import pytest
 from django.conf import settings
@@ -12,6 +13,10 @@ PRODUCTION_ENV = {
     "ALLOWED_HOSTS": "impromptu.example",
     "POSTGRES_HOST": "db",
     "DODO_API_KEY": "live-key",
+    "STORAGE_BUCKET": "impromptu",
+    "S3_ACCESS_KEY_ID": "some-key-id",
+    "S3_SECRET_ACCESS_KEY": "some-secret-key",
+    "STORAGE_PUBLIC_BASE_URL": "https://cdn.impromptu.example",
 }
 
 
@@ -33,7 +38,19 @@ def configure(monkeypatch, **overrides):
 # The payment key is here because `is_pro` reads it before every
 # billable call: a host that forgot its .env must not hand Pro to
 # everybody who signs up.
-@pytest.mark.parametrize("missing", ["SECRET_KEY", "ALLOWED_HOSTS", "POSTGRES_HOST", "DODO_API_KEY"])
+@pytest.mark.parametrize(
+    "missing",
+    [
+        "SECRET_KEY",
+        "ALLOWED_HOSTS",
+        "POSTGRES_HOST",
+        "DODO_API_KEY",
+        "STORAGE_BUCKET",
+        "S3_ACCESS_KEY_ID",
+        "S3_SECRET_ACCESS_KEY",
+        "STORAGE_PUBLIC_BASE_URL",
+    ],
+)
 def test_production_refuses_to_boot_without(monkeypatch, missing):
     configure(monkeypatch, **{missing: None})
     with pytest.raises(ImproperlyConfigured, match=missing):
@@ -86,3 +103,29 @@ def test_rate_limit_counters_stay_in_memory_under_test():
 
 def test_exactly_one_proxy_hop_is_trusted():
     assert settings.RATELIMIT_TRUSTED_PROXY_HOPS == 1
+
+
+def load_local():
+    # local.py does `from .base import *`, and a plain re-import would
+    # reuse the already-cached impromptu.settings.base module rather than
+    # re-reading the env vars this test just changed.
+    sys.modules.pop("impromptu.settings.base", None)
+    spec = importlib.util.find_spec("impromptu.settings.local")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_static_files_serve_off_disk_with_no_bucket_configured(monkeypatch):
+    monkeypatch.delenv("STORAGE_BUCKET", raising=False)
+    module = load_local()
+    assert module.STATIC_URL == "static/"
+    assert module.STORAGES["staticfiles"]["BACKEND"] == "django.contrib.staticfiles.storage.StaticFilesStorage"
+
+
+def test_static_files_serve_from_the_cdn_once_a_bucket_is_set(monkeypatch):
+    monkeypatch.setenv("STORAGE_BUCKET", "impromptu")
+    monkeypatch.setenv("STORAGE_PUBLIC_BASE_URL", "https://cdn.impromptu.example")
+    module = load_local()
+    assert module.STATIC_URL == "https://cdn.impromptu.example/static/"
+    assert module.STORAGES["staticfiles"]["BACKEND"] == "storages.backends.s3.S3Storage"
