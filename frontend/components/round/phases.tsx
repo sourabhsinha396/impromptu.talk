@@ -1,3 +1,4 @@
+import { Meter, MicCheck } from "@/components/round/mic";
 import { RoundReport } from "@/components/round/report";
 import { Ring } from "@/components/round/ring";
 import { Button } from "@/components/site/button";
@@ -6,6 +7,7 @@ import { LogoMark } from "@/components/site/logo";
 import type { Topic } from "@/lib/bank";
 import type { Report } from "@/lib/report";
 import { MAX_NOTE } from "@/lib/round/engine";
+import type { Listener } from "@/lib/round/voice";
 
 /* The phases inside the round, as approved in docs/mocks/home.html. Each
    is presentational: it draws what the engine says and hands back presses.
@@ -55,6 +57,7 @@ export function TopicPhase({
   genre,
   styleLabel,
   prepSeconds,
+  listener,
   onThink,
   onSpeakNow,
   onSpin,
@@ -64,6 +67,9 @@ export function TopicPhase({
   genre: { name: string; icon: string };
   styleLabel: string;
   prepSeconds: number;
+  /* Only when the round is listening. Null draws nothing at all, which is
+     what a round with no microphone behind it should look like. */
+  listener: Listener | null;
   onThink: () => void;
   onSpeakNow: () => void;
   onSpin: () => void;
@@ -97,6 +103,7 @@ export function TopicPhase({
         </Button>
       </div>
       <Reset onReset={onReset} />
+      {listener && <MicCheck listener={listener} />}
     </>
   );
 }
@@ -168,6 +175,7 @@ export function SpeakPhase({
   topic,
   clock,
   notes,
+  listener,
   onPause,
   onDone,
   onReset,
@@ -175,6 +183,7 @@ export function SpeakPhase({
   topic: Topic;
   clock: Clock;
   notes: string[];
+  listener: Listener | null;
   onPause: () => void;
   onDone: () => void;
   onReset: () => void;
@@ -184,6 +193,7 @@ export function SpeakPhase({
     <>
       <p className="mb-7 font-display text-topic-mid font-semibold text-accent text-balance">{topic.text}</p>
       <Ring fraction={clock.fraction} text={clock.text} label="Speak" ending={clock.ending} />
+      {listener && <Meter listener={listener} speaking={!clock.paused} />}
       {chips.length > 0 && (
         <div className="mb-8 flex flex-wrap justify-center gap-2">
           {chips.map((chip, index) => (

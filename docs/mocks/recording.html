@@ -1,0 +1,332 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mock: proof it is recording</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..600&family=Plus+Jakarta+Sans:wght@400..700&display=swap" rel="stylesheet"><style>
+:root{color-scheme:light;--surface:#fff;--card:#fff;--card2:oklch(.965 .008 120);--ink:#1c1917;--muted:#57534e;--line:#e7e5e4;--line-strong:#918b87;
+--accent-h:120;--accent-c:.12;--accent-l:.5;--accent-l-strong:.42;--accent:oklch(var(--accent-l) var(--accent-c) var(--accent-h));--accent-strong:oklch(var(--accent-l-strong) var(--accent-c) var(--accent-h));
+--btn:#1c1917;--btn-ink:#fff;--btn-strong:#000;--note:oklch(.93 .13 118);--note-ink:oklch(.32 .06 120);--warn:oklch(.62 .2 30);
+--sans:"Plus Jakarta Sans",ui-sans-serif,system-ui,sans-serif;--display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;--header-h:60px}
+[data-theme=dark]{color-scheme:dark;--surface:#080808;--card:#161616;--card2:#101010;--ink:#f5f5f4;--muted:#a8a29e;--line:#292524;--line-strong:#6b6560;
+--accent-l:.796;--accent-l-strong:.86;--btn:#f5f5f4;--btn-ink:#111110;--btn-strong:#fff;--note:oklch(.86 .15 120);--note-ink:oklch(.2 .04 120);--warn:oklch(.75 .19 30)}
+*{box-sizing:border-box}html,body{margin:0}body{background:#3f3d3a;font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased}
+.mockbar{position:sticky;top:0;z-index:50;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:10px 16px;background:#26241f;color:#d6d3d1;font:600 12px/1 var(--sans);letter-spacing:.02em}
+.mockbar b{color:#fff;font-weight:700;margin-right:6px}.mockbar .seg{display:inline-flex;border:1px solid #57534e;border-radius:999px;overflow:hidden}
+.mockbar button{all:unset;cursor:pointer;padding:7px 12px;color:#d6d3d1}.mockbar button.on{background:#f5f5f4;color:#1c1917}
+.frame{margin:12px auto 0;max-width:1000px;background:var(--surface);color:var(--ink);box-shadow:0 20px 60px rgb(0 0 0/.35);position:relative;overflow:hidden}
+.phone .frame{max-width:390px}
+.framelabel{max-width:1000px;margin:26px auto 0;color:#d6d3d1;font:600 12px var(--sans);letter-spacing:.04em;text-transform:uppercase}
+.phone .framelabel{max-width:390px}
+.notes{max-width:1000px;margin:0 auto 30px;background:#fffbea;color:#3b2f0b;border-radius:14px;padding:18px 22px;font-size:14px;line-height:1.55}
+.notes h2{margin:0 0 8px;font:600 15px var(--sans)}.notes h3{margin:16px 0 6px;font:600 14px var(--sans)}
+.notes ul{margin:0;padding-left:18px}.notes li{margin:5px 0}.notes[hidden]{display:none}
+.notes code{background:#f3e9b8;padding:1px 5px;border-radius:4px;font-size:12.5px}
+.verdict{margin:14px 0 0;padding:12px 14px;border-radius:10px;background:#2a2a28;color:#e7e5e4;font-size:13.5px;line-height:1.55}
+.verdict.good{background:#14361d;color:#d7f0dd}.verdict.bad{background:#3a1a16;color:#f6dad4}
+.spacer{height:34px}
+
+.topbar{height:var(--header-h);display:flex;align-items:center;padding:10px clamp(14px,4vw,28px);border-bottom:1px solid var(--accent)}
+.topbar-in{flex:1;display:flex;align-items:center;justify-content:space-between;max-width:80rem;margin-inline:auto}
+.wordmark{display:inline-flex;align-items:center;gap:8px;font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:-.02em;font-variation-settings:"wdth" 96}
+.wordmark i{color:var(--muted);font-weight:400;font-style:normal}.die{width:19px;height:19px;color:var(--accent)}
+.pill{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line-strong);background:var(--card2);border-radius:999px;padding:5px 11px;font-size:13.5px;font-weight:600}
+.pill b{color:var(--accent)}
+
+main{text-align:center;padding:34px clamp(16px,4vw,32px) 46px;display:flex;flex-direction:column;align-items:center}
+.headline{font-family:var(--display);font-weight:600;letter-spacing:-.03em;font-variation-settings:"wdth" 96;font-size:clamp(2rem,5vw,2.6rem);line-height:1.05;margin:0}
+.topicline{font-family:var(--display);font-weight:600;letter-spacing:-.03em;font-variation-settings:"wdth" 96;font-size:clamp(1.5rem,3.6vw,2.1rem);line-height:1.1;margin:0 0 22px;color:var(--accent);max-width:20ch}
+.topicbig{font-size:clamp(1.8rem,4.6vw,2.9rem);max-width:17ch;margin-bottom:38px}
+.chipline{display:inline-flex;align-items:center;gap:14px;font-size:13px;font-weight:600;color:var(--muted);margin:0 0 18px}
+.chipline span{display:inline-flex;align-items:center;gap:6px}.chipline .ico{color:var(--accent)}
+
+/* the ring, as built */
+.ring{position:relative;width:min(56vw,300px);aspect-ratio:1;margin:4px auto 0}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .track{fill:none;stroke:var(--line);stroke-width:8}
+.ring .arc{fill:none;stroke:var(--accent);stroke-width:8;stroke-linecap:round}
+.ring.ending .arc{stroke:var(--warn)}
+.ring .digits{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--display);font-weight:600;font-size:clamp(3rem,10vw,5.6rem);line-height:1;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.ring .lab{position:absolute;left:0;right:0;bottom:22%;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
+
+/* the level meter: fat strokes around the same centre line the report's
+   wave is drawn on, live, remembering nothing */
+.meter{display:flex;align-items:center;justify-content:center;gap:8px;height:48px;margin:18px auto 0}
+.meter i{display:block;width:10px;height:10px;border-radius:999px;background:var(--accent)}
+.meter.deaf i{background:var(--warn)}
+.metersay{margin:14px auto 0;font-size:13.5px;font-weight:600;color:var(--warn);display:flex;align-items:center;justify-content:center;gap:8px;max-width:40ch}
+.metersay .ico{flex:none}
+.metersay em{font-style:normal;font-weight:500;color:var(--muted)}
+
+.chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:22px 0 0}
+.chip{background:var(--note);color:var(--note-ink);border-radius:3px;padding:7px 11px;font-size:13px;font-weight:600}
+.row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:26px 0 0}
+.btn{font:inherit;font-weight:600;font-size:16px;border-radius:999px;border:1px solid transparent;padding:14px 26px;cursor:pointer;line-height:1;display:inline-flex;align-items:center;gap:8px}
+.btn-primary{background:var(--btn);color:var(--btn-ink)}.btn-ghost{background:none;color:var(--muted);border-color:var(--line-strong)}
+.btn-sm{font-size:14px;padding:10px 18px}
+.reset{margin:18px 0 0;font-size:13.5px;color:var(--muted);text-decoration:underline;text-underline-offset:4px}
+
+/* the check before the clock */
+.check{margin:26px auto 0;max-width:44ch;display:flex;align-items:flex-start;gap:9px;text-align:left;font-size:13.5px;line-height:1.5;color:var(--muted)}
+.check .ico{color:var(--warn);flex:none;margin-top:2px}
+.check b{color:var(--ink);font-weight:600}
+.check a{color:var(--accent-strong);font-weight:600;text-decoration:underline;text-underline-offset:4px}
+.checknote{margin:26px auto 0;max-width:40ch;font-size:13px;color:var(--muted);line-height:1.5}
+
+/* the done screen, for the today tab */
+.tiles{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;width:100%;max-width:560px;margin:26px 0 0}
+.tile{border:1px solid var(--line);background:var(--card);border-radius:14px;padding:14px 6px;text-align:center}
+.tile .n{font-family:var(--display);font-size:34px;font-weight:600;letter-spacing:-.03em;line-height:1}
+.tile .l{font-size:12px;font-weight:600;color:var(--muted);margin-top:5px}
+.late{margin:30px auto 0;max-width:560px;width:100%;border:1px dashed var(--warn);border-radius:12px;padding:16px;font-size:14px;color:var(--muted);line-height:1.55}
+.late b{color:var(--warn);font-weight:600}
+
+/* the three ways */
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;width:100%;max-width:900px;margin:8px auto 0;text-align:left}
+.phone .three{grid-template-columns:1fr}
+.way{border:1px solid var(--line);border-radius:16px;background:var(--card);padding:18px}
+.way h4{font-family:var(--display);font-weight:600;font-size:16px;letter-spacing:-.02em;margin:0 0 3px}
+.way .k{font-size:12.5px;color:var(--muted);margin:0 0 16px}
+.way .stage{height:76px;display:grid;place-items:center;background:var(--card2);border-radius:12px}
+.way .why{font-size:12.5px;color:var(--muted);margin:14px 0 0;line-height:1.5}
+.way .why b{color:var(--ink)}
+.way.pick{border-color:var(--accent)}
+.way .tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent-strong);margin-bottom:6px}
+.pulse{position:relative;width:56px;height:56px;display:grid;place-items:center}
+.pulse .halo{position:absolute;inset:0;border-radius:999px;background:var(--accent);opacity:.16}
+.pulse .core{position:relative;width:38px;height:38px;border-radius:999px;background:var(--card);border:1px solid var(--line-strong);display:grid;place-items:center;color:var(--accent)}
+[hidden]{display:none!important}
+</style></head><body>
+
+<div class="mockbar"><b>Mock</b>
+<span class="seg">
+<button data-tab="speak" class="on">1 &middot; Heard</button>
+<button data-tab="quiet">2 &middot; Not heard</button>
+<button data-tab="topic">3 &middot; Before the clock</button>
+<button data-tab="three">4 &middot; Three ways</button>
+<button data-tab="today">5 &middot; Today</button>
+</span>
+<span class="seg"><button data-theme-set="light" class="on">Light</button><button data-theme-set="dark">Dark</button></span>
+<span class="seg"><button data-width="desktop" class="on">Desktop</button><button data-width="phone">Phone</button></span>
+<span class="seg"><button data-notes class="on">Notes</button></span></div>
+
+<div class="notes"><h2>Say it during the round, not after it</h2>
+<p style="margin:0 0 10px"><b>What happens now.</b> The microphone is only ever reported on once the round is over, and only in one of the two ways it can fail. A microphone that opened and heard nothing gives <code>heard: false</code>, and the done screen says "We could not hear you. Check your microphone." after the whole minute has been spoken. A microphone that never opened at all - refused, no device, a browser without <code>MediaRecorder</code> - writes <code>report: "off"</code> and the done screen draws nothing, silently, on that round and on every round after it. For the whole minute a working round and a broken one look exactly the same, so there is no moment at which somebody could have fixed it.</p>
+<h3>The three states, and where each one is said</h3>
+<ul>
+<li><b>Heard.</b> A level meter under the clock, moving with your voice. Five bars on the centre line the report's wave is already drawn on, so it is the same vocabulary, live: fat strokes instead of thin ones, and remembering nothing. No label and no icon, because a meter that is moving is already the sentence. <i>Owner's call, over the two alternatives in tab 4.</i></li>
+<li><b>Open but silent</b> (muted hardware, the wrong input picked, a headset that never connected). Caught on the topic screen, before the clock, so nothing is lost. The level ticker is already running there, and a live microphone in a silent room is never digital silence - it always has a floor. Exact zero for two seconds is a dead input, not a quiet room.</li>
+<li><b>Heard nothing once you began</b> (working, but pointed away or with the input volume at nought). Caught four seconds into the speaking, when the meter has not moved. The bars go warm and flat, one sentence appears, and the clock keeps running. Nothing in the speaking loop may depend on the microphone working: the round still happens and the streak still counts.</li>
+</ul>
+<h3>What this costs</h3>
+<ul>
+<li>Nothing new is measured. The level is already sampled fifty times a second for the timeline, and this only draws it.</li>
+<li>The meter remembers nothing, so <b>nobody watches their own pauses pile up while they are still speaking</b>. That was the argument against drawing the live wave, and it is what the meter buys.</li>
+<li>The check that runs before the clock says nothing when it passes. Silence is the good state, so the topic screen keeps its near-zero words and the ten-second rule survives. Tab 3 has a button for the other reading of that, where the meter appears on the topic screen too and lets somebody confirm the microphone before they commit the minute.</li>
+</ul>
+<div class="verdict" id="v"></div>
+</div>
+
+<div class="framelabel" id="fl">The speaking screen</div>
+<div class="frame">
+  <div class="topbar"><div class="topbar-in">
+    <span class="wordmark"><svg class="die" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4 28 11v10L16 28 4 21V11Z"/><path d="M16 16 28 11M16 16v12M16 16 4 11"/></svg>impromptu<i>.talk</i></span>
+    <span class="pill"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg><b>4</b></span>
+  </div></div>
+
+  <!-- 1: speaking, heard -->
+  <main data-pane="speak">
+    <p class="topicline">Argue for owning one good pen</p>
+    <div class="ring" id="ring1"><svg viewBox="0 0 100 100"><circle class="track" cx="50" cy="50" r="45"/><circle class="arc" cx="50" cy="50" r="45" stroke-dasharray="282.74" stroke-dashoffset="0"/></svg>
+      <div class="digits">0:60</div><div class="lab">Speak</div></div>
+    <div class="meter" id="meter1"><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="chips"><span class="chip">one pen</span><span class="chip">cheap ones fail</span><span class="chip">you keep it</span></div>
+    <div class="row"><button class="btn btn-primary">Done</button><button class="btn btn-ghost">Pause</button></div>
+    <p class="reset">Reset, without keeping this round</p>
+  </main>
+
+  <!-- 2: speaking, not heard -->
+  <main data-pane="quiet" hidden>
+    <p class="topicline">Argue for owning one good pen</p>
+    <div class="ring" id="ring2"><svg viewBox="0 0 100 100"><circle class="track" cx="50" cy="50" r="45"/><circle class="arc" cx="50" cy="50" r="45" stroke-dasharray="282.74" stroke-dashoffset="0"/></svg>
+      <div class="digits">0:60</div><div class="lab">Speak</div></div>
+    <div class="meter" id="meter2"><i></i><i></i><i></i><i></i><i></i></div>
+    <p class="metersay" id="say2" hidden><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m2 2 20 20"/><path d="M9 9v2a3 3 0 0 0 5.1 2.1"/><path d="M15 9.3V5a3 3 0 0 0-5.7-1.3"/><path d="M19 10v1a7 7 0 0 1-.6 2.8M5 10v1a7 7 0 0 0 12 5M12 18v4"/></svg>
+      <span>We can't hear you. <em>This round still counts.</em></span></p>
+    <div class="chips"><span class="chip">one pen</span><span class="chip">cheap ones fail</span><span class="chip">you keep it</span></div>
+    <div class="row"><button class="btn btn-primary">Done</button><button class="btn btn-ghost">Pause</button></div>
+    <p class="reset">Reset, without keeping this round</p>
+  </main>
+
+  <!-- 3: the topic screen, before the clock -->
+  <main data-pane="topic" hidden>
+    <p class="chipline"><span><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>Careers</span>
+      <span><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Argue</span></p>
+    <p class="topicline topicbig">Argue for owning one good pen</p>
+    <div class="row" style="margin:0"><button class="btn btn-primary">Think for a minute</button><button class="btn btn-ghost">Speak now</button><button class="btn btn-ghost"><svg style="width:16px;height:16px" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4 28 11v10L16 28 4 21V11Z"/><path d="M16 16 28 11M16 16v12M16 16 4 11"/></svg>Spin</button></div>
+    <p class="reset">Reset</p>
+    <p class="check" id="check3"><svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m2 2 20 20"/><path d="M9 9v2a3 3 0 0 0 5.1 2.1"/><path d="M15 9.3V5a3 3 0 0 0-5.7-1.3"/><path d="M19 10v1a7 7 0 0 1-.6 2.8M5 10v1a7 7 0 0 0 12 5M12 18v4"/></svg>
+      <span><b>We can't hear your microphone.</b> Check it isn't muted, and that the right one is picked. <a href="#">Check again</a></span></p>
+    <div class="meter" id="meter3" hidden style="margin-top:26px"><i></i><i></i><i></i><i></i><i></i></div>
+    <p class="checknote" id="note3" hidden>The meter here too, so somebody can say a word and see the microphone answer before they commit the minute. It costs one small moving thing on the quietest screen in the product.</p>
+    <div class="row"><button class="btn btn-ghost btn-sm" id="flip3">Next state</button></div>
+  </main>
+
+  <!-- 4: three ways to draw it -->
+  <main data-pane="three" hidden style="align-items:stretch">
+    <p class="headline" style="font-size:1.5rem;text-align:center;margin-bottom:6px">Three ways to say "we can hear you"</p>
+    <p style="text-align:center;font-size:13.5px;color:var(--muted);margin:0 0 22px">All three run off the same live level. The only question is how much of the round each one remembers.</p>
+    <div class="three">
+      <div class="way pick"><span class="tag">Chosen</span><h4>A level meter</h4><p class="k">Remembers a moment</p>
+        <div class="stage"><div class="meter" id="meter4" style="margin:0"><i></i><i></i><i></i><i></i><i></i></div></div>
+        <p class="why">The one control everybody has already seen, so <b>nothing about it has to be explained</b>, and it is not as borrowed as it looks: five fat strokes on the centre line the report's wave is drawn on. It shows the present moment and no history, so it proves the microphone is live without putting your pauses in front of you while you are still speaking.</p></div>
+      <div class="way"><h4>The minute, drawing itself</h4><p class="k">Remembers the whole round</p>
+        <div class="stage"><div style="width:86%"><svg viewBox="0 0 100 40" preserveAspectRatio="none" id="wave4" style="display:block;width:100%;height:44px;overflow:visible"></svg></div></div>
+        <p class="why">The report's own wave, live, so the picture you watched being made is the picture you are handed at the end. <b>Not taken:</b> it shows your pauses while you are still in them, which is the one thing on this screen that could change the minute being measured, and it puts a second clock beside the clock.</p></div>
+      <div class="way"><h4>A pulse</h4><p class="k">Remembers nothing</p>
+        <div class="stage"><div class="pulse"><span class="halo" id="halo4"></span><span class="core"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3Z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4"/></svg></span></div></div>
+        <p class="why">The quietest of the three, and the only one carrying an icon. <b>Not taken:</b> one blob breathing says something is on, but not that it is hearing <i>you</i>, and a microphone glyph in the middle of the round names the machinery on a screen that is meant to be a person and a clock.</p></div>
+    </div>
+  </main>
+
+  <!-- 5: today -->
+  <main data-pane="today" hidden>
+    <p class="headline">Day 4.</p>
+    <div class="tiles"><div class="tile"><div class="n">4</div><div class="l">day streak</div></div><div class="tile"><div class="n">11</div><div class="l">topics</div></div><div class="tile"><div class="n">11</div><div class="l">minutes spoken</div></div></div>
+    <div class="row"><button class="btn btn-primary">Spin again</button><button class="btn btn-ghost">Same topic</button></div>
+    <div class="late"><b>We could not hear you. Check your microphone.</b><br>
+      Said here, sixty seconds too late, and only when the microphone opened and heard nothing. When it never opened at all this space is empty instead, on this round and on every round after it.</div>
+    <p style="margin:22px 0 0;font-size:13.5px;color:var(--muted);max-width:44ch">Both are silent for the whole minute before this. That is the thing being fixed.</p>
+  </main>
+</div>
+<div class="spacer"></div>
+
+<script>
+const verdicts = {
+  speak: ["good", "<b>The owner's call, and the whole answer in one object.</b> Five bars under the clock that move the moment sound reaches the microphone, so a round that is being heard never looks like a round that is not. It needs no label and no icon, because a meter that is moving is already the sentence. It remembers nothing, which is the point: there is no history on it to read, and nobody watches their own pauses collect while they are still talking."],
+  quiet: ["bad", "<b>Four seconds in, not sixty.</b> The bars have not moved, so they go warm and flat and one sentence says so. The clock never stops and the buttons never change: a broken microphone is not a broken round, and the streak still counts. The second half of the sentence is the important half, because somebody who reads only \"we can't hear you\" will stop talking, which costs them the round as well as the report."],
+  topic: ["good", "<b>Earlier still, and free.</b> The microphone opens when the topic lands, half a minute before anybody speaks, and the level ticker is already running. An input that returns exact digital silence for two seconds is dead - a live microphone in a silent room always has a floor - so this is knowable before the clock, and fixing it costs nothing. The button walks the three readings: the failure, then <b>passing said with silence</b>, then passing with the meter shown here too. The middle one keeps the topic screen at near-zero words; the last one lets somebody test the microphone before they commit the minute."],
+  three: ["", "<b>The choice, and it is made: the meter.</b> All three prove the same fact off the same level. The meter was picked because it is understood on sight and remembers nothing. Kept here as the record of what was drawn and why the other two were not, so the question is not reopened in three months."],
+  today: ["bad", "<b>What ships today.</b> One sentence, after the minute, and only for one of the two failures. The other failure is drawn as nothing at all, so somebody whose browser refused the microphone months ago sees an empty done screen forever and has no way to know why."]
+};
+const HEIGHTS = [0.55, 0.9, 0.7, 1, 0.6, 0.85, 0.75, 0.95];
+const SEGS = [[2.4, 9.1], [9.7, 15.4], [16.1, 23.8], [24.4, 29.2], [35.0, 41.6], [42.3, 48.0], [48.6, 57.2]];
+const WEIGHTS = [0.5, 0.8, 1, 0.78, 0.48];
+const TOTAL = 60;
+
+function drawWave(svg, done) {
+  let out = '<line x1="0" x2="100" y1="20" y2="20" stroke="var(--line)" stroke-width="2" vector-effect="non-scaling-stroke"/>';
+  const pct = seconds => (seconds / TOTAL) * 100;
+  out += '<line x1="0" x2="' + pct(done) + '" y1="20" y2="20" stroke="var(--line-strong)" stroke-width="1.5" vector-effect="non-scaling-stroke"/>';
+  let index = 0;
+  for (const pair of SEGS) {
+    if (pair[0] > done) break;
+    const from = pct(pair[0]);
+    const to = pct(Math.min(pair[1], done));
+    for (let x = from + 0.5; x < to; x += 1) {
+      const edge = (x - from < 1) || (to - x < 1);
+      const height = HEIGHTS[index % 8] * (edge ? 0.5 : 1);
+      index += 1;
+      out += '<line x1="' + x + '" x2="' + x + '" y1="' + (20 - height * 18) + '" y2="' + (20 + height * 18) + '" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" vector-effect="non-scaling-stroke"/>';
+    }
+  }
+  svg.innerHTML = out;
+}
+
+/* A voice, simulated: loud inside a stretch of speech and at the room's
+   floor between them. The real one is the RMS the timeline already reads. */
+function loudness(at) {
+  const inside = SEGS.some(pair => at >= pair[0] && at <= pair[1]);
+  if (!inside) return 0.05 + Math.random() * 0.04;
+  return 0.42 + 0.4 * Math.abs(Math.sin(at * 6.3)) + Math.random() * 0.12;
+}
+
+/* Smoothed per meter, because a bar following every frame of a raw level
+   flickers rather than moves. */
+const smoothed = {};
+function drawMeter(id, level, now) {
+  const meter = document.getElementById(id);
+  if (!meter) return;
+  smoothed[id] = (smoothed[id] || 0) + (level - (smoothed[id] || 0)) * 0.3;
+  meter.querySelectorAll('i').forEach((bar, index) => {
+    const wobble = 0.72 + 0.28 * Math.abs(Math.sin(now / 150 + index * 0.9));
+    bar.style.height = Math.round(10 + smoothed[id] * WEIGHTS[index] * wobble * 36) + 'px';
+  });
+}
+
+function setRing(id, done) {
+  const ring = document.getElementById(id);
+  if (!ring) return;
+  const left = Math.max(0, TOTAL - done);
+  ring.querySelector('.arc').setAttribute('stroke-dashoffset', 282.74 * (1 - left / TOTAL));
+  ring.querySelector('.digits').textContent = '0:' + String(Math.ceil(left)).padStart(2, '0');
+  ring.classList.toggle('ending', left <= 10);
+}
+
+let started = performance.now();
+function tick(now) {
+  const done = ((now - started) / 1000) % (TOTAL + 3);
+  const capped = Math.min(done, TOTAL);
+  const open = document.querySelector('[data-pane]:not([hidden])');
+  const pane = open ? open.dataset.pane : '';
+  if (pane === 'speak') {
+    setRing('ring1', capped);
+    drawMeter('meter1', loudness(capped), now);
+  } else if (pane === 'quiet') {
+    setRing('ring2', capped);
+    drawMeter('meter2', 0, now);
+    document.getElementById('meter2').classList.toggle('deaf', capped >= 4);
+    document.getElementById('say2').hidden = capped < 4;
+  } else if (pane === 'topic') {
+    drawMeter('meter3', loudness(capped), now);
+  } else if (pane === 'three') {
+    drawWave(document.getElementById('wave4'), capped);
+    const level = loudness(capped);
+    drawMeter('meter4', level, now);
+    const halo = document.getElementById('halo4');
+    halo.style.transform = 'scale(' + (0.62 + level * 0.5) + ')';
+    halo.style.opacity = 0.1 + level * 0.22;
+  }
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+
+const labels = {
+  speak: "The speaking screen",
+  quiet: "The speaking screen, nothing arriving",
+  topic: "The topic screen, before the clock",
+  three: "The indicator, three ways",
+  today: "The done screen, as built today"
+};
+const set = tab => {
+  document.querySelectorAll('[data-pane]').forEach(pane => pane.hidden = pane.dataset.pane !== tab);
+  document.querySelectorAll('[data-tab]').forEach(button => button.classList.toggle('on', button.dataset.tab === tab));
+  document.getElementById('fl').textContent = labels[tab];
+  const verdict = verdicts[tab];
+  const box = document.getElementById('v');
+  box.className = 'verdict ' + verdict[0];
+  box.innerHTML = verdict[1];
+  started = performance.now();
+};
+document.querySelectorAll('[data-tab]').forEach(button => button.onclick = () => set(button.dataset.tab));
+document.querySelectorAll('[data-theme-set]').forEach(button => button.onclick = () => {
+  document.documentElement.dataset.theme = button.dataset.themeSet;
+  document.querySelectorAll('[data-theme-set]').forEach(other => other.classList.toggle('on', other === button));
+});
+document.querySelectorAll('[data-width]').forEach(button => button.onclick = () => {
+  document.body.classList.toggle('phone', button.dataset.width === 'phone');
+  document.querySelectorAll('[data-width]').forEach(other => other.classList.toggle('on', other === button));
+});
+document.querySelector('[data-notes]').onclick = event => {
+  const notes = document.querySelector('.notes');
+  notes.hidden = !notes.hidden;
+  event.target.classList.toggle('on', !notes.hidden);
+};
+const readings = ["It can't hear the microphone", "It passes, and says nothing", "It passes, with the meter"];
+let reading = 0;
+document.getElementById('flip3').onclick = event => {
+  reading = (reading + 1) % 3;
+  document.getElementById('check3').hidden = reading !== 0;
+  document.getElementById('meter3').hidden = reading !== 2;
+  document.getElementById('note3').hidden = reading !== 2;
+  event.target.textContent = readings[(reading + 1) % 3];
+};
+document.getElementById('flip3').textContent = readings[1];
+set('speak');
+</script>
+</body></html>

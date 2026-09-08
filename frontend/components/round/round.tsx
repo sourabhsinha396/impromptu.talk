@@ -222,6 +222,11 @@ export function Round({
   );
   const settle = useCallback(() => engine?.settle(), [engine]);
 
+  /* The microphone the meter and the check draw from, and null whenever
+     the round is not listening: under "ask" and "off" there is nothing to
+     say about a microphone nobody switched on. */
+  const listening = mic === "on" ? listener.current : null;
+
   const genre = engine?.currentGenre ?? bank.genres[0] ?? { slug: "general", name: "General", icon: "dices", blurb: "" };
   const prefs = engine?.prefs ?? { ...DEFAULT_PREFS, genre: genre.slug };
 
@@ -295,6 +300,7 @@ export function Round({
           genre={genre}
           styleLabel={styleLabel}
           prepSeconds={prefs.prep}
+          listener={listening}
           onThink={armed(() => engine.startPrep())}
           onSpeakNow={armed(() => engine.startSpeak())}
           onSpin={armed(() => engine.spin())}
@@ -317,6 +323,7 @@ export function Round({
           topic={topic}
           clock={clock}
           notes={engine.notes}
+          listener={listening}
           onPause={() => engine.togglePause()}
           onDone={() => engine.done()}
           onReset={() => engine.leaveRound()}

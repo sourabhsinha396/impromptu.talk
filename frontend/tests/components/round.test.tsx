@@ -98,6 +98,40 @@ describe("the round on the page", () => {
     expect(tracked).toHaveBeenCalledWith("round_finished", expect.objectContaining({ notes_written: 1 }));
   });
 
+  /* A round with no microphone behind it draws nothing about one. The
+     meter and the check are the only two places the product ever mentions
+     the microphone mid-round, and somebody who said "not now" should never
+     meet either of them. */
+  it("draws no meter and no microphone line for a round that is not listening", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("{}", { status: 500 })));
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    render(<Round bank={bank} signedIn={false} />);
+
+    await user.click(await screen.findByRole("button", { name: "Spin" }));
+    await screen.findByText(/Low tide|Queues|Tipping should end/);
+    act(() => vi.advanceTimersByTime(3000));
+    expect(screen.queryByText(/We can't hear your microphone/)).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Speak now" }));
+    expect(screen.queryByRole("img", { name: /microphone/i })).not.toBeInTheDocument();
+  });
+
+  /* The half of the bug that was silent forever: a microphone that never
+     opened wrote nothing to the done screen, on that round and on every
+     round after it. It is now said on the topic screen, before the clock,
+     where fixing it still costs nothing. */
+  it("says the microphone cannot be heard before the clock, when the round is listening", async () => {
+    localStorage.setItem("impromptu.prefs", JSON.stringify({ mic: "on" }));
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("{}", { status: 500 })));
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    render(<Round bank={bank} signedIn={false} />);
+
+    await user.click(await screen.findByRole("button", { name: "Spin" }));
+    await screen.findByText(/Low tide|Queues|Tipping should end/);
+    // jsdom has no getUserMedia, which is the refused case exactly.
+    expect(await screen.findByText(/We can't hear your microphone/)).toBeInTheDocument();
+  });
+
   it("names the duration on the button and says 'a minute' rather than '1 minutes'", () => {
     expect(thinkLabel(60)).toBe("Think for a minute");
     expect(thinkLabel(120)).toBe("Think for 2 minutes");

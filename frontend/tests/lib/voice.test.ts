@@ -1,6 +1,15 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { Listener, SAMPLE_HZ, filenameFor, level, segmentsFrom } from "@/lib/round/voice";
+import {
+  DEAD_FLOOR,
+  Listener,
+  SAMPLE_HZ,
+  SPEECH_FLOOR,
+  filenameFor,
+  isDead,
+  level,
+  segmentsFrom,
+} from "@/lib/round/voice";
 
 /* Turning loudness into "when there was a voice" is the whole free report:
    the pause map, the opening stall and trail-off are all read off these
@@ -112,7 +121,7 @@ describe("filenameFor", () => {
    A held microphone answers only when the test says so, which is what a
    real permission prompt does and what an instantly resolved fake cannot
    reproduce: the leak being pinned lives in that gap. */
-function fakeMicrophone({ hold = false } = {}) {
+function fakeMicrophone({ hold = false, loudness = LOUD } = {}) {
   const track = { readyState: "live", stop: vi.fn(), getSettings: () => ({}) };
   const stream = { getAudioTracks: () => [track], getTracks: () => [track] };
   let answer = () => {};
@@ -134,7 +143,7 @@ function fakeMicrophone({ hold = false } = {}) {
         return {
           fftSize: 0,
           getFloatTimeDomainData(frame: Float32Array) {
-            frame.fill(LOUD);
+            frame.fill(loudness);
           },
         };
       }
@@ -143,6 +152,40 @@ function fakeMicrophone({ hold = false } = {}) {
   );
   return { getUserMedia, track, answer: () => answer() };
 }
+
+describe("isDead", () => {
+  /* What the topic screen acts on, before the clock. It has to tell a
+     muted device from a person sitting quietly, and getting that backwards
+     either accuses somebody whose microphone is fine or stays silent for
+     the one who needs telling. */
+
+  /** Frames of a given loudness, in seconds. */
+  const held = (seconds: number, value: number) => new Array(Math.round(seconds * SAMPLE_HZ)).fill(value);
+
+  it("calls two seconds of digital silence a dead input", () => {
+    expect(isDead(held(2, 0))).toBe(true);
+  });
+
+  it("does not call a quiet room dead", () => {
+    // A live microphone always carries a noise floor. This is far below
+    // anybody's voice and still far above nothing at all.
+    expect(isDead(held(10, QUIET))).toBe(false);
+  });
+
+  it("says nothing until there is enough silence to be sure of it", () => {
+    // A device still settling after getUserMedia gives a few empty frames.
+    // Accusing it on those would put the line on screen and take it off
+    // again a moment later.
+    expect(isDead(held(1, 0))).toBe(false);
+  });
+
+  it("keeps the floor for nothing far under the floor for a voice", () => {
+    // The two thresholds answer different questions, and a dead floor that
+    // crept up towards the speech floor would start calling quiet rooms
+    // broken microphones.
+    expect(DEAD_FLOOR * 10).toBeLessThan(SPEECH_FLOOR);
+  });
+});
 
 describe("Listener", () => {
   afterEach(() => {
@@ -220,5 +263,43 @@ describe("Listener", () => {
     await stopped;
     expect(await opening).toBe(true);
     expect(mic.track.stop).toHaveBeenCalledTimes(1);
+  });
+
+  it("reads a refused microphone as dead, so the round says the one line for both", async () => {
+    // Refused, absent, or a browser without one: nothing will ever arrive,
+    // and until now the round said nothing about it, on that round and on
+    // every round after it.
+    Object.defineProperty(navigator, "mediaDevices", {
+      value: { getUserMedia: () => Promise.reject(new Error("refused")) },
+      configurable: true,
+    });
+    const ears = new Listener();
+    expect(await ears.start()).toBe(false);
+    expect(ears.dead).toBe(true);
+  });
+
+  it("says the round was not heard on exactly the floor the report says it on", async () => {
+    /* The warning at four seconds and the sentence on the done screen have
+       to be the same verdict. Two thresholds would mean a round warned
+       about live and then reported on as fine, or the reverse. */
+    vi.useFakeTimers();
+    fakeMicrophone({ loudness: SPEECH_FLOOR / 2 });
+    const ears = new Listener();
+    await ears.start();
+    ears.mark();
+    vi.advanceTimersByTime(5000);
+    expect(ears.heard).toBe(false);
+    expect((await ears.stop()).segments).toEqual([]);
+  });
+
+  it("says the round was heard as soon as anything reaches that floor", async () => {
+    vi.useFakeTimers();
+    fakeMicrophone({ loudness: SPEECH_FLOOR * 2 });
+    const ears = new Listener();
+    await ears.start();
+    ears.mark();
+    vi.advanceTimersByTime(5000);
+    expect(ears.heard).toBe(true);
+    expect((await ears.stop()).segments.length).toBeGreaterThan(0);
   });
 });

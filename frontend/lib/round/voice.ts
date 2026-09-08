@@ -46,11 +46,33 @@ const CLOSE_AT = 0.12;
 /** Below this, whatever the shape of it, nothing in the room was a voice.
     This is what stops a silent recording having its own hiss promoted to
     speech by a threshold derived from that same hiss. */
-const SPEECH_FLOOR = 0.01;
+export const SPEECH_FLOOR = 0.01;
 
 /** The room can never be read as quieter than this, so a digital-silence
     recording does not make every ratio above it satisfiable by nothing. */
 const FLOOR = 0.005;
+
+/** Below this there is no signal at all, which is a different fact from a
+    quiet room and is the one the topic screen acts on.
+
+    A live microphone always carries a noise floor: even a silent room
+    reads a thousandth or more, because the room, the preamp and the
+    converter all contribute. A muted device, the wrong input or a headset
+    that never connected reads digital zero. Three least-significant bits
+    of sixteen-bit audio, so dither and a denormal still count as nothing
+    while any real room does not. */
+export const DEAD_FLOOR = 0.0001;
+
+/** How long the input has to read as nothing before the topic screen says
+    so. Long enough that a device still settling after `getUserMedia` is
+    not accused, short enough to land well before anybody presses a
+    button. */
+export const DEAD_AFTER_MS = 2000;
+
+/** How long into the speaking somebody is left alone before being told
+    that nothing is arriving. Under this, an ordinary slow start would be
+    called a broken microphone. */
+export const DEAF_AFTER_MS = 4000;
 
 /** With no separation between the two ends, the round is all one level.
     Past `SPEECH_FLOOR` that means somebody talked without stopping, which
@@ -65,6 +87,18 @@ const HANGOVER_MS = 200;
 const MIN_SPEECH_MS = 120;
 
 export type Segment = [number, number];
+
+/** Whether an open input is giving nothing at all.
+
+    Pure, and separate from the class, so the rule that decides what
+    somebody is told about their microphone is tested without a browser.
+    Undecided until there are enough samples to be sure: a verdict from
+    three frames would accuse every device that takes a moment to start. */
+export function isDead(recent: number[], hz: number = SAMPLE_HZ): boolean {
+  const needed = Math.round((DEAD_AFTER_MS / 1000) * hz);
+  if (recent.length < needed) return false;
+  return recent.slice(-needed).every((value) => value < DEAD_FLOOR);
+}
 
 /** The monotonic clock, which a system clock change cannot move. Falls
     back where `performance` is missing, which is server rendering rather
@@ -226,6 +260,18 @@ export class Listener {
   private levels: number[] = [];
   private ticker: ReturnType<typeof setInterval> | null = null;
   private type = "";
+  /** The last level read, which is all the meter under the clock wants. */
+  private latest = 0;
+  /** A rolling couple of seconds of levels, kept whatever the round is
+      doing, so the topic screen can tell a dead input from a quiet room
+      before anybody has spoken a word. */
+  private recent: number[] = [];
+  /** The loudest frame since the speaking began. */
+  private loudestSince = 0;
+  /** The microphone was asked for and did not arrive: refused, absent, or
+      a browser without one. Nothing will ever be heard, and the topic
+      screen says the same line for this as for a dead device. */
+  private refused = false;
   /** The microphone being asked for, while it is. */
   private opening: Promise<boolean> | null = null;
   /** When the speaking minute began, on the monotonic clock. */
@@ -235,6 +281,29 @@ export class Listener {
       speaker was not being measured on. */
   private pausedAt: number | null = null;
   private pausedFor = 0;
+
+  /** How loud it is right now, for the meter under the clock. Nought
+      whenever nothing is open, which draws as five bars at rest. */
+  get level(): number {
+    return this.latest;
+  }
+
+  /** Nothing at all is arriving: refused, absent, or open and reading
+      digital silence. Answered before the clock starts, which is the
+      whole point of it. */
+  get dead(): boolean {
+    return this.refused || isDead(this.recent);
+  }
+
+  /** Whether anything since `mark` has been loud enough to be a voice.
+
+      Deliberately the same floor `segmentsFrom` uses to decide a round had
+      no voice in it, so the warning during the round and the report after
+      it can never disagree: whatever this says at four seconds is what the
+      done screen would have said at sixty. */
+  get heard(): boolean {
+    return this.loudestSince >= SPEECH_FLOOR;
+  }
 
   /** Opens the microphone, once. Calling this while it is open, or still
       being asked for, is the same call and not a second microphone.
@@ -258,12 +327,23 @@ export class Listener {
   }
 
   private async open(): Promise<boolean> {
-    if (typeof navigator === "undefined" || !navigator.mediaDevices?.getUserMedia) return false;
+    // Cleared here rather than in `stop`, so a retry from the topic screen
+    // is judged on the device it just opened and never on the two seconds
+    // of silence that made somebody press the link.
+    this.recent = [];
+    this.latest = 0;
+    this.refused = false;
+    if (typeof navigator === "undefined" || !navigator.mediaDevices?.getUserMedia) {
+      this.refused = true;
+      return false;
+    }
     try {
       this.stream = await navigator.mediaDevices.getUserMedia({ audio: CONSTRAINTS });
     } catch {
       // Refused, or no device. Not an error anybody needs to see: they
-      // came here to talk, not to grant permissions.
+      // came here to talk, not to grant permissions. Recorded, though,
+      // because the round now says once that it cannot hear anything.
+      this.refused = true;
       return false;
     }
 
@@ -276,10 +356,16 @@ export class Listener {
       analyser.fftSize = 512;
       source.connect(analyser);
       const frame = new Float32Array(analyser.fftSize);
+      const keep = Math.round((DEAD_AFTER_MS / 1000) * SAMPLE_HZ);
       this.ticker = setInterval(() => {
         if (this.pausedAt !== null) return;
         analyser.getFloatTimeDomainData(frame);
-        this.levels.push(level(frame));
+        const loudness = level(frame);
+        this.latest = loudness;
+        if (loudness > this.loudestSince) this.loudestSince = loudness;
+        this.recent.push(loudness);
+        if (this.recent.length > keep) this.recent.shift();
+        this.levels.push(loudness);
       }, 1000 / SAMPLE_HZ);
     } catch {
       // No Web Audio is survivable: the recording still happens and the
@@ -304,6 +390,7 @@ export class Listener {
   mark(): void {
     this.levels = [];
     this.chunks = [];
+    this.loudestSince = 0;
     this.markedAt = clock();
     this.pausedAt = null;
     this.pausedFor = 0;
@@ -358,6 +445,7 @@ export class Listener {
 
     const segments = segmentsFrom(this.levels, this.rate());
     this.levels = [];
+    this.latest = 0;
     this.markedAt = null;
     this.pausedAt = null;
     this.pausedFor = 0;

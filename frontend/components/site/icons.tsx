@@ -28,6 +28,7 @@ import {
   MessageCircle,
   MessageSquareText,
   Mic,
+  MicOff,
   Microscope,
   Moon,
   Music,
@@ -92,6 +93,10 @@ export const MinutesIcon = icon(Mic);
    and a name that reads as one of them at the other's call site is the
    wrong name. */
 export const MicIcon = icon(Mic);
+/* Nothing is reaching the microphone. Its own glyph rather than the mic
+   with a warm colour, because colour alone is not a difference somebody
+   can see in a filmed frame or through a colour deficiency. */
+export const MicOffIcon = icon(MicOff);
 export const BackIcon = icon(ArrowLeft);
 export const RotateIcon = icon(RotateCw);
 export const EditIcon = icon(Pencil);
