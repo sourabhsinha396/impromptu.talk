@@ -123,8 +123,15 @@ describe("filenameFor", () => {
    A held microphone answers only when the test says so, which is what a
    real permission prompt does and what an instantly resolved fake cannot
    reproduce: the leak being pinned lives in that gap. */
-function fakeMicrophone({ hold = false, loudness = LOUD } = {}) {
-  const track = { readyState: "live", stop: vi.fn(), getSettings: () => ({}) };
+/* `dead` names the channels that carry nothing, which is what a laptop
+   microphone array's spare element does. The graph is modelled rather than
+   stubbed flat, because the bug being pinned lives in the difference
+   between the two ways of reading one: an analyser hung straight off the
+   source gets the browser's mono down-mix, the average of every channel
+   including the dead ones, and an analyser hung off a splitter gets the
+   one channel it was wired to. */
+function fakeMicrophone({ hold = false, loudness = LOUD, suspended = false, channels = 1, dead = [] as number[] } = {}) {
+  const track = { readyState: "live", stop: vi.fn(), getSettings: () => ({ channelCount: channels }) };
   const stream = { getAudioTracks: () => [track], getTracks: () => [track] };
   let answer = () => {};
   const getUserMedia = vi.fn(
@@ -135,27 +142,66 @@ function fakeMicrophone({ hold = false, loudness = LOUD } = {}) {
       }),
   );
   Object.defineProperty(navigator, "mediaDevices", { value: { getUserMedia }, configurable: true });
-  const source = { connect: vi.fn(), disconnect: vi.fn() };
+  const live = loudness * ((channels - dead.length) / channels);
+  // Anything hung straight off the source reads the mono down-mix.
+  const source = {
+    connect: vi.fn((target: { channel?: number | "mix" }) => {
+      if (target) target.channel = "mix";
+    }),
+    disconnect: vi.fn(),
+  };
+  /* Chrome's autoplay rule: a context built outside a press lands
+     suspended, its analyser answers with exact zeros rather than with the
+     room, and `resume` goes on refusing until the page has been pressed.
+     A fake that resumes on the first ask cannot reproduce this, because
+     the first ask is the one moment the browser is certain to say no. */
+  let state = suspended ? "suspended" : "running";
+  let pressed = !suspended;
   vi.stubGlobal(
     "AudioContext",
     class {
+      get state() {
+        return state;
+      }
       createMediaStreamSource() {
         return source;
       }
       createAnalyser() {
-        return {
+        const analyser = {
           fftSize: 0,
+          channel: 0 as number | "mix",
           disconnect() {},
           getFloatTimeDomainData(frame: Float32Array) {
-            frame.fill(loudness);
+            if (state !== "running") return frame.fill(0);
+            if (analyser.channel === "mix") return frame.fill(live);
+            frame.fill(dead.includes(analyser.channel) ? 0 : loudness);
+          },
+        };
+        return analyser;
+      }
+      createChannelSplitter() {
+        return {
+          disconnect() {},
+          connect(target: { channel: number | "mix" }, channel: number) {
+            target.channel = channel;
           },
         };
       }
-      async resume() {}
+      async resume() {
+        if (pressed) state = "running";
+      }
       async close() {}
     },
   );
-  return { getUserMedia, track, source, answer: () => answer() };
+  return {
+    getUserMedia,
+    track,
+    source,
+    answer: () => answer(),
+    press: () => {
+      pressed = true;
+    },
+  };
 }
 
 describe("isDead", () => {
@@ -244,6 +290,50 @@ describe("Listener", () => {
     vi.advanceTimersByTime(2000);
     const heard = await ears.stop();
     expect(mic.getUserMedia).toHaveBeenCalledTimes(1);
+    expect(heard.segments).toEqual([[0, 2]]);
+  });
+
+  it("hears a round through a context the browser started suspended", async () => {
+    /* The microphone opens when the topic lands, which is a render and not
+       a press, so a browser's autoplay rule can leave the context
+       suspended, and its analyser then answers with zeros however loud the
+       room is. Resumed once at creation and never again, such a round
+       draws a flat meter, calls a live microphone dead and ends on "we
+       could not hear you". Pinned as a guard rather than as a fix for a
+       round anybody had: the reported failure was the dead array element
+       below, on a Chrome that reported the context running. */
+    vi.useFakeTimers();
+    const mic = fakeMicrophone({ suspended: true });
+    const ears = new Listener();
+    // The topic lands and the microphone opens, with nothing pressed yet.
+    await ears.start();
+    // Then somebody presses to begin, which is what the browser was
+    // waiting for and the only thing that can unblock the context.
+    mic.press();
+    ears.mark();
+    await vi.advanceTimersByTimeAsync(2000);
+    const heard = await ears.stop();
+    expect(heard.segments).toEqual([[0, 2]]);
+  });
+
+  it("hears the live element of an array, not the average of it and a dead one", async () => {
+    /* Measured on a Realtek microphone array in Chrome: the live element
+       carried an ordinary speaking voice at 0.018 and its twin carried
+       nothing. An `AnalyserNode` always analyses mono and down-mixes a
+       stereo input as (left + right) / 2, so the level arrived as 0.009,
+       under `SPEECH_FLOOR`, and `segmentsFrom` returned nothing at all
+       against somebody talking normally at their own desk. Chrome ignored
+       the `channelCount: 1` constraint and handed back two channels, so
+       there was no asking the device to stop doing it. */
+    vi.useFakeTimers();
+    fakeMicrophone({ channels: 2, dead: [1], loudness: 0.018 });
+    const ears = new Listener();
+    await ears.start();
+    ears.mark();
+    vi.advanceTimersByTime(2000);
+    // The voice, not half of it.
+    expect(ears.level).toBeCloseTo(0.018, 4);
+    const heard = await ears.stop();
     expect(heard.segments).toEqual([[0, 2]]);
   });
 

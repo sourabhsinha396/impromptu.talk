@@ -304,7 +304,11 @@ export class Listener {
       and the same zeros are what made the topic screen call a granted,
       live microphone dead. */
   private source: MediaStreamAudioSourceNode | null = null;
-  private analyser: AnalyserNode | null = null;
+  private splitter: ChannelSplitterNode | null = null;
+  private analysers: AnalyserNode[] = [];
+  /** Whether a `resume` is already in flight, so the ticker asks once and
+      not fifty times a second. */
+  private waking = false;
   /** A rolling couple of seconds of levels, kept whatever the round is
       doing, so the topic screen can tell a dead input from a quiet room
       before anybody has spoken a word. */
@@ -399,22 +403,55 @@ export class Listener {
     try {
       const Ctor = window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       this.context = new Ctor();
-      // Made in a promise continuation, after the await above, so it can
-      // land suspended where a context made inside the press would not.
-      // A suspended context's analyser answers with zeros too.
-      void this.context.resume().catch(() => {});
+      this.wake();
       this.source = this.context.createMediaStreamSource(this.stream);
-      const analyser = this.context.createAnalyser();
-      // Small window: the level is wanted often, not precisely.
-      analyser.fftSize = 512;
-      this.source.connect(analyser);
-      this.analyser = analyser;
-      const frame = new Float32Array(analyser.fftSize);
+      /* One analyser per channel, and the loudest of them is the level.
+
+         An `AnalyserNode` always analyses mono, and it down-mixes a stereo
+         input as (left + right) / 2. A laptop microphone array whose
+         second element carries nothing therefore arrives at exactly half
+         its real loudness, and that halving is what put an ordinary
+         speaking voice under `SPEECH_FLOOR`: measured on a Realtek array,
+         the live element read 0.021 at the ninetieth percentile and the
+         mix of it with its dead twin read 0.0105, against a floor of 0.01.
+         Rounds landed either side of that line, so the same person at the
+         same desk was heard or not heard at random, and the ones that
+         passed took the "talked without stopping" branch and came back
+         with no pauses in them at all.
+
+         Asking for one channel does not help: the constraint says
+         `channelCount: 1` and Chrome hands back two anyway. Taking channel
+         zero would fix this device and break the one whose live element is
+         the other one, so every channel is measured and the loudest wins.
+         That is also the only reading that survives two elements in
+         opposite phase, which cancel to nothing when averaged. */
+      const channels = Math.max(1, this.stream.getAudioTracks()[0]?.getSettings().channelCount ?? 1);
+      const splitter = this.context.createChannelSplitter(channels);
+      this.source.connect(splitter);
+      this.splitter = splitter;
+      const analysers: AnalyserNode[] = [];
+      for (let channel = 0; channel < channels; channel += 1) {
+        const analyser = this.context.createAnalyser();
+        // Small window: the level is wanted often, not precisely.
+        analyser.fftSize = 512;
+        splitter.connect(analyser, channel);
+        analysers.push(analyser);
+      }
+      // Held on the instance, like the source above and for the same
+      // reason: a tap never reaches the destination, so a node nothing in
+      // script refers to is collected and answers with zeros thereafter.
+      this.analysers = analysers;
+      const frame = new Float32Array(analysers[0].fftSize);
       const keep = Math.round((DEAD_AFTER_MS / 1000) * SAMPLE_HZ);
       this.ticker = setInterval(() => {
         if (this.pausedAt !== null) return;
-        analyser.getFloatTimeDomainData(frame);
-        const loudness = level(frame);
+        this.wake();
+        let loudness = 0;
+        for (const analyser of analysers) {
+          analyser.getFloatTimeDomainData(frame);
+          const heard = level(frame);
+          if (heard > loudness) loudness = heard;
+        }
         this.latest = loudness;
         this.recent.push(loudness);
         if (this.recent.length > keep) this.recent.shift();
@@ -426,6 +463,38 @@ export class Listener {
     }
 
     return true;
+  }
+
+  /** Starts the audio clock, and keeps asking until it runs.
+
+      The microphone is opened when the topic lands, which is a render and
+      not a press, so the context is built with no user gesture behind it.
+      A browser's autoplay rule can leave such a context suspended, and a
+      suspended context's analyser answers with a buffer of exact zeros
+      however loud the room is, which would draw a flat meter, call a
+      working microphone dead and end the round on "we could not hear you".
+
+      Asked once at creation, as it was, that could only ever fail: that is
+      the moment there is least reason for the browser to say yes, and the
+      refusal went into a `catch` that dropped it. Asked again on every
+      frame it succeeds the moment somebody presses anything, and pressing
+      something is how the round reaches the speaking in the first place.
+
+      This is a guard rather than a fix for anything seen: the round this
+      was written for turned out to be the dead array element below, and
+      that Chrome reported the context running. Kept because the failure it
+      prevents is silent, indistinguishable from the one that was real, and
+      a one-shot resume has no way of telling anybody it was refused. */
+  private wake(): void {
+    const context = this.context;
+    if (!context || context.state !== "suspended" || this.waking) return;
+    this.waking = true;
+    void context
+      .resume()
+      .catch(() => {})
+      .finally(() => {
+        this.waking = false;
+      });
   }
 
   /** The speaking minute starts here.
@@ -492,9 +561,11 @@ export class Listener {
 
     this.stream?.getTracks().forEach((track) => track.stop());
     this.source?.disconnect();
-    this.analyser?.disconnect();
+    this.splitter?.disconnect();
+    this.analysers.forEach((analyser) => analyser.disconnect());
     this.source = null;
-    this.analyser = null;
+    this.splitter = null;
+    this.analysers = [];
     void this.context?.close().catch(() => {});
     this.stream = null;
     this.context = null;
