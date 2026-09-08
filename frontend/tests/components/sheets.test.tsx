@@ -79,7 +79,7 @@ describe("the sheets", () => {
     expect(within(dialog).queryByRole("link", { name: "Edit General" })).not.toBeInTheDocument();
   });
 
-  it("changes the lengths live, writes them on release, offers a coined style only in its genre, and mutes", async () => {
+  it("changes the lengths live, writes them on release, offers a coined style only in its genre, and mutes a page in", async () => {
     const user = userEvent.setup();
     render(<Round bank={bank} signedIn={false} />);
     await user.click(await screen.findByRole("button", { name: "Settings" }));
@@ -97,8 +97,16 @@ describe("the sheets", () => {
     expect(saved().style).toBe("hot-take");
     expect(screen.getByText("Pick a side.")).toBeInTheDocument();
 
+    /* The sound lives a page in, the way the account's own second page
+       holds what is set once: the front page of the sheet is only what
+       gets changed before a round. */
+    expect(screen.queryByLabelText("Mute sound effects")).not.toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Additional settings" }));
+    expect(screen.queryByLabelText("Talking time")).not.toBeInTheDocument();
     await user.click(screen.getByLabelText("Mute sound effects"));
     expect(saved().sound).toBe(false);
+    await user.click(screen.getByRole("button", { name: "Settings" }));
+    expect(screen.getByLabelText("Talking time")).toBeInTheDocument();
 
     /* The coined style belongs to the owned genre: it appears there and
        nowhere else. */
