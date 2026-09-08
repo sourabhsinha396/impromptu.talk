@@ -109,7 +109,7 @@ export function RoundDetail({ report, length, pro }: { report: Report; length: n
         <Section title="How the round went" aside="a sample">
           <Sample
             title="Pro measures every round."
-            line="Your pace, how fast you started, your longest pause, and your longest sentence, each against a comfortable range."
+            line="This requires pro access. Pro also helps you track your performance over time."
           >
             <Dials rows={axes(SAMPLE_REPORT)} />
             <Bands rows={axes(SAMPLE_REPORT).filter((row) => !row.noBar)} />
@@ -158,7 +158,7 @@ export function RoundDetail({ report, length, pro }: { report: Report; length: n
         <Section title="Sentences" aside="a sample">
           <Sample
             title="Pro measures every sentence."
-            line="How long each one ran, when your first word came, and how many different words you used."
+            line="This requires pro access. Pro also helps you track your performance over time."
           >
             <Sentences report={SAMPLE_REPORT} />
             <p className="mt-2 text-[12.5px] leading-relaxed text-muted">{sentenceCaption(SAMPLE_REPORT)}</p>

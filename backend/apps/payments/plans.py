@@ -107,7 +107,7 @@ CATALOGUE: tuple[Plan, ...] = (
         period=None,
         days=30,
         tracks=30,
-        note="One month of Pro. Nothing renews, nothing to cancel.",
+        note="30 days of Pro. Nothing renews, nothing to cancel.",
     ),
     Plan(
         code=LIFETIME,

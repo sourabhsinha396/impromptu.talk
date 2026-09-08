@@ -38,7 +38,15 @@ services:
     env_file: .env
     environment:
       PYTHONUNBUFFERED: "1"
-    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8009"
+    # Local settings get the dev server (autoreload, tracebacks); anything
+    # else gets gunicorn, since that is what actually runs in production.
+    command: >
+      sh -c "python manage.py migrate &&
+      if [ \"$DJANGO_SETTINGS_MODULE\" = \"impromptu.settings.local\" ]; then
+        python manage.py runserver 0.0.0.0:8009;
+      else
+        gunicorn impromptu.wsgi:application --bind 0.0.0.0:8009;
+      fi"
     ports:
       - "${WEB_PORT:-8009}:8009"
     volumes:
