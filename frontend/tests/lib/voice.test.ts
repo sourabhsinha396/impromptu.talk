@@ -135,24 +135,27 @@ function fakeMicrophone({ hold = false, loudness = LOUD } = {}) {
       }),
   );
   Object.defineProperty(navigator, "mediaDevices", { value: { getUserMedia }, configurable: true });
+  const source = { connect: vi.fn(), disconnect: vi.fn() };
   vi.stubGlobal(
     "AudioContext",
     class {
       createMediaStreamSource() {
-        return { connect() {} };
+        return source;
       }
       createAnalyser() {
         return {
           fftSize: 0,
+          disconnect() {},
           getFloatTimeDomainData(frame: Float32Array) {
             frame.fill(loudness);
           },
         };
       }
+      async resume() {}
       async close() {}
     },
   );
-  return { getUserMedia, track, answer: () => answer() };
+  return { getUserMedia, track, source, answer: () => answer() };
 }
 
 describe("isDead", () => {
@@ -295,6 +298,24 @@ describe("Listener", () => {
     await stopped;
     expect(await opening).toBe(true);
     expect(mic.track.stop).toHaveBeenCalledTimes(1);
+  });
+
+  it("holds the audio graph, so the browser cannot collect the microphone tap", async () => {
+    /* Web Audio keeps a node alive while it is referenced from script or
+       on a path to the context's destination. This graph is a tap and
+       never reaches the destination, so the source lived only as long as
+       the local it was assigned to: once collected, the analyser went on
+       answering with a buffer of exact zeros and the round recorded
+       digital silence against a working microphone. Holding it is the
+       whole fix, and nothing in the drawing would ever show it going
+       wrong, so it is pinned here. */
+    const mic = fakeMicrophone();
+    const ears = new Listener();
+    await ears.start();
+    // Reachable from the listener, which is what keeps it alive; the
+    // proof is that the listener can still take it apart afterwards.
+    await ears.stop();
+    expect(mic.source.disconnect).toHaveBeenCalledTimes(1);
   });
 
   it("reads a refused microphone as dead, so the round says the one line for both", async () => {

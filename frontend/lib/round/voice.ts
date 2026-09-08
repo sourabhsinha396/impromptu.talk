@@ -289,6 +289,22 @@ export class Listener {
   private type = "";
   /** The last level read, which is all the meter under the clock wants. */
   private latest = 0;
+  /** The audio graph, held on the instance rather than left to a closure.
+
+      The first version kept the source in a local and only the analyser in
+      the ticker's closure, so after `open` returned nothing in JavaScript
+      referenced the source node any more. Web Audio keeps a node alive
+      while it is either referenced from script or on a path to the
+      context's destination, and this graph is neither: it is a tap, so it
+      deliberately never reaches the speakers. The source was therefore
+      collected at the garbage collector's leisure, the analyser went on
+      answering with a buffer of exact zeros, and the round recorded a
+      timeline of digital silence against a microphone that was working
+      perfectly. That is the round that came back "we could not hear you",
+      and the same zeros are what made the topic screen call a granted,
+      live microphone dead. */
+  private source: MediaStreamAudioSourceNode | null = null;
+  private analyser: AnalyserNode | null = null;
   /** A rolling couple of seconds of levels, kept whatever the round is
       doing, so the topic screen can tell a dead input from a quiet room
       before anybody has spoken a word. */
@@ -383,11 +399,16 @@ export class Listener {
     try {
       const Ctor = window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       this.context = new Ctor();
-      const source = this.context.createMediaStreamSource(this.stream);
+      // Made in a promise continuation, after the await above, so it can
+      // land suspended where a context made inside the press would not.
+      // A suspended context's analyser answers with zeros too.
+      void this.context.resume().catch(() => {});
+      this.source = this.context.createMediaStreamSource(this.stream);
       const analyser = this.context.createAnalyser();
       // Small window: the level is wanted often, not precisely.
       analyser.fftSize = 512;
-      source.connect(analyser);
+      this.source.connect(analyser);
+      this.analyser = analyser;
       const frame = new Float32Array(analyser.fftSize);
       const keep = Math.round((DEAD_AFTER_MS / 1000) * SAMPLE_HZ);
       this.ticker = setInterval(() => {
@@ -470,6 +491,10 @@ export class Listener {
     const audio = await this.finish();
 
     this.stream?.getTracks().forEach((track) => track.stop());
+    this.source?.disconnect();
+    this.analyser?.disconnect();
+    this.source = null;
+    this.analyser = null;
     void this.context?.close().catch(() => {});
     this.stream = null;
     this.context = null;
