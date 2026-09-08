@@ -34,23 +34,33 @@ class MeOut(Schema):
 # extra fields pydantic drops by default are the point too: a post
 # carrying is_superuser is a post carrying nothing.
 
+# The captcha token is the one field here nobody types, so the rule above
+# does not apply to it and the first ceiling written for it, 2000, refused
+# every real login on the live site with a 422 the form could not explain.
+# Google publishes no maximum and has grown the token before, so any number
+# that describes the token is a guess that expires. This one describes the
+# transport instead: what an opaque blob may cost us to hand to the
+# verifier, far above anything Google has issued. What actually holds the
+# route is the throttle beside it, and what decides the token is Google.
+MAX_CAPTCHA_TOKEN = 10000
+
 
 class SignupIn(Schema):
     email: str = Field(max_length=254)
     password: str = Field(max_length=128)
     name: str = Field(default="", max_length=80)
-    recaptcha_token: str = Field(default="", max_length=2000)
+    recaptcha_token: str = Field(default="", max_length=MAX_CAPTCHA_TOKEN)
 
 
 class LoginIn(Schema):
     email: str = Field(max_length=254)
     password: str = Field(max_length=128)
-    recaptcha_token: str = Field(default="", max_length=2000)
+    recaptcha_token: str = Field(default="", max_length=MAX_CAPTCHA_TOKEN)
 
 
 class ForgotIn(Schema):
     email: str = Field(max_length=254)
-    recaptcha_token: str = Field(default="", max_length=2000)
+    recaptcha_token: str = Field(default="", max_length=MAX_CAPTCHA_TOKEN)
 
 
 class ResetIn(Schema):

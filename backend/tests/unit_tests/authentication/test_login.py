@@ -4,6 +4,7 @@ the right one, and a throttle that refuses the right password too."""
 from django.conf import settings
 
 from apps.authentication.models import User
+from apps.common import recaptcha
 from apps.common.devices import DEVICE_COOKIE
 from tests.unit_tests import factories
 
@@ -64,6 +65,30 @@ def test_an_untipped_captcha_refuses_the_login(client, user, settings):
     assert response.status_code == 400
     assert response.json() == {"detail": "Confirm you're not a robot."}
     assert settings.SESSION_COOKIE_NAME not in client.cookies
+
+
+def test_a_long_captcha_token_reaches_the_verifier_rather_than_a_422(client, user, settings, monkeypatch):
+    """The live site refused every login with a bare 422 for a fortnight's
+    worth of an afternoon: the schema capped the token at 2000 characters
+    and Google had grown past it. Nobody types this field, so the length
+    is Google's to decide and ours only to carry."""
+    settings.RECAPTCHA_SITE_KEY = "site"
+    settings.RECAPTCHA_SECRET_KEY = "secret"
+    seen = {}
+
+    def _verify(token):
+        seen["length"] = len(token)
+        return {"success": True}
+
+    monkeypatch.setattr(recaptcha, "verify", _verify)
+    token = "t" * 4000
+    response = client.post(
+        LOGIN,
+        {"email": "speaker@example.com", "password": factories.PASSWORD, "recaptcha_token": token},
+        content_type="application/json",
+    )
+    assert response.status_code == 200
+    assert seen["length"] == 4000
 
 
 def test_the_account_window_is_the_typed_address_not_the_caller(client, user):
