@@ -70,9 +70,20 @@ export const DEAD_FLOOR = 0.0001;
 export const DEAD_AFTER_MS = 2000;
 
 /** How long into the speaking somebody is left alone before being told
-    that nothing is arriving. Under this, an ordinary slow start would be
-    called a broken microphone. */
+    that nothing is arriving. Asked again every half second after that and
+    answered afresh, so a slow start costs a moment of the line and not the
+    round: the instant somebody's voice arrives, it goes. */
 export const DEAF_AFTER_MS = 4000;
+
+/** The share of the round that has to carry sound for it to count as
+    heard.
+
+    One number in two places: this mirrors `HEARD_FLOOR` in
+    `backend/apps/runs/analysis.py`, which is what actually decides the
+    sentence on the done screen. They have to move together, and the whole
+    point of the warning during the round is that it is the same verdict
+    arriving fifty seconds earlier. */
+export const HEARD_RATIO = 0.05;
 
 /** With no separation between the two ends, the round is all one level.
     Past `SPEECH_FLOOR` that means somebody talked without stopping, which
@@ -87,6 +98,22 @@ const HANGOVER_MS = 200;
 const MIN_SPEECH_MS = 120;
 
 export type Segment = [number, number];
+
+/** How much of a stretch of levels carried a voice, as a share of it.
+
+    Deliberately built on `segmentsFrom` rather than on the levels
+    directly: that function is what the whole timeline is made of, and the
+    backend calls a round unheard when the timeline it is sent covers less
+    than a twentieth of the round. Anything else asked here is a second
+    opinion, and a second opinion is how somebody spoke a whole minute,
+    was shown no warning, and was told afterwards that we could not hear
+    them. */
+export function heardRatio(levels: number[], hz: number = SAMPLE_HZ): number {
+  const elapsed = levels.length / hz;
+  if (elapsed <= 0) return 0;
+  const spoken = segmentsFrom(levels, hz).reduce((total, [from, to]) => total + (to - from), 0);
+  return spoken / elapsed;
+}
 
 /** Whether an open input is giving nothing at all.
 
@@ -266,8 +293,6 @@ export class Listener {
       doing, so the topic screen can tell a dead input from a quiet room
       before anybody has spoken a word. */
   private recent: number[] = [];
-  /** The loudest frame since the speaking began. */
-  private loudestSince = 0;
   /** The microphone was asked for and did not arrive: refused, absent, or
       a browser without one. Nothing will ever be heard, and the topic
       screen says the same line for this as for a dead device. */
@@ -295,14 +320,22 @@ export class Listener {
     return this.refused || isDead(this.recent);
   }
 
-  /** Whether anything since `mark` has been loud enough to be a voice.
+  /** Whether the round so far reads as heard, by the same arithmetic the
+      done screen's verdict is made of.
 
-      Deliberately the same floor `segmentsFrom` uses to decide a round had
-      no voice in it, so the warning during the round and the report after
-      it can never disagree: whatever this says at four seconds is what the
-      done screen would have said at sixty. */
+      The first version of this asked whether any single frame had got
+      loud, which is a much easier question than the one the report asks:
+      a click, a chair or one loud word passed it while the round it was
+      taken from still came back unheard. So somebody spoke a whole minute
+      against a microphone too quiet for the timeline, saw nothing during
+      it, and read "we could not hear you" at the end - the exact failure
+      this was built to stop. It now runs the round's own segmenting over
+      the levels collected so far and compares the share to the floor the
+      backend uses. Nothing to judge yet is heard, so silence is never
+      claimed on no evidence. */
   get heard(): boolean {
-    return this.loudestSince >= SPEECH_FLOOR;
+    if (this.markedAt === null || !this.levels.length) return true;
+    return heardRatio(this.levels, this.rate()) >= HEARD_RATIO;
   }
 
   /** Opens the microphone, once. Calling this while it is open, or still
@@ -362,7 +395,6 @@ export class Listener {
         analyser.getFloatTimeDomainData(frame);
         const loudness = level(frame);
         this.latest = loudness;
-        if (loudness > this.loudestSince) this.loudestSince = loudness;
         this.recent.push(loudness);
         if (this.recent.length > keep) this.recent.shift();
         this.levels.push(loudness);
@@ -390,7 +422,6 @@ export class Listener {
   mark(): void {
     this.levels = [];
     this.chunks = [];
-    this.loudestSince = 0;
     this.markedAt = clock();
     this.pausedAt = null;
     this.pausedFor = 0;

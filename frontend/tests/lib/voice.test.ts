@@ -2,10 +2,12 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
   DEAD_FLOOR,
+  HEARD_RATIO,
   Listener,
   SAMPLE_HZ,
   SPEECH_FLOOR,
   filenameFor,
+  heardRatio,
   isDead,
   level,
   segmentsFrom,
@@ -187,6 +189,36 @@ describe("isDead", () => {
   });
 });
 
+describe("heardRatio", () => {
+  /* What the round is told mid-minute has to be what the done screen says
+     at the end of it. The backend calls a round unheard when the timeline
+     it is sent covers less than a twentieth of the round, so this is that
+     same arithmetic run early. */
+
+  const held = (seconds: number, value: number) => new Array(Math.round(seconds * SAMPLE_HZ)).fill(value);
+
+  it("does not call a round heard because one frame of it got loud", () => {
+    /* The bug this replaced. The first version asked whether any single
+       frame had reached the speech floor, which a click, a chair or one
+       loud word clears while the round it came from is still thrown away.
+       Somebody spoke a whole minute against a microphone too quiet for
+       the timeline, was shown nothing during it, and read "we could not
+       hear you" at the end. */
+    const round = [...held(30, 0.004), ...held(0.06, 0.3), ...held(30, 0.004)];
+    expect(Math.max(...round)).toBeGreaterThan(SPEECH_FLOOR);
+    expect(segmentsFrom(round)).toEqual([]);
+    expect(heardRatio(round)).toBeLessThan(HEARD_RATIO);
+  });
+
+  it("calls a spoken round heard", () => {
+    expect(heardRatio([...held(2, QUIET), ...held(40, LOUD), ...held(18, QUIET)])).toBeGreaterThan(HEARD_RATIO);
+  });
+
+  it("reads a round with nothing in it as nought rather than dividing by nothing", () => {
+    expect(heardRatio([])).toBe(0);
+  });
+});
+
 describe("Listener", () => {
   afterEach(() => {
     vi.useRealTimers();
@@ -278,10 +310,10 @@ describe("Listener", () => {
     expect(ears.dead).toBe(true);
   });
 
-  it("says the round was not heard on exactly the floor the report says it on", async () => {
-    /* The warning at four seconds and the sentence on the done screen have
-       to be the same verdict. Two thresholds would mean a round warned
-       about live and then reported on as fine, or the reverse. */
+  it("says the round was not heard on exactly the arithmetic the report says it on", async () => {
+    /* The warning during the round and the sentence on the done screen
+       have to be one verdict. Two tests meant a round passed live and
+       thrown away afterwards, which is worse than no warning at all. */
     vi.useFakeTimers();
     fakeMicrophone({ loudness: SPEECH_FLOOR / 2 });
     const ears = new Listener();

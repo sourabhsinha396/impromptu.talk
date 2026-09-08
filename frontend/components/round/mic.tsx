@@ -53,6 +53,9 @@ export function Meter({ listener, speaking }: { listener: Listener | null; speak
      enough with nothing arriving to say so. */
   const [deaf, setDeaf] = useState(false);
 
+  /* The drawing, on its own loop and holding no state: a setter called
+     sixty times a second is sixty chances to re-render the clock, the
+     topic and the notes with it. */
   useEffect(() => {
     if (!speaking) {
       // Paused: nothing is being recorded, so the bars say nothing rather
@@ -60,30 +63,34 @@ export function Meter({ listener, speaking }: { listener: Listener | null; speak
       bars.current.forEach((bar) => bar && (bar.style.height = `${REST}px`));
       return;
     }
-    setDeaf(false);
-    const started = performance.now();
     let smoothed = 0;
-    let frame = 0;
-    // Asked once, at four seconds, and then never again: a setter called
-    // sixty times a second is sixty chances to re-render the clock.
-    let asked = false;
-    const draw = (now: number) => {
+    let frame = requestAnimationFrame(function draw(now: number) {
       frame = requestAnimationFrame(draw);
-      const level = listener?.level ?? 0;
-      smoothed += (shape(level) - smoothed) * EASE;
+      smoothed += (shape(listener?.level ?? 0) - smoothed) * EASE;
       bars.current.forEach((bar, index) => {
         if (!bar) return;
         // A slow wobble across the row, so a steady voice still moves.
         const wobble = 0.72 + 0.28 * Math.abs(Math.sin(now / 150 + index * 0.9));
         bar.style.height = `${Math.round(REST + smoothed * WEIGHTS[index] * wobble * REACH)}px`;
       });
-      if (!asked && now - started > DEAF_AFTER_MS) {
-        asked = true;
-        setDeaf(!listener?.heard);
-      }
-    };
-    frame = requestAnimationFrame(draw);
+    });
     return () => cancelAnimationFrame(frame);
+  }, [listener, speaking]);
+
+  /* The verdict, asked twice a second and answered afresh each time.
+
+     Asked once at four seconds it accused anybody who took five to begin,
+     and there was no way back from it for the rest of the round. Asked
+     again it costs a slow starter a moment of the line, and the line goes
+     the instant their voice arrives. */
+  useEffect(() => {
+    if (!speaking || !listener) return;
+    setDeaf(false);
+    const started = performance.now();
+    const tick = setInterval(() => {
+      setDeaf(performance.now() - started > DEAF_AFTER_MS && !listener.heard);
+    }, 500);
+    return () => clearInterval(tick);
   }, [listener, speaking]);
 
   return (

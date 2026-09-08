@@ -58,6 +58,12 @@ TAIL = 0.2
 # not a quiet speaker. A report drawn from it would say somebody paused
 # for a minute, which is the worst possible first impression, so the
 # caller is told nothing was heard instead.
+#
+# Mirrored as HEARD_RATIO in frontend/lib/round/voice.ts, which is what
+# warns during the round rather than after it. One number in two places,
+# and they have to move together: while they disagreed, a round passed the
+# live check and was still thrown away here, so somebody spoke a whole
+# minute, saw no warning, and read "we could not hear you" at the end.
 HEARD_FLOOR = 0.05
 
 # Non-lexical fillers only. These are not words; they are the sound of
