@@ -1,5 +1,6 @@
 import { Button } from "@/components/site/button";
 import { MicIcon } from "@/components/site/icons";
+import { Ping } from "@/components/site/ping";
 import {
   advice,
   at,
@@ -67,10 +68,15 @@ export function RoundReport({
       <Bands rows={bands(report)} />
       <Transcript report={report} />
       {href && (
-        <p className="mt-4 text-center text-[12.5px]">
+        /* The ping sits after the link rather than on it: the underline
+           already says the words are pressable, and this says which of the
+           several pressable things on the done screen is the one nobody
+           has found yet. */
+        <p className="mt-4 flex items-center justify-center gap-2 text-[12.5px]">
           <a href={href} className="font-semibold text-accent-strong underline underline-offset-4 hover:text-ink">
             See the full report
           </a>
+          <Ping />
         </p>
       )}
     </div>
