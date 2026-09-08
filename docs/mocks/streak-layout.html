@@ -1,0 +1,264 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mock: the empty half of the streak page</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..600&family=Plus+Jakarta+Sans:wght@400..700&display=swap" rel="stylesheet"><style>
+:root{color-scheme:light;--surface:#fff;--card:#fff;--card2:oklch(.965 .008 120);--ink:#1c1917;--muted:#57534e;--line:#e7e5e4;--line-strong:#918b87;
+--accent-h:120;--accent-c:.12;--accent-l:.5;--accent-l-strong:.42;--accent:oklch(var(--accent-l) var(--accent-c) var(--accent-h));--accent-strong:oklch(var(--accent-l-strong) var(--accent-c) var(--accent-h));
+--btn:#1c1917;--btn-ink:#fff;--warn:oklch(.62 .2 30);--poor:oklch(.55 .18 12);
+--sans:"Plus Jakarta Sans",ui-sans-serif,system-ui,sans-serif;--display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif}
+[data-theme=dark]{color-scheme:dark;--surface:#080808;--card:#161616;--card2:#101010;--ink:#f5f5f4;--muted:#a8a29e;--line:#292524;--line-strong:#6b6560;
+--accent-l:.796;--accent-l-strong:.86;--btn:#f5f5f4;--btn-ink:#111110;--warn:oklch(.75 .19 30);--poor:oklch(.78 .14 10)}
+*{box-sizing:border-box}html,body{margin:0}body{background:#3f3d3a;font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased}
+.mockbar{position:sticky;top:0;z-index:50;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:10px 16px;background:#26241f;color:#d6d3d1;font:600 12px/1 var(--sans);letter-spacing:.02em}
+.mockbar b{color:#fff;font-weight:700;margin-right:6px}.mockbar .seg{display:inline-flex;border:1px solid #57534e;border-radius:999px;overflow:hidden}
+.mockbar button{all:unset;cursor:pointer;padding:7px 12px;color:#d6d3d1}.mockbar button.on{background:#f5f5f4;color:#1c1917}
+h1.lab{max-width:1000px;margin:26px auto 0;color:#d6d3d1;font:600 12px var(--sans);letter-spacing:.05em;text-transform:uppercase}
+.cap{max-width:1000px;margin:8px auto 0;color:#a8a29e;font:400 13px/1.5 var(--sans)}
+.stage{margin:12px auto 0;max-width:1000px;overflow-x:auto}.phone .stage{max-width:400px}
+.frame{width:1000px;background:var(--surface);color:var(--ink);box-shadow:0 20px 60px rgb(0 0 0/.35)}
+.phone .frame{width:400px}
+.notes{max-width:1000px;margin:26px auto 0;background:#fffbea;color:#3b2f0b;border-radius:14px;padding:18px 22px;font-size:14px;line-height:1.55}
+.notes h2{margin:0 0 8px;font:600 15px var(--sans)}.notes h3{margin:18px 0 6px;font:600 14px var(--sans)}
+.notes ul{margin:0;padding-left:18px}.notes li{margin:6px 0}.notes[hidden]{display:none}
+.notes code{background:#f3e9b8;padding:1px 5px;border-radius:4px;font-size:12.5px}
+.verdict{margin:14px 0 0;padding:12px 14px;border-radius:10px;background:#2a2a28;color:#e7e5e4;font-size:13.5px;line-height:1.55}
+.tail{height:70px}
+[hidden]{display:none!important}
+.void{outline:2px dashed #22a7d0;outline-offset:-6px;position:relative}
+.void::after{content:"the empty half";position:absolute;top:50%;left:0;right:0;text-align:center;color:#22a7d0;font:600 12px var(--sans);letter-spacing:.06em;text-transform:uppercase}
+body:not(.showvoid) .void{outline:none}body:not(.showvoid) .void::after{content:none}
+
+/* ------------------------------------------------------------- the page */
+main{padding:28px clamp(16px,4vw,32px) 64px}
+.kicker{margin:0 0 6px;font-size:13px;font-weight:600;color:var(--muted)}
+h1.page{display:flex;align-items:center;gap:.18em;margin:0;font-family:var(--display);font-weight:600;font-variation-settings:"wdth" 96;letter-spacing:-.03em;font-size:clamp(2rem,5.5vw,3.4rem);line-height:1.05}
+h1.page svg{width:.8em;height:.8em;color:var(--accent);flex:none}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:760px;margin-top:24px}
+.tile{border:1px solid var(--line);border-radius:14px;background:var(--card);padding:16px 10px;text-align:center}
+.tile svg{width:19px;height:19px;color:var(--accent)}
+.tile .n{font-family:var(--display);font-weight:600;font-size:32px;line-height:1;margin-top:6px}
+.tile .l{font-size:12.5px;color:var(--muted);margin-top:5px}
+.sect{margin-top:40px}
+.sect-h{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 12px;margin-bottom:12px}
+.sect-h h2{margin:0;font-size:15px;font-weight:600}
+.sect-h p{margin:0;font-size:13px;font-weight:600;color:var(--muted)}
+.sect-h a{color:var(--accent-strong);text-decoration:underline;text-underline-offset:3px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:0 48px}
+.phone .two{grid-template-columns:1fr}
+
+/* the calendar */
+.heat{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,20px);grid-auto-columns:20px;gap:5px}
+.heat i{border-radius:5px;background:var(--card2);border:1px solid var(--line)}
+.heat i.on{background:var(--accent);border-color:var(--accent)}
+.week{display:grid;grid-template-rows:repeat(7,20px);gap:5px;font-size:10px;font-weight:600;color:var(--muted);line-height:20px;margin-right:8px}
+.heatwrap{display:flex}
+.month{font-size:10px;font-weight:600;color:var(--muted);height:14px;margin-bottom:4px}
+
+/* the calendar as one row */
+.rowcal{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:6px}
+.rowcal i{aspect-ratio:1;border-radius:6px;background:var(--card2);border:1px solid var(--line)}
+.rowcal i.on{background:var(--accent);border-color:var(--accent)}
+.rowcal i.today{border-color:var(--line-strong);border-width:2px}
+.rowends{display:flex;justify-content:space-between;margin-top:7px;font-size:11.5px;color:var(--muted)}
+.phone .rowcal{grid-auto-flow:row;grid-template-columns:repeat(10,1fr)}
+
+/* the list */
+ul.recent{list-style:none;margin:0;padding:0;max-width:640px}
+.wide ul.recent{max-width:none;columns:2;column-gap:48px}
+.phone .wide ul.recent{columns:1}
+ul.recent li{display:flex;align-items:baseline;justify-content:space-between;gap:16px;border-bottom:1px solid var(--line);padding:10px 2px;font-size:15.5px;break-inside:avoid}
+ul.recent li:last-child{border-bottom:0}
+ul.recent a{color:inherit;text-decoration:underline;text-decoration-color:var(--line-strong);text-underline-offset:4px}
+ul.recent .meta{display:inline-flex;flex:none;gap:12px;font-size:12.5px;font-weight:600;color:var(--muted)}
+ul.recent .meta .g{display:inline-flex;align-items:center;gap:4px}
+ul.recent .meta svg{width:14px;height:14px;color:var(--accent)}
+.more{margin:14px 0 0;font-size:13.5px}
+.more a{color:var(--accent-strong);font-weight:600;text-decoration:underline;text-underline-offset:4px}
+
+/* progress, enough of it to show where it sits */
+.prog{border:1px solid var(--line);border-radius:14px;background:var(--card);padding:4px 16px;max-width:none}
+.prow{display:grid;grid-template-columns:8.5rem minmax(0,1fr) 220px;gap:0 20px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}
+.prow:last-child{border-bottom:0}
+.phone .prow{grid-template-columns:1fr;gap:6px 0}
+.prow .k{font-size:12.5px;font-weight:600}
+.prow .s{font-size:13px;color:var(--muted)}.prow .s b{color:var(--ink);font-weight:600}
+.db{position:relative;height:22px}
+.db .track{position:absolute;left:0;right:0;top:10px;height:2px;background:var(--line)}
+.db .good{position:absolute;top:8px;height:6px;border-radius:999px;background:var(--accent);opacity:.25}
+.db .then{position:absolute;top:6px;width:10px;height:10px;margin-left:-5px;border-radius:999px;background:var(--surface);border:2px solid var(--line-strong)}
+.db .now{position:absolute;top:5px;width:12px;height:12px;margin-left:-6px;border-radius:999px;background:var(--accent);border:2px solid var(--surface)}
+.db .now.out{background:var(--poor)}
+.btn{display:inline-flex;align-items:center;border-radius:999px;background:var(--btn);color:var(--btn-ink);font:600 18px var(--sans);padding:16px 32px;text-decoration:none;margin-top:36px}
+.foot{margin-top:36px;max-width:60ch;font-size:13.5px;color:var(--muted)}
+</style></head><body>
+<div class="mockbar"><b>Mock</b>
+<span class="seg"><button data-opt="now" class="on">Today</button><button data-opt="one">1 One column</button><button data-opt="top">2 Calendar with the tiles</button><button data-opt="cap">3 A shorter list</button></span>
+<span class="seg"><button data-rounds="19" class="on">19 rounds</button><button data-rounds="60">60 rounds</button></span>
+<span class="seg"><button data-void class="on">Mark the void</button></span>
+<span class="seg"><button data-theme-set="light">Light</button><button data-theme-set="dark">Dark</button></span>
+<span class="seg"><button data-width="desktop" class="on">Desktop</button><button data-width="phone">Phone</button></span>
+<span class="seg"><button data-notes class="on">Notes</button></span></div>
+
+<div class="notes"><h2>The streak page empties out as the streak fills up</h2>
+<p style="margin:0 0 10px">The calendar and the Recent list share a row on a laptop. The comment above <code>TwoColumns</code> says why: "the calendar is the wide thing and the list is the tall one, so they sit side by side and finish together instead of leaving a column of nothing down the right of a long page." The premise is wrong. A thirty-day calendar is five columns of seven squares - about 180 pixels tall, and it never grows. The list grows by one row per round. So the two never finish together, and the gap between them is the streak: <b>the better somebody practises, the emptier their page looks.</b></p>
+<p style="margin:0 0 10px">It is not bounded, either. Free lists the last 25 rounds and Pro lists up to a thousand (<code>FREE_RUNS</code>, <code>PRO_RUNS</code> in <code>streaks.py</code>), so a Pro speaker a year in has a column of nothing several screens tall. Switch to <b>60 rounds</b> above to see where that is going.</p>
+<p style="margin:0 0 10px">The same pairing is wrong at every window. Five days is a strip of named cards beside a 25-row list. Thirty days is the block in the screenshot. A year is the only window that already escapes it, because <code>isWide</code> gives the year the whole width and puts the list underneath - which is the answer, arriving 91 days too late.</p>
+
+<h3>1. One column</h3>
+<ul>
+<li><b>The calendar always takes the whole width, and the list sits under it.</b> Which is what the year already does, so this is the year's rule applied to every window instead of only the longest one.</li>
+<li><b>At the whole width a month is one row of thirty squares</b>, not a five by seven block. That is a better calendar as well as a wider one: a row reads left to right like time does, and the gap where you missed three days is a gap, not a hole in a grid whose columns are weeks nobody counts.</li>
+<li><b>The list, given the width, runs in two columns</b> and halves its height. Nineteen rounds is ten and nine, and it still reads top to bottom then across.</li>
+<li><b>It removes something:</b> <code>TwoColumns</code> and <code>isWide</code> both go, and the page stops having two layouts that depend on a plan.</li>
+</ul>
+
+<h3>2. The calendar goes up with the tiles</h3>
+<ul>
+<li><b>The calendar is a small object, so it belongs with the other small objects.</b> Streak, topics, minutes and the month sit in one band at the top, and the list has the page to itself underneath.</li>
+<li>The top of the page becomes the whole answer to "how am I doing", which is what somebody clicking the flame came for, and everything below it is the record.</li>
+<li>Costs: four things in a row is a dashboard, and the three tiles were deliberately three. The month has to shrink to fit beside them, which is the opposite of what option 1 does with it.</li>
+</ul>
+
+<h3>3. A shorter list</h3>
+<ul>
+<li><b>Keep the two columns and stop the list growing:</b> show the last eight, then "See all 19 rounds". The two columns roughly balance, and the page is the same height at round 19 as at round 900.</li>
+<li><b>The thousand-row cap needs this whatever else happens.</b> A list nobody scrolls to the end of is not a record, it is a wall, and the page has no other way to get shorter.</li>
+<li>Costs: it is the least of the three. The columns only balance at one length, so the void comes back the moment somebody has a slow week and the calendar is emptier than the list is long; and it hides rounds behind a click on the one page whose job is to show them.</li>
+</ul>
+
+<div class="verdict"><b>The recommendation: 1, and take 3's cap with it.</b> One column fixes the shape - nothing on this page has a partner it can be left waiting for - and the month at full width is a better drawing of a month than the block it replaces. The cap is a separate fault the layout was hiding: a Pro speaker's thousand rows are a wall at any width, so the list shows the last ten or so and says how many there are. Option 2 is the one to take if the top of the page should answer everything and the rest should be the archive.</div>
+</div>
+
+<h1 class="lab" data-lab>Today, as built</h1>
+<p class="cap" data-cap>The calendar finishes in 180 pixels and the list keeps going. The gap between them is the streak.</p>
+<div class="stage"><div class="frame"><main>
+  <p class="kicker">Your streak</p>
+  <h1 class="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>Day 2.</h1>
+
+  <div class="tiles" data-tiles>
+    <div class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg><div class="n">2</div><div class="l">day streak</div></div>
+    <div class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 10h8M8 14h5M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><div class="n" data-topics>19</div><div class="l">topics</div></div>
+    <div class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19v3M8 22h8M19 10v2a7 7 0 0 1-14 0v-2"/><rect x="9" y="2" width="6" height="12" rx="3"/></svg><div class="n" data-minutes>21</div><div class="l">minutes spoken</div></div>
+  </div>
+
+  <div data-slot></div>
+
+  <div class="sect">
+    <div class="sect-h"><h2>Progress</h2><p>19 rounds since 7 September</p></div>
+    <p style="margin:0 0 10px;font-size:13px;font-weight:600">Then and now <span style="font-weight:400;color:var(--muted)">Your first 5 rounds against your last 5.</span></p>
+    <div class="prog">
+      <div class="prow"><span class="k">Silence</span><span class="s">You are quiet for <b>22 seconds</b> of your minute. It was 26.</span>
+        <span class="db"><i class="track"></i><i class="good" style="left:0;width:45%"></i><i class="then" style="left:65%"></i><i class="now out" style="left:55%"></i></span></div>
+      <div class="prow"><span class="k">Time to start</span><span class="s">You start after <b>0.8 seconds</b>. It was 2.2.</span>
+        <span class="db"><i class="track"></i><i class="good" style="left:0;width:50%"></i><i class="then" style="left:28%"></i><i class="now" style="left:10%"></i></span></div>
+      <div class="prow"><span class="k">Ums a minute</span><span class="s">You say <b>2</b>. It was 5.</span>
+        <span class="db"><i class="track"></i><i class="good" style="left:0;width:33%"></i><i class="then" style="left:42%"></i><i class="now" style="left:17%"></i></span></div>
+    </div>
+  </div>
+
+  <a class="btn" href="#">Keep it going</a>
+  <p class="foot">Signed in as you. Your streak follows you on any device.</p>
+</main></div></div>
+<div class="tail"></div>
+
+<script>
+const root=document.documentElement;
+const LAB={now:["Today, as built","The calendar finishes in 180 pixels and the list keeps going. The gap between them is the streak."],
+  one:["1 - One column","The calendar takes the whole width, a month as one row of days, and the list runs under it in two columns."],
+  top:["2 - Calendar with the tiles","The small things share the top band; the list has the page to itself."],
+  cap:["3 - A shorter list","Today's two columns, with the list cut to the last eight and a way to the rest."]};
+
+const TOPICS=["Most published research is unreliable|Science & climate|29m","Air|Science & climate|1h","The first time you saw the Milky Way|Science & climate|2h","Explain why the wind blows|Science & climate|2h","What is worth queueing for?|General|2h","Working with someone difficult|Career & work|3h","Tea is better than coffee|General|4h","Silence in a lift|General|5h","What are you known for?|General|5h","Doors|General|5h","The middle seat|General|5h","Explain the internet to someone from 1900|General|5h","Explain why we dream|General|6h","Complain about something trivial for a minute|General|6h","Argue for owning one good pen|General|17h","Lists|General|17h","The smell of rain|General|17h","When you stayed silent|Philosophy & ethics|17h","A rule worth breaking|Philosophy & ethics|18h"];
+const GLYPH={"Science & climate":'<path d="M9 3h6M10 3v6.5L4.8 18a2 2 0 0 0 1.7 3h11a2 2 0 0 0 1.7-3L14 9.5V3"/>',
+  "Career & work":'<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
+  "General":'<path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>',
+  "Philosophy & ethics":'<path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/>'};
+let rounds=19, picked="now";
+
+function icon(genre){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(GLYPH[genre]||GLYPH.General)+'</svg>';}
+function rows(n){
+  let out="";
+  for(let i=0;i<n;i++){
+    const [text,genre,ago]=TOPICS[i%TOPICS.length].split("|");
+    out+='<li><a href="#">'+text+'</a><span class="meta"><span class="g">'+icon(genre)+genre+'</span><time>'+ago+' ago</time></span></li>';
+  }
+  return '<ul class="recent">'+out+'</ul>';
+}
+
+/* A month of squares: two days spoken, the rest empty, which is the
+   account in the screenshot. */
+const SPOKEN=new Set([28,29]);
+function heat(){
+  let cells="";
+  for(let i=0;i<35;i++)cells+='<i class="'+(SPOKEN.has(i)?"on":"")+'"></i>';
+  return '<div class="heatwrap"><div class="week"><span>Mon</span><span></span><span>Wed</span><span></span><span>Fri</span><span></span><span></span></div>'+
+    '<div><div class="month" style="padding-left:100px">Sep</div><div class="heat">'+cells+'</div></div></div>';
+}
+function rowcal(){
+  let cells="";
+  for(let i=0;i<30;i++){
+    const on=i>=28, today=i===29;
+    cells+='<i class="'+(on?"on ":"")+(today?"today":"")+'"></i>';
+  }
+  return '<div class="rowcal">'+cells+'</div><div class="rowends"><span>10 August</span><span>Today</span></div>';
+}
+function sect(title,aside,body,cls){
+  return '<div class="sect '+(cls||"")+'"><div class="sect-h"><h2>'+title+'</h2><p>'+aside+'</p></div>'+body+'</div>';
+}
+
+const FREE='Free keeps 30 days. <a href="#">Pro keeps a year</a>';
+function build(){
+  const slot=document.querySelector("[data-slot]");
+  const listAside='Last '+rounds+' of '+rounds+'.';
+  if(picked==="now"){
+    slot.innerHTML='<div class="two">'+sect("Last 30 days",FREE,heat())+
+      '<div class="void">'+sect("Recent",listAside,rows(rounds))+'</div></div>';
+    /* The void is the left column, not the list: mark the space beside it. */
+    slot.querySelector(".void").classList.remove("void");
+    slot.querySelector(".sect").classList.add("void");
+  }else if(picked==="one"){
+    slot.innerHTML=sect("Last 30 days",FREE,rowcal())+
+      sect("Recent",listAside,rows(rounds)+'<p class="more"><a href="#">See every round</a></p>',"wide");
+  }else if(picked==="top"){
+    slot.innerHTML=sect("Last 30 days",FREE,rowcal())+
+      sect("Recent",listAside,rows(rounds),"wide");
+    /* The calendar rides up beside the tiles rather than sitting under them. */
+    const tiles=document.querySelector("[data-tiles]");
+    tiles.style.maxWidth="none";
+    tiles.style.gridTemplateColumns="repeat(3,150px) minmax(0,1fr)";
+    const cal=slot.querySelector(".sect");
+    cal.style.marginTop="0";
+    cal.style.alignSelf="center";
+    tiles.appendChild(cal);
+  }else{
+    const shown=Math.min(8,rounds);
+    slot.innerHTML='<div class="two">'+sect("Last 30 days",FREE,heat())+
+      sect("Recent",listAside,rows(shown)+'<p class="more"><a href="#">See all '+rounds+' rounds</a></p>')+'</div>';
+  }
+  if(picked!=="top"){
+    const tiles=document.querySelector("[data-tiles]");
+    tiles.style.maxWidth="760px";
+    tiles.style.gridTemplateColumns="repeat(3,1fr)";
+  }
+  document.querySelector("[data-topics]").textContent=rounds;
+  document.querySelector("[data-minutes]").textContent=Math.round(rounds*1.1);
+}
+
+function opt(id){picked=id;document.querySelectorAll(".mockbar [data-opt]").forEach(b=>b.classList.toggle("on",b.dataset.opt===id));
+  document.querySelector("[data-lab]").textContent=LAB[id][0];document.querySelector("[data-cap]").textContent=LAB[id][1];build();}
+function count(n){rounds=Number(n);document.querySelectorAll(".mockbar [data-rounds]").forEach(b=>b.classList.toggle("on",Number(b.dataset.rounds)===rounds));build();}
+function theme(t){root.dataset.theme=t;document.querySelectorAll("[data-theme-set]").forEach(b=>b.classList.toggle("on",b.dataset.themeSet===t));}
+function width(w){document.body.classList.toggle("phone",w==="phone");document.querySelectorAll("[data-width]").forEach(b=>b.classList.toggle("on",b.dataset.width===w));}
+function notes(){const n=document.querySelector(".notes");n.hidden=!n.hidden;document.querySelector("[data-notes]").classList.toggle("on",!n.hidden);}
+function voidmark(){document.body.classList.toggle("showvoid");document.querySelector("[data-void]").classList.toggle("on",document.body.classList.contains("showvoid"));}
+document.addEventListener("click",e=>{
+  const t=e.target.closest(".mockbar [data-opt],.mockbar [data-rounds],[data-theme-set],[data-width],[data-notes],[data-void]");
+  if(!t)return;e.preventDefault();
+  if(t.dataset.opt)opt(t.dataset.opt);
+  if(t.dataset.rounds)count(t.dataset.rounds);
+  if(t.dataset.themeSet)theme(t.dataset.themeSet);
+  if(t.dataset.width)width(t.dataset.width);
+  if(t.hasAttribute("data-notes"))notes();
+  if(t.hasAttribute("data-void"))voidmark();
+});
+document.body.classList.add("showvoid");
+build();
+theme(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");
+</script></body></html>

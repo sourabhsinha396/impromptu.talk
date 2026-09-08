@@ -12,8 +12,8 @@ have travelled since; "today" is the clock of the request asking.
 The rule a streak is counted under is the plan's (owner's call, card 16).
 Free tracks five days: the number never reads above five and a missed day
 ends it. Pro tracks as many days as the plan lasts, thirty for a month,
-365 for a year and for lifetime, and survives a couple of missed days a
-calendar month. When Pro lapses the free rule takes over, and the number
+365 for a year and for lifetime, and survives a couple of missed days in
+any thirty. When Pro lapses the free rule takes over, and the number
 drops to what five days can show. Both are counting rules and nothing is
 stored: no inventory, no table, no purchase of its own, so the answer
 cannot disagree with the runs table and buying Pro repairs the gaps
@@ -26,12 +26,18 @@ from dataclasses import dataclass, field
 from apps.runs.models import Run
 from apps.runs.services import owned_by, totals
 
-# Missed days a Pro streak survives, per calendar month. Two covers a
-# weekend away, which is what people actually lose a streak to. Per
-# calendar month rather than per streak so a long streak keeps being
-# forgiven, and small enough that practising every other day still breaks,
-# which a streak that never breaks would not be worth having.
-FREEZES_PER_MONTH = 2
+# Missed days a Pro streak survives, and the window that allowance is
+# counted over. Two covers a weekend away, which is what people actually
+# lose a streak to. The window rolls back from the gap rather than
+# following the calendar: billed to calendar months, three days away broke
+# a streak mid-month and held across the 31st, because each month handed
+# the same absence its own two, so whether it was forgiven depended on the
+# date and not on the absence. Thirty days rather than per streak so a long
+# streak keeps being forgiven, and small enough that practising every other
+# day still breaks, which a streak that never breaks would not be worth
+# having.
+FREEZES_PER_WINDOW = 2
+FREEZE_WINDOW_DAYS = 30
 
 # How many days each tier tracks. Five is what the free page shows, and
 # the most its streak reads; a Pro plan tracks its own length, and nothing
@@ -75,7 +81,7 @@ def local_dates(did: str, user=None) -> list[dt.date]:
     return sorted({local_date(created, offset) for created, offset in rows}, reverse=True)
 
 
-def _freeze(earlier: dt.date, later: dt.date, spent: dict[tuple[int, int], int]) -> bool:
+def _freeze(earlier: dt.date, later: dt.date, spent: list[dt.date]) -> bool:
     """Cover the days between two practice days, or leave `spent` untouched.
 
     All or nothing: a gap half-covered is still a broken streak, so a run
@@ -83,19 +89,21 @@ def _freeze(earlier: dt.date, later: dt.date, spent: dict[tuple[int, int], int])
     have used.
     """
     missed = (later - earlier).days - 1
-    # Consecutive days land in at most two calendar months, so a gap longer
-    # than two months' allowance can never be covered however it falls. The
-    # guard is what stops a year away walking a year of dates.
-    if missed > 2 * FREEZES_PER_MONTH:
+    # One gap's missed days are consecutive, so they always sit in one
+    # window: a gap longer than the whole allowance can never be covered
+    # however it falls, and this is what stops a year away walking a year
+    # of dates.
+    if missed > FREEZES_PER_WINDOW:
         return False
-    want = dict(spent)
-    for n in range(1, missed + 1):
-        day = earlier + dt.timedelta(days=n)
-        month = (day.year, day.month)
-        want[month] = want.get(month, 0) + 1
-        if want[month] > FREEZES_PER_MONTH:
-            return False
-    spent.update(want)
+    want = sorted(spent + [earlier + dt.timedelta(days=n) for n in range(1, missed + 1)])
+    # Two in any window, said as spacing: if some window holds three frozen
+    # days then two of them are less than a window apart with a third
+    # between, so checking each day against the second one after it is the
+    # whole rule.
+    crowded = zip(want, want[FREEZES_PER_WINDOW:], strict=False)
+    if any((late - early).days < FREEZE_WINDOW_DAYS for early, late in crowded):
+        return False
+    spent[:] = want
     return True
 
 
@@ -121,7 +129,7 @@ def _walk(days: list[dt.date], today: dt.date, rule: Rule) -> tuple[int, set[dt.
     if not days or days[0] < today - dt.timedelta(days=1):
         return 0, set()
     streak = 1
-    spent: dict[tuple[int, int], int] = {}
+    spent: list[dt.date] = []
     frozen: set[dt.date] = set()
     for earlier, later in zip(days[1:], days, strict=False):
         if streak >= rule.days:
@@ -144,13 +152,13 @@ def _longest(days: list[dt.date], rule: Rule) -> int:
     if not days:
         return 0
     best = run = 1
-    spent: dict[tuple[int, int], int] = {}
+    spent: list[dt.date] = []
     for earlier, later in zip(days[1:], days, strict=False):
         if (later - earlier).days == 1 or (rule.freezes and _freeze(earlier, later, spent)):
             run += 1
         else:
             run = 1
-            spent = {}
+            spent = []
         best = max(best, run)
     return min(best, rule.days)
 

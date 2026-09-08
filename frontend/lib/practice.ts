@@ -32,10 +32,16 @@ export type Shared = {
   recent: { text: string; slug: string }[];
 };
 
-/** A calendar longer than a quarter wants the whole width; anything
-    shorter shares the row with the list beside it on a laptop. */
-export function isWide(days: number): boolean {
-  return days > 91;
+/** A window short enough to draw as one line of days rather than as seven
+    lines of weeks.
+
+    At the page's width a row of sixty-four squares is still ten pixels
+    each, which is the smallest a day reads at; past that the days have to
+    stack into weeks. Everything the product actually asks for is under
+    the line - five days free, thirty on a plan, eight weeks on a shared
+    page - so the heatmap is the year's drawing and nothing else's. */
+export function isRow(days: number): boolean {
+  return days > 7 && days <= 64;
 }
 
 export const EMPTY_PROGRESS: Progress = {

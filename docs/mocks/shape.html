@@ -1,0 +1,455 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mock: the shape card, made readable</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..600&family=Plus+Jakarta+Sans:wght@400..700&display=swap" rel="stylesheet"><style>
+:root{color-scheme:light;--surface:#fff;--card:#fff;--card2:oklch(.965 .008 120);--ink:#1c1917;--muted:#57534e;--line:#e7e5e4;--line-strong:#918b87;
+--accent-h:120;--accent-c:.12;--accent-l:.5;--accent-l-strong:.42;--accent:oklch(var(--accent-l) var(--accent-c) var(--accent-h));--accent-strong:oklch(var(--accent-l-strong) var(--accent-c) var(--accent-h));
+--btn:#1c1917;--btn-ink:#fff;--warn:oklch(.62 .2 30);--poor:oklch(.55 .18 12);
+--sans:"Plus Jakarta Sans",ui-sans-serif,system-ui,sans-serif;--display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif}
+[data-theme=dark]{color-scheme:dark;--surface:#080808;--card:#161616;--card2:#101010;--ink:#f5f5f4;--muted:#a8a29e;--line:#292524;--line-strong:#6b6560;
+--accent-l:.796;--accent-l-strong:.86;--btn:#f5f5f4;--btn-ink:#111110;--warn:oklch(.75 .19 30);--poor:oklch(.72 .17 12)}
+*{box-sizing:border-box}html,body{margin:0}body{background:#3f3d3a;font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased}
+.mockbar{position:sticky;top:0;z-index:50;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:10px 16px;background:#26241f;color:#d6d3d1;font:600 12px/1 var(--sans);letter-spacing:.02em}
+.mockbar b{color:#fff;font-weight:700;margin-right:6px}.mockbar .seg{display:inline-flex;border:1px solid #57534e;border-radius:999px;overflow:hidden}
+.mockbar button{all:unset;cursor:pointer;padding:7px 12px;color:#d6d3d1}.mockbar button.on{background:#f5f5f4;color:#1c1917}
+.mockbar .seg[hidden]{display:none}
+h1.lab{max-width:1160px;margin:26px auto 0;color:#d6d3d1;font:600 12px var(--sans);letter-spacing:.05em;text-transform:uppercase}
+.cap{max-width:1160px;margin:8px auto 0;color:#a8a29e;font:400 13px/1.5 var(--sans)}
+.stage{margin:12px auto 0;max-width:1160px;overflow-x:auto}.phone .stage{max-width:390px}
+.frame{width:1160px;background:var(--surface);color:var(--ink);box-shadow:0 20px 60px rgb(0 0 0/.35);padding:24px 28px 30px}
+.phone .frame{width:390px;padding:20px 16px 26px}
+.notes{max-width:1160px;margin:26px auto 0;background:#fffbea;color:#3b2f0b;border-radius:14px;padding:18px 22px;font-size:14px;line-height:1.55}
+.notes h2{margin:0 0 8px;font:600 15px var(--sans)}.notes h3{margin:18px 0 6px;font:600 14px var(--sans)}
+.notes ul{margin:0;padding-left:18px}.notes li{margin:6px 0}.notes[hidden]{display:none}
+.notes code{background:#f3e9b8;padding:1px 5px;border-radius:4px;font-size:12.5px}
+.verdict{margin:14px 0 0;padding:12px 14px;border-radius:10px;background:#2a2a28;color:#e7e5e4;font-size:13.5px;line-height:1.55}
+.tail{height:70px}
+[hidden]{display:none!important}
+
+/* --------------------------------------------------------------- gallery */
+.gal{display:grid;grid-template-columns:repeat(3,1fr);gap:18px 16px}
+.phone .gal{grid-template-columns:1fr}
+.pick{all:unset;cursor:pointer;display:flex;flex-direction:column;height:100%}
+.pick .c{flex:1;height:auto;transition:box-shadow .12s}
+.pick[aria-pressed=true] .c{box-shadow:0 0 0 2px var(--ink)}
+.pick .why{flex:none;font-size:12px;color:var(--muted);line-height:1.45;margin:8px 2px 0;display:block}
+.pick .why b{color:var(--ink);font-weight:600}
+
+/* ------------------------------------------------------- the filming board */
+.head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px 24px}
+.head .topic{font-family:var(--display);font-weight:600;font-variation-settings:"wdth" 96;font-size:21px;letter-spacing:-.02em;color:var(--accent);margin:0;line-height:1.15}
+.head .meta{font-size:15px;font-weight:600;color:var(--muted);margin:0}.head .meta b{color:var(--ink);font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}
+.phone .grid{grid-template-columns:1fr}
+.wide{grid-column:span 2}.phone .wide{grid-column:auto}
+.c{display:flex;flex-direction:column;border:1.5px solid var(--line);border-radius:14px;background:var(--card2);padding:12px 16px;min-width:0;height:100%}
+.c h3{margin:0;font-size:14px;font-weight:700;color:var(--muted)}
+.c .v{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-top:8px}
+.c .v .n{font-family:var(--display);font-weight:600;font-size:40px;line-height:1;letter-spacing:-.03em;white-space:nowrap}
+.c .v .n.out{color:var(--poor)}
+.c .v .u{font-size:14px;font-weight:600;color:var(--muted);text-align:right}
+.c p{margin:10px 0 0;font-size:15px;color:var(--muted);line-height:1.4}
+.c p.push{margin-top:auto;padding-top:10px}
+.meter{position:relative;height:13px;border-radius:999px;background:var(--line);margin-top:10px}
+.meter i.good{position:absolute;top:0;bottom:0;border-radius:999px;background:color-mix(in oklab,var(--accent) 40%,transparent)}
+.meter i.now{position:absolute;top:-5px;width:22px;height:22px;margin-left:-11px;border-radius:999px;border:4px solid var(--card2);background:var(--ink)}
+.meter i.now.out{background:var(--poor)}
+.c .f{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-top:6px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.chip{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:6px 12px;font-size:15px;font-weight:600;background:color-mix(in oklab,var(--accent) 20%,transparent)}
+.chip.f{background:color-mix(in oklab,var(--warn) 20%,transparent)}
+.foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px;margin-top:16px;font-size:15px;color:var(--muted)}
+.link{color:var(--accent-strong);font-weight:600;text-decoration:underline;text-underline-offset:4px}
+
+/* columns */
+.cols{display:flex;align-items:flex-end;gap:8px;height:92px;margin-top:12px}
+.cols div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%}
+.cols i{display:block;border-radius:5px 5px 0 0;background:var(--accent);opacity:.85}
+.cols i.out{background:var(--poor);opacity:1}
+.colnames{display:flex;gap:8px;margin-top:6px}
+.colnames span{flex:1;font-size:11.5px;font-weight:600;color:var(--muted);text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.colnames span.out{color:var(--poor)}
+
+/* rows of bars */
+.hrows{display:flex;flex-direction:column;gap:7px;margin-top:10px}
+.hrow{display:grid;grid-template-columns:4.6rem 1fr;gap:0 10px;align-items:center}
+.hrow span{font-size:12.5px;font-weight:600;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hrow span.out{color:var(--poor)}
+.hbar{height:11px;border-radius:999px;background:var(--line);overflow:hidden}
+.hbar i{display:block;height:100%;border-radius:999px;background:var(--accent);opacity:.85}
+.hbar i.out{background:var(--poor);opacity:1}
+
+/* segmented bar */
+.segs{display:flex;gap:4px;margin-top:12px}
+.segs i{flex:1;height:16px;border-radius:4px;background:color-mix(in oklab,var(--accent) 60%,transparent)}
+.segs i.out{background:var(--poor)}
+.segnames{display:flex;gap:4px;margin-top:6px}
+.segnames span{flex:1;font-size:11.5px;font-weight:600;color:var(--muted);text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.segnames span.out{color:var(--poor)}
+
+/* named marks */
+.marks{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.mark{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:5px 11px 5px 9px;font-size:15px;font-weight:600;background:color-mix(in oklab,var(--accent) 18%,transparent)}
+.mark.out{background:color-mix(in oklab,var(--poor) 18%,transparent)}
+.mark svg{flex:none;color:var(--accent-strong)}.mark.out svg{color:var(--poor)}
+
+/* ---------------------------------------------------------- the round page */
+.page{max-width:760px;margin:0 auto}
+.sect-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:7px;margin-bottom:16px}
+.sect-h h2{margin:0;font-family:var(--display);font-weight:600;font-variation-settings:"wdth" 96;letter-spacing:-.02em;font-size:19px}
+.sect-h .a{font-size:12.5px;color:var(--muted)}
+.pair{display:grid;grid-template-columns:250px 1fr;gap:0 32px;align-items:center}
+.phone .pair{grid-template-columns:1fr;gap:18px}
+.bands{display:grid;grid-template-columns:1fr;gap:15px}
+.bands.two{grid-template-columns:1fr 1fr;gap:16px 28px}
+.phone .bands.two{grid-template-columns:1fr}
+.band .h{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.band .h b{font-size:12.5px;font-weight:600}.band .h span{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.sm{position:relative;height:6px;border-radius:999px;background:var(--line);margin-top:8px}
+.sm i.good{position:absolute;top:0;bottom:0;border-radius:999px;background:color-mix(in oklab,var(--accent) 30%,transparent)}
+.sm i.usual{position:absolute;top:-3px;width:12px;height:12px;margin-left:-6px;border-radius:999px;border:2px solid var(--muted);background:var(--surface)}
+.sm i.now{position:absolute;top:-4px;width:14px;height:14px;margin-left:-7px;border-radius:999px;border:2px solid var(--surface);background:var(--accent)}
+.sm i.now.out{background:var(--poor)}
+.band .f{display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:11px;color:var(--muted)}
+.band .f b{color:var(--accent-strong);font-weight:600}.band .f b.out{color:var(--poor)}
+.radarkey{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 14px;font-size:11.5px;color:var(--muted);margin-top:6px}
+.radarkey i{display:inline-block;width:14px;border-top:2px solid var(--accent);margin-right:5px;vertical-align:4px}
+.radarkey i.d{border-top:1px dashed var(--line-strong)}.radarkey i.m{border-top:1.5px solid var(--muted)}
+
+/* zones */
+.zone{display:flex;gap:2px;height:12px;margin-top:8px}
+.zone i{height:100%}
+.zone i.low,.zone i.high{background:color-mix(in oklab,var(--line-strong) 32%,transparent)}
+.zone i.good{background:color-mix(in oklab,var(--accent) 45%,transparent)}
+.zone i:first-child{border-radius:999px 0 0 999px}.zone i:last-child{border-radius:0 999px 999px 0}
+.zonewrap{position:relative}
+.zonewrap .pin{position:absolute;top:10px;width:16px;height:16px;margin-left:-8px;border-radius:999px;border:3px solid var(--surface);background:var(--ink);box-shadow:0 0 0 1px var(--line-strong)}
+.zonewrap .pin.out{background:var(--poor);box-shadow:0 0 0 1px var(--poor)}
+.zonewrap .usual{position:absolute;top:12px;width:12px;height:12px;margin-left:-6px;border-radius:999px;border:2px solid var(--muted);background:var(--surface)}
+.zonenames{display:flex;margin-top:7px;font-size:11px;color:var(--muted)}
+.zonenames span{text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.zonenames span.here{color:var(--ink);font-weight:600}
+.zonenames span.here.out{color:var(--poor)}
+
+/* a measure a row, with its last ten */
+.trend{border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.trow{display:grid;grid-template-columns:9.5rem 1fr 120px 5.5rem;gap:0 18px;align-items:center;padding:11px 16px;border-bottom:1px solid var(--line)}
+.trow:last-child{border-bottom:0}
+.phone .trow{grid-template-columns:1fr 90px;gap:4px 12px}.phone .trow .z{grid-column:1/-1;order:3}
+.trow .k{font-size:12.5px;font-weight:600}
+.trow .n{font-size:13px;font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+.trow .n.out{color:var(--poor)}
+.trow .w{font-size:11.5px;color:var(--muted);text-align:right;font-weight:400}
+.spark{display:block;width:120px;height:26px}
+</style></head><body>
+<div class="mockbar"><b>Mock</b>
+<span class="seg"><button data-view="gallery" class="on">The card, nine ways</button><button data-view="board">On the board</button><button data-view="page">Round page</button></span>
+<span class="seg" data-set="page" hidden><button data-popt="pnow" class="on">Today</button><button data-popt="zones">Named zones</button><button data-popt="hbars">Bars, one a measure</button><button data-popt="trend">With your last ten</button></span>
+<span class="seg"><button data-theme-set="light">Light</button><button data-theme-set="dark">Dark</button></span>
+<span class="seg"><button data-width="desktop" class="on">Desktop</button><button data-width="phone">Phone</button></span>
+<span class="seg"><button data-notes class="on">Notes</button></span></div>
+
+<div class="notes"><h2>The shape card: nine drawings of one number, and what each costs</h2>
+<p style="margin:0 0 10px">The round scores five measures - pace, time to start, longest gap, ums a minute, longest sentence - and four of them were comfortable. That is the whole content of this card. The radar draws it as a pentagon with no labels and no key, which is why it reads as a blob; and every one of the five already has its own card two inches away, so the only thing this card adds is the count and the comparison with your usual.</p>
+<p style="margin:0 0 10px">Click a card in the gallery to put it on the board. Every drawing below is a shape people have seen before: a bar chart, a pie with the slices pulled apart, a dial, a progress bar.</p>
+
+<h3>The bar family</h3>
+<ul>
+<li><b>Columns.</b> Five bars, one a measure, full height where the round was comfortable and short where it was not. The plainest chart there is, and it plots exactly the numbers the radar plots - a radar is a bar chart bent into a circle, so this is that circle cut open and laid flat. The short bar is the thing that went wrong and it says its own name underneath, which no other drawing here does without a sentence.</li>
+<li><b>Bars, one a measure.</b> The same, on its side. Turning it is what lets the names be words rather than abbreviations: "Longest sentence" fits at the left of a row and does not fit under a column.</li>
+<li><b>Segmented bar.</b> One track cut into five blocks. Not a measurement at all, a tally: four full and one empty, the way a progress bar reads.</li>
+<li>The cost these three share: <b>bar height is a score, not a number you can quote.</b> A short Pace bar does not mean 111 is a small number, it means 111 fell outside the comfortable stretch. Somebody skimming can misread that, and the caption has to carry it.</li>
+</ul>
+
+<h3>The pie family</h3>
+<ul>
+<li><b>Broken pie.</b> A circle cut into five slices with gaps between them, four accent and one warm, the count in the middle. Equal slices are normally a mistake in a pie; here they are the point, because the five measures weigh the same and the only question is how many were comfortable. A fifth of a ring in another colour is a shape you read before you read a word.</li>
+<li><b>Arc gauge.</b> The same pie folded to a half circle, which is what a dial is. Sits better in a wide short card and leaves more room under it for the sentence.</li>
+<li><b>Ring.</b> One unbroken donut, four fifths accent, count in the middle. The simplest of all, with nothing to count: a ring that is nearly whole.</li>
+<li>The cost the pie family shares: <b>where a slice sits means nothing.</b> The warm slice is warm because pace was outside, but its position on the circle is arbitrary, and it cannot name what went wrong - the sentence under the card has to.</li>
+</ul>
+
+<h3>Not charts</h3>
+<ul>
+<li><b>Named marks.</b> A big "4 of 5 comfortable" and five little pills, ticked or crossed. The card then reads exactly like every other card on the board: a number, a word, then the detail.</li>
+<li><b>Two numbers.</b> No drawing at all: "4 of 5" against "your usual 3 of 5", side by side, the way the streak tiles already read. The least this card could possibly be.</li>
+<li><b>No card.</b> The count moves into the head row and the board goes to nine bigger cards, which on a filmed screen may be worth more than a tenth box.</li>
+</ul>
+
+<h3>The round page is a different room</h3>
+<ul>
+<li>The same radar is on <code>/streak/[id]</code>, labelled and keyed and <b>drawn beside the very bars it is a picture of</b>, so four measures appear twice on one line: once as a spike with no number and once as a bar with one.</li>
+<li><b>Named zones</b> keeps the bars and fixes what actually makes them hard: the three stretches are drawn along the track and the one you landed in is named under it - "slow", "comfortable", "rushed" - instead of two words at the far ends. Your usual stays a hollow dot.</li>
+<li><b>Bars, one a measure</b> is the column chart at page size, in place of the radar, with each measure's real number at the end of its row.</li>
+<li><b>With your last ten</b> puts a small line of your last ten rounds on each row. The only option that answers "am I getting better", and the only one with a cost behind it: <code>usual</code> is a mean over twelve rounds and not a series, so the backend would have to send ten points a measure.</li>
+</ul>
+
+<div class="verdict"><b>The recommendation: columns on the board, named zones on the round page.</b> The bar chart is the only drawing here that carries both halves of the message on its own - how many were comfortable, and which one was not - without anybody reading a sentence, and a short bar among tall ones is as legible across a room as a gap in a ring. The pie family is prettier and says half as much: a ring cannot name what went wrong. If the card should be beautiful before it is informative, take the broken pie; if it should be neither, take the two numbers, which is the honest floor. On the round page there is no picture worth drawing, only bars that finally explain themselves.</div>
+</div>
+
+<h1 class="lab" data-lab>The card, nine ways</h1>
+<p class="cap" data-cap>Every drawing at the size it takes on the board. Click one to put it in place.</p>
+<div class="stage"><div class="frame">
+
+<!-- ============================================================= gallery -->
+<div data-view="gallery"><div class="gal" data-gallery></div></div>
+
+<!-- ======================================================== filming board -->
+<div data-view="board" hidden>
+  <div class="head"><p class="topic">Air</p><p class="meta" data-meta><b>Day 2</b> · 1:00</p></div>
+  <div class="grid">
+    <div class="c wide"><h3>Your minute</h3><div style="margin-top:6px" data-wave></div><p class="push">No gap long enough to notice. 2 ums, drawn where they were said.</p></div>
+    <div class="c"><h3>Answered the topic</h3><div class="v"><span class="n">Yes</span></div><p>You explained what air is and why it is important for life.</p></div>
+    <div class="c" data-slot></div>
+    <div class="c"><h3>Pace</h3><div class="v"><span class="n out">111</span><span class="u">Slow</span></div><div class="meter"><i class="good" style="left:34%;width:32%"></i><i class="now out" style="left:19%"></i></div><div class="f"><span>slow</span><span>rushed</span></div></div>
+    <div class="c"><h3>Time to start</h3><div class="v"><span class="n">0:00</span><span class="u">Straight in</span></div><div class="meter"><i class="good" style="left:0;width:50%"></i><i class="now" style="left:2%"></i></div><div class="f"><span>at once</span><span>8s</span></div></div>
+    <div class="c"><h3>Longest gap</h3><div class="v"><span class="n">0s</span><span class="u">No holes</span></div><div class="meter"><i class="good" style="left:0;width:44%"></i><i class="now" style="left:2%"></i></div><div class="f"><span>none</span><span>8s</span></div></div>
+    <div class="c"><h3>Ums a minute</h3><div class="v"><span class="n">2</span><span class="u">Clean</span></div><div class="meter"><i class="good" style="left:0;width:33%"></i><i class="now" style="left:17%"></i></div><div class="f"><span>none</span><span>12</span></div></div>
+    <div class="c wide"><h3>Words you lean on</h3><div class="chips"><span class="chip f">um <b>2</b></span><span class="chip f">like <b>2</b></span><span class="chip">just <b>1</b></span><span class="chip">so <b>1</b></span><span class="chip">yeah <b>1</b></span></div><p class="push">111 words, 61 of them different.</p></div>
+    <div class="c"><h3>Restarts</h3><div class="v"><span class="n">2</span><span class="u">and 1 phrase said twice</span></div><p>&ldquo;Even if there is sunlight, even if&rdquo;</p></div>
+    <div class="c"><h3>Sentences</h3><div class="v"><span class="n">24</span><span class="u">longest, and you landed the last</span></div><p>Longest 24 words. Every one of them landed.</p></div>
+  </div>
+  <div class="foot"><span data-foot>Next time: push on a little. Long words land better than long gaps.</span><a class="link" href="#">See the full report</a></div>
+</div>
+
+<!-- ========================================================== round page -->
+<div data-view="page" hidden><div class="page">
+  <div class="sect-h"><h2 data-ptitle>The shape of your round</h2><span class="a">4 of 5 comfortable, against your usual</span></div>
+  <div data-popt="pnow">
+    <div class="pair">
+      <div><div data-radar-big></div><div class="radarkey"><span><i></i>today</span><span><i class="d"></i>comfortable</span><span><i class="m"></i>your usual, 6 rounds</span></div></div>
+      <div class="bands" data-bands></div>
+    </div>
+  </div>
+  <div data-popt="zones" hidden><div class="bands two" data-zones></div>
+    <p style="margin:18px 0 0;font-size:12.5px;color:var(--muted)">The hollow dot is your usual over your last 6 rounds.</p></div>
+  <div data-popt="hbars" hidden><div data-pagebars></div>
+    <p style="margin:18px 0 0;font-size:12.5px;color:var(--muted)">A full bar is a measure that landed in its comfortable stretch. Only your pace did not.</p></div>
+  <div data-popt="trend" hidden><div class="trend" data-trend></div>
+    <p style="margin:14px 0 0;font-size:12.5px;color:var(--muted)">The line is your last ten rounds on that measure, oldest first. Needs ten points a measure from the backend, which the round does not send today.</p></div>
+</div></div>
+
+</div></div>
+<div class="tail"></div>
+
+<script>
+const root=document.documentElement;
+
+/* The round in the screenshot: 111 wpm and slow, everything else
+   comfortable. `fit` is how far into the comfortable stretch the round
+   landed, which is the number the radar plots and the number a bar's
+   height would be. */
+const M=[
+  {k:"Pace",short:"Pace",v:"111 wpm",fit:42,zones:[34,32,34],names:["slow","comfortable","rushed"],at:19,usual:44,out:true,verdict:"Slow",
+   spark:[128,120,133,141,126,118,131,124,116,111]},
+  {k:"Time to start",short:"Start",v:"0:00",fit:100,zones:[0,50,50],names:["","straight in","slow to start"],at:2,usual:26,out:false,verdict:"Straight in",
+   spark:[4,3,5,2,3,1,2,1,0,0]},
+  {k:"Longest gap",short:"Gaps",v:"0s",fit:100,zones:[0,44,56],names:["","no holes","long hole"],at:2,usual:31,out:false,verdict:"No holes",
+   spark:[6,5,7,3,4,2,3,1,2,0]},
+  {k:"Ums a minute",short:"Ums",v:"2",fit:100,zones:[0,33,67],names:["","clean","heavy"],at:17,usual:24,out:false,verdict:"Clean",
+   spark:[7,6,8,5,6,4,3,4,3,2]},
+  {k:"Longest sentence",short:"Length",v:"24 words",fit:100,zones:[0,58,42],names:["","landed","run-on"],at:40,usual:46,out:false,verdict:"Landed",
+   spark:[38,41,36,33,30,34,29,27,26,24]}
+];
+const GOOD=M.filter(m=>!m.out).length, ALL=M.length, COUNT=GOOD+" of "+ALL;
+const TICK='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>';
+const CROSS='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+const TITLE="How the round went";
+const USUAL="Better than your usual, which is 3 of 5.";
+const NAMED="Only your pace was outside. "+USUAL;
+
+/* ---------------------------------------------------------------- pieces */
+/* Equal slices with a gap between them. Equal on purpose: the five measures
+   weigh the same, so the only question a slice can answer is whether that
+   measure was comfortable. */
+function slices(from,to,r,cx,cy,sw,gap){
+  const n=M.length, span=((to-from)-gap*n)/n;
+  let out="";
+  M.forEach((m,i)=>{
+    const a0=from+i*(span+gap), a1=a0+span;
+    const p=a=>{const t=a*Math.PI/180;return [cx+r*Math.cos(t),cy+r*Math.sin(t)];};
+    const [x0,y0]=p(a0),[x1,y1]=p(a1);
+    out+='<path d="M'+x0+' '+y0+' A'+r+' '+r+' 0 '+(a1-a0>180?1:0)+' 1 '+x1+' '+y1+'" fill="none" stroke-linecap="butt" stroke-width="'+sw+'" stroke="'+(m.out?"var(--poor)":"var(--accent)")+'"/>';
+  });
+  return out;
+}
+function middle(cx,y,big,small){
+  return '<text x="'+cx+'" y="'+y+'" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-weight="600" font-size="36" letter-spacing="-1" fill="var(--ink)">'+big+'</text>'+
+    '<text x="'+cx+'" y="'+(y+18)+'" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--muted)">'+small+'</text>';
+}
+function svg(w,h,body){return '<svg viewBox="0 0 '+w+' '+h+'" style="display:block;width:100%;max-width:'+w+'px;margin:8px auto 0" aria-hidden="true">'+body+'</svg>';}
+
+/* ----------------------------------------------------------- the drawings */
+const CARDS={
+  now:{name:"Today, the radar",why:"<b>The one to beat.</b> No labels, no key, and the caption under it already says what it says.",
+    html:()=>'<h3>The shape</h3>'+radar(150,false)+'<p class="push">4 of 5 comfortable, against your usual.</p>'},
+
+  pie:{name:"Broken pie",why:"<b>A pie with the slices pulled apart.</b> Equal slices, because the measures are equal. One is a different colour and you see it before you read.",
+    html:()=>'<h3>'+TITLE+'</h3>'+svg(180,146,slices(-90,270,58,90,73,16,9)+middle(90,70,COUNT,"comfortable"))+'<p class="push">'+NAMED+'</p>'},
+
+  arc:{name:"Arc gauge",why:"<b>The same pie folded to a dial.</b> Sits better in a wide short card and leaves more room for the sentence.",
+    html:()=>'<h3>'+TITLE+'</h3>'+svg(206,116,slices(180,360,78,103,106,17,7)+middle(103,84,COUNT,"comfortable"))+'<p class="push">'+NAMED+'</p>'},
+
+  ring:{name:"Ring",why:"<b>One donut, four fifths full.</b> Nothing to count and no gaps: a ring that is nearly whole. Cannot say which one fell out.",
+    html:()=>{
+      const r=58,cx=90,cy=73,c=2*Math.PI*r;
+      return '<h3>'+TITLE+'</h3>'+svg(180,146,
+        '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="var(--poor)" stroke-width="16"/>'+
+        '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="var(--accent)" stroke-width="16" stroke-linecap="round" stroke-dasharray="'+(c*GOOD/ALL)+' '+c+'" transform="rotate(-90 '+cx+' '+cy+')"/>'+
+        middle(cx,cy-3,COUNT,"comfortable"))+'<p class="push">'+NAMED+'</p>';
+    }},
+
+  cols:{name:"Columns",why:"<b>A bar chart, which is the radar cut open and laid flat.</b> The short bar is what went wrong, and it is the only drawing here that names it without a sentence.",
+    html:()=>'<h3>'+TITLE+'</h3><div class="v"><span class="n">'+COUNT+'</span><span class="u">comfortable</span></div>'+
+      '<div class="cols">'+M.map(m=>'<div><i class="'+(m.out?"out":"")+'" style="height:'+m.fit+'%"></i></div>').join("")+'</div>'+
+      '<div class="colnames">'+M.map(m=>'<span class="'+(m.out?"out":"")+'">'+m.short+'</span>').join("")+'</div>'+
+      '<p class="push">'+USUAL+'</p>'},
+
+  hbars:{name:"Bars, one a measure",why:"<b>The same chart on its side</b>, which is the only version where the names get to be words rather than abbreviations.",
+    html:()=>'<h3>'+TITLE+'</h3><div class="v"><span class="n">'+COUNT+'</span><span class="u">comfortable</span></div>'+
+      '<div class="hrows">'+M.map(m=>'<div class="hrow"><span class="'+(m.out?"out":"")+'">'+m.short+'</span><div class="hbar"><i class="'+(m.out?"out":"")+'" style="width:'+m.fit+'%"></i></div></div>').join("")+'</div>'+
+      '<p class="push">'+USUAL+'</p>'},
+
+  segbar:{name:"Segmented bar",why:"<b>A tally, not a measurement.</b> Four full and one empty, the way a progress bar reads, with the names underneath.",
+    html:()=>'<h3>'+TITLE+'</h3><div class="v"><span class="n">'+COUNT+'</span><span class="u">comfortable</span></div>'+
+      '<div class="segs">'+M.map(m=>'<i class="'+(m.out?"out":"")+'"></i>').join("")+'</div>'+
+      '<div class="segnames">'+M.map(m=>'<span class="'+(m.out?"out":"")+'">'+m.short+'</span>').join("")+'</div>'+
+      '<p class="push">'+USUAL+'</p>'},
+
+  marks:{name:"Named marks",why:"<b>Not a chart at all.</b> The card then reads like every other card on the board: a number, a word, then the detail.",
+    html:()=>{
+      const order=M.filter(m=>!m.out).concat(M.filter(m=>m.out));
+      return '<h3>'+TITLE+'</h3><div class="v"><span class="n">'+COUNT+'</span><span class="u">comfortable</span></div>'+
+        '<div class="marks">'+order.map(m=>'<span class="mark'+(m.out?" out":"")+'">'+(m.out?CROSS:TICK)+m.short+'</span>').join("")+'</div>'+
+        '<p class="push">'+USUAL+'</p>';
+    }},
+
+  two:{name:"Two numbers",why:"<b>The honest floor.</b> No drawing at all: today against your usual, the way the streak tiles already read.",
+    html:()=>'<h3>'+TITLE+'</h3><div class="v"><span class="n">'+COUNT+'</span><span class="u">comfortable<br>today</span></div>'+
+      '<div class="v" style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line)"><span class="n" style="font-size:28px;color:var(--muted)">3 of 5</span><span class="u">your usual,<br>6 rounds</span></div>'+
+      '<p class="push">Only your pace was outside.</p>'},
+
+  none:{name:"No card",why:"<b>The count moves to the head row</b> and the board goes to nine bigger cards, which on a filmed screen may be worth more than a tenth box.",
+    html:()=>'<h3 style="color:var(--line-strong)">Nothing here</h3><p style="margin-top:14px">The card is gone. &ldquo;4 of 5 comfortable&rdquo; joins the day and the length in the head row, and &ldquo;better than your usual&rdquo; joins the Next time line.</p>'}
+};
+
+/* ---------------------------------------------------------------- gallery */
+const ORDER=["now","cols","hbars","segbar","pie","arc","ring","marks","two","none"];
+let picked="cols";
+document.querySelectorAll("[data-gallery]").forEach(el=>{
+  el.innerHTML=ORDER.map(id=>'<button class="pick" data-card="'+id+'" aria-pressed="'+(id===picked)+'"><span class="c">'+CARDS[id].html()+'</span><span class="why">'+CARDS[id].why+'</span></button>').join("");
+});
+function place(){
+  const slot=document.querySelector("[data-slot]");
+  slot.hidden=picked==="none";
+  slot.innerHTML=picked==="none"?"":CARDS[picked].html();
+  document.querySelector("[data-meta]").innerHTML='<b>Day 2</b> · 1:00'+(picked==="none"?' · <span style="color:var(--ink)">4 of 5 comfortable</span>':"");
+  document.querySelector("[data-foot]").textContent=picked==="none"
+    ? "Next time: push on a little, and you are ahead of your usual 3 of 5."
+    : "Next time: push on a little. Long words land better than long gaps.";
+  document.querySelectorAll("[data-card]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.card===picked)));
+}
+
+/* ------------------------------------------------------------- round page */
+function band(m){
+  return '<div class="band"><div class="h"><b>'+m.k+'</b><span>'+m.v+'</span></div>'+
+    '<div class="sm"><i class="good" style="left:'+m.zones[0]+'%;width:'+m.zones[1]+'%"></i>'+
+    '<i class="usual" style="left:'+m.usual+'%"></i><i class="now'+(m.out?" out":"")+'" style="left:'+m.at+'%"></i></div>'+
+    '<div class="f"><span>'+(m.names[0]||"none")+'</span><b'+(m.out?' class="out"':"")+'>'+m.verdict+'</b><span>'+m.names[2]+'</span></div></div>';
+}
+function here(m){return m.at<m.zones[0]?0:m.at<m.zones[0]+m.zones[1]?1:2;}
+function zone(m){
+  const at=here(m);let bars="",names="";
+  [0,1,2].forEach(i=>{if(m.zones[i]>0){
+    bars+='<i class="'+["low","good","high"][i]+'" style="width:'+m.zones[i]+'%"></i>';
+    names+='<span class="'+(i===at?"here"+(m.out?" out":""):"")+'" style="width:'+m.zones[i]+'%">'+(m.names[i]||"")+'</span>';}});
+  return '<div class="band"><div class="h"><b>'+m.k+'</b><span>'+m.v+'</span></div>'+
+    '<div class="zonewrap"><div class="zone">'+bars+'</div><i class="usual" style="left:'+m.usual+'%"></i>'+
+    '<i class="pin'+(m.out?" out":"")+'" style="left:'+m.at+'%"></i></div><div class="zonenames">'+names+'</div></div>';
+}
+document.querySelectorAll("[data-bands]").forEach(el=>{el.innerHTML=M.slice(0,4).map(band).join("");});
+document.querySelectorAll("[data-zones]").forEach(el=>{el.innerHTML=M.map(zone).join("");});
+document.querySelectorAll("[data-pagebars]").forEach(el=>{
+  el.innerHTML='<div class="hrows" style="gap:12px;margin-top:0">'+M.map(m=>
+    '<div class="hrow" style="grid-template-columns:9.5rem 1fr 7rem;gap:0 16px"><span class="'+(m.out?"out":"")+'" style="color:var(--ink)">'+m.k+'</span>'+
+    '<div class="hbar" style="height:14px"><i class="'+(m.out?"out":"")+'" style="width:'+m.fit+'%"></i></div>'+
+    '<span style="text-align:right">'+m.v+'</span></div>').join("")+'</div>';
+});
+document.querySelectorAll("[data-trend]").forEach(el=>{
+  el.innerHTML=M.map(m=>{
+    const lo=Math.min(...m.spark),hi=Math.max(...m.spark),span=hi-lo||1;
+    const pts=m.spark.map((v,i)=>[i/(m.spark.length-1)*116+2,24-((v-lo)/span)*20].join(",")).join(" ");
+    const ly=24-((m.spark[m.spark.length-1]-lo)/span)*20;
+    let bars="";[0,1,2].forEach(i=>{if(m.zones[i]>0)bars+='<i class="'+["low","good","high"][i]+'" style="width:'+m.zones[i]+'%"></i>';});
+    return '<div class="trow"><span class="k">'+m.k+'</span>'+
+      '<span class="z zonewrap" style="display:block"><span class="zone" style="display:flex;margin-top:0">'+bars+'</span>'+
+      '<i class="usual" style="top:2px;left:'+m.usual+'%"></i><i class="pin'+(m.out?" out":"")+'" style="top:0;left:'+m.at+'%"></i></span>'+
+      '<svg class="spark" viewBox="0 0 120 28" aria-hidden="true"><polyline points="'+pts+'" fill="none" stroke="var(--line-strong)" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>'+
+      '<circle cx="118" cy="'+ly+'" r="3" fill="'+(m.out?"var(--poor)":"var(--accent)")+'"/></svg>'+
+      '<span class="n'+(m.out?" out":"")+'">'+m.v+'<br><span class="w">'+m.names[here(m)]+'</span></span></div>';
+  }).join("");
+});
+
+/* ----------------------------------------------------- the wave and radar */
+const BLOCKS=[[0,26,"talk"],[26,26.8,"breath"],[26.8,60,"talk"]];
+const HEIGHTS=[.55,.9,.7,1,.6,.85,.75,.95];
+document.querySelectorAll("[data-wave]").forEach(el=>{
+  let i=0,out="";
+  for(const p of BLOCKS){
+    const at=p[0]/60*100,to=p[1]/60*100;
+    if(p[2]==="talk"){for(let x=at+1;x<to;x+=2){const edge=(x-at<2)||(to-x<2);const h=HEIGHTS[i++%8]*(edge?.5:1);
+      out+='<line x1="'+x+'" x2="'+x+'" y1="'+(20-h*18)+'" y2="'+(20+h*18)+'" stroke="var(--accent)" stroke-width="4" stroke-linecap="round" vector-effect="non-scaling-stroke"/>';}}
+    else out+='<line x1="'+at+'" x2="'+to+'" y1="20" y2="20" stroke="var(--line-strong)" stroke-width="4.5" vector-effect="non-scaling-stroke"/>';
+  }
+  el.innerHTML='<div style="position:relative"><svg viewBox="0 0 100 40" preserveAspectRatio="none" style="display:block;width:100%;height:92px;overflow:visible" aria-hidden="true">'+out+'</svg>'+
+    '<span style="position:absolute;top:50%;left:56%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:999px;background:var(--warn);box-shadow:0 0 0 4px var(--card2)"></span>'+
+    '<span style="position:absolute;top:50%;left:63%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:999px;background:var(--warn);box-shadow:0 0 0 4px var(--card2)"></span></div>'+
+    '<div style="display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-top:4px"><span>0:00</span><span>1:00</span></div>';
+});
+const NAMES=["Pace","Start","Gaps","Ums","Length"];
+function point(i,v,n,r,c){const a=((-90+(i*360)/n)*Math.PI)/180;const d=(r*v)/100;return [c+d*Math.cos(a),c+d*Math.sin(a)];}
+function radar(size,labels){
+  const FIT=M.map(m=>m.fit);
+  const c=size/2,r=size/2-(labels?26:16),n=5;
+  const path=vals=>vals.map((v,i)=>point(i,v,n,r,c).join(",")).join(" ");
+  let out="";
+  for(const ring of [100,66,33])out+='<polygon points="'+path(FIT.map(()=>ring))+'" fill="none" stroke="var(--line)" stroke-width="1.5"/>';
+  out+='<polygon points="'+path(FIT.map(()=>100))+'" fill="none" stroke="var(--line-strong)" stroke-width="2" stroke-dasharray="4 4"/>';
+  out+='<polygon points="'+path([66,88,92,80,86])+'" fill="none" stroke="var(--muted)" stroke-width="1.5"/>';
+  out+='<polygon points="'+path(FIT)+'" fill="color-mix(in oklab,var(--accent) 45%,transparent)" stroke="var(--accent-strong)" stroke-width="3" stroke-linejoin="round"/>';
+  if(labels)for(let i=0;i<n;i++){const [x,y]=point(i,118,n,r,c);
+    out+='<text x="'+x+'" y="'+y+'" text-anchor="middle" dominant-baseline="middle" font-size="11" font-weight="600" fill="var(--muted)">'+NAMES[i]+'</text>';}
+  return '<svg viewBox="0 0 '+size+' '+size+'" style="display:block;width:100%;max-width:'+size+'px;margin:4px auto 0" aria-hidden="true">'+out+'</svg>';
+}
+document.querySelectorAll("[data-radar-big]").forEach(el=>{el.innerHTML=radar(250,true);});
+
+/* ------------------------------------------------------------- the mockbar */
+const LAB={gallery:["The card, nine ways","Every drawing at the size it takes on the board. Click one to put it in place."],
+  board:["On the board","The pick, in place, at the width a camera sees."],
+  page:["Round page","The same measures on the page that is read rather than filmed."]};
+const PTITLE={pnow:"The shape of your round",zones:"How the round went",hbars:"How the round went",trend:"How the round went"};
+function view(v){
+  document.querySelectorAll(".frame [data-view]").forEach(el=>{el.hidden=el.dataset.view!==v;});
+  document.querySelectorAll(".mockbar [data-view]").forEach(b=>b.classList.toggle("on",b.dataset.view===v));
+  document.querySelectorAll(".mockbar [data-set]").forEach(s=>{s.hidden=s.dataset.set!==v;});
+  document.querySelector("[data-lab]").textContent=LAB[v][0];
+  document.querySelector("[data-cap]").textContent=LAB[v][1];
+}
+function popt(id){
+  document.querySelectorAll(".mockbar [data-popt]").forEach(b=>b.classList.toggle("on",b.dataset.popt===id));
+  document.querySelectorAll(".frame [data-popt]").forEach(el=>{el.hidden=el.dataset.popt!==id;});
+  document.querySelector("[data-ptitle]").textContent=PTITLE[id];
+}
+function theme(t){root.dataset.theme=t;document.querySelectorAll("[data-theme-set]").forEach(b=>b.classList.toggle("on",b.dataset.themeSet===t));}
+function width(w){document.body.classList.toggle("phone",w==="phone");document.querySelectorAll("[data-width]").forEach(b=>b.classList.toggle("on",b.dataset.width===w));}
+function notes(){const n=document.querySelector(".notes");n.hidden=!n.hidden;document.querySelector("[data-notes]").classList.toggle("on",!n.hidden);}
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-card],.mockbar [data-view],.mockbar [data-popt],[data-theme-set],[data-width],[data-notes]");
+  if(!t)return;e.preventDefault();
+  if(t.dataset.card){picked=t.dataset.card;place();view("board");}
+  if(t.dataset.view)view(t.dataset.view);
+  if(t.dataset.popt)popt(t.dataset.popt);
+  if(t.dataset.themeSet)theme(t.dataset.themeSet);
+  if(t.dataset.width)width(t.dataset.width);
+  if(t.hasAttribute("data-notes"))notes();
+});
+place();view("gallery");
+theme(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");
+</script></body></html>

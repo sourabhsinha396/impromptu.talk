@@ -218,23 +218,28 @@ export function clock(seconds: number): string {
 /** The one line under the bar, chosen from whichever number is furthest
     from where it should be.
 
+    Short words, short sentences. The people this is written for are
+    practising in a second language, so nothing here reaches for an
+    idiom: "you slowed down at the end", never "you faded"; "a long
+    pause", never "a hole" (owner's call).
+
     One sentence and never a paragraph. The report never rewrites anybody's
     words: prose from a model cannot be plotted, so a report made of it
     would mean the progress view could never exist, and "you could have
     phrased this as" is not something anybody can act on tomorrow. */
 export function headline(report: Report): string {
   if (!report.heard) return "We could not hear you. Check your microphone.";
-  if (report.opening_stall >= 3) return `You took ${clock(report.opening_stall)} to start. Open with your point.`;
-  if (report.longest_pause >= 3) return `Your longest gap was ${report.longest_pause} seconds.`;
-  if (report.trail_off < 0.6) return "You faded at the end. Plan your last line early.";
+  if (report.opening_stall >= 3) return `You took ${clock(report.opening_stall)} to start. Say your point first.`;
+  if (report.longest_pause >= 3) return `Your longest pause was ${report.longest_pause} seconds.`;
+  if (report.trail_off < 0.6) return "You slowed down at the end. Plan your last sentence early.";
   if (report.fillers !== null && report.filler_rate !== null && report.filler_rate >= 4) {
-    return `You said um ${report.fillers} times. Pause instead.`;
+    return `You said um ${report.fillers} times. Take a short pause instead.`;
   }
   if (report.awkward_pauses > 0) {
     const many = report.awkward_pauses > 1;
-    return `${report.awkward_pauses} gap${many ? "s" : ""} long enough to notice.`;
+    return `You had ${report.awkward_pauses} long pause${many ? "s" : ""}.`;
   }
-  return "Steady all the way through.";
+  return "You spoke steadily the whole minute.";
 }
 
 
@@ -279,8 +284,8 @@ export function marked(report: Report): Marked[] {
 /* Where a number sits against a comfortable range, which is what makes it
    mean anything on a first round.
 
-   "166 wpm" is a fact about physics. "166 wpm, and comfortable is 130 to
-   170" is a fact about you, and it needs no history at all, which is the
+   "166 words a minute" is a fact about physics. "166, and the good
+   range is 130 to 170" is a fact about you, and it needs no history at all, which is the
    whole point: the baseline from your own past rounds is Pro's, and this
    is what free gets on the very first minute.
 
@@ -290,7 +295,7 @@ export function marked(report: Report): Marked[] {
    band. The rest are judgement, set where a listener starts to notice,
    and they should be revisited against real rounds rather than defended.
    Nothing here is presented as a score, and no round is ever called
-   wrong; the words are "rushed" and "slow", never "bad". */
+   wrong; the words are "too fast" and "slow", never "bad". */
 
 export type Band = {
   key: string;
@@ -306,12 +311,15 @@ export type Band = {
   verdict: string;
   /** The ends of the scale, named, so the picture reads without a legend. */
   ends: [string, string];
-  /** The one-word name the radar has room for. */
+  /** The measure's plain name, for where the label will not fit: a row
+      of bars on the filming board, and the radar's five points. The goal
+      it was phrased as before ("Good pace") said the verdict twice on a
+      bar that is full when the pace was good. */
   short?: string;
   /** Where this person usually lands, drawn as a hollow ring; null without a past. */
   usual?: number | null;
-  /** An axis of the shape and never a bar: the donut says it better. */
-  radarOnly?: boolean;
+  /** A dial and never a bar: the donut under it says it better. */
+  noBar?: boolean;
 };
 
 function band(
@@ -334,11 +342,11 @@ function paceBand(report: Report): Band | null {
     "pace",
     "Pace",
     report.pace,
-    `${report.pace} wpm`,
+    `${report.pace} words a minute`,
     [80, 220],
     [130, 170],
-    ["Slow", "Good pace", "Rushed"],
-    ["slow", "rushed"],
+    ["Slow", "Good pace", "Too fast"],
+    ["slow", "fast"],
   );
 }
 
@@ -352,8 +360,8 @@ function startBand(report: Report): Band {
     clock(report.opening_stall),
     [0, 8],
     [0, 2],
-    ["", "Straight in", "Slow to start"],
-    ["at once", "8s"],
+    ["", "Quick start", "Slow start"],
+    ["no wait", "8s"],
   );
 }
 
@@ -365,12 +373,12 @@ function startBand(report: Report): Band {
 function gapBand(report: Report): Band {
   return band(
     "gap",
-    "Longest gap",
+    "Longest pause",
     report.longest_pause,
     `${report.longest_pause}s`,
     [0, 8],
     [0, AWKWARD],
-    ["", "No holes", "Long hole"],
+    ["", "No long pauses", "A long pause"],
     ["none", "8s"],
   );
 }
@@ -392,13 +400,24 @@ export function bands(report: Report): Band[] {
         `${report.filler_rate}`,
         [0, 12],
         [0, 4],
-        ["", "Clean", "Heavy"],
+        ["", "Few ums", "Many ums"],
         ["none", "12"],
       ),
     );
   }
 
   return out;
+}
+
+/** The number a dial has room for: the value without its unit, because
+    the dial's own label says which measure it is and 88 pixels of arc do
+    not hold "111 words a minute". `shown` keeps the unit, for the bar
+    rows, which have the width for it. Here rather than in the drawing so
+    the two ways of writing a measure stay side by side. */
+export function dialNumber(band: Band): string {
+  if (band.key === "start") return clock(band.value);
+  if (band.key === "gap") return `${band.value}s`;
+  return String(band.value);
 }
 
 /** Where a value falls across the scale, as a percentage, clamped so a
@@ -516,16 +535,16 @@ export function advice(band: Band): string | null {
   switch (band.key) {
     case "pace":
       return low
-        ? "Push on a little. Long words land better than long gaps."
-        : "Slow down. Land on your full stops and let them sit.";
+        ? "Speak a bit faster. A short pause is better than a long one."
+        : "Slow down. Stop at the end of each sentence.";
     case "start":
-      return "Open with your claim, not a wind-up. Say the point, then explain it.";
+      return "Say your point first. Then explain it.";
     case "gap":
-      return "Say the next point half-formed. A wobble costs less than a hole.";
+      return "Start your next point even if it is not ready. A long silence is worse than a small mistake.";
     case "fillers":
-      return "Pause instead of um. Silence reads as deliberate; um reads as lost.";
+      return "Take a short pause instead of saying um. A pause sounds calm.";
     case "sentence":
-      return "Land a full stop. Then start the next thought fresh.";
+      return "Stop your sentence sooner. Then start a new one.";
     default:
       return null;
   }
@@ -539,14 +558,19 @@ export function advice(band: Band): string | null {
 export const RUN_ON = 35;
 
 /** The five things the round's own page measures it on, each against its
-    comfortable stretch. One list feeds the radar and the bars so the two
-    can never disagree. Fillers are an axis of the shape and never a bar,
-    because the donut beside it says everything a bar would, as words rather
-    than as a rate (owner's call). */
+    good range. One list feeds the dials and the bars so the two can never
+    disagree. Fillers get a dial and never a bar, because the donut under
+    it says everything a bar would, as words rather than as a rate
+    (owner's call). */
 export function axes(report: Report): Band[] {
   const usual = report.usual;
   const out: Band[] = [];
   const pace = paceBand(report);
+  /* `short` is the name where there is no room for the full one, which
+     since the radar went is the filming board alone. It is the measure's
+     own name shortened and never the goal ("Ums", not "Few ums"): the
+     round page's dials say how it went with the arc and the verdict under
+     it, so a name that also carried the verdict would say it twice. */
   if (pace) out.push({ ...pace, short: "Pace", usual: usual?.pace ?? null });
   out.push({ ...startBand(report), short: "Start", usual: usual?.stall ?? null });
   out.push({ ...gapBand(report), short: "Gaps", usual: usual?.gap ?? null });
@@ -560,19 +584,19 @@ export function axes(report: Report): Band[] {
         `${longest} words`,
         [0, 60],
         [0, RUN_ON],
-        ["", "Landed", "Run-on"],
+        ["", "Good length", "Too long"],
         ["short", "60 words"],
       ),
-      short: "Sentences",
+      short: "Length",
       usual: usual?.sentence ?? null,
     });
   }
   if (report.filler_rate !== null) {
     out.push({
-      ...band("fillers", "Fillers", report.filler_rate, `${report.filler_rate}`, [0, 12], [0, 4], ["", "Clean", "Heavy"], ["none", "12"]),
-      short: "Fillers",
+      ...band("fillers", "Ums a minute", report.filler_rate, `${report.filler_rate}`, [0, 12], [0, 4], ["", "Few ums", "Many ums"], ["none", "12"]),
+      short: "Ums",
       usual: usual?.fillers ?? null,
-      radarOnly: true,
+      noBar: true,
     });
   }
   return out;
@@ -595,9 +619,9 @@ export function fit(band: Band, value: number | null = band.value): number | nul
 export function shapeCaption(rows: Band[]): string {
   if (!rows.length) return "";
   const inRange = rows.filter((row) => fit(row) === 100).length;
-  if (inRange === rows.length) return `All ${rows.length} in the comfortable range`;
+  if (inRange === rows.length) return `All ${rows.length} in the good range`;
   const worst = [...rows].sort((a, b) => (fit(a) ?? 0) - (fit(b) ?? 0))[0];
-  return `${inRange} of ${rows.length} in the comfortable range · furthest out: ${worst.label.toLowerCase()}`;
+  return `${inRange} of ${rows.length} in the good range · work on your ${worst.label.toLowerCase()}`;
 }
 
 /** Written by code from the peak and the trough, never by a model, so the
@@ -607,9 +631,9 @@ export function paceCaption(report: Report): string | null {
   if (points.length < 2) return null;
   const fast = points.reduce((best, point) => (point.wpm > best.wpm ? point : best));
   const slow = points.reduce((best, point) => (point.wpm < best.wpm ? point : best));
-  let out = `Fastest from ${clock(fast.start)}, ${fast.wpm} words a minute. Slowest from ${clock(slow.start)}, ${slow.wpm}.`;
-  if (report.trail_off < 0.6) out += " You faded in the last stretch.";
-  else if (report.trail_off > 1.4) out += " You sped up to finish.";
+  let out = `Fastest at ${clock(fast.start)}, ${fast.wpm} words a minute. Slowest at ${clock(slow.start)}, ${slow.wpm}.`;
+  if (report.trail_off < 0.6) out += " You slowed down at the end.";
+  else if (report.trail_off > 1.4) out += " You sped up at the end.";
   return out;
 }
 
@@ -657,8 +681,8 @@ export function sentenceCaption(report: Report): string | null {
   if (!counts.length) return null;
   const longest = Math.max(...counts);
   return longest > RUN_ON
-    ? `One ran to ${longest} words. Land a full stop and let it sit.`
-    : `Longest ${longest} words. Every one of them landed.`;
+    ? `Your longest sentence was ${longest} words. Try to keep them shorter.`
+    : `Your longest sentence was ${longest} words. That is a good length.`;
 }
 
 /** Where the voice stopped for good, for the tile beside the first word. */

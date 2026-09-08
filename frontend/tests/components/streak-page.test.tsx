@@ -122,3 +122,33 @@ describe("the streak page", () => {
     expect(screen.queryByRole("button", { name: "Create a link" })).not.toBeInTheDocument();
   });
 });
+
+/* Nothing on this page has a partner. The calendar and the list used to
+   share a row on a laptop, and since a month stops growing at five
+   columns of seven while the list grows by a row a round, the gap
+   between them was the streak: the better somebody practised, the
+   emptier their page looked. */
+describe("the streak page's one column", () => {
+  const month: History = { ...free, days: 30, calendar: days(30, [0, 1, 2]) };
+
+  it("draws a month as one line of days and a year as seven, and never a block beside a list", () => {
+    /* A row is the whole width and reads as time. The heatmap is the
+       year's drawing and nothing else's, because a row of more than
+       sixty-four days puts the squares under ten pixels. */
+    const { container, unmount } = render(<StreakPage history={month} bank={bank} user={null} now={NOW} />);
+    const squares = () => container.querySelectorAll("ol > li[title]");
+    expect(squares()).toHaveLength(30);
+    expect(getComputedStyle(squares()[0].parentElement as HTMLElement).gridTemplateRows).toBe("var(--cell)");
+    unmount();
+
+    render(<StreakPage history={{ ...free, days: 365, calendar: days(70, [0]) }} bank={bank} user={null} now={NOW} />);
+    const heat = document.querySelectorAll("ol > li[title]")[0].parentElement as HTMLElement;
+    expect(getComputedStyle(heat).gridTemplateRows).toBe("repeat(7, var(--cell))");
+  });
+
+  it("names both ends of the row, because a line of squares says how many days but never which", () => {
+    render(<StreakPage history={month} bank={bank} user={null} now={NOW} />);
+    expect(screen.getByText("Today", { selector: "span" })).toBeInTheDocument();
+    expect(screen.getByText("9 August")).toBeInTheDocument();
+  });
+});

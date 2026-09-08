@@ -9,6 +9,7 @@ import {
   bands,
   blocks,
   clock,
+  dialNumber,
   distinctWords,
   fit,
   headline,
@@ -152,14 +153,24 @@ describe("headline", () => {
     expect(headline(report({ opening_stall: 5, longest_pause: 9 }))).toMatch(/to start/);
   });
 
-  it("falls through to the longest gap, then the fade, then the ums", () => {
-    expect(headline(report({ longest_pause: 4 }))).toMatch(/longest gap/);
-    expect(headline(report({ trail_off: 0.3 }))).toMatch(/faded/);
+  it("falls through to the longest pause, then the slowing, then the ums", () => {
+    expect(headline(report({ longest_pause: 4 }))).toMatch(/longest pause/);
+    expect(headline(report({ trail_off: 0.3 }))).toMatch(/slowed down/);
     expect(headline(report({ fillers: 9, filler_rate: 9 }))).toMatch(/um 9 times/);
   });
 
   it("says something true rather than nothing when the round went well", () => {
-    expect(headline(report())).toBe("Steady all the way through.");
+    expect(headline(report())).toBe("You spoke steadily the whole minute.");
+  });
+
+  it("says it in words a learner reads once", () => {
+    // The people this is for are practising in a second language. Every
+    // line the report writes for itself was rewritten off idioms once;
+    // this is what stops the next one creeping back in.
+    const idioms = /\b(faded|hunting|wind-up|run-on|holes?|lands?|landed|wobble)\b/i;
+    expect(headline(report({ trail_off: 0.3 }))).not.toMatch(idioms);
+    expect(headline(report({ awkward_pauses: 2 }))).not.toMatch(idioms);
+    expect(headline(report())).not.toMatch(idioms);
   });
 
   it("never mentions ums when nothing counted them", () => {
@@ -194,11 +205,11 @@ describe("marked", () => {
 });
 
 describe("bands", () => {
-  it("calls a comfortable pace comfortable and names both ways out of it", () => {
+  it("calls a good pace good and names both ways out of it", () => {
     const verdict = (pace: number) => bands(report({ pace })).find((b) => b.key === "pace")?.verdict;
     expect(verdict(150)).toBe("Good pace");
     expect(verdict(100)).toBe("Slow");
-    expect(verdict(200)).toBe("Rushed");
+    expect(verdict(200)).toBe("Too fast");
   });
 
   it("never shows a pace band when nothing counted the words", () => {
@@ -217,17 +228,29 @@ describe("bands", () => {
     expect(keys).toContain("gap");
   });
 
-  it("agrees with the headline about what counts as a hole", () => {
-    // The headline calls a gap notable at AWKWARD; the band has to call
-    // the same gap a hole, or the report argues with itself.
+  it("agrees with the headline about what counts as a long pause", () => {
+    // The headline calls a pause notable at AWKWARD; the band has to call
+    // the same pause long, or the report argues with itself.
     const verdict = (gap: number) => bands(report({ longest_pause: gap })).find((b) => b.key === "gap")?.verdict;
-    expect(verdict(AWKWARD - 0.1)).toBe("No holes");
-    expect(verdict(AWKWARD + 0.1)).toBe("Long hole");
+    expect(verdict(AWKWARD - 0.1)).toBe("No long pauses");
+    expect(verdict(AWKWARD + 0.1)).toBe("A long pause");
   });
 
   it("says nothing is wrong with a round that went well", () => {
     const good = bands(report({ opening_stall: 0.5, longest_pause: 1, pace: 150, filler_rate: 1 }));
-    expect(good.map((b) => b.verdict)).toEqual(["Good pace", "Straight in", "No holes", "Clean"]);
+    expect(good.map((b) => b.verdict)).toEqual(["Good pace", "Quick start", "No long pauses", "Few ums"]);
+  });
+});
+
+describe("dialNumber", () => {
+  it("drops the unit the dial has no room for and keeps the one that is the value", () => {
+    // "111 words a minute" does not fit inside an 88 pixel arc and the
+    // label under it already says Pace. A clock and a second count are
+    // not units in the same sense: 0:03 and 3s are the number.
+    const of = (key: string) => bands(report({ pace: 111, opening_stall: 3, longest_pause: 2.4 })).find((b) => b.key === key)!;
+    expect(dialNumber(of("pace"))).toBe("111");
+    expect(dialNumber(of("start"))).toBe("0:03");
+    expect(dialNumber(of("gap"))).toBe("2.4s");
   });
 });
 
@@ -303,8 +326,8 @@ describe("axes", () => {
   it("puts the fillers on the shape and never on a bar, since the donut says it as words", () => {
     const rows = axes(SPOKEN);
     expect(rows.map((row) => row.key)).toEqual(["pace", "start", "gap", "sentence", "fillers"]);
-    expect(rows.find((row) => row.key === "fillers")?.radarOnly).toBe(true);
-    expect(rows.filter((row) => !row.radarOnly).map((row) => row.key)).not.toContain("fillers");
+    expect(rows.find((row) => row.key === "fillers")?.noBar).toBe(true);
+    expect(rows.filter((row) => !row.noBar).map((row) => row.key)).not.toContain("fillers");
   });
 
   it("has no fillers axis where nothing could count them, and no sentence axis without a transcript", () => {
@@ -336,19 +359,19 @@ describe("shapeCaption", () => {
   it("counts what landed and names the furthest out", () => {
     // Nine ums a minute is well past four, and a 56-word sentence is
     // further past 35 still, so the sentence is the one named.
-    expect(shapeCaption(axes(SPOKEN))).toBe("3 of 5 in the comfortable range · furthest out: longest sentence");
+    expect(shapeCaption(axes(SPOKEN))).toBe("3 of 5 in the good range · work on your longest sentence");
   });
 
   it("says so when everything landed", () => {
     const rows = axes(report({ ...SPOKEN, filler_rate: 2, sentences: [sentence("x", 12)] }));
-    expect(shapeCaption(rows)).toBe("All 5 in the comfortable range");
+    expect(shapeCaption(rows)).toBe("All 5 in the good range");
   });
 });
 
 describe("paceCaption", () => {
   it("names the fastest stretch and the slowest, and the fade when there was one", () => {
     expect(paceCaption(SPOKEN)).toBe(
-      "Fastest from 0:10, 210 words a minute. Slowest from 0:20, 78. You faded in the last stretch.",
+      "Fastest at 0:10, 210 words a minute. Slowest at 0:20, 78. You slowed down at the end.",
     );
   });
 
@@ -373,9 +396,9 @@ describe("slices", () => {
 
 describe("sentences and words", () => {
   it("calls a sentence past the edge a run-on and a short one landed", () => {
-    expect(sentenceCaption(SPOKEN)).toBe("One ran to 56 words. Land a full stop and let it sit.");
+    expect(sentenceCaption(SPOKEN)).toBe("Your longest sentence was 56 words. Try to keep them shorter.");
     expect(sentenceCaption(report({ sentences: [sentence("x", RUN_ON)] }))).toBe(
-      `Longest ${RUN_ON} words. Every one of them landed.`,
+      `Your longest sentence was ${RUN_ON} words. That is a good length.`,
     );
   });
 

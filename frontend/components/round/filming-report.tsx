@@ -1,4 +1,5 @@
 import { MinuteBar, Transcript, WAITING } from "@/components/round/report";
+import { Button } from "@/components/site/button";
 import { Ping } from "@/components/site/ping";
 import { Placeholder } from "@/components/site/placeholder";
 import {
@@ -7,6 +8,7 @@ import {
   axes,
   bands,
   clock,
+  dialNumber,
   distinctWords,
   fit,
   RUN_ON,
@@ -71,9 +73,9 @@ export function FilmingReport({
   const worstGap = report.pauses.filter((pause) => pause.awkward).sort((a, b) => b.seconds - a.seconds)[0];
   const minute = [
     worstGap
-      ? `A ${Math.round(worstGap.seconds)} second gap at ${clock(worstGap.at)}.`
-      : "No gap long enough to notice.",
-    report.fillers ? `${report.fillers} um${report.fillers === 1 ? "" : "s"}, drawn where they were said.` : "",
+      ? `A ${Math.round(worstGap.seconds)} second pause at ${clock(worstGap.at)}.`
+      : "No long pauses.",
+    report.fillers ? `${report.fillers} um${report.fillers === 1 ? "" : "s"}, marked where you said them.` : "",
   ]
     .filter(Boolean)
     .join(" ");
@@ -112,8 +114,8 @@ export function FilmingReport({
         )}
 
         {shape.length >= 3 && (
-          <Card title="The shape">
-            <Shape rows={shape} />
+          <Card title="How the round went">
+            <HowItWent rows={shape} />
           </Card>
         )}
 
@@ -124,7 +126,7 @@ export function FilmingReport({
         ))}
 
         {words.length > 0 && (
-          <Card title="Words you lean on" className="sm:col-span-2">
+          <Card title="Words you used a lot" className="sm:col-span-2">
             <div className="mt-1.5 flex flex-wrap gap-2">
               {words.slice(0, 6).map((word) => (
                 <span
@@ -165,7 +167,7 @@ export function FilmingReport({
           <Card title="Sentences">
             <Value
               number={`${longest}`}
-              unit={report.ended_clean ? "longest, and you landed the last" : "longest, and the last trailed off"}
+              unit={report.ended_clean ? "longest, and you finished your last one" : "longest, and your last one was cut off"}
               out={longest > RUN_ON}
             />
             <p className="mt-auto pt-2 text-sm text-muted">{sentenceCaption(report)}</p>
@@ -176,12 +178,14 @@ export function FilmingReport({
       <div className="mt-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
         {next && <p className="text-[15px] text-muted">Next time: {next.charAt(0).toLowerCase()}{next.slice(1)}</p>}
         {href && (
-          <p className="flex items-center gap-2 text-[15px]">
-            <a href={href} className="font-semibold text-accent-strong underline underline-offset-4 hover:text-ink">
-              See the full report
-            </a>
-            <Ping />
-          </p>
+          /* The same button as the reading report, at the board's scale:
+             a control a camera keeps, where an underlined line of text at
+             the foot of ten cards is the first thing a compressor throws
+             away. */
+          <Button href={href} variant="ghost" size="md">
+            See the full report
+            <Ping size={14} />
+          </Button>
         )}
       </div>
 
@@ -305,7 +309,12 @@ function Meter({ band }: { band: Band }) {
   const inside = band.value >= band.good[0] && band.value <= band.good[1];
   return (
     <>
-      <Value number={band.shown} unit={band.verdict} out={!inside} />
+      {/* The compact number, not `shown`: "129 words a minute" at 40
+          pixels and no wrapping runs straight out of the card, which is
+          what it did on the live board the day the units were spelled
+          out. The card's own title says which measure this is and the
+          ends of the track say which way is which. */}
+      <Value number={dialNumber(band)} unit={band.verdict} out={!inside} />
       <div className="relative mt-2.5 h-[13px] w-full rounded-full bg-line">
         <div className="absolute inset-y-0 rounded-full bg-accent/40" style={{ left: `${start}%`, width: `${width}%` }} />
         <div
@@ -327,49 +336,51 @@ function Meter({ band }: { band: Band }) {
 /* Five measures as one shape, this round filled and your usual as a
    dashed outline. The point of it is the glance: a lopsided pentagon says
    which way a round went wrong before any number has been read. */
-function Shape({ rows }: { rows: Band[] }) {
-  const point = (index: number, value: number) => {
-    const angle = ((-90 + (index * 360) / rows.length) * Math.PI) / 180;
-    const distance = (44 * value) / 100;
-    return [60 + distance * Math.cos(angle), 60 + distance * Math.sin(angle)];
-  };
-  const path = (pick: (row: Band) => number | null) =>
-    rows.map((row, index) => point(index, pick(row) ?? 0).join(",")).join(" ");
-  const usual = rows.some((row) => row.usual !== null && row.usual !== undefined);
-
+function HowItWent({ rows }: { rows: Band[] }) {
+  const good = rows.filter((row) => fit(row) === 100).length;
   return (
     <>
-      <svg viewBox="0 0 120 120" className="mt-1 max-h-[150px] w-full" role="img" aria-label="This round against your usual">
-        {[100, 66, 33].map((ring) => (
-          <polygon
-            key={ring}
-            points={rows.map((_, index) => point(index, ring).join(",")).join(" ")}
-            fill="none"
-            stroke="var(--line)"
-            strokeWidth={1.5}
-          />
-        ))}
-        {usual && (
-          <polygon
-            points={path((row) => fit(row, row.usual ?? null))}
-            fill="none"
-            stroke="var(--line-strong)"
-            strokeWidth={2}
-            strokeDasharray="4 4"
-          />
-        )}
-        <polygon
-          points={path((row) => fit(row))}
-          fill="color-mix(in oklab, var(--accent) 45%, transparent)"
-          stroke="var(--accent-strong)"
-          strokeWidth={3}
-          strokeLinejoin="round"
-        />
-      </svg>
-      <p className="mt-auto pt-2 text-sm text-muted">
-        {rows.filter((row) => fit(row) === 100).length} of {rows.length} comfortable
-        {usual ? ", against your usual" : ""}.
-      </p>
+      <Value number={`${good} of ${rows.length}`} unit="in the good range" />
+      <div className="mt-3 flex flex-col gap-1.5">
+        {rows.map((row) => {
+          const inside = fit(row) === 100;
+          return (
+            <div key={row.key} className="grid grid-cols-[4.4rem_1fr] items-center gap-2.5">
+              <span className={cn("truncate text-[12.5px] font-semibold", inside ? "text-muted" : "text-poor")}>
+                {/* The short name, not the label: the four measure cards
+                    on this same board are already titled "Longest pause"
+                    and "Ums a minute", and a board that says each of them
+                    twice is a board with less room for the bars. */}
+                {row.short ?? row.label}
+                {/* The bar's length says how it went, but only to
+                    somebody looking: without this a pass and a fail
+                    differ by colour alone once the picture is gone. */}
+                <span className="sr-only">: {row.verdict}</span>
+              </span>
+              <span aria-hidden className="h-2.5 overflow-hidden rounded-full bg-line">
+                <span
+                  className={cn("block h-full rounded-full", inside ? "bg-accent" : "bg-poor")}
+                  style={{ width: `${fit(row) ?? 0}%` }}
+                />
+              </span>
+            </div>
+          );
+        })}
+      </div>
+      {against(rows, good) && <p className="mt-auto pt-2.5 text-sm text-muted">{against(rows, good)}</p>}
     </>
   );
+}
+
+/* The one thing the five cards beside this one cannot say: whether this
+   round was a better one than usual. Only where every measure has a past
+   to compare against, because "3 of 5" counted over a different set of
+   measures than "4 of 5" is not a comparison. */
+function against(rows: Band[], good: number): string | null {
+  if (!rows.every((row) => row.usual !== null && row.usual !== undefined)) return null;
+  const before = rows.filter((row) => fit(row, row.usual ?? null) === 100).length;
+  if (good === before) return `The same as your usual ${before} of ${rows.length}.`;
+  return good > before
+    ? `Better than your usual, which is ${before} of ${rows.length}.`
+    : `Under your usual, which is ${before} of ${rows.length}.`;
 }

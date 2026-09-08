@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import { DonePhase } from "@/components/round/phases";
@@ -65,11 +65,13 @@ describe("the report sized for filming", () => {
     expect(screen.getByText("Day 7")).toBeInTheDocument();
     expect(screen.queryByText("day streak")).not.toBeInTheDocument();
     // The same measures as the ordinary report, to the same numbers.
-    expect(screen.getByText("Longest gap")).toBeInTheDocument();
+    expect(screen.getByText("Longest pause")).toBeInTheDocument();
     expect(screen.getByText("6s")).toBeInTheDocument();
-    expect(screen.getByText("143 wpm")).toBeInTheDocument();
+    // The number alone on a card: "143 words a minute" at 40 pixels ran
+    // out of the card, and the card's own title already says Pace.
+    expect(screen.getByText("143")).toBeInTheDocument();
     // And more of the round than the done screen has ever shown.
-    expect(screen.getByText("Words you lean on")).toBeInTheDocument();
+    expect(screen.getByText("Words you used a lot")).toBeInTheDocument();
     expect(screen.getByText("Answered the topic")).toBeInTheDocument();
     expect(screen.getByText("Restarts")).toBeInTheDocument();
   });
@@ -77,13 +79,13 @@ describe("the report sized for filming", () => {
   it("draws no verdict card on a round nothing read, rather than a box saying nothing", () => {
     render(done(true, { ...REPORT, case: null }));
     expect(screen.queryByText("Answered the topic")).not.toBeInTheDocument();
-    expect(screen.getByText("Longest gap")).toBeInTheDocument();
+    expect(screen.getByText("Longest pause")).toBeInTheDocument();
   });
 
   it("is off by default, and a round nobody listened to keeps the ordinary done screen", () => {
     const { unmount } = render(done(false));
     expect(screen.getByText("Day 7.")).toBeInTheDocument();
-    expect(screen.queryByText("Words you lean on")).not.toBeInTheDocument();
+    expect(screen.queryByText("Words you used a lot")).not.toBeInTheDocument();
     unmount();
 
     // Filming on, but no microphone behind the round: there is nothing to
@@ -101,5 +103,43 @@ describe("the report sized for filming", () => {
       />,
     );
     expect(screen.getByText("Day 7.")).toBeInTheDocument();
+  });
+});
+
+/* The card that replaced the radar. The pentagon was drawn on the board
+   with no axis labels and no key, which made five measures one olive
+   blob; the same numbers as a row of bars need no legend at all. What is
+   pinned here is what the card counts and what it is allowed to claim. */
+describe("how the round went", () => {
+  const usual = { pace: 143, stall: 1, gap: 6, fillers: 4, sentence: 41, rounds: 6 };
+  const card = () => within(screen.getByText("How the round went").closest("div") as HTMLElement);
+
+  it("counts the measures that landed in range, not the cards on the board", () => {
+    /* The board draws a card for every measure and several things that
+       are not measures at all. The count is of the five the bands judge,
+       so a new card can never quietly change it. This round has a long
+       pause and a run-on sentence, which is two of the five outside. */
+    render(done(true));
+    expect(card().getByText("3 of 5")).toBeInTheDocument();
+    expect(card().getByText("in the good range")).toBeInTheDocument();
+  });
+
+  it("says how each measure went in words, so a bar is never read by colour alone", () => {
+    // The length says it to anybody looking. Nothing says it to a screen
+    // reader, and a rose bar and an olive one are the same shape.
+    render(done(true));
+    expect(card().getByText(/A long pause/)).toBeInTheDocument();
+    expect(card().getByText(/Good pace/)).toBeInTheDocument();
+  });
+
+  it("compares with your usual only where every measure has a past", () => {
+    /* A first round has no usual at all, and a count taken over four
+       measures against one taken over five is not a comparison. */
+    const { unmount } = render(done(true));
+    expect(card().queryByText(/your usual/)).not.toBeInTheDocument();
+    unmount();
+
+    render(done(true, { ...REPORT, pace: 40, usual }));
+    expect(card().getByText("Under your usual, which is 3 of 5.")).toBeInTheDocument();
   });
 });

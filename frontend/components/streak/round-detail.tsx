@@ -8,11 +8,6 @@ import {
   Cell,
   Pie,
   PieChart,
-  PolarAngleAxis,
-  PolarGrid,
-  PolarRadiusAxis,
-  Radar,
-  RadarChart,
   ReferenceArea,
   ResponsiveContainer,
   Tooltip,
@@ -21,13 +16,17 @@ import {
 } from "recharts";
 
 import { Bands, Headline, MinuteBar, Transcript } from "@/components/round/report";
-import { CaseRead, SampleRead } from "@/components/streak/case";
+import { CaseRead, Sample, SampleRead } from "@/components/streak/case";
+import { WordCloud } from "@/components/streak/cloud";
+import { SAMPLE_LENGTH, SAMPLE_REPORT } from "@/lib/case";
+import { tally } from "@/lib/words";
 import {
   RUN_ON,
+  at,
   axes,
   clock,
+  dialNumber,
   distinctWords,
-  fit,
   lastWord,
   paceCaption,
   saidCount,
@@ -37,7 +36,6 @@ import {
   type Band,
   type Report,
   type Slice,
-  type Usual,
 } from "@/lib/report";
 
 /* One round, read all the way back.
@@ -51,17 +49,17 @@ import {
    here is a score with a name.
 
    Recharts, which /streak already loads and nothing else does: the pace
-   line, the shape of the round and the donut are axes, polygons and arcs
-   with hover, which is the work a library is for. The bar, the bands, the
-   sentence columns and the tiles stay hand-drawn, as on the done screen,
-   because a track and a marker is not a chart. */
+   line and the donut are axes and arcs with hover, which is the work a
+   library is for. The wave, the dials, the bands, the sentence columns
+   and the tiles stay hand-drawn, as on the done screen, because a track
+   and a marker is not a chart. */
 
 export function RoundDetail({ report, length, pro }: { report: Report; length: number; pro: boolean }) {
   if (!report.heard) {
     return <p className="text-sm text-muted">We could not hear you. Check your microphone.</p>;
   }
   const rows = axes(report);
-  const bars = rows.filter((row) => !row.radarOnly);
+  const bars = rows.filter((row) => !row.noBar);
   const timed = report.pace_curve.length > 1;
 
   return (
@@ -74,12 +72,12 @@ export function RoundDetail({ report, length, pro }: { report: Report; length: n
           whether it was given comes before how it sounded. Free sees the
           same section drawn from one fixed round, blurred. */}
       {report.case ? (
-        <Section title="The case you made">
+        <Section title="Your answer">
           <CaseRead read={report.case} sentences={report.sentences} length={length} />
         </Section>
       ) : (
         !pro && (
-          <Section title="The case you made" aside="a sample">
+          <Section title="Your answer" aside="a sample">
             <SampleRead />
           </Section>
         )
@@ -88,22 +86,27 @@ export function RoundDetail({ report, length, pro }: { report: Report; length: n
       {timed && (
         <Section
           title="Pace through the minute"
-          aside={report.pace !== null ? `${report.pace} wpm over the round` : undefined}
+          aside={report.pace !== null ? `${report.pace} words a minute over the round` : undefined}
         >
           <PaceChart report={report} length={length} />
           <p className="mt-2 text-[12.5px] leading-relaxed text-muted">{paceCaption(report)}</p>
         </Section>
       )}
 
-      <Section title="The shape of your round" aside={shapeCaption(rows)}>
-        <div className="grid gap-5 sm:grid-cols-[250px_1fr] sm:items-center sm:gap-x-8">
-          <Shape rows={rows} usual={report.usual} />
-          <Bands rows={bars} columns={1} />
-        </div>
+      <Section title="How the round went" aside={shapeCaption(rows)}>
+        <Dials rows={rows} />
+        <Bands rows={bars} />
+        {/* The bands draw your usual as a hollow ring and nothing on them
+            says so. The radar's key used to; this is what is left of it. */}
+        {report.usual && (
+          <p className="mt-3 text-[11.5px] text-muted">
+            The hollow dot on each bar is where you usually land, over your last {report.usual.rounds} rounds.
+          </p>
+        )}
       </Section>
 
       {report.words !== null && (
-        <Section title="Words you leaned on" aside={leanAside(report)}>
+        <Section title="Words you used a lot" aside={leanAside(report)}>
           <div className="grid gap-6 sm:grid-cols-2 sm:gap-x-8">
             <LeanedOn report={report} />
             <Repeats report={report} />
@@ -111,16 +114,48 @@ export function RoundDetail({ report, length, pro }: { report: Report; length: n
         </Section>
       )}
 
-      {report.sentences.length > 0 && (
-        <Section title="Sentences" aside={sentenceAside(report)}>
-          <Sentences report={report} />
-          <p className="mt-2 text-[12.5px] leading-relaxed text-muted">{sentenceCaption(report)}</p>
+      {/* The whole minute, not the short list above it: every word said,
+          sized and shaded by how often (owner's call, from
+          `mocks/words.html`). The section above answers what somebody
+          leans on and this answers what the minute sounded like, which
+          is why they are two sections and not one. */}
+      {report.transcript && (
+        <Section title="Words you used" aside={`${tally(report.transcript).length} different words`}>
+          <WordCloud report={report} />
         </Section>
       )}
 
-      <Tiles report={report} length={length} />
+      {/* The sentences and the three tiles under them are Pro's, and free
+          sees the same two drawn from one fixed round, blurred (owner's
+          call). One card over both rather than one each: two overlays
+          eight inches apart on the same scroll is nagging, and they
+          answer the same question, which is what the last part of a
+          round looked like. */}
+      {pro ? (
+        <>
+          {report.sentences.length > 0 && (
+            <Section title="Sentences" aside={sentenceAside(report)}>
+              <Sentences report={report} />
+              <p className="mt-2 text-[12.5px] leading-relaxed text-muted">{sentenceCaption(report)}</p>
+            </Section>
+          )}
 
-      <Section title="Read it back">
+          <Tiles report={report} length={length} rows={rows} />
+        </>
+      ) : (
+        <Section title="Sentences" aside="a sample">
+          <Sample
+            title="Pro measures every sentence."
+            line="How long each one ran, when your first word came, and how many different words you used."
+          >
+            <Sentences report={SAMPLE_REPORT} />
+            <p className="mt-2 text-[12.5px] leading-relaxed text-muted">{sentenceCaption(SAMPLE_REPORT)}</p>
+            <Tiles report={SAMPLE_REPORT} length={SAMPLE_LENGTH} rows={axes(SAMPLE_REPORT)} />
+          </Sample>
+        </Section>
+      )}
+
+      <Section title="What you said">
         <Transcript report={report} open />
       </Section>
     </div>
@@ -140,7 +175,7 @@ function Section({ title, aside, children }: { title: string; aside?: string; ch
 }
 
 /* What the wave means, said once under it: the wiggle is a voice, the
-   flat line is nobody speaking, the warm line is a hole you would notice. */
+   flat line is nobody speaking, the warm line is a long pause. */
 function BarKey({ fillers }: { fillers: boolean }) {
   return (
     <div className="mt-2 flex flex-wrap gap-x-3.5 gap-y-1 text-[11.5px] text-muted">
@@ -153,10 +188,10 @@ function BarKey({ fillers }: { fillers: boolean }) {
         talking
       </span>
       <span className="inline-flex items-center gap-1.5">
-        <i className="inline-block w-3.5 border-t-[1.5px] border-line-strong" />a breath
+        <i className="inline-block w-3.5 border-t-[1.5px] border-line-strong" />a short pause
       </span>
       <span className="inline-flex items-center gap-1.5">
-        <i className="inline-block w-3.5 border-t-[3px] border-warn" />a gap you would notice
+        <i className="inline-block w-3.5 border-t-[3px] border-warn" />a long pause
       </span>
       {fillers && (
         <span className="inline-flex items-center gap-1.5">
@@ -232,7 +267,7 @@ function PaceChart({ report, length }: { report: Report; length: number }) {
             fillOpacity={0.12}
             stroke="none"
             label={{
-              value: "comfortable, 130 to 170",
+              value: "a good pace, 130 to 170",
               position: "insideTopRight",
               fontSize: 11,
               fontWeight: 600,
@@ -268,7 +303,7 @@ function PaceChart({ report, length }: { report: Report; length: number }) {
             labelFormatter={() => ""}
             formatter={(value, _name, item) => {
               const row = item.payload as { start: number; end: number };
-              return [`${value} wpm`, `${clock(row.start)} to ${clock(row.end)}`];
+              return [`${value} words a minute`, `${clock(row.start)} to ${clock(row.end)}`];
             }}
           />
           <Area
@@ -290,70 +325,78 @@ function PaceChart({ report, length }: { report: Report; length: number }) {
 
 /* ------------------------------------------------------------ the shape */
 
-type ShapeDotProps = { cx?: number; cy?: number; index?: number; value?: number };
+/* Five dials, one a measure: the good stretch lit on the arc, the number
+   in the middle, one word for where it landed (owner's call, drawing B in
+   `mocks/shape-card.html`).
 
-/* The radar. The dashed pentagon is the comfortable range, the filled
-   shape is today, the thin outline is your usual over your last rounds.
-   A radar with no reference shape is a blob, which is why the target is
-   drawn; and there is no average beside it, because an average of seconds
-   and words a minute is a number with nothing behind it. */
-function Shape({ rows, usual }: { rows: Band[]; usual: Usual | null }) {
-  const data = rows.map((row) => ({
-    axis: row.short ?? row.label,
-    today: fit(row) ?? 0,
-    usual: row.usual !== null && row.usual !== undefined ? (fit(row, row.usual) ?? undefined) : undefined,
-    target: 100,
-  }));
-  const showUsual = usual !== null && data.every((point) => point.usual !== undefined);
-  const dot = (props: ShapeDotProps) => {
-    const { cx = 0, cy = 0, index = 0, value = 0 } = props;
-    return (
-      <circle
-        key={index}
-        cx={cx}
-        cy={cy}
-        r={4}
-        fill={value < 100 ? "var(--warn)" : "var(--accent)"}
-        stroke="var(--surface)"
-        strokeWidth={2}
-      />
-    );
-  };
+   It replaces a radar, and the radar's fault was not its drawing. It
+   plotted how far inside its range each measure sat, so the point at the
+   outer edge of an axis called "Fillers" meant hardly any ums: read as a
+   picture it said the opposite of what it meant, and the owner read it
+   that way on the live page. Naming the axes for their good end fixed the
+   meaning and made the words too wide for a 250 pixel box. A dial has one
+   direction and needs no key.
+
+   Drawn by hand, like the bands and for the same reason: an arc and a dot
+   is not a chart. It also takes the charting library out of this section,
+   which now loads for the pace line alone. */
+
+/* The length of the arc: a half circle of radius 34, which is what the
+   dashes below are cut from. */
+const ARC = Math.PI * 34;
+
+function Dials({ rows }: { rows: Band[] }) {
   return (
-    <div className="mx-auto w-[250px]">
-      <RadarChart width={250} height={250} data={data} outerRadius={84} margin={{ top: 6, right: 6, bottom: 6, left: 6 }}>
-        <PolarGrid gridType="polygon" stroke="var(--line)" />
-        <PolarAngleAxis dataKey="axis" tick={{ fontSize: 11, fontWeight: 600, fill: "var(--muted)" }} />
-        <PolarRadiusAxis domain={[0, 100]} tick={false} axisLine={false} />
-        <Radar dataKey="target" stroke="var(--line-strong)" strokeDasharray="4 4" fill="transparent" isAnimationActive={false} />
-        {showUsual && (
-          <Radar dataKey="usual" stroke="var(--muted)" strokeWidth={1.5} fill="transparent" isAnimationActive={false} />
-        )}
-        <Radar
-          dataKey="today"
-          stroke="var(--accent)"
-          strokeWidth={2}
-          fill="var(--accent)"
-          fillOpacity={0.22}
-          isAnimationActive={false}
-          dot={dot}
-        />
-      </RadarChart>
-      <div className="mt-1 flex flex-wrap justify-center gap-x-3.5 gap-y-1 text-[11.5px] text-muted">
-        <Key stroke="border-t-2 border-accent" label="today" />
-        <Key stroke="border-t border-dashed border-line-strong" label="comfortable" />
-        {showUsual && usual && <Key stroke="border-t-[1.5px] border-muted" label={`your usual, ${usual.rounds} rounds`} />}
-      </div>
+    <div className="grid grid-cols-3 gap-x-2 gap-y-5 sm:grid-cols-5">
+      {rows.map((row) => (
+        <Dial key={row.key} band={row} />
+      ))}
     </div>
   );
 }
 
-function Key({ stroke, label }: { stroke: string; label: string }) {
+function Dial({ band }: { band: Band }) {
+  const inside = band.value >= band.good[0] && band.value <= band.good[1];
+  const from = at(band.good[0], band.scale) / 100;
+  const to = at(band.good[1], band.scale) / 100;
+  // Left end of the arc is the bottom of the scale, right end the top.
+  const angle = Math.PI - (at(band.value, band.scale) / 100) * Math.PI;
   return (
-    <span className="inline-flex items-center gap-1.5">
-      <i className={`inline-block w-3.5 ${stroke}`} />
-      {label}
-    </span>
+    <div className="min-w-0 text-center">
+      <svg viewBox="0 0 88 46" className="mx-auto block h-[54px] w-full max-w-[104px]" aria-hidden>
+        <path d="M10 40 A34 34 0 0 1 78 40" fill="none" stroke="var(--line)" strokeWidth={8} strokeLinecap="round" />
+        <path
+          d="M10 40 A34 34 0 0 1 78 40"
+          fill="none"
+          stroke="var(--accent)"
+          strokeOpacity={0.42}
+          strokeWidth={8}
+          strokeDasharray={`${(to - from) * ARC} ${ARC}`}
+          strokeDashoffset={-from * ARC}
+        />
+        <circle
+          cx={44 + 34 * Math.cos(angle)}
+          cy={40 - 34 * Math.sin(angle)}
+          r={5.5}
+          fill={inside ? "var(--accent)" : "var(--poor)"}
+          stroke="var(--surface)"
+          strokeWidth={2.5}
+        />
+      </svg>
+      {/* The number sits up inside the arc, which is what makes the pair
+          read as one dial rather than as a picture with a caption. */}
+      <div
+        className={`-mt-3.5 font-display text-[19px] leading-none font-semibold tracking-[-0.02em] ${
+          inside ? "" : "text-poor"
+        }`}
+      >
+        {dialNumber(band)}
+      </div>
+      <div className={`mt-1.5 text-[11.5px] leading-tight font-semibold ${inside ? "text-accent-strong" : "text-poor"}`}>
+        {band.verdict}
+      </div>
+      <div className="mt-0.5 text-[11px] leading-tight text-muted">{band.label}</div>
+    </div>
   );
 }
 
@@ -365,7 +408,7 @@ function leanAside(report: Report): string {
   const out = [`${total} of ${saidCount(report)} words`];
   const fillers = report.filler_counts.reduce((sum, filler) => sum + filler.count, 0);
   if (report.fillers_at_transitions !== null && fillers > 0) {
-    out.push(`${report.fillers_at_transitions} um${report.fillers_at_transitions === 1 ? "" : "s"} beside a gap`);
+    out.push(`${report.fillers_at_transitions} um${report.fillers_at_transitions === 1 ? "" : "s"} after a pause`);
   }
   return out.join(" · ");
 }
@@ -428,17 +471,17 @@ function LeanedOn({ report }: { report: Report }) {
         <ul className="m-0 list-none p-0 text-[12.5px]">
           {report.filler_counts.length > 0 || report.fillers !== null ? (
             <>
-              <Group>Fillers</Group>
-              {fillers.length ? fillers.map((slice) => <Row key={slice.word} slice={slice} />) : <Plain>Not one um.</Plain>}
+              <Group>Filler words</Group>
+              {fillers.length ? fillers.map((slice) => <Row key={slice.word} slice={slice} />) : <Plain>No ums.</Plain>}
             </>
           ) : null}
-          <Group>Words you lean on</Group>
+          <Group>Words you use a lot</Group>
           {crutches.length ? crutches.map((slice) => <Row key={slice.word} slice={slice} />) : <Plain>None this time.</Plain>}
         </ul>
       </div>
       {report.fillers === null && (
         <p className="mt-3 text-[12.5px] leading-relaxed text-muted">
-          The free transcriber drops the ums before anybody can count them.{" "}
+          The free version removes the ums before we can count them.{" "}
           <a href="/pro" className="font-semibold text-accent-strong underline underline-offset-4">
             Pro counts them
           </a>
@@ -473,7 +516,7 @@ function Row({ slice }: { slice: Slice }) {
    two-word run underlined where it happened, both times. */
 function Repeats({ report }: { report: Report }) {
   if (!report.repeats.length && !report.restarts.length) {
-    return <p className="text-[12.5px] text-muted">Nothing said twice, no restarts.</p>;
+    return <p className="text-[12.5px] text-muted">You said nothing twice, and you started no sentence twice.</p>;
   }
   return (
     <div>
@@ -512,8 +555,8 @@ function Repeats({ report }: { report: Report }) {
             ))}
           </ul>
           <p className="mt-2 text-[12px] leading-relaxed text-muted">
-            A restart is a sentence begun twice within a few seconds: the sound of losing the thread and going back
-            for it.
+            A restart is a sentence you started twice within a few seconds. You lost your place and went back to
+            the beginning.
           </p>
         </>
       )}
@@ -549,7 +592,7 @@ function Quoted({ quote }: { quote: string }) {
 function sentenceAside(report: Report): string {
   const counts = report.sentences.map((sentence) => sentence.words);
   const mean = Math.round(counts.reduce((sum, count) => sum + count, 0) / counts.length);
-  return `${counts.length} sentence${counts.length === 1 ? "" : "s"} · ${mean} words each`;
+  return `${counts.length} sentence${counts.length === 1 ? "" : "s"} · ${mean} words on average`;
 }
 
 /* Past this many sentences the words beside each bar go, and the bars
@@ -591,7 +634,7 @@ function Sentences({ report }: { report: Report }) {
       </div>
       <div className="mt-1.5 flex justify-between text-[11px] text-muted">
         <span>first to last</span>
-        <span>the line is {RUN_ON} words</span>
+        <span>the line is at {RUN_ON} words</span>
       </div>
     </>
   );
@@ -599,18 +642,43 @@ function Sentences({ report }: { report: Report }) {
 
 /* --------------------------------------------------------------- tiles */
 
-/* The facts that are not a scale. Three columns and never two and one. */
-function Tiles({ report, length }: { report: Report; length: number }) {
-  const tiles: [string, string][] = [
-    [clock(report.opening_stall), "to your first word"],
-    [clock(lastWord(report, length)), report.ended_clean ? "last word, on a full stop" : "last word, mid-sentence"],
+/* The facts that are not a scale. Three columns and never two and one.
+
+   The number turns rose where the round fell outside the range the bands
+   already draw, so the row says at a glance which of the three to look at
+   (owner's call, and the only place on the site that colour is used). The
+   edge is read off the band rather than written again here: two copies of
+   one threshold drift apart on the first edit. The third tile never turns
+   - how many different words a minute holds has no comfortable range
+   behind it, and colouring it would be a judgement with nothing under
+   it. */
+function Tiles({ report, length, rows }: { report: Report; length: number; rows: Band[] }) {
+  const outside = (key: string) => {
+    const row = rows.find((band) => band.key === key);
+    return row !== undefined && (row.value < row.good[0] || row.value > row.good[1]);
+  };
+  const tiles: [string, string, boolean][] = [
+    [clock(report.opening_stall), "to your first word", outside("start")],
+    [
+      clock(lastWord(report, length)),
+      report.ended_clean ? "last word, at the end of a sentence" : "last word, in the middle of a sentence",
+      !report.ended_clean,
+    ],
   ];
-  if (report.words !== null) tiles.push([String(distinctWords(report)), `different words of ${report.words}`]);
+  if (report.words !== null) {
+    tiles.push([String(distinctWords(report)), `different words out of ${report.words}`, false]);
+  }
   return (
     <div className={`mt-9 grid gap-2.5 ${tiles.length === 3 ? "grid-cols-3" : "grid-cols-2"}`}>
-      {tiles.map(([number, label]) => (
+      {tiles.map(([number, label, poor]) => (
         <div key={label} className="min-w-0 rounded-card border border-line bg-card px-3 py-3.5">
-          <div className="text-[22px] leading-[1.1] font-semibold tracking-[-0.02em] sm:text-[26px]">{number}</div>
+          <div
+            className={`text-[22px] leading-[1.1] font-semibold tracking-[-0.02em] sm:text-[26px] ${
+              poor ? "text-poor" : ""
+            }`}
+          >
+            {number}
+          </div>
           <div className="mt-1 text-[12px] leading-snug text-muted">{label}</div>
         </div>
       ))}

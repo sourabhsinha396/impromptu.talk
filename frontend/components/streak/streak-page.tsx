@@ -7,7 +7,7 @@ import { Share } from "@/components/streak/share";
 import type { SessionUser } from "@/lib/api";
 import type { Bank } from "@/lib/bank";
 import { ProgressSection } from "@/components/streak/progress";
-import { type Day, type History, heatmapLayout, isStrip, isWide, timeAgo, weekdayName, windowLabel } from "@/lib/practice";
+import { type Day, type History, heatmapLayout, isRow, isStrip, timeAgo, weekdayName, windowLabel } from "@/lib/practice";
 import { absolute } from "@/lib/site";
 
 /* The streak page, as approved in docs/mocks/streak.html. One column at
@@ -45,24 +45,22 @@ export function StreakPage({
             <Stats streak={history.streak} topics={history.topics} minutes={history.minutes} />
           </div>
 
-          <TwoColumns wide={isWide(history.days)}>
-            <Section
-              title={windowLabel(history.days)}
-              aside={
-                pro ? null : (
-                  <>
-                    Free keeps {history.days} days. <PitchLink>Pro keeps a year</PitchLink>
-                  </>
-                )
-              }
-            >
-              {isStrip(history.days) ? <Strip days={history.calendar} /> : <Heatmap days={history.calendar} />}
-            </Section>
+          <Section
+            title={windowLabel(history.days)}
+            aside={
+              pro ? null : (
+                <>
+                  Free keeps {history.days} days. <PitchLink>Pro keeps a year</PitchLink>
+                </>
+              )
+            }
+          >
+            <Calendar days={history.calendar} window={history.days} />
+          </Section>
 
-            <Section title="Recent" aside={<Capped history={history} pro={pro} />}>
-              <RecentList history={history} bank={bank} now={now} />
-            </Section>
-          </TwoColumns>
+          <Section title="Recent" aside={<Capped history={history} pro={pro} />}>
+            <RecentList history={history} bank={bank} now={now} />
+          </Section>
 
           {/* Under the calendar, because the calendar answers "did I turn
               up" and this answers "am I getting better", which is the
@@ -142,12 +140,20 @@ export function StreakPage({
   );
 }
 
-/* The calendar is the wide thing and the list is the tall one, so on a
-   laptop they sit side by side and finish together instead of leaving a
-   column of nothing down the right of a long page. A year-long heatmap
-   wants the whole width and takes it alone. One column on a phone. */
-export function TwoColumns({ wide, children }: { wide: boolean; children: React.ReactNode }) {
-  return <div className={wide ? "" : "md:grid md:grid-cols-2 md:gap-x-12"}>{children}</div>;
+/* The window, drawn at whatever size it is.
+
+   Everything on this page takes the whole width and follows the thing
+   above it. The calendar and the list used to share a row on a laptop,
+   on the premise that the calendar is the wide thing and the list is the
+   tall one, so the two would finish together. They never did: a month is
+   five columns of seven squares and stops growing, while the list grows
+   by a row a round and runs to a thousand on Pro. The gap between them
+   was the streak, so the better somebody practised the emptier their
+   page looked (owner's call, from `mocks/streak-layout.html`). */
+export function Calendar({ days, window }: { days: Day[]; window: number }) {
+  if (isStrip(window)) return <Strip days={days} />;
+  if (isRow(window)) return <Row days={days} />;
+  return <Heatmap days={days} />;
 }
 
 export function Section({ title, aside, children }: { title: string; aside: React.ReactNode; children: React.ReactNode }) {
@@ -266,38 +272,95 @@ export function Heatmap({ days }: { days: Day[] }) {
                 gap: "var(--gap)",
               }}
             >
-              {days.map((day, index) => {
-                const today = index === days.length - 1;
-                const fill = day.count
-                  ? "border-accent bg-accent"
-                  : day.frozen
-                    ? "border-dashed border-accent bg-transparent"
-                    : "border-line bg-card2";
-                return (
-                  <li
-                    key={day.date}
-                    title={`${day.date}${day.count ? `, ${day.count} ${day.count === 1 ? "topic" : "topics"}` : day.frozen ? ", missed, and held" : ""}`}
-                    className={`rounded-[3px] border ${fill} ${today ? "outline outline-1 outline-offset-1 outline-line-strong" : ""}`}
-                    style={index === 0 ? { gridRow: layout.firstRow } : undefined}
-                  />
-                );
-              })}
+              {days.map((day, index) => (
+                <DaySquare
+                  key={day.date}
+                  day={day}
+                  today={index === days.length - 1}
+                  style={index === 0 ? { gridRow: layout.firstRow } : undefined}
+                />
+              ))}
             </ol>
           </div>
         </div>
       </div>
-      {anyFrozen && (
-        <p className="mt-3 flex flex-wrap gap-x-4.5 gap-y-1 text-[13px] text-muted">
-          <span className="inline-flex items-center gap-1.5">
-            <i className="inline-block size-3 rounded-[2px] bg-accent" /> a day you spoke
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <i className="inline-block size-3 rounded-[2px] border border-dashed border-accent" /> a missed day the freeze
-            held
-          </span>
-        </p>
-      )}
+      {anyFrozen && <FrozenKey />}
     </div>
+  );
+}
+
+/* A month as one line of days, left to right the way time runs.
+
+   The same squares as the heatmap, in one row instead of seven. At the
+   page's width thirty of them are twenty-six pixels each; the same month
+   stacked into weeks is a 190 pixel block with seven hundred pixels of
+   nothing beside it, which is what the two-column layout was leaving
+   behind. A row also reads as time rather than as a grid whose columns
+   are weeks nobody counts, so the three days somebody missed are a gap
+   and not a hole. */
+function Row({ days }: { days: Day[] }) {
+  return (
+    <div
+      className="[container-type:inline-size]"
+      style={{ "--cell": cellSize(days.length), "--gap": GAP } as React.CSSProperties}
+    >
+      <ol
+        className="grid"
+        style={{
+          gridAutoFlow: "column",
+          gridTemplateRows: "var(--cell)",
+          gridAutoColumns: "var(--cell)",
+          gap: "var(--gap)",
+        }}
+      >
+        {days.map((day, index) => (
+          <DaySquare key={day.date} day={day} today={index === days.length - 1} />
+        ))}
+      </ol>
+      {/* Both ends named, because a row of squares with nothing written
+          on it says how many days but never which. */}
+      <div className="mt-2 flex justify-between text-[11.5px] text-muted">
+        <span>{days.length > 0 ? longDate(days[0].date) : ""}</span>
+        <span>Today</span>
+      </div>
+      {days.some((day) => day.frozen) && <FrozenKey />}
+    </div>
+  );
+}
+
+function longDate(date: string): string {
+  return new Date(date).toLocaleDateString("en-GB", { day: "numeric", month: "long", timeZone: "UTC" });
+}
+
+/* One day. A dashed square is a day the freeze held: it did not happen,
+   and a square that read as a run would be the calendar telling a small
+   lie. Shared by the row and the heatmap so the two cannot drift into
+   meaning different things by the same colour. */
+function DaySquare({ day, today, style }: { day: Day; today: boolean; style?: React.CSSProperties }) {
+  const fill = day.count
+    ? "border-accent bg-accent"
+    : day.frozen
+      ? "border-dashed border-accent bg-transparent"
+      : "border-line bg-card2";
+  return (
+    <li
+      title={`${day.date}${day.count ? `, ${day.count} ${day.count === 1 ? "topic" : "topics"}` : day.frozen ? ", missed, and held" : ""}`}
+      className={`rounded-[3px] border ${fill} ${today ? "outline outline-1 outline-offset-1 outline-line-strong" : ""}`}
+      style={style}
+    />
+  );
+}
+
+function FrozenKey() {
+  return (
+    <p className="mt-3 flex flex-wrap gap-x-4.5 gap-y-1 text-[13px] text-muted">
+      <span className="inline-flex items-center gap-1.5">
+        <i className="inline-block size-3 rounded-[2px] bg-accent" /> a day you spoke
+      </span>
+      <span className="inline-flex items-center gap-1.5">
+        <i className="inline-block size-3 rounded-[2px] border border-dashed border-accent" /> a missed day the freeze held
+      </span>
+    </p>
   );
 }
 
@@ -306,13 +369,18 @@ export function Heatmap({ days }: { days: Day[] }) {
    drops and the time stays. */
 function RecentList({ history, bank, now }: { history: History; bank: Bank; now: number }) {
   return (
-    <ul className="max-w-[640px]">
+    /* Two columns now that the list has the page's width, which halves
+       the height of a long one and is the other half of why this page
+       used to grow a hole down its left. Every row keeps its rule, so
+       both columns end on a line rather than one of them stopping in
+       mid-air. */
+    <ul className="sm:columns-2 sm:gap-x-12">
       {history.recent.map((run, index) => {
         const genre = bank.genres.find((candidate) => candidate.slug === run.genre_slug);
         return (
           <li
             key={`${run.at}-${index}`}
-            className="flex items-baseline justify-between gap-4 border-b border-line px-0.5 py-2.5 text-[15.5px] last:border-b-0"
+            className="flex break-inside-avoid items-baseline justify-between gap-4 border-b border-line px-0.5 py-2.5 text-[15.5px]"
           >
             {/* A link only where there is something to open. A round
                 practised before the report existed, or with no microphone,

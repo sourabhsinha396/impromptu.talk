@@ -110,6 +110,35 @@ describe.each(Object.keys(ACCENTS).sort())("%s is readable as the topic", (slug)
   });
 });
 
+describe("the colour that marks a poor measure", () => {
+  /* The three tiles at the foot of a round put a number in `--poor`, and
+     the filming board puts a measure's name in it, so unlike `--warn`,
+     which only ever draws a line or a dot, this one is read as text and
+     has to clear the text floor on both pages. It also
+     has to stay distinct from the warm colour beside it: a rose and an
+     orange that read as one colour would say the wave and the tile mean
+     the same thing. */
+  const poor = () => [...CSS.matchAll(/--poor:\s*oklch\(([\d.]+) ([\d.]+) ([\d.]+)\)/g)].map((m) => m.slice(1).map(Number));
+
+  it("is declared once for light and once for each copy of dark", () => {
+    expect(poor()).toHaveLength(3);
+    expect(poor()[1]).toEqual(poor()[2]);
+  });
+
+  it("is readable as text on both pages", () => {
+    const [lightPoor, darkPoor] = poor();
+    expect(contrast(srgb(lightPoor[0], lightPoor[1], lightPoor[2]), LIGHT_PAGE)).toBeGreaterThanOrEqual(FLOOR);
+    expect(contrast(srgb(darkPoor[0], darkPoor[1], darkPoor[2]), DARK_PAGE)).toBeGreaterThanOrEqual(FLOOR);
+  });
+
+  it("sits far enough from the warm colour to read as a different one", () => {
+    const warn = [...CSS.matchAll(/--warn:\s*oklch\([\d.]+ [\d.]+ ([\d.]+)\)/g)].map((m) => Number(m[1]));
+    for (const hue of poor().map((row) => row[2])) {
+      expect(Math.min(...warn.map((h) => Math.abs(h - hue)))).toBeGreaterThanOrEqual(15);
+    }
+  });
+});
+
 describe("the accent never paints the button", () => {
   /* The whole reason a settable colour is safe: it is never what marks the
      one thing you press. If the primary button goes back to the accent, a

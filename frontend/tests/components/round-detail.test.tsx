@@ -88,13 +88,13 @@ describe("RoundDetail", () => {
     // fillers marked where they were said.
     expect(screen.getByText("Um,")).toBeInTheDocument();
     expect(screen.getByText("of 13 words")).toBeInTheDocument();
-    expect(screen.getByText("2 of 13 words · 1 um beside a gap")).toBeInTheDocument();
+    expect(screen.getByText("2 of 13 words · 1 um after a pause")).toBeInTheDocument();
   });
 
-  it("says how many measures landed and which is furthest out", () => {
+  it("says how many measures are in the good range and which to work on", () => {
     render(<RoundDetail report={PRO} length={58} pro />);
-    expect(screen.getByText("4 of 5 in the comfortable range · furthest out: longest sentence")).toBeInTheDocument();
-    expect(screen.getByText("last word, on a full stop")).toBeInTheDocument();
+    expect(screen.getByText("4 of 5 in the good range · work on your longest sentence")).toBeInTheDocument();
+    expect(screen.getByText("last word, at the end of a sentence")).toBeInTheDocument();
   });
 
   it("tells a free round about its pace and its restart and nothing about fillers", () => {
@@ -117,5 +117,25 @@ describe("RoundDetail", () => {
     expect(screen.queryByText("Fillers")).not.toBeInTheDocument();
     expect(screen.getByText("Restart")).toBeInTheDocument();
     expect(screen.getByText("of 11 words")).toBeInTheDocument();
+  });
+
+  it("shows a free round a sample of the sentences and the tiles, never its own", () => {
+    // The blur is drawn from one fixed round for the reason the case
+    // sample is: a blur over somebody's own numbers is a fault, and a
+    // free round's own tiles behind glass is a thing taken away rather
+    // than a thing offered.
+    render(<RoundDetail report={{ ...PRO, usual: null }} length={58} pro={false} />);
+    expect(screen.getByText("Pro measures every sentence.")).toBeInTheDocument();
+    // Two sections behind glass now, the case and this one, and both say
+    // so beside the heading rather than only on the card.
+    expect(screen.getAllByText("a sample")).toHaveLength(2);
+    // Its own longest sentence is 41 words; the sample's is 17.
+    expect(screen.queryByText(/41 words/)).not.toBeInTheDocument();
+  });
+
+  it("gives a Pro round its own sentences and tiles, with no sample behind them", () => {
+    render(<RoundDetail report={PRO} length={58} pro />);
+    expect(screen.queryByText("Pro measures every sentence.")).not.toBeInTheDocument();
+    expect(screen.getByText("to your first word")).toBeInTheDocument();
   });
 });

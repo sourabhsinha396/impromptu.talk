@@ -10,23 +10,23 @@
    No DOM in this file, so it is a table of tests rather than a page
    nobody can check. */
 
-import type { Case, Role, Round, Sentence } from "@/lib/report";
+import type { Case, Report, Role, Round, Sentence } from "@/lib/report";
 
 /* What each role is called on the page. In the order a legend reads them,
    which is the order they usually arrive in a round. */
 export const ROLE_WORD: Record<Exclude<Role, "">, string> = {
-  point: "the point",
+  point: "your point",
   reason: "a reason",
   example: "an example",
-  setup: "wind-up",
-  aside: "an aside",
-  close: "the close",
+  setup: "an intro",
+  aside: "off topic",
+  close: "your ending",
 };
 
 export const ANSWERED_WORD: Record<Case["answered"], string> = {
-  yes: "Answered it.",
-  half: "Half answered.",
-  no: "Missed it.",
+  yes: "You answered it.",
+  half: "You half answered it.",
+  no: "You did not answer it.",
 };
 
 /** Reaching your point inside this is reaching it at once. Editorial, like
@@ -116,8 +116,8 @@ export const SAMPLE_LENGTH = 60;
 
 export const SAMPLE_CASE: Case = {
   answered: "yes",
-  verdict: "The story you were asked for: the point in the first sentence, three reasons, then what happened.",
-  advice: "Start the close ten seconds earlier, so the lesson lands before the bell.",
+  verdict: "You told the story you were asked for. Your point came first, then three reasons, then what happened.",
+  advice: "Start your ending ten seconds earlier, so you finish before the time runs out.",
 };
 
 export const SAMPLE_SENTENCES: Sentence[] = [
@@ -133,6 +133,56 @@ export const SAMPLE_SENTENCES: Sentence[] = [
   { text: "Better than fine.", words: 3, role: "example", at: 45.3, end: 46.3 },
   { text: "So, yeah, I think, um, I think the lesson is you can say no and, uh, and the world", words: 17, role: "close", at: 49.7, end: 59.2 },
 ];
+
+/* The same fixed round as a whole report, for the sections that are
+   blurred rather than read: the sentences and the three tiles under them
+   (owner's call, free sees a sample of both).
+
+   Every field the two of them touch is real arithmetic over the sentences
+   above, so the blurred picture is a round that could have happened: the
+   transcript is those sentences, which is what the different-word count
+   is taken from, and the last word lands where the last sentence ends.
+   The rest is filled in because a `Report` has to be whole, and nothing
+   drawn behind the blur reads it. */
+export const SAMPLE_REPORT: Report = {
+  heard: true,
+  speaking_seconds: 48.8,
+  opening_stall: 1.6,
+  pauses: [
+    { at: 9.2, seconds: 1, awkward: false },
+    { at: 16.4, seconds: 1.9, awkward: true },
+    { at: 26, seconds: 2.7, awkward: true },
+    { at: 41, seconds: 1.8, awkward: true },
+    { at: 47, seconds: 1.4, awkward: false },
+  ],
+  longest_pause: 2.7,
+  awkward_pauses: 3,
+  speaking_ratio: 0.81,
+  trail_off: 0.9,
+  words: 111,
+  pace: 136,
+  fillers: 11,
+  filler_rate: 11,
+  crutch_words: [],
+  filler_words: ["um", "uh", "like"],
+  fillers_at_transitions: 4,
+  transcript: SAMPLE_SENTENCES.map((sentence) => sentence.text).join(" "),
+  said: [],
+  topic: "A time you said no",
+  at: "2026-09-07T09:00:00Z",
+  genre_slug: "general",
+  seconds_left: 0,
+  pace_curve: [],
+  filler_times: [],
+  filler_counts: [],
+  leaned_on: [],
+  restarts: [],
+  repeats: [],
+  sentences: SAMPLE_SENTENCES,
+  ended_clean: true,
+  usual: null,
+  case: SAMPLE_CASE,
+};
 
 /* Ten rounds behind the sample one, so the cards under it show a person
    getting to the point sooner over a fortnight, which is what the cards

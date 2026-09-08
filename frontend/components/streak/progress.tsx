@@ -163,7 +163,7 @@ function ThenAndNow({ progress, pro }: { progress: Progress; pro: boolean }) {
         </span>
         <span className="inline-flex items-center gap-1.5">
           <i className="inline-block h-2 w-3 rounded-[3px] bg-accent/25" />
-          comfortable
+          the good range
         </span>
       </div>
     </div>
@@ -173,7 +173,7 @@ function ThenAndNow({ progress, pro }: { progress: Progress; pro: boolean }) {
 const pct = (v: number, [lo, hi]: [number, number]) => Math.max(0, Math.min(100, ((v - lo) / (hi - lo)) * 100));
 
 /* One skill: its name, one sentence, and where you were against where you
-   are, as two dots on the comfortable stretch. */
+   are, as two dots on the good range. */
 function Row({ row, word }: { row: Compared; word: string | null }) {
   const { skill } = row;
   const scale: [number, number] = skill.rate ? [0, row.of] : (skill.scale ?? [0, 1]);
@@ -240,8 +240,8 @@ function WorkOnNext({ progress }: { progress: Progress }) {
     return (
       <Card label="Work on next" title="Nothing is out of range.">
         <p className="mt-2 text-[13px] leading-relaxed text-muted">
-          Every skill sat in the comfortable stretch over your last {pick.looked} rounds. Try a harder genre, or no
-          time to think.
+          Every skill was in the good range over your last {pick.looked} rounds. Try a harder genre, or no time to
+          think.
         </p>
       </Card>
     );
@@ -252,7 +252,7 @@ function WorkOnNext({ progress }: { progress: Progress }) {
   return (
     <Card label="Work on next" title={capital(name)}>
       <p className="mt-2 text-[13px] leading-relaxed text-muted">
-        {skill.label === "Your word" ? `"${word}"` : skill.label} was outside the comfortable range in{" "}
+        {skill.label === "Your word" ? `"${word}"` : skill.label} was outside the good range in{" "}
         <b className="font-semibold text-ink">
           {pick.out} of your last {pick.looked}
         </b>{" "}
@@ -387,7 +387,7 @@ function Trend({ line, points }: { line: Line; points: Point[] }) {
         ) : (
           <span>Not counted yet</span>
         )}
-        <span>comfortable under {fmt(line.good, line.unit)}</span>
+        <span>good under {fmt(line.good, line.unit)}</span>
       </div>
       <div className="mt-2 h-[64px]">
         <ResponsiveContainer width="100%" height="100%">
@@ -484,8 +484,8 @@ function Firsts({ progress, pro }: { progress: Progress; pro: boolean }) {
       <p className="mb-2 text-[12.5px] font-semibold">Firsts</p>
       {!pro ? (
         <p className="text-[13px] leading-relaxed text-muted">
-          Your first minute with no holes, your first round with no restarts, your first clean ending, each a link to
-          the round. <Pitch>Pro keeps them</Pitch>.
+          Your first minute with no long pauses, your first round with no restarts, your first clean ending, each a
+          link to the round. <Pitch>Pro keeps them</Pitch>.
         </p>
       ) : (
         <ul className="m-0 list-none p-0 text-[12.5px]">

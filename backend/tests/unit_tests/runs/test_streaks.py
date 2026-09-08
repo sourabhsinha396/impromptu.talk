@@ -1,8 +1,8 @@
 """Streaks are derived, never stored, and that is only safe if the
 derivation is right. Its edges are silent when broken: the grace day, the
-offset, the plan's window, and the freeze rule, which is per calendar
-month and so is tested on fixed dates rather than through rows dated
-relative to a real today."""
+offset, the plan's window, and the freeze rule, whose allowance is counted
+over the thirty days behind a gap and so is tested on fixed dates, where
+the spacing that decides it can be read off the page."""
 
 import datetime as dt
 
@@ -101,40 +101,50 @@ class TestTheClock:
         assert current_streak(DEVICE, offset_minutes=0, now=now) == 0
 
 
+WEEKEND = [dt.date(2026, 3, 7), dt.date(2026, 3, 8)]
+
+
 class TestFreezeRule:
-    """The allowance itself, on fixed dates: a three-day gap is one month's
-    worth mid-month and two months' worth across a boundary, so asserting
-    it through rows dated from a real today would pass or fail with the
-    calendar, the exact silent breakage this module is careful about."""
+    """The allowance itself, on fixed dates, because what decides a gap is
+    how far its days sit from the days already frozen and that is a number
+    the test should be able to show."""
 
     def gap(self, first, second, spent=None):
-        spent = {} if spent is None else spent
+        spent = [] if spent is None else spent
         return _freeze(dt.date.fromisoformat(first), dt.date.fromisoformat(second), spent), spent
 
-    def test_one_missed_day_and_a_weekend_are_covered_and_billed_to_the_month(self):
-        assert self.gap("2026-03-10", "2026-03-12") == (True, {(2026, 3): 1})
-        assert self.gap("2026-03-06", "2026-03-09") == (True, {(2026, 3): 2})
+    def test_one_missed_day_and_a_weekend_are_covered_and_spend_those_days(self):
+        assert self.gap("2026-03-10", "2026-03-12") == (True, [dt.date(2026, 3, 11)])
+        assert self.gap("2026-03-06", "2026-03-09") == (True, WEEKEND)
 
-    def test_three_days_in_one_month_is_not_and_a_refusal_spends_nothing(self):
-        assert self.gap("2026-03-10", "2026-03-14") == (False, {})
+    def test_three_days_away_is_refused_wherever_it_falls_and_a_refusal_spends_nothing(self):
+        assert self.gap("2026-03-10", "2026-03-14") == (False, [])
+        # The same absence across a month boundary, which the calendar
+        # month used to forgive by handing it two fresh days on the 1st.
+        assert self.gap("2026-01-30", "2026-02-03") == (False, [])
 
-    def test_the_allowance_is_per_month_not_per_streak_and_a_month_runs_out(self):
-        _, spent = self.gap("2026-03-06", "2026-03-09")
-        assert self.gap("2026-04-06", "2026-04-09", spent) == (True, {(2026, 3): 2, (2026, 4): 2})
-        assert self.gap("2026-03-20", "2026-03-22", dict(spent))[0] is False
+    def test_the_window_rolls_back_from_the_gap_and_not_to_the_first_of_a_month(self):
+        """A third missed day is refused until it is thirty days clear of
+        the first of the two behind it, whatever month that lands in."""
+        assert self.gap("2026-04-04", "2026-04-06", list(WEEKEND))[0] is False
+        assert self.gap("2026-04-05", "2026-04-07", list(WEEKEND))[0] is True
 
-    def test_a_gap_across_a_month_boundary_bills_each_month(self):
-        assert self.gap("2026-01-30", "2026-02-03") == (True, {(2026, 1): 1, (2026, 2): 2})
+    def test_the_allowance_is_per_window_not_per_streak_and_a_window_runs_out(self):
+        spent = list(WEEKEND)
+        assert self.gap("2026-04-06", "2026-04-09", spent)[0] is True
+        assert spent == [*WEEKEND, dt.date(2026, 4, 7), dt.date(2026, 4, 8)]
+        assert self.gap("2026-03-20", "2026-03-22", list(WEEKEND))[0] is False
 
     def test_a_long_absence_is_refused_without_walking_it_and_adjacent_days_cost_nothing(self):
-        assert self.gap("2025-01-01", "2026-01-01") == (False, {})
-        assert self.gap("2026-03-10", "2026-03-11") == (True, {})
+        assert self.gap("2025-01-01", "2026-01-01") == (False, [])
+        assert self.gap("2026-03-10", "2026-03-11") == (True, [])
 
 
 class TestFrozenStreaks:
-    """The rule through the count. Only gaps whose verdict cannot move with
-    the calendar are asserted: one and two missed days are covered
-    whichever month they land in, five are refused whichever."""
+    """The rule through the count, on rows dated back from a real today,
+    which is safe now that no gap's verdict moves with the calendar: one
+    and two missed days are covered, three or more are not, on every day of
+    every month."""
 
     def test_free_breaks_on_a_missed_day_and_pro_survives_it(self, db):
         runs_on_days([0, 2, 3])
@@ -170,6 +180,10 @@ class TestFrozenStreaks:
 
 class TestLongestStreak:
     def test_never_shorter_than_the_current_one_and_never_more_than_the_plan_tracks(self, db):
+        """The three missed days behind day 10 break the chain on every
+        date this runs. Under the calendar month they did not: twelve days
+        back from the 8th crosses into the month before, which paid for the
+        gap out of two allowances and read 9."""
         runs_on_days([0, 1, 2, 3, 4, 5, 6, 10, 11])
         assert longest_streak(DEVICE, rule=PRO) == 7
         assert longest_streak(DEVICE) == 5

@@ -144,6 +144,16 @@
      goes near red, so it means one thing. */
   --warn: oklch(0.62 0.2 30);
 
+  /* A measure that fell outside the range the bands draw, and nothing
+     else: the number on the three tiles at the foot of a round, and the
+     one short bar on the filming board's "How the round went".
+
+     Rose rather than the warn orange, because warn is the wave's own
+     colour on both of those screens and would read as part of it; and
+     this one is read as text, so it clears 4.5:1 on both pages where
+     warn does not. */
+  --poor: oklch(0.55 0.18 12);
+
   /* The header's true rendered height: 40px controls and 10px each side.
      The tool page fills the rest of the viewport so the footer lands just
      below the fold, present for anyone who looks and absent from a
@@ -175,6 +185,7 @@
   --note: oklch(0.86 0.15 120);
   --note-ink: oklch(0.2 0.04 120);
   --warn: oklch(0.75 0.19 30);
+  --poor: oklch(0.78 0.14 10);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -199,6 +210,7 @@
     --note: oklch(0.86 0.15 120);
     --note-ink: oklch(0.2 0.04 120);
     --warn: oklch(0.75 0.19 30);
+    --poor: oklch(0.78 0.14 10);
   }
 }
 
@@ -247,6 +259,7 @@
   --color-note: var(--note);
   --color-note-ink: var(--note-ink);
   --color-warn: var(--warn);
+  --color-poor: var(--poor);
 
   --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;

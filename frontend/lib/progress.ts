@@ -20,7 +20,7 @@ export const RECENT = 5;
     carries it alone. */
 export const DOTS_UNTIL = 12;
 
-/* The comfortable edges. The stall and the gap are the round page's; the
+/* The good edges. The stall and the gap are the round page's; the
    rest are editorial, like every edge in the report, and are meant to
    move against real rounds. Silence is seconds of a round with no voice
    in them, so fifteen is a quarter of a minute quiet. */
@@ -60,7 +60,7 @@ export const SKILLS: Skill[] = [
     good: [0, GOOD_SILENCE],
     scale: [0, 40],
     name: "keeping going",
-    advice: "Say the next point half-formed. A wobble costs less than a hole.",
+    advice: "Start your next point even if it is not ready. A long silence is worse than a small mistake.",
     fmt: (v) => `${Math.round(v)}s`,
     say: (a, b) => `You are quiet for ${Math.round(b)} seconds of your minute. It was ${Math.round(a)}.`,
   },
@@ -69,8 +69,8 @@ export const SKILLS: Skill[] = [
     label: "Time to start",
     good: [0, GOOD_STALL],
     scale: [0, 8],
-    name: "starting at once",
-    advice: "Open with your claim, not a wind-up. Say the point, then explain it.",
+    name: "starting quickly",
+    advice: "Say your point first. Then explain it.",
     fmt: (v) => `${r1(v)}s`,
     say: (a, b) => `You start after ${r1(b)} seconds. It was ${r1(a)}.`,
   },
@@ -79,8 +79,8 @@ export const SKILLS: Skill[] = [
     label: "Restarts",
     good: [0, GOOD_RESTARTS],
     scale: [0, 4],
-    name: "holding the thread",
-    advice: "When you lose a sentence, finish it badly rather than start it again. Nobody heard the plan.",
+    name: "finishing your sentences",
+    advice: "If you lose a sentence, finish it anyway. Nobody heard the sentence you planned.",
     fmt: (v) => `${r1(v)} a round`,
     say: (a, b) => `You go back for a sentence ${r1(b)} times a round. It was ${r1(a)}.`,
   },
@@ -91,7 +91,7 @@ export const SKILLS: Skill[] = [
     good: [GOOD_FILLED, 60],
     scale: [30, 60],
     name: "filling the time",
-    advice: "Plan your last line while you think, then talk until the bell.",
+    advice: "Plan your last sentence while you think, then keep talking until the time ends.",
     fmt: (v) => clock(v),
     say: (a, b) => `You speak until ${clock(b)} of 1:00. It was ${clock(a)}.`,
   },
@@ -108,7 +108,7 @@ export const SKILLS: Skill[] = [
     good: [0, GOOD_HABIT],
     scale: [0, 12],
     name: "a habit word",
-    advice: "Pause where the word would go. Silence reads as deliberate.",
+    advice: "Take a short pause where the word would go. A pause sounds calm.",
     fmt: (v) => `${r1(v)} a round`,
     say: (a, b, _of, word) => `You say "${word}" ${r1(b)} times a round. It was ${r1(a)}.`,
   },
@@ -277,7 +277,7 @@ export function byPrep(rounds: Round[]): { none: number; some: number } | null {
 
 /** The milestones, in the order they are listed. */
 export const FIRSTS: [string, string][] = [
-  ["no_holes", "A minute with no holes"],
+  ["no_holes", "A minute with no long pauses"],
   ["no_restarts", "A round with no restarts"],
   ["clean_ending", "A clean ending"],
   ["full_minute", "A full minute"],
@@ -285,8 +285,8 @@ export const FIRSTS: [string, string][] = [
   ["no_ums", "A minute with no ums"],
 ];
 
-/** The three lines over the window, and the edge each is comfortable
-    under. Lower is better on all three, so "better" is always down. */
+/** The three lines over the window, and the edge each is good under.
+    Lower is better on all three, so "better" is always down. */
 export const LINES = [
   { key: "silence" as const, label: "Silence in the minute", unit: "s", good: GOOD_SILENCE, floor: 40 },
   { key: "restarts" as const, label: "Restarts a round", unit: "", good: GOOD_RESTARTS, floor: 3 },

@@ -3,8 +3,8 @@ import Link from "next/link";
 import { Stats } from "@/components/round/phases";
 import { Button } from "@/components/site/button";
 import { FlameIcon } from "@/components/site/icons";
-import { Heatmap, Section, TwoColumns } from "@/components/streak/streak-page";
-import { type Shared, isWide } from "@/lib/practice";
+import { Calendar, Section } from "@/components/streak/streak-page";
+import { type Shared } from "@/lib/practice";
 import { SITE_NAME, SITE_TAGLINE } from "@/lib/site";
 
 /* One person's practice for anybody with the link, as approved in
@@ -30,24 +30,23 @@ export function SharedPage({ shared }: { shared: Shared }) {
         <Stats streak={shared.streak} topics={shared.topics} minutes={shared.minutes} />
       </div>
 
-      <TwoColumns wide={isWide(shared.days)}>
-        <Section title="Last eight weeks" aside={null}>
-          <Heatmap days={shared.calendar} />
+      <Section title="Last eight weeks" aside={null}>
+        <Calendar days={shared.calendar} window={shared.days} />
+      </Section>
+
+      {shared.recent.length > 0 && (
+        <Section title="Recently practised" aside={null}>
+          <ul className="sm:columns-2 sm:gap-x-12">
+            {shared.recent.map((topic) => (
+              <li key={topic.slug} className="break-inside-avoid border-b border-line px-0.5 py-2.5 text-[15.5px]">
+                <Link href={`/?topic=${topic.slug}`} className="text-ink no-underline hover:text-accent hover:underline">
+                  {topic.text}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </Section>
-        {shared.recent.length > 0 && (
-          <Section title="Recently practised" aside={null}>
-            <ul className="max-w-[640px]">
-              {shared.recent.map((topic) => (
-                <li key={topic.slug} className="border-b border-line px-0.5 py-2.5 text-[15.5px] last:border-b-0">
-                  <Link href={`/?topic=${topic.slug}`} className="text-ink no-underline hover:text-accent hover:underline">
-                    {topic.text}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </Section>
-        )}
-      </TwoColumns>
+      )}
 
       <div className="mt-9">
         <Button href="/" size="xl">

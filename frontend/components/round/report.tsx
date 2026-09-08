@@ -63,15 +63,22 @@ export function RoundReport({
       <Bands rows={bands(report)} />
       <Transcript report={report} />
       {href && (
-        /* The ping sits after the link rather than on it: the underline
-           already says the words are pressable, and this says which of the
-           several pressable things on the done screen is the one nobody
-           has found yet. */
-        <p className="mt-4 flex items-center justify-center gap-2 text-[12.5px]">
-          <a href={href} className="font-semibold text-accent-strong underline underline-offset-4 hover:text-ink">
+        /* A button, not a line of underlined text.
+
+           This is the one thing on the done screen nobody was finding,
+           and 12.5 pixel grey type under a fold nobody opens is not a
+           control anybody sees, whatever is pinging beside it. Ghost,
+           because Spin again is the ink primary on this screen and there
+           is only ever one of those.
+
+           The ping rides inside the button now, at twelve pixels rather
+           than eight, so what the button is for arrives before the words
+           are read (owner's call). */
+        <p className="mt-6 flex justify-center">
+          <Button href={href} variant="ghost" size="md">
             See the full report
-          </a>
-          <Ping />
+            <Ping size={12} />
+          </Button>
         </p>
       )}
     </div>
@@ -176,7 +183,7 @@ export function MinuteBar({
           preserveAspectRatio="none"
           className={`block w-full overflow-visible ${film ? "h-24" : "h-10"}`}
           role="img"
-          aria-label={`Your minute: ${report.pauses.length} pauses, longest ${report.longest_pause} seconds`}
+          aria-label={`Your minute: ${report.pauses.length} pauses, the longest ${report.longest_pause} seconds`}
         >
           {marks.map((mark, index) =>
             mark.kind === "stroke" ? (
@@ -202,7 +209,7 @@ export function MinuteBar({
                 strokeWidth={film ? TONE[mark.tone].width * 3 : TONE[mark.tone].width}
                 vectorEffect="non-scaling-stroke"
               >
-                <title>{mark.tone === "gap" ? `A ${mark.seconds}s gap` : `A ${mark.seconds}s breath`}</title>
+                <title>{mark.tone === "gap" ? `A long pause, ${mark.seconds}s` : `A short pause, ${mark.seconds}s`}</title>
               </line>
             ),
           )}
@@ -237,8 +244,8 @@ export function Headline({ report }: { report: Report }) {
       {report.fillers !== null && report.fillers_at_transitions !== null && report.fillers > 0 && (
         <p className="mt-1 text-[12.5px] text-muted">
           {report.fillers_at_transitions === 0
-            ? "None of them at a gap, so it is a habit rather than hunting."
-            : `${report.fillers_at_transitions} of them beside a gap, where the next point was not ready.`}
+            ? "None of them came after a pause, so it is a habit."
+            : `${report.fillers_at_transitions} of them came after a pause, when your next point was not ready.`}
         </p>
       )}
     </>
@@ -275,7 +282,7 @@ export function Transcript({ report, open = false }: { report: Report; open?: bo
   return (
     <details className="group mt-5 text-left">
       <summary className="cursor-pointer list-none text-center text-[12.5px] font-semibold text-muted underline underline-offset-4 hover:text-ink">
-        <span className="group-open:hidden">Read it back</span>
+        <span className="group-open:hidden">Read what you said</span>
         <span className="hidden group-open:inline">Hide</span>
       </summary>
       {body}
@@ -292,10 +299,10 @@ function numbers(report: Report): string[] {
   // times and reporting that as twenty pauses reads like an accusation
   // while telling nobody anything; the gaps long enough for a listener to
   // notice are the ones worth acting on.
-  const out = [`${report.awkward_pauses} long gap${report.awkward_pauses === 1 ? "" : "s"}`];
+  const out = [`${report.awkward_pauses} long pause${report.awkward_pauses === 1 ? "" : "s"}`];
   if (report.opening_stall >= 1) out.push(`${clock(report.opening_stall)} to start`);
-  if (report.pace !== null) out.push(`${report.pace} wpm`);
-  if (report.fillers !== null) out.push(`${report.fillers} um`);
+  if (report.pace !== null) out.push(`${report.pace} words a minute`);
+  if (report.fillers !== null) out.push(`${report.fillers} um${report.fillers === 1 ? "" : "s"}`);
   return out;
 }
 
@@ -322,11 +329,11 @@ export function ReportInvitation({ onYes, onNo }: { onYes: () => void; onNo: () 
     <div className="mx-auto w-full max-w-[420px] rounded-card border border-line bg-card2 px-5 py-4 text-center">
       <p className="flex items-center justify-center gap-2 text-[15px] font-semibold">
         <MicIcon size={16} className="text-accent" />
-        Get feedback on every round
+        Get feedback on your speech
       </p>
       <p className="mx-auto mt-1.5 max-w-[40ch] text-[13px] text-muted">
-        A report on your pauses, your pace and the words you lean on. Needs your microphone, and we never keep the
-        audio.
+        Needs your microphone, and we never keep
+        the audio.
       </p>
       {/* A ghost button and a word, not two buttons. There are only two
           variants and the primary is ink, which belongs to Spin on this
@@ -447,7 +454,7 @@ function Timed({ report }: { report: Report }) {
               className={`mx-1 inline-block rounded-[4px] px-1 align-middle text-[11px] font-semibold tabular-nums ${
                 part.awkward ? "bg-warn/25 text-ink" : "bg-line text-muted"
               }`}
-              title={part.awkward ? "Long enough to notice" : "A breath"}
+              title={part.awkward ? "A long pause" : "A short pause"}
             >
               {part.seconds}s
             </span>

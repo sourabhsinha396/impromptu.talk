@@ -1,0 +1,246 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mock: the words you used, by size</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..600&family=Plus+Jakarta+Sans:wght@400..700&display=swap" rel="stylesheet"><style>
+:root{color-scheme:light;--surface:#fff;--card:#fff;--card2:oklch(.965 .008 120);--ink:#1c1917;--muted:#57534e;--line:#e7e5e4;--line-strong:#918b87;
+--accent-h:120;--accent-c:.12;--accent-l:.5;--accent-l-strong:.42;--accent:oklch(var(--accent-l) var(--accent-c) var(--accent-h));--accent-strong:oklch(var(--accent-l-strong) var(--accent-c) var(--accent-h));
+--warn:oklch(.62 .2 30);--poor:oklch(.55 .18 12);
+--sans:"Plus Jakarta Sans",ui-sans-serif,system-ui,sans-serif;--display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif}
+[data-theme=dark]{color-scheme:dark;--surface:#080808;--card:#161616;--card2:#101010;--ink:#f5f5f4;--muted:#a8a29e;--line:#292524;--line-strong:#6b6560;
+--accent-l:.796;--accent-l-strong:.86;--warn:oklch(.75 .19 30);--poor:oklch(.78 .14 10)}
+[data-accent=amber]{--accent-h:75;--accent-c:.106}[data-accent=coral]{--accent-h:32;--accent-c:.118}
+[data-accent=violet]{--accent-h:285;--accent-c:.106}[data-accent=cyan]{--accent-h:210;--accent-c:.086}
+*{box-sizing:border-box}html,body{margin:0}body{background:#3f3d3a;font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased}
+.mockbar{position:sticky;top:0;z-index:50;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:10px 16px;background:#26241f;color:#d6d3d1;font:600 12px/1 var(--sans);letter-spacing:.02em}
+.mockbar b{color:#fff;font-weight:700;margin-right:6px}.mockbar .seg{display:inline-flex;border:1px solid #57534e;border-radius:999px;overflow:hidden}
+.mockbar button{all:unset;cursor:pointer;padding:7px 12px;color:#d6d3d1}.mockbar button.on{background:#f5f5f4;color:#1c1917}
+h1.lab{max-width:860px;margin:26px auto 0;color:#d6d3d1;font:600 12px var(--sans);letter-spacing:.05em;text-transform:uppercase}
+.cap{max-width:860px;margin:8px auto 0;color:#a8a29e;font:400 13px/1.5 var(--sans)}
+.frame{width:860px;max-width:100%;margin:12px auto 0;background:var(--surface);color:var(--ink);box-shadow:0 20px 60px rgb(0 0 0/.35);padding:26px 32px 34px}
+.notes{max-width:860px;margin:26px auto 0;background:#fffbea;color:#3b2f0b;border-radius:14px;padding:18px 22px;font-size:14px;line-height:1.55}
+.notes h2{margin:0 0 8px;font:600 15px var(--sans)}.notes h3{margin:18px 0 6px;font:600 14px var(--sans)}
+.notes ul{margin:0;padding-left:18px}.notes li{margin:6px 0}.notes[hidden]{display:none}
+.notes code{background:#f3e9b8;padding:1px 5px;border-radius:4px;font-size:12.5px}
+.verdict{margin:14px 0 0;padding:12px 14px;border-radius:10px;background:#2a2a28;color:#e7e5e4;font-size:13.5px;line-height:1.55}
+.tail{height:70px}
+[hidden]{display:none!important}
+
+.sect-h{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 12px;border-bottom:1px solid var(--line);padding-bottom:7px;margin-bottom:16px}
+.sect-h h2{margin:0;font-family:var(--display);font-weight:600;font-variation-settings:"wdth" 96;letter-spacing:-.02em;font-size:19px}
+.sect-h p{margin:0;font-size:12.5px;color:var(--muted)}
+.plain{margin:16px 0 0;font-size:12.5px;line-height:1.6;color:var(--muted)}
+.plain b{color:var(--ink);font-weight:600}
+.key{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;margin:16px 0 0;font-size:12px;color:var(--muted)}
+.ramp{display:inline-flex;gap:3px;vertical-align:-2px;margin-right:7px}
+.ramp i{display:inline-block;width:14px;height:9px;border-radius:2px}
+
+/* today */
+.pair{display:grid;grid-template-columns:150px 1fr;gap:0 22px;align-items:center}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:5px 11px;font-size:13.5px;font-weight:600;background:color-mix(in oklab,var(--accent) 18%,transparent)}
+.chip.f{background:color-mix(in oklab,var(--warn) 20%,transparent)}
+.chip b{font-variant-numeric:tabular-nums}
+
+/* the cloud */
+.cloudbox{width:100%}
+.cloudbox svg{display:block;width:100%;height:auto}
+.cloudbox text{font-family:"Bricolage Grotesque",var(--display);font-weight:600;font-variation-settings:"wdth" 96;letter-spacing:-.02em;dominant-baseline:middle}
+
+/* the sized line */
+.line{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px}
+.line span{font-family:var(--display);font-weight:600;font-variation-settings:"wdth" 96;letter-spacing:-.02em}
+.line sup{font-family:var(--sans);font-size:11px;font-weight:600;color:var(--muted);margin-left:3px;vertical-align:super;letter-spacing:0}
+.rest{margin:16px 0 0;font-size:12.5px;color:var(--muted)}
+</style></head><body>
+<div class="mockbar"><b>Mock</b>
+<span class="seg"><button data-opt="cloud" class="on">The cloud</button><button data-opt="line">One sized line</button><button data-opt="now">Today</button></span>
+<span class="seg"><button data-turn="mixed" class="on">Across and down</button><button data-turn="flat">All across</button></span>
+<span class="seg"><button data-mark="ramp" class="on">Shade by count</button><button data-mark="fillers">Fillers warm</button></span>
+<span class="seg"><button data-seed>Repack</button></span>
+<span class="seg"><button data-theme-set="light">Light</button><button data-theme-set="dark">Dark</button></span>
+<span class="seg"><button data-accent="lime" class="on">Lime</button><button data-accent="coral">Coral</button><button data-accent="cyan">Cyan</button></span>
+<span class="seg"><button data-notes class="on">Notes</button></span></div>
+
+<div class="notes"><h2>The whole minute as a cloud</h2>
+<p style="margin:0 0 10px">Every word kept - pronouns, conjunctions, articles, all of it - sized by how often it was said, packed across and down, and shaded so the most used are the strongest. Drawn from a real round, "Why cats are plotting something" at <code>/streak/124</code>, 111 words, so every size and every shade below is a count and not a sketch.</p>
+
+<h3>How it is drawn</h3>
+<ul>
+<li><b>Size is the count</b>, on a square-root scale between 13 and 62 pixels. Linear sizing makes one word fill the box and the rest a hedge; the square root is what every word cloud since the first one has used, and it is why "they" at eight is large without being the only thing you can see.</li>
+<li><b>Shade is the count too</b>, in five steps down one accent ramp: the most used is `--accent-strong`, then `--accent`, then three mixes toward `--muted`. One hue, never a second colour, so the picture still belongs to whoever picked their accent - try Coral and Cyan above. Saying it twice, in size and in shade, is the point: at a glance the deep words are the big words, and the picture has a middle and edges instead of being a uniform field.</li>
+<li><b>Across and down, nothing in between.</b> Every word is either horizontal or turned a quarter, which is the only rotation a reader can take without tilting their head. Words at forty-five degrees are the reason most word clouds are unreadable. The <b>All across</b> switch shows what is lost: a taller, looser block that reads more easily and looks like far less.</li>
+<li><b>Packed on a spiral from the middle out</b>, biggest first, each word tried against the ones already placed until it fits. The seed is fixed, so the same round draws the same cloud every time it is opened - <b>Repack</b> reseeds it to show what a different packing looks like, which is a thing the real page must never do.</li>
+<li><b>Nothing needs the backend.</b> The transcript is already on the round, so the browser counts its own words, the same way it already draws its own wave.</li>
+</ul>
+
+<h3>What the cloud is honest about, and what it is not</h3>
+<ul>
+<li><b>It answers a question nothing else on the page does:</b> what did this minute sound like. On this round the biggest word is <b>they</b>, said eight times, against <b>cats</b> said once - a minute about cats in which the speaker said cats one time. The section as it stands cannot say that, because `leaned_on` is a crutch word list and drops pronouns before the page sees them.</li>
+<li><b>Position means nothing.</b> A word near the middle is only there because it was placed early, which is because it was said often, which the size already says. Nobody should read the arrangement, and the notes under the picture do not invite them to.</li>
+<li><b>A minute is a small sample.</b> Around 60 words are different and most are said once, so the whole bottom of the ramp is ties. That is exactly what the faintest shade means and why it is one step and not twenty.</li>
+<li><b>It is a picture, not a reading.</b> Which is why the sized line is still in the mockbar: the same counts, biggest first, on one line, with nothing packed. That one survives a phone and a screen reader. The cloud is the thing people screenshot.</li>
+</ul>
+
+<div class="verdict"><b>The recommendation: the cloud on the round's own page, the sized line under it or in its place on a phone.</b> The round page is where somebody goes to look at one minute properly, and a cloud is the only drawing here that shows the shape of a whole minute's vocabulary at once. Keep the size and the shade saying the same thing, keep the rotation to a quarter turn, and keep the seed fixed. The line is what a narrow screen and a screen reader get, and it loses nothing but the packing, which never carried anything.</div>
+</div>
+
+<h1 class="lab" data-lab>The cloud</h1>
+<p class="cap" data-cap>Every word, sized and shaded by how often it was said, packed across and down.</p>
+<div class="frame">
+  <div class="sect-h"><h2>Words you used</h2><p data-aside></p></div>
+  <div data-slot></div>
+  <p class="plain" data-insight></p>
+</div>
+<div class="tail"></div>
+
+<script>
+const root=document.documentElement;
+
+/* A real round: "Why cats are plotting something", 111 words, from
+   /streak/124. Kept verbatim, punctuation and all, so the counts are the
+   round's own. */
+const SAID="It's quite obvious that cats are definitely plotting something big. They have been there and they definitely think of themselves as God. Even we can find their reference in the Egyptian sculptures. Even in the side of Egyptian pyramids we can definitely see that they were the ruling species some 3000 years ago. And now since they have reduced their size, they are trying to take revenge. They are trying to secretly plot some kind of attack. But at the same time, they are very secretive in nature and are not directly showing their intent. If you just take one video, you will quickly realize how dangerous and beautifully dangerous they are.";
+
+const FILLERS=["um","uh","like","just","actually","basically","literally","kind"];
+
+let picked="cloud", turn="mixed", mark="ramp", seed=7;
+
+/* Every word, nothing dropped: the owner's call. A stop word list would
+   take out "the" and "and", which are the top of every round ever spoken
+   and say nothing - but they are also most of what a minute is, and a
+   cloud that hides them is a cloud of a minute nobody spoke. */
+function counts(){
+  const tally=new Map();
+  for(const raw of SAID.toLowerCase().split(/[^a-z']+/)){
+    const word=raw.replace(/^'+|'+$/g,"");
+    if(!word)continue;
+    tally.set(word,(tally.get(word)||0)+1);
+  }
+  return [...tally].map(([word,count])=>({word,count})).sort((a,b)=>b.count-a.count||a.word.localeCompare(b.word));
+}
+
+/* Five steps down one accent ramp, strongest for the most used. One hue
+   throughout, so a person who picked a different accent gets their own
+   cloud rather than somebody else's palette. */
+const RAMP=["var(--accent-strong)","var(--accent)","color-mix(in oklab, var(--accent) 72%, var(--muted))",
+  "color-mix(in oklab, var(--accent) 46%, var(--muted))","color-mix(in oklab, var(--accent) 26%, var(--muted))"];
+function shade(count,top){
+  if(count<=1)return RAMP[4];
+  const step=Math.ceil((1-Math.sqrt((count-1)/Math.max(1,top-1)))*4);
+  return RAMP[Math.min(4,Math.max(0,step))];
+}
+/* The square root, not the count: linear sizing gives the top word the
+   whole box and everything else a hedge. */
+function size(count,top){return Math.round(13+49*Math.sqrt((count-1)/Math.max(1,top-1)));}
+
+/* A fixed seed, so the same round draws the same cloud on every visit. A
+   picture that rearranged itself between two looks at the same minute
+   would be saying something had changed when nothing had. */
+function rng(state){return()=>{state=(state*1664525+1013904223)>>>0;return state/4294967296;};}
+
+const canvas=document.createElement("canvas");
+const ctx=canvas.getContext("2d");
+function measure(word,px){
+  ctx.font='600 '+px+'px "Bricolage Grotesque", ui-sans-serif, sans-serif';
+  return {w:ctx.measureText(word).width,h:px*0.82};
+}
+
+/* Biggest first, each word walked out along a spiral from the middle
+   until it clears everything already placed. Position carries nothing:
+   a word is near the middle because it went down early, which is
+   because it was said often, which the size already says. */
+function pack(rows,W,H){
+  const top=rows[0].count, rand=rng(seed), placed=[], out=[];
+  const PAD=3;
+  rows.forEach((row,index)=>{
+    const px=size(row.count,top);
+    const down=turn==="mixed"&&index>0&&rand()<0.32;
+    const m=measure(row.word,px);
+    const w=(down?m.h:m.w)+PAD*2, h=(down?m.w:m.h)+PAD*2;
+    for(let t=0;t<3000;t+=1){
+      const a=t*0.32, r=1.4*a;
+      const x=W/2+r*Math.cos(a)*1.9-w/2, y=H/2+r*Math.sin(a)-h/2;
+      if(x<0||y<0||x+w>W||y+h>H)continue;
+      if(placed.some(p=>x<p.x+p.w&&x+w>p.x&&y<p.y+p.h&&y+h>p.y))continue;
+      placed.push({x,y,w,h});
+      out.push({...row,px,down,x:x+PAD,y:y+PAD,w:w-PAD*2,h:h-PAD*2});
+      return;
+    }
+  });
+  return {out,top,missed:rows.length-out.length};
+}
+
+function build(){
+  const rows=counts();
+  const top=rows[0].count;
+  const once=rows.filter(r=>r.count===1).length;
+  const slot=document.querySelector("[data-slot]");
+  document.querySelector("[data-aside]").textContent=rows.length+" different words in 111";
+
+  if(picked==="cloud"){
+    const W=796,H=380;
+    const {out,missed}=pack(rows,W,H);
+    const body=out.map(w=>{
+      const colour=mark==="fillers"&&FILLERS.includes(w.word)?"var(--warn)":shade(w.count,top);
+      const cx=w.x+w.w/2, cy=w.y+w.h/2;
+      return '<text x="'+cx.toFixed(1)+'" y="'+cy.toFixed(1)+'" font-size="'+w.px+'" fill="'+colour+'" text-anchor="middle"'+
+        (w.down?' transform="rotate(-90 '+cx.toFixed(1)+' '+cy.toFixed(1)+')"':"")+
+        '><title>'+w.word+', said '+w.count+(w.count===1?" time":" times")+'</title>'+w.word+'</text>';
+    }).join("");
+    /* The viewBox is trimmed to what was actually placed, so the cloud
+       fills its card instead of floating in the box the packer happened
+       to be given. */
+    const pad=8;
+    const x0=Math.min(...out.map(w=>w.x))-pad, y0=Math.min(...out.map(w=>w.y))-pad;
+    const x1=Math.max(...out.map(w=>w.x+w.w))+pad, y1=Math.max(...out.map(w=>w.y+w.h))+pad;
+    slot.innerHTML='<div class="cloudbox"><svg viewBox="'+x0.toFixed(1)+' '+y0.toFixed(1)+' '+(x1-x0).toFixed(1)+' '+(y1-y0).toFixed(1)+'" role="img" aria-label="The words of this round, sized by how often you said each one">'+body+'</svg></div>'+
+      (missed?'<p class="rest">'+missed+' more did not fit.</p>':"")+key();
+  }else if(picked==="line"){
+    const repeats=rows.filter(r=>r.count>1);
+    slot.innerHTML='<div class="line">'+repeats.map(w=>
+      '<span style="font-size:'+size(w.count,top)+'px;color:'+(mark==="fillers"&&FILLERS.includes(w.word)?"var(--warn)":shade(w.count,top))+'">'+
+      w.word+'<sup>'+w.count+'</sup></span>').join("")+'</div>'+
+      '<p class="rest">and '+once+' words you said once.</p>'+key();
+  }else{
+    const shown=[{word:"just",count:1},{word:"definitely",count:3},{word:"dangerous",count:2},{word:"trying",count:2}];
+    const c=2*Math.PI*58;
+    slot.innerHTML='<div class="pair"><svg viewBox="0 0 150 150" style="width:150px;height:150px" aria-hidden="true">'+
+      '<circle cx="75" cy="75" r="58" fill="none" stroke="var(--line)" stroke-width="16"/>'+
+      '<circle cx="75" cy="75" r="58" fill="none" stroke="var(--accent)" stroke-width="16" stroke-dasharray="'+(c*8/111)+' '+c+'" transform="rotate(-90 75 75)"/>'+
+      '<text x="75" y="72" text-anchor="middle" font-family="Bricolage Grotesque,sans-serif" font-weight="600" font-size="26" fill="var(--ink)">7%</text>'+
+      '<text x="75" y="90" text-anchor="middle" font-size="11" font-weight="600" fill="var(--muted)">leaned on</text></svg>'+
+      '<div class="chips">'+shown.map(w=>'<span class="chip'+(FILLERS.includes(w.word)?" f":"")+'">'+w.word+' <b>'+w.count+'</b></span>').join("")+'</div></div>';
+  }
+
+  const they=rows.find(r=>r.word==="they"), cats=rows.find(r=>r.word==="cats");
+  document.querySelector("[data-insight]").innerHTML=
+    'You said <b>'+they.word+'</b> '+they.count+' times and <b>'+cats.word+'</b> '+cats.count+'. A minute about cats in which you said cats once.';
+}
+function key(){
+  return '<p class="key"><span><span class="ramp">'+RAMP.slice().reverse().map(c=>'<i style="background:'+c+'"></i>').join("")+
+    '</span>said once, up to said most</span>'+
+    (mark==="fillers"?'<span><i style="display:inline-block;width:9px;height:9px;border-radius:2px;background:var(--warn);margin-right:6px"></i>a filler</span>':"")+
+    '<span>Where a word sits means nothing.</span></p>';
+}
+
+const LAB={cloud:["The cloud","Every word, sized and shaded by how often it was said, packed across and down."],
+  line:["One sized line","The same counts, biggest first, on a line. What a phone and a screen reader get."],
+  now:["Today, as built","A donut of fillers and crutch words against the rest, with the same words as chips beside it."]};
+function opt(id){picked=id;document.querySelectorAll(".mockbar [data-opt]").forEach(b=>b.classList.toggle("on",b.dataset.opt===id));
+  document.querySelector("[data-lab]").textContent=LAB[id][0];document.querySelector("[data-cap]").textContent=LAB[id][1];build();}
+function set(attr,value){window[attr]=value;}
+function theme(t){root.dataset.theme=t;document.querySelectorAll("[data-theme-set]").forEach(b=>b.classList.toggle("on",b.dataset.themeSet===t));}
+function notes(){const n=document.querySelector(".notes");n.hidden=!n.hidden;document.querySelector("[data-notes]").classList.toggle("on",!n.hidden);}
+document.addEventListener("click",e=>{
+  const t=e.target.closest(".mockbar [data-opt],.mockbar [data-turn],.mockbar [data-mark],[data-seed],[data-theme-set],[data-accent],[data-notes]");
+  if(!t)return;e.preventDefault();
+  if(t.dataset.opt)opt(t.dataset.opt);
+  if(t.dataset.turn){turn=t.dataset.turn;document.querySelectorAll(".mockbar [data-turn]").forEach(b=>b.classList.toggle("on",b.dataset.turn===turn));build();}
+  if(t.dataset.mark){mark=t.dataset.mark;document.querySelectorAll(".mockbar [data-mark]").forEach(b=>b.classList.toggle("on",b.dataset.mark===mark));build();}
+  if(t.hasAttribute("data-seed")){seed=(seed*31+17)>>>0;build();}
+  if(t.dataset.themeSet)theme(t.dataset.themeSet);
+  if(t.dataset.accent){root.dataset.accent=t.dataset.accent;document.querySelectorAll("[data-accent]").forEach(b=>b.classList.toggle("on",b.dataset.accent===t.dataset.accent));}
+  if(t.hasAttribute("data-notes"))notes();
+});
+/* Measured with the real face or not at all: the widths decide the
+   packing, and the fallback font is wide enough to leave holes. */
+(document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(build);
+theme(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");
+</script></body></html>

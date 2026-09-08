@@ -31,8 +31,8 @@ import { clock, type Case, type Role, type Round, type Sentence } from "@/lib/re
    is a score and nothing here rewrites what somebody said. */
 
 /* The point in the strong accent, support in the accent with an example
-   paler than a reason, a wind-up hollow because it is talk before the
-   talk started, an aside quiet, the close in ink. */
+   paler than a reason, an intro hollow because it is talk before the talk
+   started, an off-topic sentence quiet, the ending in ink. */
 const PAINT: Record<Role, string> = {
   point: "bg-accent-strong",
   reason: "bg-accent",
@@ -101,7 +101,7 @@ export function CaseRead({ read, sentences, length }: { read: Case; sentences: S
                  accusing somebody of a miss they did not make. */
               !hasPoint(sentences) && (
                 <span className="absolute top-0.5 right-0 text-[11.5px] leading-none font-semibold text-warn">
-                  no point made
+                  no clear point
                 </span>
               )
             )}
@@ -134,7 +134,18 @@ export function CaseRead({ read, sentences, length }: { read: Case; sentences: S
    their own round blurred: nothing read it, so there is nothing of theirs
    back there, and a blur over what does not exist reads as a fault
    rather than a door. */
-export function Sample({ line, children }: { line: string; children: React.ReactNode }) {
+export function Sample({
+  line,
+  title = "Pro reads what you said.",
+  children,
+}: {
+  line: string;
+  /* The bold line on the card. It says what Pro does with this section,
+     so it is not always about a model reading: the sentences and the
+     tiles are arithmetic, and saying a model read them would be a lie. */
+  title?: string;
+  children: React.ReactNode;
+}) {
   return (
     <div className="relative">
       <div aria-hidden className="pointer-events-none blur-[5px] select-none">
@@ -142,7 +153,7 @@ export function Sample({ line, children }: { line: string; children: React.React
       </div>
       <div className="absolute inset-0 grid place-items-center">
         <div className="mx-4 max-w-[36ch] rounded-card border border-line-strong bg-card px-4 py-3.5 text-center text-[13.5px] leading-relaxed shadow-[0_8px_24px_rgb(0_0_0/0.12)]">
-          <span className="block font-semibold">Pro reads what you said.</span>
+          <span className="block font-semibold">{title}</span>
           {line}{" "}
           <a href="/pro" className="font-semibold text-accent-strong underline underline-offset-3 dark:text-accent">
             See Pro
@@ -155,7 +166,7 @@ export function Sample({ line, children }: { line: string; children: React.React
 
 export function SampleRead() {
   return (
-    <Sample line="Did you answer it, where your point came, what to do next time.">
+    <Sample line="Did you answer the topic, when your point came, and what to do next time.">
       <CaseRead read={SAMPLE_CASE} sentences={SAMPLE_SENTENCES} length={SAMPLE_LENGTH} />
     </Sample>
   );
@@ -163,7 +174,7 @@ export function SampleRead() {
 
 export function SampleCards() {
   return (
-    <Sample line="Whether you answered the topic, and how fast you got to the point.">
+    <Sample line="Whether you answered the topic, and how quickly you reached your point.">
       <CaseCards rounds={SAMPLE_ROUNDS} />
     </Sample>
   );
@@ -220,7 +231,7 @@ export function CaseCards({ rounds }: { rounds: Round[] }) {
                 : moved.to > moved.from
                   ? `was ${moved.from}s · worse`
                   : `steady at ${moved.from}s`
-            : "when a round makes its point"}
+            : "once a round makes a point"}
         </p>
         <PointLine rounds={shown} />
       </div>

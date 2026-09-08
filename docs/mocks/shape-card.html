@@ -1,0 +1,217 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mock: what replaces the radar</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..600&family=Plus+Jakarta+Sans:wght@400..700&display=swap" rel="stylesheet"><style>
+:root{color-scheme:light;--surface:#fff;--card:#fff;--card2:oklch(.965 .008 120);--ink:#1c1917;--muted:#57534e;--line:#e7e5e4;--line-strong:#918b87;
+--accent-h:120;--accent-c:.12;--accent-l:.5;--accent-l-strong:.42;--accent:oklch(var(--accent-l) var(--accent-c) var(--accent-h));--accent-strong:oklch(var(--accent-l-strong) var(--accent-c) var(--accent-h));
+--warn:oklch(.62 .2 30);--poor:oklch(.55 .18 12);
+--sans:"Plus Jakarta Sans",ui-sans-serif,system-ui,sans-serif;--display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif}
+[data-theme=dark]{color-scheme:dark;--surface:#080808;--card:#161616;--card2:#101010;--ink:#f5f5f4;--muted:#a8a29e;--line:#292524;--line-strong:#6b6560;
+--accent-l:.796;--accent-l-strong:.86;--warn:oklch(.75 .19 30);--poor:oklch(.78 .14 10)}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:#3f3d3a;font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased}
+.mockbar{position:sticky;top:0;z-index:50;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:10px 16px;background:#26241f;color:#d6d3d1;font:600 12px/1 var(--sans);letter-spacing:.02em}
+.mockbar b{color:#fff;font-weight:700;margin-right:6px}
+.mockbar .seg{display:inline-flex;border:1px solid #57534e;border-radius:999px;overflow:hidden}
+.mockbar button{all:unset;cursor:pointer;padding:7px 12px;color:#d6d3d1}
+.mockbar button.on{background:#f5f5f4;color:#1c1917}
+.framelabel{max-width:860px;margin:26px auto 0;color:#d6d3d1;font:600 12px var(--sans);letter-spacing:.05em;text-transform:uppercase}
+.frame{margin:10px auto 0;max-width:860px;background:var(--surface);color:var(--ink);box-shadow:0 20px 60px rgb(0 0 0/.35);padding:26px clamp(16px,4vw,30px) 30px}
+.note{max-width:860px;margin:0 auto 34px;background:#fffbea;color:#3b2f0b;border-radius:0 0 14px 14px;padding:14px 22px 16px;font-size:13.5px;line-height:1.6}
+.note b{font-weight:700}
+.note .keeps{color:#3f5b1c}.note .costs{color:#8a3b12}
+
+h2{font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:-.02em;margin:0}
+.head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px 14px;margin-bottom:14px}
+.aside{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.aside b{color:var(--ink)}
+
+/* ------------------------------------------------------------ zoned bars */
+.rows{display:grid;gap:16px}
+.row .top{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.row .name{font-size:12.5px;font-weight:600}
+.row .val{font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--muted)}
+.zones{position:relative;display:flex;gap:2px;height:10px;margin-top:7px}
+.zone{position:relative;border-radius:3px;background:var(--line)}
+.zone.good{background:color-mix(in oklab,var(--accent) 42%,transparent)}
+.zone.here{outline:1px solid var(--line-strong);outline-offset:1px}
+.marks{position:relative;height:0}
+.dot{position:absolute;top:-16px;width:13px;height:13px;border-radius:999px;transform:translateX(-50%);border:2px solid var(--surface)}
+.dot.today{background:var(--accent)}
+.dot.today.out{background:var(--poor)}
+.dot.usual{background:var(--surface);border:2px solid var(--muted);width:11px;height:11px;top:-15px}
+.znames{display:flex;gap:2px;margin-top:6px;font-size:11px;color:var(--muted)}
+.zname{text-align:center}
+.zname.here{font-weight:700;color:var(--accent-strong)}
+.zname.here.out{color:var(--poor)}
+
+/* ------------------------------------------------------------ dials */
+.dials{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.dial{text-align:center}
+.dial svg{width:100%;max-width:104px;height:62px}
+.dial .n{font-family:var(--display);font-weight:600;font-size:20px;line-height:1;margin-top:-14px}
+.dial .n.out{color:var(--poor)}
+.dial .v{font-size:11.5px;font-weight:600;color:var(--accent-strong);margin-top:3px}
+.dial .v.out{color:var(--poor)}
+.dial .l{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* ------------------------------------------------------------ pills */
+.count{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.count .big{font-family:var(--display);font-weight:600;font-size:34px;letter-spacing:-.03em;line-height:1}
+.count .of{font-size:13.5px;color:var(--muted)}
+.pills{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.pillx{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--card2);border-radius:999px;padding:5px 12px;font-size:12.5px;font-weight:600}
+.pillx i{width:8px;height:8px;border-radius:999px;background:var(--accent)}
+.pillx.out{border-color:var(--poor);color:var(--poor)}
+.pillx.out i{background:var(--poor)}
+.pillx s{text-decoration:none;font-weight:400;color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* ------------------------------------------------------------ dumbbell */
+.track{position:relative;height:10px;border-radius:999px;background:var(--line);margin-top:8px}
+.track .good{position:absolute;inset-block:0;border-radius:999px;background:color-mix(in oklab,var(--accent) 42%,transparent)}
+.track .join{position:absolute;top:4px;height:2px;background:var(--muted);opacity:.55}
+.ends{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:7px}
+.legend{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 16px;font-size:11.5px;color:var(--muted);margin-top:16px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:12px;height:12px;border-radius:999px;background:var(--accent)}
+.legend i.usual{background:var(--surface);border:2px solid var(--muted)}
+.legend i.out{background:var(--poor)}
+.legend i.band{width:16px;height:9px;border-radius:3px;background:color-mix(in oklab,var(--accent) 42%,transparent)}
+</style></head><body>
+
+<div class="mockbar">
+  <b>Mock</b> what replaces the radar on the round page
+  <span class="seg"><button id="light" class="on">Light</button><button id="dark">Dark</button></span>
+  <span style="opacity:.7">one round, the same numbers in all four: 111 words a minute, straight in, no long pauses, 24 word sentence, 2 ums</span>
+</div>
+
+<div class="framelabel">A. Zoned bars &middot; the radar goes, the bars explain themselves</div>
+<div class="frame">
+  <div class="head"><h2>How the round went</h2><span class="aside"><b>4 of 5</b> in the good range &middot; work on your pace</span></div>
+  <div class="rows" id="a"></div>
+  <div class="legend"><span><i></i>today</span><span><i class="usual"></i>your usual, 9 rounds</span><span><i class="band"></i>the good range</span></div>
+</div>
+<div class="note"><b>A.</b> Every track is cut into its real zones and the one you landed in is named under it, so the bar needs no key and no second picture. Fillers stops being radar-only and becomes the fifth row. <span class="keeps">Keeps: the number, where inside the range you landed, your usual, what to do.</span> <span class="costs">Loses: the one-glance silhouette, and the section is a list rather than a picture.</span> Removes the radar, the <code>fit()</code> maths and a charting import.</div>
+
+<div class="framelabel">B. Five dials</div>
+<div class="frame">
+  <div class="head"><h2>How the round went</h2><span class="aside"><b>4 of 5</b> in the good range &middot; work on your pace</span></div>
+  <div class="dials" id="b"></div>
+  <div class="legend"><span><i class="band"></i>the good range on the arc</span><span><i></i>where you landed</span></div>
+</div>
+<div class="note"><b>B.</b> One small arc each, the good stretch lit on the arc, your number in the middle and the verdict under it. The most filmable of the four and the easiest to read at a glance. <span class="keeps">Keeps: five measures in one row, colour carrying the verdict.</span> <span class="costs">Loses: your usual, and how far inside the range you sat.</span> The bars would stay underneath, so this is a picture on top of them, not a replacement.</div>
+
+<div class="framelabel">C. The count, then the five named &middot; not a chart at all</div>
+<div class="frame">
+  <div class="head"><h2>How the round went</h2></div>
+  <div class="count"><span class="big">4 of 5</span><span class="of">in the good range. Better than your usual, which is 3 of 5.</span></div>
+  <div class="pills" id="c"></div>
+  <div style="margin-top:22px" class="rows" id="c2"></div>
+</div>
+<div class="note"><b>C.</b> The card keeps the page's own grammar: a number, a sentence, then the detail. The five pills say which is which in a line, and the bars below carry everything else. <span class="keeps">Keeps: the comparison with your usual, as a sentence, which is the only thing the second polygon was for.</span> <span class="costs">Loses: any picture of the round as a whole.</span> The cheapest of the four to build and the hardest to film.</div>
+
+<div class="framelabel">D. Today against your usual</div>
+<div class="frame">
+  <div class="head"><h2>How the round went</h2><span class="aside"><b>4 of 5</b> in the good range &middot; work on your pace</span></div>
+  <div class="rows" id="d"></div>
+  <div class="legend"><span><i class="usual"></i>your usual, 9 rounds</span><span><i></i>today</span><span><i class="band"></i>the good range</span></div>
+</div>
+<div class="note"><b>D.</b> One track a measure, two dots joined: where you usually land and where you landed today, so the gap between them is the whole message and the direction is the line. <span class="keeps">Keeps: the comparison the radar's thin outline carried, made readable.</span> <span class="costs">Loses: the zone names, so the ends of the track still have to say slow and fast.</span> Says nothing on a first round, where there is no usual yet, and falls back to A.</div>
+
+<script>
+const M = [
+  {label:"Pace", shown:"111 words a minute", value:111, usual:148, scale:[80,220], good:[130,170],
+   zones:[["slow",80,130],["good pace",130,170],["too fast",170,220]], here:0, ok:false, dial:"111", verdict:"Slow", ends:["slow","fast"]},
+  {label:"Time to start", shown:"0:00", value:0, usual:3.1, scale:[0,8], good:[0,2],
+   zones:[["quick start",0,2],["slow start",2,8]], here:0, ok:true, dial:"0:00", verdict:"Quick start", ends:["no wait","8s"]},
+  {label:"Longest pause", shown:"0s", value:0, usual:2.4, scale:[0,8], good:[0,1.5],
+   zones:[["no long pauses",0,1.5],["a long pause",1.5,8]], here:0, ok:true, dial:"0s", verdict:"None", ends:["none","8s"]},
+  {label:"Longest sentence", shown:"24 words", value:24, usual:24, scale:[0,60], good:[0,35],
+   zones:[["good length",0,35],["too long",35,60]], here:0, ok:true, dial:"24", verdict:"Good length", ends:["short","60 words"]},
+  {label:"Ums a minute", shown:"2", value:2, usual:3.2, scale:[0,12], good:[0,4],
+   zones:[["few ums",0,4],["many ums",4,12]], here:0, ok:true, dial:"2", verdict:"Few ums", ends:["none","12"]},
+];
+const pct = (v,[lo,hi]) => Math.max(0, Math.min(100, ((v-lo)/(hi-lo))*100));
+const zoneOf = m => m.zones.findIndex(([,lo,hi]) => m.value >= lo && m.value <= hi);
+
+/* A: zoned bars */
+document.getElementById("a").innerHTML = M.map(m => {
+  const here = zoneOf(m);
+  const out = !m.ok ? " out" : "";
+  const zones = m.zones.map(([name,lo,hi],i) => {
+    const w = ((hi-lo)/(m.scale[1]-m.scale[0]))*100;
+    const good = m.zones.length === 1 || (lo >= m.good[0] && hi <= m.good[1]);
+    return `<span class="zone${good?" good":""}${i===here?" here":""}" style="flex:0 0 ${w}%"></span>`;
+  }).join("");
+  const names = m.zones.map(([name,lo,hi],i) => {
+    const w = ((hi-lo)/(m.scale[1]-m.scale[0]))*100;
+    return `<span class="zname${i===here?" here"+out:""}" style="flex:0 0 ${w}%">${name}</span>`;
+  }).join("");
+  return `<div class="row">
+    <div class="top"><span class="name">${m.label}</span><span class="val">${m.shown}</span></div>
+    <div class="zones">${zones}</div>
+    <div class="marks">
+      <span class="dot usual" style="left:${pct(m.usual,m.scale)}%" title="your usual"></span>
+      <span class="dot today${out}" style="left:${pct(m.value,m.scale)}%" title="today"></span>
+    </div>
+    <div class="znames">${names}</div>
+  </div>`;
+}).join("");
+
+/* B: dials */
+const L = Math.PI * 34;
+const arcPoint = f => {
+  const a = Math.PI - f*Math.PI;
+  return [44 + 34*Math.cos(a), 40 - 34*Math.sin(a)];
+};
+document.getElementById("b").innerHTML = M.map(m => {
+  const g0 = pct(m.good[0],m.scale)/100, g1 = pct(m.good[1],m.scale)/100;
+  const [x,y] = arcPoint(pct(m.value,m.scale)/100);
+  const out = m.ok ? "" : " out";
+  return `<div class="dial">
+    <svg viewBox="0 0 88 46" aria-hidden="true">
+      <path d="M10 40 A34 34 0 0 1 78 40" fill="none" stroke="var(--line)" stroke-width="8" stroke-linecap="round"/>
+      <path d="M10 40 A34 34 0 0 1 78 40" fill="none" stroke="var(--accent)" stroke-opacity=".42" stroke-width="8"
+            stroke-dasharray="${((g1-g0)*L).toFixed(1)} ${L.toFixed(1)}" stroke-dashoffset="${(-g0*L).toFixed(1)}"/>
+      <circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5.5" fill="${m.ok?'var(--accent)':'var(--poor)'}" stroke="var(--surface)" stroke-width="2.5"/>
+    </svg>
+    <div class="n${out}">${m.dial}</div>
+    <div class="v${out}">${m.verdict}</div>
+    <div class="l">${m.label}</div>
+  </div>`;
+}).join("");
+
+/* C: pills, then today's bars unchanged */
+document.getElementById("c").innerHTML = M.map(m =>
+  `<span class="pillx${m.ok?"":" out"}"><i></i>${m.label} <s>${m.shown}</s></span>`).join("");
+document.getElementById("c2").innerHTML = M.map(m => {
+  const start = pct(m.good[0],m.scale), width = pct(m.good[1],m.scale) - start;
+  return `<div class="row">
+    <div class="top"><span class="name">${m.label}</span><span class="val">${m.shown}</span></div>
+    <div class="track"><span class="good" style="left:${start}%;width:${width}%"></span></div>
+    <div class="marks"><span class="dot today${m.ok?"":" out"}" style="left:${pct(m.value,m.scale)}%"></span></div>
+    <div class="ends"><span>${m.ends[0]}</span><span>${m.ends[1]}</span></div>
+  </div>`;
+}).join("");
+
+/* D: dumbbell */
+document.getElementById("d").innerHTML = M.map(m => {
+  const start = pct(m.good[0],m.scale), width = pct(m.good[1],m.scale) - start;
+  const a = pct(m.value,m.scale), b = pct(m.usual,m.scale);
+  const [lo,hi] = [Math.min(a,b), Math.max(a,b)];
+  return `<div class="row">
+    <div class="top"><span class="name">${m.label}</span><span class="val">${m.shown} <span style="color:var(--muted)">&middot; usually ${m.usual}</span></span></div>
+    <div class="track">
+      <span class="good" style="left:${start}%;width:${width}%"></span>
+      <span class="join" style="left:${lo}%;width:${(hi-lo).toFixed(1)}%"></span>
+    </div>
+    <div class="marks">
+      <span class="dot usual" style="left:${b}%"></span>
+      <span class="dot today${m.ok?"":" out"}" style="left:${a}%"></span>
+    </div>
+    <div class="ends"><span>${m.ends[0]}</span><span>${m.ends[1]}</span></div>
+  </div>`;
+}).join("");
+
+const light = document.getElementById("light"), dark = document.getElementById("dark");
+light.onclick = () => { document.documentElement.removeAttribute("data-theme"); light.classList.add("on"); dark.classList.remove("on"); };
+dark.onclick = () => { document.documentElement.setAttribute("data-theme","dark"); dark.classList.add("on"); light.classList.remove("on"); };
+</script>
+</body></html>
