@@ -338,6 +338,7 @@ export function Round({
           spokenSeconds={engine.spokeFor}
           signedIn={signedIn}
           filming={prefs.filming}
+          topic={topic?.text}
           onAgain={armed(() => engine.spin())}
           onSame={() => engine.sameTopic()}
         />

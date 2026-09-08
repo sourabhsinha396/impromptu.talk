@@ -224,6 +224,7 @@ export function DonePhase({
   spokenSeconds,
   signedIn,
   filming,
+  topic,
   onAgain,
   onSame,
 }: {
@@ -238,6 +239,10 @@ export function DonePhase({
       draw: a round nobody listened to has nothing to fill a screen with,
       and the ordinary done screen is the honest one for it. */
   filming: boolean;
+  /** What was just spoken on, for the filming board to head its frame with
+      while the reading is still coming. Once it lands the topic comes off
+      the report and the row does not move. */
+  topic?: string;
   onAgain: () => void;
   onSame: () => void;
 }) {
@@ -251,7 +256,7 @@ export function DonePhase({
   if (filming && report !== "off") {
     return (
       <div className="w-full max-w-[1100px]">
-        <FilmingReport report={report} length={spokenSeconds} day={summary?.streak} href={href} />
+        <FilmingReport report={report} length={spokenSeconds} day={summary?.streak} topic={topic} href={href} />
         <div className={`${ROW} mt-6`}>
           <Button size="lg" onClick={onAgain}>
             <LogoMark className="size-[1em]" />

@@ -265,6 +265,25 @@
   --text-headline--letter-spacing: -0.03em;
 
   --radius-card: 14px;
+
+  /* The one animation the site defines itself: a band of accent crossing a
+     placeholder while the report is being read back. Tailwind's own
+     `animate-pulse` was what the wait used before, and on white it moves
+     `--line` between full and half opacity, which is about one percent of
+     contrast: nobody could tell a waiting screen from a finished one. This
+     travels instead, so the movement is visible from across a room.
+
+     Only ever used behind `motion-safe:`, so a placeholder asked to hold
+     still is a plain shape and not a broken one. */
+  --animate-shimmer: shimmer 1.7s ease-in-out infinite;
+  @keyframes shimmer {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(100%);
+    }
+  }
 }
 
 @layer base {

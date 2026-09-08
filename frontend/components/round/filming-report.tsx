@@ -1,5 +1,6 @@
-import { MinuteBar, Transcript } from "@/components/round/report";
+import { MinuteBar, Transcript, WAITING } from "@/components/round/report";
 import { Ping } from "@/components/site/ping";
+import { Placeholder } from "@/components/site/placeholder";
 import {
   advice,
   at,
@@ -45,6 +46,7 @@ export function FilmingReport({
   report,
   length,
   day,
+  topic,
   href,
 }: {
   report: Report | null;
@@ -52,16 +54,13 @@ export function FilmingReport({
   /** The streak, said as a word in the head rather than as a tile: the
       header pill already carries it on every page. */
   day?: number;
+  /** The topic just spoken on. Only used while the round is being read
+      back: once the reading lands it comes off the report itself, so the
+      head row is the same row before and after and does not move. */
+  topic?: string;
   href?: string;
 }) {
-  if (!report) {
-    return (
-      <div className="w-full text-center" role="status">
-        <div className="h-3 w-full animate-pulse rounded-full bg-line" />
-        <p className="mt-4 text-lg text-muted">Reading your round back...</p>
-      </div>
-    );
-  }
+  if (!report) return <Waiting length={length} day={day} topic={topic} />;
   if (!report.heard) {
     return <p className="text-xl font-semibold">We could not hear you. Check your microphone.</p>;
   }
@@ -88,14 +87,7 @@ export function FilmingReport({
 
   return (
     <div className="w-full text-left">
-      <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
-        <p className="font-display text-[21px] leading-tight font-semibold text-accent">{report.topic}</p>
-        <p className="text-[15px] font-semibold text-muted">
-          {day && day > 1 && <span className="text-ink">Day {day}</span>}
-          {day && day > 1 ? " · " : ""}
-          {clock(length)}
-        </p>
-      </div>
+      <Head topic={report.topic} day={day} length={length} />
 
       <div className="mt-3 grid gap-3 sm:grid-cols-4">
         <Card title="Your minute" className="sm:col-span-2">
@@ -201,10 +193,89 @@ export function FilmingReport({
   );
 }
 
-function Card({ title, className, children }: { title: string; className?: string; children: React.ReactNode }) {
+/* The topic, the day and the length: the row above the board, drawn the
+   same whether the reading has landed or not, so it does not move when it
+   does. While waiting the topic comes down from the round; afterwards it
+   comes off the report, which is the same string. */
+function Head({ topic, day, length }: { topic?: string; day?: number; length: number }) {
+  return (
+    <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+      <p className="font-display text-[21px] leading-tight font-semibold text-accent">{topic}</p>
+      <p className="text-[15px] font-semibold text-muted">
+        {day && day > 1 && <span className="text-ink">Day {day}</span>}
+        {day && day > 1 ? " · " : ""}
+        {clock(length)}
+      </p>
+    </div>
+  );
+}
+
+/* The board as its own empty frame, while the round is being read back.
+
+   The same idea as the reading report's wait and for the same reason, at
+   the size a camera keeps: cards with an edge, nothing thinner than the
+   real thing, and the board at the height it will be, so the shot does not
+   jump when the numbers arrive. Ten cards, because ten is what a round
+   with everything measured draws.
+
+   Named nowhere, deliberately. Which cards a round earns depends on what
+   came back - the verdict is Pro's, half the measures need a transcript -
+   so a ghost card with "Answered the topic" on it would be a promise
+   broken on every free round. Unnamed, the frame says only that a report
+   of about this size is coming.
+
+   The head row is the exception and is real: the topic and the clock are
+   the round's own, held by the browser, and were never waiting on
+   anything. */
+function Waiting({ length, day, topic }: { length: number; day?: number; topic?: string }) {
+  return (
+    <div className="w-full text-left" role="status">
+      <Head topic={topic} day={day} length={length} />
+      <div className="mt-3 grid gap-3 sm:grid-cols-4">
+        <Card className="sm:col-span-2">
+          <Placeholder className="mt-1.5 h-24 rounded-card" />
+          <div className="mt-1 flex justify-between text-[13px] tabular-nums text-muted">
+            <span>0:00</span>
+            <span>{clock(length)}</span>
+          </div>
+          <Placeholder className="mt-auto h-4 w-[70%]" delay={80} />
+        </Card>
+        {MEASURES.map((width, index) => (
+          <Card key={width}>
+            <Placeholder className={cn("mt-2 h-10", width)} delay={140 + index * 70} />
+            <Placeholder className="mt-2.5 h-[13px] rounded-full" delay={140 + index * 70} />
+            <Placeholder className="mt-1.5 h-3 w-[40%]" delay={140 + index * 70} />
+          </Card>
+        ))}
+        <Card>
+          <Placeholder className="mt-2 h-[124px] rounded-card" delay={630} />
+        </Card>
+        <Card className="sm:col-span-2">
+          <div className="mt-2 flex flex-wrap gap-2">
+            {CHIPS.map((chip, index) => (
+              <Placeholder key={chip} className={cn("h-8 rounded-full", chip)} delay={700 + index * 70} />
+            ))}
+          </div>
+          <Placeholder className="mt-auto h-4 w-[52%]" delay={770} />
+        </Card>
+      </div>
+      <p className="mt-4 text-[15px] text-muted">{WAITING}</p>
+    </div>
+  );
+}
+
+/* Seven measure-shaped cards at the widths the real numbers take, so the
+   board is a board and not a grid of identical grey squares. Seven, plus
+   the wide minute, the shape and the wide words, fills the same three rows
+   a round with everything measured draws, so the wait is the height of the
+   thing it is waiting for. */
+const MEASURES = ["w-[70%]", "w-[52%]", "w-[60%]", "w-[44%]", "w-[66%]", "w-[48%]", "w-[58%]"];
+const CHIPS = ["w-24", "w-20", "w-28"];
+
+function Card({ title, className, children }: { title?: string; className?: string; children: React.ReactNode }) {
   return (
     <div className={cn("flex min-w-0 flex-col rounded-card border-[1.5px] border-line bg-card2 px-4 py-3", className)}>
-      <h3 className="text-sm font-bold text-muted">{title}</h3>
+      {title && <h3 className="text-sm font-bold text-muted">{title}</h3>}
       {children}
     </div>
   );

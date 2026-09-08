@@ -1,6 +1,7 @@
 import { Button } from "@/components/site/button";
 import { MicIcon } from "@/components/site/icons";
 import { Ping } from "@/components/site/ping";
+import { Placeholder } from "@/components/site/placeholder";
 import {
   advice,
   at,
@@ -49,14 +50,7 @@ export function RoundReport({
   // The run has landed and the transcriber has not. Saying so matters:
   // an unexplained blank where a report should be reads as a feature that
   // did not work, and this can take a few seconds.
-  if (!report) {
-    return (
-      <div className="text-center" role="status">
-        <div className="h-2 w-full animate-pulse rounded-full bg-line" />
-        <p className="mt-3 text-[13px] text-muted">Reading your round back...</p>
-      </div>
-    );
-  }
+  if (!report) return <Waiting length={length} />;
 
   if (!report.heard) {
     return <p className="text-sm text-muted">We could not hear you. Check your microphone.</p>;
@@ -80,6 +74,60 @@ export function RoundReport({
           <Ping />
         </p>
       )}
+    </div>
+  );
+}
+
+/** The words the wait says, in both drawings of the report, so the two
+    cannot drift apart. */
+export const WAITING = "Analyzing your speech...";
+
+/* The report as its own empty frame, while the round is being read back.
+
+   The run lands instantly and the reading takes seconds, so this is on
+   screen every time somebody speaks with the microphone on. What was here
+   before was a hairline pulsing between full and half opacity, which on
+   white is about one percent of contrast: it read as a report that had
+   finished and come out blank rather than as one still coming.
+
+   So the wait is drawn as the shape of the thing arriving - the wave's
+   box, the sentence, the numbers, the four bands - at the sizes they will
+   be, which is also why nothing on the screen moves when the reading
+   lands.
+
+   Nothing here is named. Half the measures need a transcript and the
+   verdict needs Pro, so a frame with "Pace" written on it would be a
+   promise this code cannot keep on a round whose provider was down or
+   whose allowance was spent. An unnamed shape claims only that a report
+   of about this size is coming, and a card that then does not arrive
+   breaks nothing. The clock is the exception and is drawn for real: the
+   browser timed the round itself and has never needed the server for it. */
+function Waiting({ length }: { length: number }) {
+  return (
+    <div className="w-full text-center" role="status">
+      <Placeholder className="h-10 rounded-card" />
+      <div className="mt-1 flex justify-between tabular-nums text-[11px] text-muted">
+        <span>0:00</span>
+        <span>{clock(length)}</span>
+      </div>
+      <Placeholder className="mx-auto mt-4 h-[18px] w-[72%]" delay={80} />
+      <Placeholder className="mx-auto mt-2.5 h-3 w-[46%]" delay={160} />
+      <div className="mt-6 grid gap-4 sm:grid-cols-2">
+        {[0, 1, 2, 3].map((index) => (
+          <div key={index}>
+            <div className="flex items-baseline justify-between gap-2">
+              <Placeholder className="h-3 w-[44%]" delay={240 + index * 80} />
+              <Placeholder className="h-3 w-[22%]" delay={240 + index * 80} />
+            </div>
+            <Placeholder className="mt-2 h-1.5 rounded-full" delay={240 + index * 80} />
+            <div className="mt-1.5 flex justify-between gap-2">
+              <Placeholder className="h-2.5 w-[18%]" delay={240 + index * 80} />
+              <Placeholder className="h-2.5 w-[30%]" delay={240 + index * 80} />
+            </div>
+          </div>
+        ))}
+      </div>
+      <p className="mt-6 text-[13px] text-muted">{WAITING}</p>
     </div>
   );
 }
