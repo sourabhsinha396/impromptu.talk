@@ -19,21 +19,23 @@ describe("the features page, an explicit override of AGENTS.md's \"no features p
     }
   });
 
-  it("never links a Soon badge anywhere, locked or not", () => {
-    render(<FeaturesPage isPro={false} />);
-    expect(screen.queryByRole("link", { name: "Soon" })).toBeNull();
-    expect(screen.getAllByText("Soon").length).toBeGreaterThan(0);
-  });
-
-  it("unlocks the Pro cards, except the ones still marked Soon, for a Pro viewer", () => {
+  it("unlocks every Pro card for a Pro viewer, uploads included", () => {
     render(<FeaturesPage isPro />);
     expect(screen.getByRole("link", { name: /Custom genre.*Your own topics/ })).toHaveAttribute("href", "/genres/yours");
-    /* The custom-genre-by-picture counterpart is not built yet, so it
-       stays unclickable whatever the viewer's plan. */
-    expect(screen.queryByRole("link", { name: /Custom genre.*Your own pictures/ })).toBeNull();
-    /* Already Pro, so the badge is a plain label rather than a link to
-       the page selling the plan they're already on. */
-    expect(screen.queryByRole("link", { name: "Pro" })).toBeNull();
+    expect(screen.getByRole("link", { name: /Custom genre.*Upload your own pictures/ })).toHaveAttribute(
+      "href",
+      "/genres/yours",
+    );
+  });
+
+  it("shows no Pro pill at all to somebody who is already Pro", () => {
+    /* The badge and the lock are one condition. Labelling half of what a
+       subscriber already owns with the name of the thing they already pay
+       for is selling to somebody who has finished buying. */
+    render(<FeaturesPage isPro />);
+    expect(screen.queryByText("Pro", { selector: "a, span" })).toBeNull();
+    /* The heading is still called Pro; it is the pills that go. */
+    expect(screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent)).toContain("Pro");
   });
 
   it("leads with free forever, and does not rearrange itself once somebody is Pro", () => {

@@ -81,7 +81,8 @@ class TestMakingOne:
     def test_a_new_genre_is_owned_slugged_and_counted(self, pro, user):
         body = make(pro).json()
         assert body == {"slug": "interview-questions", "name": "Interview questions", "icon": "mic",
-                        "topic_count": 0, "share_token": None, "topics": [], "own_styles": []}
+                        "topic_count": 0, "share_token": None, "topics": [], "own_styles": [],
+                        "has_pictures": False}
         assert Genre.objects.get(slug="interview-questions").owner == user
 
     def test_an_icon_nobody_offers_becomes_the_default(self, pro):

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { CopyField } from "@/components/account/copy-field";
 import { Button } from "@/components/site/button";
@@ -64,6 +64,30 @@ export function Editor({
   /* Sharing answers with the token rather than the genre, since turning
      it off leaves nothing to hand back: the token is cleared, not parked,
      so the link somebody was already sent is dead. */
+  /* Multipart, so it cannot go through `write`: that one sets a JSON
+     content type, and a multipart body needs the browser to set its own
+     header with the boundary in it. */
+  async function upload(file: File, text: string, style: string) {
+    setError("");
+    const body = new FormData();
+    body.append("picture", file);
+    body.append("text", text);
+    body.append("style", style);
+    try {
+      const response = await fetch(`${base}/pictures`, { method: "POST", body });
+      const answer = (await response.json().catch(() => null)) as (OwnedGenre & { detail?: string }) | null;
+      if (!response.ok) {
+        setError(answer?.detail ?? FAILED);
+        return false;
+      }
+      if (answer) setGenre(answer);
+      return true;
+    } catch {
+      setError(FAILED);
+      return false;
+    }
+  }
+
   async function flipShare(on: boolean) {
     setError("");
     try {
@@ -165,7 +189,14 @@ export function Editor({
         <p className="mt-6 text-[15px] text-muted">Nothing in here yet. Paste a few lines above.</p>
       )}
 
-      <Sharing token={genre.share_token} editable={isPro} onFlip={flipShare} />
+      <AddPicture editable={isPro} shared={genre.share_token !== null} onUpload={upload} styles={styles} />
+
+      <Sharing
+        token={genre.share_token}
+        editable={isPro}
+        hasPictures={genre.has_pictures === true}
+        onFlip={flipShare}
+      />
 
       <DeleteGenre slug={genre.slug} />
     </main>
@@ -296,6 +327,128 @@ function AddTopics({
   );
 }
 
+/* Uploading one picture, with the sentence that goes over it. Deliberately
+   one at a time rather than a multi-select: each picture needs its own
+   prompt, and a bulk upload would leave somebody typing twenty of them
+   into a list afterwards.
+
+   Off entirely while a genre is shared, because the backend refuses it
+   and the reason is worth reading before the file dialog opens rather
+   than after. */
+function AddPicture({
+  editable,
+  shared,
+  styles,
+  onUpload,
+}: {
+  editable: boolean;
+  shared: boolean;
+  styles: Style[];
+  onUpload: (file: File, text: string, style: string) => Promise<boolean>;
+}) {
+  const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState("");
+  const [text, setText] = useState("");
+  const [style, setStyle] = useState("just-talk");
+  const [busy, setBusy] = useState(false);
+  const real = styles.filter((s) => s.key !== "surprise");
+
+  /* Revoked when it is replaced or the component goes, or every pick
+     leaks the last one for the life of the page. */
+  useEffect(() => {
+    if (!file) return setPreview("");
+    const url = URL.createObjectURL(file);
+    setPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [file]);
+
+  async function send() {
+    if (!file || text.trim() === "") return;
+    setBusy(true);
+    try {
+      if (await onUpload(file, text.trim(), style)) {
+        setFile(null);
+        setText("");
+      }
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <section className="mt-6.5 rounded-card border border-line bg-card p-4.5">
+      <h2 className="text-base font-semibold">Add a picture</h2>
+      <p className="mt-1 text-[13.5px] text-muted">
+        {shared
+          ? "Stop sharing this genre first. A genre with your own pictures in it stays private."
+          : "A photograph to talk about, and the line that goes over it. Same round, with a picture."}
+      </p>
+
+      {!shared && (
+        <div className="mt-3.5 flex flex-col gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <label
+              className={cn(
+                "inline-flex cursor-pointer items-center gap-2 rounded-full border border-line-strong px-4 py-2 text-sm font-semibold text-muted",
+                (!editable || busy) && "cursor-not-allowed opacity-50",
+              )}
+            >
+              <input
+                type="file"
+                accept="image/*"
+                className="sr-only"
+                disabled={!editable || busy}
+                onChange={(event) => setFile(event.target.files?.[0] ?? null)}
+              />
+              {file ? "Choose another" : "Choose a picture"}
+            </label>
+            {file && <span className="text-[13px] text-muted">{Math.round(file.size / 1024)}KB</span>}
+          </div>
+
+          {preview && (
+            <div className="aspect-[4/3] w-full max-w-[260px] overflow-hidden rounded-xl bg-card2">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={preview} alt="" className="h-full w-full object-cover" />
+            </div>
+          )}
+
+          <div className="flex flex-wrap items-end gap-3">
+            <label className="flex-1 basis-[16rem]">
+              <span className="mb-1.5 block text-sm font-semibold">What to talk about</span>
+              <input
+                value={text}
+                maxLength={200}
+                placeholder="The road I didn't take"
+                disabled={!editable || busy}
+                onChange={(event) => setText(event.target.value)}
+                className="w-full rounded-[10px] border border-line-strong bg-card2 px-3 py-2.5 text-[15px] font-semibold text-ink"
+              />
+            </label>
+            <label>
+              <span className="mb-1.5 block text-sm font-semibold">Style</span>
+              <select
+                value={style}
+                disabled={!editable || busy}
+                onChange={(event) => setStyle(event.target.value)}
+                className="rounded-[10px] border border-line-strong bg-card2 px-3 py-2.5 text-[15px] font-semibold text-ink"
+              >
+                {real.map((option) => (
+                  <option key={option.key} value={option.key}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <Button size="sm" disabled={!editable || busy || !file || text.trim() === ""} onClick={send}>
+              {busy ? "Uploading" : "Add picture"}
+            </Button>
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
+
 function Row({
   topic,
   styles,
@@ -390,6 +543,15 @@ function Row({
 
   return (
     <li className="flex items-center gap-3 border-b border-line px-1 py-2.5">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      {topic.image && (
+        <img
+          src={topic.image}
+          alt=""
+          className="size-11 flex-none rounded-lg bg-card2 object-cover"
+          loading="lazy"
+        />
+      )}
       <span className="min-w-0 flex-1 text-[15.5px]">{topic.text}</span>
       <span className="rounded-full border border-line bg-card2 px-2.5 py-0.5 text-[11.5px] font-semibold text-muted">
         {topic.style_label}
@@ -432,10 +594,14 @@ function IconButton({
 function Sharing({
   token,
   editable,
+  hasPictures,
   onFlip,
 }: {
   token: string | null;
   editable: boolean;
+  /** A genre holding an uploaded picture cannot be shared at all. Said
+      here, before the press, rather than as a refusal after it. */
+  hasPictures: boolean;
   onFlip: (on: boolean) => Promise<void>;
 }) {
   const [busy, setBusy] = useState(false);
@@ -456,7 +622,9 @@ function Sharing({
         <div>
           <h2 className="text-base font-semibold">Share this genre</h2>
           <p className="mt-1 text-[13.5px] text-muted">
-            Anyone with the link can read it and practise it. No account needed.
+            {hasPictures
+              ? "Genres with your own pictures in them stay private, so nothing you upload is reachable by a link."
+              : "Anyone with the link can read it and practise it. No account needed."}
           </p>
         </div>
         <button
@@ -464,7 +632,7 @@ function Sharing({
           role="switch"
           aria-checked={on}
           aria-label="Sharing"
-          disabled={busy || !editable}
+          disabled={busy || !editable || hasPictures}
           onClick={flip}
           className={cn(
             "relative h-7 w-12 flex-none cursor-pointer rounded-full border transition-colors disabled:cursor-not-allowed",

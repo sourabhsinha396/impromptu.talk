@@ -12,6 +12,10 @@ dependencies = [
     "limits[redis]>=5.8",
     "gunicorn>=23.0",
     "django-storages[s3]>=1.14",
+    # Uploaded pictures are decoded, resized and re-encoded to WebP before
+    # anything is stored, which is also what proves the bytes are an image
+    # and not something wearing an image's content type.
+    "pillow>=11.0",
 ]
 
 [dependency-groups]

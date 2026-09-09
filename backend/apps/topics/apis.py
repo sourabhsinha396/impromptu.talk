@@ -1,13 +1,14 @@
 from django.http import Http404, HttpResponse
-from ninja import Router, Status
+from ninja import File, Form, Router, Status
 from ninja.errors import HttpError
+from ninja.files import UploadedFile
 
 from apps.authentication.security import session_auth
 from apps.common import openrouter
 from apps.common.ratelimit import throttle
 from apps.payments import services as payments
 from apps.topics import generate as generation
-from apps.topics import owned
+from apps.topics import owned, pictures
 from apps.topics.bank import STYLES
 from apps.topics.models import Genre, Topic
 from apps.topics.schemas import (
@@ -72,12 +73,23 @@ def _genre(genre) -> dict:
         "share_token": genre.share_token,
         "topics": topics,
         "own_styles": owned.own_styles(genre),
+        # The editor needs to know before the press, so Share can say why
+        # it is off rather than refusing after somebody has pressed it.
+        "has_pictures": any(t["image"] for t in topics),
     }
 
 
 def _topics(genre) -> list[dict]:
     return [
-        {"id": t.id, "text": t.text, "style": t.style, "style_label": owned.label_for(t.style)}
+        {
+            "id": t.id,
+            "text": t.text,
+            "style": t.style,
+            "style_label": owned.label_for(t.style),
+            # Resolved here rather than stored: the row holds a storage
+            # key, so moving CDN is a settings change and not a rewrite.
+            "image": pictures.url_for(t.image),
+        }
         for t in owned.topics_of(genre)
     ]
 
@@ -128,6 +140,24 @@ def paste(request, slug: str, payload: PasteIn):
     genre = owned.by_slug(request.user, slug)
     owned.add_topics(genre, payload.text, payload.default_style)
     return _genre(genre)
+
+
+@api.post("/mine/{slug}/pictures", auth=session_auth, response={201: OwnedGenreOut})
+# Dearer than any other write here: it reads a file off the wire, decodes
+# it and re-encodes it. Keyed on the account, since an upload is a person
+# choosing a file rather than a page loading.
+@throttle("genre-pictures", "60/hour")
+def add_picture(request, slug: str, picture: File[UploadedFile], text: Form[str], style: Form[str] = ""):
+    """One uploaded picture and the sentence over it.
+
+    Multipart rather than JSON with a data URL: a base64 body is a third
+    larger and has to be held in memory whole, and the browser's own file
+    input already produces exactly this.
+    """
+    _writer(request)
+    genre = owned.by_slug(request.user, slug)
+    owned.add_picture(genre, request.user.id, picture, text, style)
+    return Status(201, _genre(genre))
 
 
 @api.patch("/mine/{slug}/topics/{topic_id}", auth=session_auth, response=OwnedGenreOut)

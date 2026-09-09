@@ -4,48 +4,28 @@ import { FeatureIcon } from "@/components/site/icons";
 import { FREE_FEATURES, PRO_FEATURES, type Feature } from "@/components/features/feature-list";
 import { cn } from "@/lib/utils";
 
-/* One badge reads on a card at a time: "Soon" beats "Pro", since a feature
-   that is not built yet is not usefully described by who it will be sold
-   to. Everything built and free wears no badge at all. */
-function badge(feature: Feature): string | null {
-  if (feature.soon) return "Soon";
-  if (feature.pro) return "Pro";
-  return null;
-}
+const BADGE_CLASS =
+  "rounded-full border border-accent bg-accent/12 px-2 py-0.5 text-[10.5px] font-bold tracking-wide text-accent-strong uppercase";
 
-const BADGE_CLASS = "rounded-full border px-2 py-0.5 text-[10.5px] font-bold tracking-wide uppercase";
+/* A Pro card is locked and badged for exactly one reader: somebody who
+   has not bought it. A subscriber gets neither, because a page that
+   labels half of what they already own with the name of the thing they
+   already pay for is selling to somebody who has finished buying.
 
+   So the badge and the lock are the same condition, and the badge is the
+   one live thing on a locked card: it goes to the page that answers it. */
 function Card({ feature, isPro }: { feature: Feature; isPro: boolean }) {
-  const locked = feature.soon || (feature.pro && !isPro);
-  const label = badge(feature);
-  /* Locked on being Pro rather than on being unbuilt: the badge is the one
-     live thing on an otherwise inert card, and it goes where the lock's
-     answer lives. A Soon card has no such answer - nobody is selling it
-     yet - so its badge stays a span even while locked. */
-  const proBadgeLinks = locked && feature.pro && !feature.soon;
+  const locked = Boolean(feature.pro) && !isPro;
   const body = (
     <>
       <FeatureIcon slug={feature.slug} size={20} className={locked ? "text-muted" : "text-accent"} />
       <span className="mt-2.5 flex items-center gap-2 text-base font-semibold">
         {feature.name}
-        {label &&
-          (proBadgeLinks ? (
-            <Link
-              href="/pro"
-              className={cn(BADGE_CLASS, "border-accent bg-accent/12 text-accent-strong no-underline hover:bg-accent/20")}
-            >
-              {label}
-            </Link>
-          ) : (
-            <span
-              className={cn(
-                BADGE_CLASS,
-                feature.pro && !feature.soon ? "border-accent bg-accent/12 text-accent-strong" : "border-line-strong bg-card2 text-muted",
-              )}
-            >
-              {label}
-            </span>
-          ))}
+        {locked && (
+          <Link href="/pro" className={cn(BADGE_CLASS, "no-underline hover:bg-accent/20")}>
+            Pro
+          </Link>
+        )}
       </span>
       <span className="mt-1 block text-[13px] leading-[1.45] text-muted">{feature.blurb}</span>
     </>

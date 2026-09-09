@@ -19,7 +19,7 @@ from django.db.models import Count, Q
 from django.utils.text import slugify
 from ninja.errors import HttpError
 
-from apps.topics import bank
+from apps.topics import bank, pictures
 from apps.topics.icons import valid_icon
 from apps.topics.models import Genre, Topic
 
@@ -50,6 +50,8 @@ NO_GENRE = "No such genre."
 NO_TOPIC = "No such topic."
 ALREADY_HERE = "That topic is already in this genre."
 PRO_ONLY = "Pro is needed to write your own genres."
+PICTURES_NO_SHARING = "A genre with your own pictures in it cannot be shared."
+SHARED_NO_PICTURES = "Stop sharing this genre before adding a picture to it."
 
 # What a pasted line's tail may say. Both the slug and the label, because
 # "Tipping should end, hot take" is what somebody types and "hot-take" is
@@ -241,21 +243,77 @@ def own_styles(genre: Genre) -> list[str]:
     return sorted({topic.style for topic in genre.topics.all() if topic.style not in bank.STYLE_KEYS})
 
 
+@transaction.atomic
+def add_picture(genre: Genre, user_id: int, upload, text: str, style: str) -> Topic:
+    """One uploaded picture, with the sentence that goes over it.
+
+    The file is stored before the row, and the row inside a transaction:
+    an orphaned object in the bucket costs a fraction of a penny, while a
+    row pointing at a file that was never written is a topic that draws
+    a broken image every time it is drawn.
+    """
+    line = " ".join(text.split())[:bank.MAX_TEXT]
+    if not line:
+        raise HttpError(400, NEEDS_TEXT)
+    if genre.share_token:
+        raise HttpError(400, SHARED_NO_PICTURES)
+    held = list(genre.topics.all())
+    if len(held) >= MAX_TOPICS:
+        raise HttpError(400, TOO_MANY_TOPICS)
+    if line.lower() in {topic.text.lower() for topic in held}:
+        raise HttpError(400, ALREADY_HERE)
+
+    key = pictures.store(user_id, upload)
+    order = max((topic.sort_order for topic in held), default=0) + 1
+    return Topic.objects.create(
+        genre=genre,
+        text=line,
+        slug=_free_slug(line, {topic.slug for topic in held}),
+        # `coin_style`, not `valid_style`: a picture is added one at a
+        # time from the editor, which is exactly where coining one is
+        # allowed. The paste is the place that refuses to, because there
+        # every comma would coin one.
+        style=coin_style(style),
+        image=key,
+        sort_order=order,
+    )
+
+
 def remove_topic(genre: Genre, topic_id: int) -> None:
     """Really gone, unlike a bank topic. Nothing public names it and no
     unique text has to stay reserved, so there is nothing a tombstone
-    would buy."""
+    would buy. The uploaded file goes with the row, or a cancelled
+    subscriber's bucket grows forever with pictures nothing points at."""
+    for topic in genre.topics.filter(pk=topic_id):
+        pictures.remove(topic.image)
     genre.topics.filter(pk=topic_id).delete()
 
 
 def delete(genre: Genre) -> None:
+    """The genre's own uploads go with it, for the reason above. Only
+    uploads: a built-in's picture is a file in the repository and is not
+    this genre's to delete."""
+    for topic in genre.topics.exclude(image=""):
+        pictures.remove(topic.image)
     genre.delete()
+
+
+def has_pictures(genre: Genre) -> bool:
+    return genre.topics.exclude(image="").exists()
 
 
 def share(genre: Genre) -> str:
     """Turn sharing on, or hand back the link already in use. Idempotent,
     as the streak's is: pressing the button twice must not break a link
-    somebody has already sent."""
+    somebody has already sent.
+
+    A genre holding uploaded pictures cannot be shared at all (owner's
+    call, 2026-09-09). `/g/<token>` needs no account, so sharing one
+    would make this site a place to host arbitrary images behind a link,
+    and that is a moderation problem rather than a feature.
+    """
+    if has_pictures(genre):
+        raise HttpError(400, PICTURES_NO_SHARING)
     if not genre.share_token:
         genre.share_token = secrets.token_urlsafe(TOKEN_BYTES)
         genre.save(update_fields=["share_token"])

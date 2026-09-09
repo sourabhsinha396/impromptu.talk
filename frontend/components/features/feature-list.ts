@@ -6,10 +6,9 @@ export type Feature = {
   name: string;
   blurb: string;
   href: string;
-  /** Gated on the viewer's `is_pro`. */
+  /** Gated on the viewer's `is_pro`: locked and badged for a reader who
+      has not bought it, an ordinary card for one who has. */
   pro?: boolean;
-  /** Not yet built, whatever the viewer's plan - always shown, never clickable. */
-  soon?: boolean;
 };
 
 export const FREE_FEATURES: Feature[] = [
@@ -36,10 +35,11 @@ export const PRO_FEATURES: Feature[] = [
   {
     slug: "custom-genre-image",
     name: "Custom genre (Images)",
-    blurb: "Your own pictures in place of sentences, in your own picker.",
+    /* Says the private part out loud, because it is the one rule that
+       surprises somebody: every other genre they make can be shared. */
+    blurb: "Upload your own pictures. A genre with pictures in it stays private.",
     href: "/genres/yours",
     pro: true,
-    soon: true,
   },
   {
     slug: "history",

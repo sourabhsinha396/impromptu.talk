@@ -5,6 +5,9 @@ developer's .env can never leak a live key into a test run. Each key
 lands here on the card that introduces it.
 """
 
+import pathlib
+import tempfile
+
 from .base import *  # noqa: F403
 
 ENVIRONMENT = "testing"
@@ -66,3 +69,8 @@ OPENROUTER_BASE_URL = "https://openrouter.invalid"
 # Every test runs against `transcribe.RecordingGateway`.
 GROQ_API_KEY = ""
 ASSEMBLY_AI_API_KEY = ""
+
+# Uploads land in a temporary directory, never in the working tree: the
+# suite writes real files through the storage backend (that is the point
+# of those tests) and a run must not leave any behind.
+MEDIA_ROOT = pathlib.Path(tempfile.mkdtemp(prefix="yapholic-test-uploads-"))

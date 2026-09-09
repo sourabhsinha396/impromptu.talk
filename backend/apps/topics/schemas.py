@@ -50,6 +50,9 @@ class OwnedTopicOut(Schema):
     text: str
     style: str
     style_label: str
+    #: Ready for an `img` tag, or empty. The row holds a storage key and
+    #: the route resolves it, so the CDN's name lives in settings only.
+    image: str = ""
 
 
 class OwnedGenreOut(Schema):
@@ -68,6 +71,9 @@ class OwnedGenreOut(Schema):
     share_token: str | None
     topics: list[OwnedTopicOut]
     own_styles: list[str]
+    #: Whether this genre holds an uploaded picture, which is what makes
+    #: it unshareable (docs/DECISIONS.md, 2026-09-09).
+    has_pictures: bool = False
 
 
 class MineOut(Schema):

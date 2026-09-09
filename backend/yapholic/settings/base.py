@@ -217,9 +217,18 @@ S3_SECRET_ACCESS_KEY = os.environ.get("S3_SECRET_ACCESS_KEY", "").strip()
 S3_ENDPOINT_URL = os.environ.get("S3_ENDPOINT_URL", "").strip()
 STORAGE_PUBLIC_BASE_URL = os.environ.get("STORAGE_PUBLIC_BASE_URL", "").strip()
 
+# Where an uploaded picture lands when there is no bucket: tests and any
+# host without one. Never used in production, which requires the bucket.
+MEDIA_ROOT = BASE_DIR / "uploads"
+MEDIA_URL = "/media/"
+
 if STORAGE_BUCKET:
+    # `default` is the uploads store (a Pro account's own pictures) and
+    # `staticfiles` is the admin's CSS. Both go to the bucket, because an
+    # upload has to be reachable from a browser on another host, which a
+    # path on this container's disk is not.
     STORAGES = {
-        "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+        "default": {"BACKEND": "storages.backends.s3.S3Storage"},
         "staticfiles": {"BACKEND": "storages.backends.s3.S3Storage"},
     }
     AWS_STORAGE_BUCKET_NAME = STORAGE_BUCKET
