@@ -102,7 +102,7 @@ CATALOGUE: tuple[Plan, ...] = (
         # reading "Monthly" side by side is a riddle, and the card is not a
         # big enough clue (owner's call, docs/DECISIONS.md).
         name="30 day pass",
-        unit="once",
+        unit="for 30 days",
         usd_cents=800,
         period=None,
         days=30,

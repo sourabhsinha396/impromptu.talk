@@ -116,9 +116,19 @@ def load_local():
     return module
 
 
+def load_base():
+    # The switch itself lives in base.py, so the two tests below read it
+    # there rather than through an environment module that overrides it.
+    sys.modules.pop("yapholic.settings.base", None)
+    spec = importlib.util.find_spec("yapholic.settings.base")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 def test_static_files_serve_off_disk_with_no_bucket_configured(monkeypatch):
     monkeypatch.delenv("STORAGE_BUCKET", raising=False)
-    module = load_local()
+    module = load_base()
     assert module.STATIC_URL == "static/"
     assert module.STORAGES["staticfiles"]["BACKEND"] == "django.contrib.staticfiles.storage.StaticFilesStorage"
 
@@ -126,6 +136,20 @@ def test_static_files_serve_off_disk_with_no_bucket_configured(monkeypatch):
 def test_static_files_serve_from_the_cdn_once_a_bucket_is_set(monkeypatch):
     monkeypatch.setenv("STORAGE_BUCKET", "yapholic")
     monkeypatch.setenv("STORAGE_PUBLIC_BASE_URL", "https://cdn.yapholic.example")
-    module = load_local()
+    module = load_base()
     assert module.STATIC_URL == "https://cdn.yapholic.example/static/"
     assert module.STORAGES["staticfiles"]["BACKEND"] == "storages.backends.s3.S3Storage"
+
+
+def test_local_serves_static_off_disk_even_with_a_bucket_in_the_env(monkeypatch):
+    """The failure this pins: a developer's .env carries the deploy host's
+    bucket so one file holds every address, base.py's switch flips on that
+    variable alone whichever settings module is loaded, and runserver's
+    staticfiles handler only intercepts a relative STATIC_URL. With an
+    absolute one on another host it never sees the request, so the local
+    admin came back unstyled with nothing in the log to say why."""
+    monkeypatch.setenv("STORAGE_BUCKET", "yapholic")
+    monkeypatch.setenv("STORAGE_PUBLIC_BASE_URL", "https://cdn.yapholic.example")
+    module = load_local()
+    assert module.STATIC_URL == "static/"
+    assert module.STORAGES["staticfiles"]["BACKEND"] == "django.contrib.staticfiles.storage.StaticFilesStorage"

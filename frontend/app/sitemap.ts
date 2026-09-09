@@ -19,6 +19,7 @@ export const PAGES: [string, number][] = [
   ...GENRE_SLUGS.map((slug): [string, number] => [`/genre/${slug}`, 0.8]),
   ["/pro", 0.5],
   ["/affiliate", 0.4],
+  ["/features", 0.4],
   ["/about", 0.3],
   ["/contact", 0.3],
   ["/privacy", 0.3],

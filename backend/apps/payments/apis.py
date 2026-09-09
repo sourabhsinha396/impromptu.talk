@@ -19,7 +19,7 @@ api = Router(tags=["payments"])
 
 # Each card is a shape rather than a plan, and the pill switches between
 # the two plans inside it. The order is the catalogue's.
-CARDS = (("sub", "Subscription", plans.SUBSCRIPTION), ("one", "One-time", plans.ONE_TIME))
+CARDS = (("sub", "Subscription", plans.SUBSCRIPTION), ("one", "Paid Once", plans.ONE_TIME))
 
 
 @api.get("/plans", auth=None, response=CatalogueOut)

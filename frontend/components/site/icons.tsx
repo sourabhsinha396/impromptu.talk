@@ -21,6 +21,8 @@ import {
   GraduationCap,
   HandCoins,
   Heart,
+  History,
+  Image as ImageGlyph,
   Lightbulb,
   LogOut,
   type LucideProps,
@@ -181,6 +183,21 @@ export const STYLE_ICONS: Record<string, Glyph> = {
 
 export function StyleIcon({ style, ...rest }: IconProps & { style: string }) {
   const Glyph = icon(STYLE_ICONS[style] ?? Shuffle);
+  return <Glyph {...rest} />;
+}
+
+/* The cards on /features, keyed by feature slug. */
+export const FEATURE_ICONS: Record<string, Glyph> = {
+  streak: Flame,
+  genres: Dices,
+  "image-impromptu": ImageGlyph,
+  "custom-genre-text": Pencil,
+  "custom-genre-image": ImageGlyph,
+  history: History,
+};
+
+export function FeatureIcon({ slug, ...rest }: IconProps & { slug: string }) {
+  const Glyph = icon(FEATURE_ICONS[slug] ?? Settings);
   return <Glyph {...rest} />;
 }
 

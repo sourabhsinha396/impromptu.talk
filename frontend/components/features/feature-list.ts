@@ -1,0 +1,50 @@
+/* The data for /features, approved in docs/mocks/features.html. A plain
+   array rather than anything fetched: this is copy about the product, not
+   product policy, and it changes exactly when this file changes. */
+export type Feature = {
+  slug: string;
+  name: string;
+  blurb: string;
+  href: string;
+  /** Gated on the viewer's `is_pro`. */
+  pro?: boolean;
+  /** Not yet built, whatever the viewer's plan - always shown, never clickable. */
+  soon?: boolean;
+};
+
+export const FREE_FEATURES: Feature[] = [
+  { slug: "streak", name: "Streak", blurb: "Comes back tomorrow. Lives in your browser, or on your account.", href: "/streak" },
+  { slug: "genres", name: "All genres", blurb: "Open, argue, teach, tell - four ways to be asked the same topic.", href: "/genres" },
+  {
+    slug: "image-impromptu",
+    name: "Image impromptu",
+    blurb: "A picture instead of a sentence. Not yet built.",
+    href: "/",
+    soon: true,
+  },
+];
+
+export const PRO_FEATURES: Feature[] = [
+  {
+    slug: "custom-genre-text",
+    name: "Custom genre",
+    blurb: "Your own topics, written or pasted, in your own picker.",
+    href: "/genres/yours",
+    pro: true,
+  },
+  {
+    slug: "custom-genre-image",
+    name: "Custom genre",
+    blurb: "Your own pictures in place of sentences, in your own picker.",
+    href: "/genres/yours",
+    pro: true,
+    soon: true,
+  },
+  {
+    slug: "history",
+    name: "Full history",
+    blurb: "Every round you've spoken, not just the last few.",
+    href: "/streak",
+    pro: true,
+  },
+];
