@@ -1,0 +1,108 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mock: the features page</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..600&family=Plus+Jakarta+Sans:wght@400..700&display=swap" rel="stylesheet"><style>
+:root{color-scheme:light;--surface:#fff;--card:#fff;--card2:oklch(.965 .008 120);--ink:#1c1917;--muted:#57534e;--line:#e7e5e4;--line-strong:#918b87;
+--accent-h:120;--accent-c:.12;--accent-l:.5;--accent-l-strong:.42;--accent:oklch(var(--accent-l) var(--accent-c) var(--accent-h));--accent-strong:oklch(var(--accent-l-strong) var(--accent-c) var(--accent-h));
+--btn:#1c1917;--btn-ink:#fff;--sans:"Plus Jakarta Sans",ui-sans-serif,system-ui,sans-serif;--display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;--header-h:60px}
+[data-theme=dark]{color-scheme:dark;--surface:#080808;--card:#161616;--card2:#101010;--ink:#f5f5f4;--muted:#a8a29e;--line:#292524;--line-strong:#6b6560;
+--accent-l:.796;--accent-l-strong:.86;--btn:#f5f5f4;--btn-ink:#111110}
+*{box-sizing:border-box}html,body{margin:0}body{background:#3f3d3a;font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased}
+.mockbar{position:sticky;top:0;z-index:50;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:10px 16px;background:#26241f;color:#d6d3d1;font:600 12px/1 var(--sans);letter-spacing:.02em}
+.mockbar b{color:#fff;font-weight:700;margin-right:6px}.mockbar .seg{display:inline-flex;border:1px solid #57534e;border-radius:999px;overflow:hidden}
+.mockbar button{all:unset;cursor:pointer;padding:7px 12px;color:#d6d3d1}.mockbar button.on{background:#f5f5f4;color:#1c1917}
+.frame{margin:18px auto;max-width:1280px;min-height:calc(100vh - 80px);background:var(--surface);color:var(--ink);box-shadow:0 20px 60px rgb(0 0 0/.35);display:flex;flex-direction:column;position:relative;overflow:hidden}
+.phone .frame{max-width:390px;min-height:780px}
+.notes{max-width:1280px;margin:0 auto 40px;background:#fffbea;color:#3b2f0b;border-radius:14px;padding:18px 22px;font-size:14px;line-height:1.55}
+.notes h2{margin:0 0 8px;font:600 15px var(--sans)}.notes h3{margin:16px 0 6px;font:600 14px var(--sans)}.notes ul{margin:0;padding-left:18px}.notes li{margin:5px 0}.notes[hidden]{display:none}
+.ico{flex:none}
+.topbar{height:var(--header-h);display:flex;padding:10px clamp(14px,4vw,28px);border-bottom:1px solid var(--accent);flex:none}
+.topbar-in{flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:80rem;margin-inline:auto}
+.left{display:flex;align-items:center;gap:22px;min-width:0}
+.wordmark{display:inline-flex;align-items:center;gap:8px;font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:-.02em;color:var(--ink);text-decoration:none;font-variation-settings:"wdth" 96}
+.wordmark span span{color:var(--muted);font-weight:400}.die{width:21px;height:21px;color:var(--accent)}
+.navlink{font-size:14px;font-weight:600;color:var(--muted);text-decoration:none}
+.navlink.on{color:var(--accent-strong)}
+.right{display:flex;align-items:center;gap:6px}
+.pill{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line-strong);background:var(--card2);border-radius:999px;padding:5px 11px 5px 9px;font-size:13.5px;font-weight:600;color:var(--ink);text-decoration:none}
+.pill .ico{color:var(--accent)}.pill b{color:var(--accent);font-weight:700}
+.iconbtn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border:1px solid var(--line-strong);background:var(--card2);color:var(--muted);border-radius:999px}
+main.page{display:block;max-width:960px;width:100%;margin:0 auto;padding:36px clamp(16px,4vw,32px) 72px;flex:1}
+.crumb{font-size:13px;color:var(--muted);font-weight:600;margin-bottom:14px}.crumb a{color:inherit;text-decoration:none}
+h1{font-family:var(--display);font-weight:600;letter-spacing:-.02em;font-size:clamp(1.9rem,5vw,2.6rem);line-height:1.05;margin:0}
+.lede{font-size:16px;color:var(--muted);max-width:60ch;margin:10px 0 0}
+.group{margin:36px 0 0}
+.group h2{font:600 13px var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
+.cards{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}.phone .cards{grid-template-columns:1fr}
+.card{display:block;padding:18px 18px 16px;border:1px solid var(--line);border-radius:14px;background:var(--card);color:inherit;text-decoration:none;position:relative}
+.card .ico{color:var(--accent)}.card .cn{display:flex;align-items:center;gap:8px;font-weight:600;margin-top:10px;font-size:16px}.card .cb{display:block;font-size:13px;color:var(--muted);margin-top:4px;line-height:1.45}
+.card.locked{cursor:default;color:var(--muted)}.card.locked .ico{color:var(--muted)}
+.badge{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:var(--card2);border:1px solid var(--line-strong);color:var(--muted);border-radius:999px;padding:2px 8px}
+.badge.pro{color:var(--accent-strong);border-color:var(--accent);background:color-mix(in oklab,var(--accent) 12%,transparent)}
+.foot{flex:none;border-top:1px solid var(--line);padding:26px clamp(16px,4vw,32px) 30px;font-size:13px;color:var(--muted)}
+[hidden]{display:none!important}
+</style></head><body>
+<div class="mockbar"><b>Mock</b><span class="seg"><button data-tab="free" class="on">Signed in, free</button><button data-tab="pro">Signed in, Pro</button></span>
+<span class="seg"><button data-theme-set="light" class="on">Light</button><button data-theme-set="dark">Dark</button></span>
+<span class="seg"><button data-width="desktop" class="on">Desktop</button><button data-width="phone">Phone</button></span>
+<span class="seg"><button data-notes class="on">Notes</button></span></div>
+
+<div class="notes"><h2>The features page: what it is and why it exists anyway</h2>
+<p style="margin:0 0 8px">AGENTS.md is explicit: "There is no features page; that is the thing you build once you have lost this argument." This page is that argument, lost on purpose, owner's call - logged as a dated entry in <code>docs/DECISIONS.md</code> in the same change as this mock, per the rulebook's own rule for reversed decisions. The reasoning: as the tool picks up genuinely separate capabilities (image topics, owned genres in two shapes, the streak, the report), a stranger arriving at the homepage has nowhere to see the shape of the whole product without spinning ten times and stumbling into each one - <code>/features</code> is that one page, kept out of the home screen so the ten-second rule still holds there untouched.</p>
+<h3>What changed</h3>
+<ul>
+<li><b>One navbar link, "Features", next to the wordmark.</b> Not in the account menu (that stays destinations, not features) and not on the home stage itself, which is unchanged and still just the genre chip, the question and Spin. The link shows on every page's chrome except during a timed round (prep/speak already hide the whole topbar).</li>
+<li><b>The page is a flat list of cards, grouped free-forever vs. Pro</b>, in that order for a stranger and Pro-first for a subscriber - the same rule the genre picker already uses for owned genres, applied here for consistency rather than invented fresh. Each card is an entry point: name, one line, and a link into the real surface (the picker, a settings sheet, a sample report), not a page unto itself.</li>
+<li><b>Custom genre (text) and custom genre (image) are disabled for a free viewer</b>: no href, muted ink, a "Pro" badge, and no hover state - looked at, not clicked, so a stranger learns the shape of what they'd get without a dead link or a surprise paywall click. Signed in as Pro they behave like every other card.</li>
+<li><b>Image impromptu</b> is listed here as planned/soon (muted, no badge) until the mock in <code>docs/mocks/image-topic.html</code> is built for real - this page does not get ahead of that decision, it only names the slot.</li>
+</ul>
+<h3>Left out on purpose</h3>
+<ul>
+<li>No pricing on this page - that argument belongs to <code>/pro</code> alone, so this page links there rather than repeating it.</li>
+<li>No screenshots or marketing copy per card - one sentence each, plain nouns, per the rulebook's copy rules.</li>
+</ul>
+</div>
+
+<div class="frame">
+<header class="topbar"><div class="topbar-in">
+<div class="left">
+<a class="wordmark" href="#"><svg class="die" viewBox="0 0 32 32" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4.6 26.4 10.6 26.4 21.4 16 27.4 5.6 21.4 5.6 10.6z"/><path d="M5.6 10.6 16 16 26.4 10.6M16 16v11.4"/></g><g fill="currentColor"><circle cx="16" cy="10.45" r="1.5"/><circle cx="8.9" cy="15.55" r="1.5"/><circle cx="12.71" cy="22.15" r="1.5"/><circle cx="21.2" cy="18.85" r="1.5"/><circle cx="23.11" cy="15.55" r="1.5"/><circle cx="19.29" cy="22.15" r="1.5"/></g></svg><span class="name">yapholic<span>.talk</span></span></a>
+<a class="navlink on" href="#">Features</a>
+</div>
+<div class="right"><a class="pill" href="#" title="7 day streak" aria-label="7 day streak"><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"/></svg><b>7</b></a><button class="iconbtn" aria-label="Account"><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button></div></div></header>
+
+<main class="page">
+<p class="crumb"><a href="#">yapholic.talk</a> / Features</p>
+<h1>Everything in the tool</h1>
+<p class="lede">One page for the whole shape of it - what's free forever, what Pro adds, what's still coming.</p>
+
+<div class="group"><h2>Free forever</h2><div class="cards">
+<a class="card" href="#"><svg class="ico" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="12" height="12" x="2" y="10" rx="2" ry="2"/><path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6"/><path d="M6 18h.01"/><path d="M10 14h.01"/><path d="M15 6h.01"/><path d="M18 9h.01"/></svg><span class="cn">Random topic</span><span class="cb">A minute to think, a minute to talk. Ten genres, one spin.</span></a>
+<a class="card" href="#"><svg class="ico" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"/></svg><span class="cn">Streak</span><span class="cb">Comes back tomorrow. Lives in your browser, or on your account.</span></a>
+<a class="card" href="#"><svg class="ico" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg><span class="cn">The round, read back</span><span class="cb">The minute as a wave, your pace, the words you leaned on.</span></a>
+<a class="card" href="#"><svg class="ico" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg><span class="cn">Styles</span><span class="cb">Open, argue, teach, tell - four ways to be asked the same topic.</span></a>
+<span class="card locked" aria-disabled="true"><svg class="ico" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.814.014L6 21"/></svg><span class="cn">Image impromptu <span class="badge">Soon</span></span><span class="cb">A picture instead of a sentence. Not yet built.</span></span>
+</div></div>
+
+<div class="group"><h2>Pro</h2><div class="cards">
+<a class="card" id="ctext" href="#"><svg class="ico" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 6.1H3"/><path d="M21 12.1H3"/><path d="M15.1 18H3"/></svg><span class="cn">Custom genre <span class="badge pro">Pro</span></span><span class="cb">Your own topics, written or pasted, in your own picker.</span></a>
+<a class="card" id="cimg" href="#"><svg class="ico" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.814.014L6 21"/></svg><span class="cn">Custom genre <span class="badge pro">Pro</span></span><span class="cb">Your own pictures in place of sentences, in your own picker.</span></a>
+<a class="card" href="#"><svg class="ico" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg><span class="cn">The case you made <span class="badge pro">Pro</span></span><span class="cb">A model reads the round: what landed, what to try next time.</span></a>
+<a class="card" href="#"><svg class="ico" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 12v5"/><path d="M12 8v9"/><path d="M17 4v13"/></svg><span class="cn">Full history <span class="badge pro">Pro</span></span><span class="cb">Every round you've spoken, not just the last few.</span></a>
+</div></div>
+</main>
+
+<footer class="foot">Everything free stays free forever. <a href="#" style="color:var(--accent-strong);font-weight:600">See Pro</a></footer>
+</div>
+<script>
+const root=document.documentElement;
+function tab(id){const pro=id==='pro';['ctext','cimg'].forEach(x=>{const el=document.getElementById(x);
+if(pro){el.removeAttribute('aria-disabled');el.classList.remove('locked');el.setAttribute('href','#');}
+else{el.setAttribute('aria-disabled','true');el.classList.add('locked');el.removeAttribute('href');}});
+document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('on',b.dataset.tab===id));}
+function theme(t){root.dataset.theme=t;document.querySelectorAll('[data-theme-set]').forEach(b=>b.classList.toggle('on',b.dataset.themeSet===t));}
+function width(w){document.body.classList.toggle('phone',w==='phone');document.querySelectorAll('[data-width]').forEach(b=>b.classList.toggle('on',b.dataset.width===w));}
+function notes(){const n=document.querySelector('.notes');n.hidden=!n.hidden;document.querySelector('[data-notes]').classList.toggle('on',!n.hidden);}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-tab],[data-theme-set],[data-width],[data-notes]');if(!t)return;
+if(t.dataset.tab)tab(t.dataset.tab);if(t.dataset.themeSet)theme(t.dataset.themeSet);if(t.dataset.width)width(t.dataset.width);if(t.hasAttribute('data-notes'))notes();});
+theme(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+tab('free');
+</script>
+</body></html>

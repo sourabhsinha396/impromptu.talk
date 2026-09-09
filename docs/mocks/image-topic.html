@@ -1,0 +1,150 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mock: a picture instead of a sentence</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..600&family=Plus+Jakarta+Sans:wght@400..700&display=swap" rel="stylesheet"><style>
+:root{color-scheme:light;--surface:#fff;--card:#fff;--card2:oklch(.965 .008 120);--ink:#1c1917;--muted:#57534e;--line:#e7e5e4;--line-strong:#918b87;
+--accent-h:120;--accent-c:.12;--accent-l:.5;--accent-l-strong:.42;--accent:oklch(var(--accent-l) var(--accent-c) var(--accent-h));--accent-strong:oklch(var(--accent-l-strong) var(--accent-c) var(--accent-h));
+--btn:#1c1917;--btn-ink:#fff;--btn-strong:#000;--note:oklch(.93 .13 118);--note-ink:oklch(.32 .06 120);--warn:oklch(.62 .2 30);
+--sans:"Plus Jakarta Sans",ui-sans-serif,system-ui,sans-serif;--display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;--header-h:60px}
+[data-theme=dark]{color-scheme:dark;--surface:#080808;--card:#161616;--card2:#101010;--ink:#f5f5f4;--muted:#a8a29e;--line:#292524;--line-strong:#6b6560;
+--accent-l:.796;--accent-l-strong:.86;--btn:#f5f5f4;--btn-ink:#111110;--btn-strong:#fff;--note:oklch(.86 .15 120);--note-ink:oklch(.2 .04 120);--warn:oklch(.75 .19 30)}
+*{box-sizing:border-box}html,body{margin:0}body{background:#3f3d3a;font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased}
+.mockbar{position:sticky;top:0;z-index:50;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:10px 16px;background:#26241f;color:#d6d3d1;font:600 12px/1 var(--sans);letter-spacing:.02em}
+.mockbar b{color:#fff;font-weight:700;margin-right:6px}.mockbar .seg{display:inline-flex;border:1px solid #57534e;border-radius:999px;overflow:hidden}
+.mockbar button{all:unset;cursor:pointer;padding:7px 12px;color:#d6d3d1}.mockbar button.on{background:#f5f5f4;color:#1c1917}
+.frame{margin:18px auto;max-width:1280px;min-height:calc(100vh - 80px);background:var(--surface);color:var(--ink);box-shadow:0 20px 60px rgb(0 0 0/.35);display:flex;flex-direction:column;position:relative;overflow:hidden}
+.phone .frame{max-width:390px;min-height:780px}
+.notes{max-width:1280px;margin:0 auto 40px;background:#fffbea;color:#3b2f0b;border-radius:14px;padding:18px 22px;font-size:14px;line-height:1.55}
+.notes h2{margin:0 0 8px;font:600 15px var(--sans)}.notes h3{margin:16px 0 6px;font:600 14px var(--sans)}.notes ul{margin:0;padding-left:18px}.notes li{margin:5px 0}.notes[hidden]{display:none}
+.ico{flex:none}
+.topbar{height:var(--header-h);display:flex;padding:10px clamp(14px,4vw,28px);border-bottom:1px solid var(--accent);flex:none}
+.topbar-in{flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:80rem;margin-inline:auto}
+.wordmark{display:inline-flex;align-items:center;gap:8px;font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:-.02em;color:var(--ink);text-decoration:none;font-variation-settings:"wdth" 96}
+.wordmark span span{color:var(--muted);font-weight:400}.die{width:21px;height:21px;color:var(--accent)}
+.right{display:flex;align-items:center;gap:6px}
+.pill{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line-strong);background:var(--card2);border-radius:999px;padding:5px 11px 5px 9px;font-size:13.5px;font-weight:600;color:var(--ink);text-decoration:none}
+.pill .ico{color:var(--accent)}.pill b{color:var(--accent);font-weight:700}
+.iconbtn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border:1px solid var(--line-strong);background:var(--card2);color:var(--muted);border-radius:999px}
+.filming .topbar,.filming .foot,.filming .hint,.filming .kbd{visibility:hidden}
+main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px clamp(16px,4vw,32px);min-height:calc(100dvh - var(--header-h))}
+.phone main{min-height:640px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.tools{display:flex;justify-content:center;align-items:center;gap:8px;margin:0 0 26px}
+.chip{display:inline-flex;align-items:center;gap:7px;height:40px;padding:0 14px 0 12px;border:1px solid var(--line-strong);background:var(--card2);border-radius:999px;font-size:14px;font-weight:600;color:var(--ink);cursor:pointer}
+.chip .ico{color:var(--accent)}.chip .cv{color:var(--muted);margin-left:-3px}
+.chip.seg{padding:0;gap:0;overflow:hidden}
+.chip.seg span{display:flex;align-items:center;gap:6px;height:40px;padding:0 14px;cursor:pointer}
+.chip.seg span.on{background:var(--ink);color:var(--surface)}.chip.seg span.on .ico{color:var(--surface)}
+.q{font-family:var(--display);font-weight:600;letter-spacing:-.03em;font-variation-settings:"wdth" 96;font-size:clamp(2rem,6.5vw,4rem);line-height:1.05;margin:0;text-wrap:balance}
+.q.accent{color:var(--accent);margin-bottom:34px}
+.btn{font:inherit;font-weight:600;border-radius:999px;border:1px solid transparent;padding:12px 24px;cursor:pointer;line-height:1;display:inline-flex;align-items:center;gap:8px;text-decoration:none}
+.btn-primary{background:var(--btn);color:var(--btn-ink)}.btn-ghost{background:none;color:var(--muted);border-color:var(--line-strong)}
+.btn-xl{font-size:18px;padding:17px 46px}
+.row{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap}
+.row .btn{font-size:17px;padding:16px 28px}.die-btn{width:18px;height:18px;color:currentColor}
+.reset{display:inline-block;margin-top:22px;font-size:13.5px;font-weight:600;color:var(--muted);text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--line-strong)}
+.filming .reset{visibility:visible}
+.hint{font-size:14px;color:var(--muted);margin:26px 0 0;max-width:44ch}
+.label{display:inline-flex;gap:14px;align-items:center;font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.02em}
+.label .ico{color:var(--accent)}
+.topic{font-family:var(--display);font-weight:600;letter-spacing:-.035em;font-variation-settings:"wdth" 96;line-height:1.02;color:var(--accent);text-wrap:balance;margin:22px 0 44px;font-size:clamp(2.6rem,11vw,8.5rem)}
+.topic-mid{font-size:clamp(1.6rem,4.4vw,3.1rem);line-height:1.1;margin:0 0 30px}
+.clock{position:relative;width:min(56vw,300px);aspect-ratio:1;margin:4px auto 30px}.phone .clock{width:230px}
+.clock svg{width:100%;height:100%;transform:rotate(-90deg)}.clock .track{stroke:var(--line);stroke-width:8;fill:none}
+.clock .arc{stroke:var(--accent);stroke-width:8;fill:none;stroke-linecap:round;stroke-dasharray:283;stroke-dashoffset:120}
+.clock.ending .arc{stroke:var(--warn)}
+.clock .time{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--display);font-weight:600;font-size:clamp(3rem,10vw,5.6rem);letter-spacing:-.04em;font-variant-numeric:tabular-nums;line-height:1}
+.clock .what{position:absolute;left:0;right:0;bottom:22%;font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.notes-row{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin:6px 0 34px}
+.note{width:190px;height:150px;background:var(--note);color:var(--note-ink);border-radius:3px;padding:14px 14px;font:600 17px/1.3 var(--sans);text-align:left;box-shadow:0 8px 24px rgb(0 0 0/.12);position:relative}
+.note:nth-child(1){transform:rotate(-1.2deg)}.note:nth-child(2){transform:rotate(.9deg)}.note:nth-child(3){transform:rotate(-.6deg)}
+.note .ph{opacity:.5}.note .cnt{position:absolute;right:10px;bottom:8px;font-size:11px;font-weight:600;opacity:.55}
+.phone .note{width:100%;height:auto;min-height:64px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:0 0 34px}
+.nchip{background:var(--note);color:var(--note-ink);border-radius:3px;padding:7px 11px;font-size:13px;font-weight:600}
+[hidden]{display:none!important}
+
+/* the image itself */
+.pic{position:relative;width:min(78vw,460px);aspect-ratio:4/3;border-radius:18px;overflow:hidden;margin:0 auto 22px;box-shadow:0 10px 30px rgb(0 0 0/.16)}
+.pic img,.pic svg{display:block;width:100%;height:100%;object-fit:cover}
+.pic .cap{position:absolute;left:0;right:0;bottom:0;padding:14px 16px 12px;background:linear-gradient(to top,rgb(0 0 0/.62),transparent);color:#fff;text-align:left;font-size:15px;font-weight:600;line-height:1.35}
+.pic.small{width:150px;aspect-ratio:4/3;margin:0 auto 20px;border-radius:12px}
+.phone .pic.small{width:120px}
+.pic-attr{font-size:11.5px;color:var(--muted);margin:0 0 30px}
+.pic-attr a{color:inherit;text-decoration:underline;text-underline-offset:3px}
+.q.under-pic{margin:0 0 30px;font-size:clamp(1.5rem,4.2vw,2.4rem)}
+</style></head><body>
+<div class="mockbar"><b>Mock</b><span class="seg"><button data-tab="idle" class="on">Idle</button><button data-tab="topic" class="">Topic</button><button data-tab="topic-cap" class="">Topic, with a line</button><button data-tab="prep" class="">Prep</button><button data-tab="speak" class="">Speak</button></span>
+<span class="seg"><button data-theme-set="light" class="on">Light</button><button data-theme-set="dark">Dark</button></span>
+<span class="seg"><button data-width="desktop" class="on">Desktop</button><button data-width="phone">Phone</button></span>
+<span class="seg"><button data-notes class="on">Notes</button></span></div>
+
+<div class="notes"><h2>A picture instead of a sentence: proposal, not yet decided</h2>
+<p style="margin:0 0 8px">This is not v0 parity - v0 never had picture prompts, so it needs its own case, logged in <code>docs/DECISIONS.md</code> once the owner picks a shape. This mock exists to have that conversation with something on screen, per the rulebook's "mock lands before the card." Nothing here is built.</p>
+<h3>What it is</h3>
+<ul>
+<li><b>A fourth kind of topic, alongside a sentence.</b> Instead of "Meetings should be optional," the stage shows a picture; a person talks about what they see, tells the story they imagine, or answers whatever the caption asks. Genre and length still apply - it is a different <i>topic</i>, not a different round.</li>
+<li><b>Text is optional on the picture, never required.</b> Some rows are the bare picture ("describe what's happening"); others carry one short line under it, doing the job a caption does at the top of an interview-prep photo prompt ("what is this person about to regret?"). Both tabs above show the two rows.</li>
+<li><b>Where it lives in the picker:</b> not a fifth style (open/argue/teach/tell stays four, closed, per the rulebook) and not an eleventh genre. It reads as a topic <i>shape</i>, the same axis "coined style" already sits on for owned genres - so the natural home is a chip next to the genre chip on idle, a segmented control: <b>Words</b> / <b>Pictures</b>. Whichever is chosen, Spin draws from that pool for the genre in play. Open question for the owner: does every genre get a picture bank, or only a few (Culture, Everyday life, Relationships read naturally in pictures; Money & business or Philosophy less so)?</li>
+<li><b>Prep and speak stay the ring.</b> The clock is the fixed point in the round and must not move; the picture shrinks to a thumbnail above it once thinking starts, the way the topic sentence shrinks to <code>topic-mid</code> today, so the eye still lands on the same ring.</li>
+</ul>
+<h3>What is unresolved, for the owner to call</h3>
+<ul>
+<li><b>Source.</b> A licensed stock set (cost per call or a flat library, attribution line under the image as drawn here), or AI-generated per topic (a per-round cost, and a style to keep consistent). Not a decision this mock makes.</li>
+<li><b>The bank shape.</b> Today <code>Topic</code> is one sentence per row. A picture topic needs an image reference (URL or storage key) and an optional caption in the same row shape, so this is a nullable column and a row kind, not a new table - in keeping with "fewer tables" in the rulebook. Filed as a question, not a schema change, until the owner picks a source.</li>
+<li><b>The report.</b> Everything downstream (the wave, the pace, the words leaned on) reads what was <i>said</i>, so it is unaffected either way - a picture topic still produces a transcript like any other.</li>
+</ul>
+</div>
+
+<div class="frame">
+<header class="topbar"><div class="topbar-in">
+<a class="wordmark" href="#"><svg class="die" viewBox="0 0 32 32" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4.6 26.4 10.6 26.4 21.4 16 27.4 5.6 21.4 5.6 10.6z"/><path d="M5.6 10.6 16 16 26.4 10.6M16 16v11.4"/></g><g fill="currentColor"><circle cx="16" cy="10.45" r="1.5"/><circle cx="8.9" cy="15.55" r="1.5"/><circle cx="12.71" cy="22.15" r="1.5"/><circle cx="21.2" cy="18.85" r="1.5"/><circle cx="23.11" cy="15.55" r="1.5"/><circle cx="19.29" cy="22.15" r="1.5"/></g></svg><span class="name">yapholic<span>.talk</span></span></a>
+<div class="right"><a class="pill" href="#" title="7 day streak" aria-label="7 day streak"><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"/></svg><b>7</b></a><button class="iconbtn" aria-label="Account"><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button></div></div></header>
+
+<section data-phase="idle"><main><h1 class="sr">Impromptu speaking practice, a free random topic generator and timer</h1>
+<div class="tools"><button class="chip"><svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="12" height="12" x="2" y="10" rx="2" ry="2"/><path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6"/><path d="M6 18h.01"/><path d="M10 14h.01"/><path d="M15 6h.01"/><path d="M18 9h.01"/></svg>General <svg class="ico cv" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+<span class="chip seg"><span class="on"><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 6.1H3"/><path d="M21 12.1H3"/><path d="M15.1 18H3"/></svg>Words</span><span><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.814.014L6 21"/></svg>Pictures</span></span>
+<button class="iconbtn" aria-label="Settings" title="Settings"><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+<p class="q accent">Can you talk for a minute?</p>
+<div class="row"><a class="btn btn-primary btn-xl" href="#">Spin</a></div></main></section>
+
+<section data-phase="topic" hidden><main>
+<div class="label"><span><svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/></svg> Relationships</span><span><svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.814.014L6 21"/></svg> Picture</span></div>
+<div class="pic"><svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-label="Two people at a kitchen table, one holding a phone face-down"><rect width="400" height="300" fill="oklch(.86 .05 60)"/><rect y="180" width="400" height="120" fill="oklch(.68 .07 40)"/><circle cx="130" cy="120" r="46" fill="oklch(.78 .06 30)"/><circle cx="280" cy="130" r="46" fill="oklch(.74 .06 20)"/><rect x="90" y="150" width="80" height="90" rx="14" fill="oklch(.6 .1 250)"/><rect x="240" y="160" width="80" height="90" rx="14" fill="oklch(.55 .1 10)"/><rect x="180" y="205" width="40" height="10" rx="3" fill="oklch(.3 .01 0)"/></svg></div>
+<p class="hint" style="margin:0 0 30px">Tell the story you think this picture is telling.</p>
+<div class="row"><a class="btn btn-primary" href="#">Think for a minute</a><a class="btn btn-ghost" href="#">Speak now</a><a class="btn btn-ghost" href="#"><svg class="ico die-btn" viewBox="0 0 32 32" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4.6 26.4 10.6 26.4 21.4 16 27.4 5.6 21.4 5.6 10.6z"/><path d="M5.6 10.6 16 16 26.4 10.6M16 16v11.4"/></g><g fill="currentColor"><circle cx="16" cy="10.45" r="1.5"/><circle cx="8.9" cy="15.55" r="1.5"/><circle cx="12.71" cy="22.15" r="1.5"/><circle cx="21.2" cy="18.85" r="1.5"/><circle cx="23.11" cy="15.55" r="1.5"/><circle cx="19.29" cy="22.15" r="1.5"/></g></svg>Spin</a></div>
+<a class="reset" href="#">Reset</a></main></section>
+
+<section data-phase="topic-cap" hidden><main>
+<div class="label"><span><svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12.296 3.464 3.02 3.956"/><path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3z"/><path d="M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m6.18 5.276 3.1 3.899"/></svg> Culture</span><span><svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.814.014L6 21"/></svg> Picture</span></div>
+<div class="pic"><svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-label="A crowded night market street with paper lanterns"><rect width="400" height="300" fill="oklch(.28 .04 260)"/><g fill="oklch(.8 .16 60)"><circle cx="60" cy="60" r="14"/><circle cx="140" cy="40" r="14"/><circle cx="220" cy="65" r="14"/><circle cx="300" cy="45" r="14"/><circle cx="360" cy="70" r="14"/></g><rect y="210" width="400" height="90" fill="oklch(.2 .03 260)"/><g fill="oklch(.4 .04 260)"><rect x="0" y="150" width="80" height="80"/><rect x="90" y="140" width="70" height="90"/><rect x="170" y="155" width="90" height="75"/><rect x="270" y="145" width="70" height="85"/><rect x="350" y="150" width="50" height="80"/></g></svg><p class="cap">What is one thing about this scene that a photo can't capture?</p></div>
+<div class="row"><a class="btn btn-primary" href="#">Think for a minute</a><a class="btn btn-ghost" href="#">Speak now</a><a class="btn btn-ghost" href="#"><svg class="ico die-btn" viewBox="0 0 32 32" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4.6 26.4 10.6 26.4 21.4 16 27.4 5.6 21.4 5.6 10.6z"/><path d="M5.6 10.6 16 16 26.4 10.6M16 16v11.4"/></g><g fill="currentColor"><circle cx="16" cy="10.45" r="1.5"/><circle cx="8.9" cy="15.55" r="1.5"/><circle cx="12.71" cy="22.15" r="1.5"/><circle cx="21.2" cy="18.85" r="1.5"/><circle cx="23.11" cy="15.55" r="1.5"/><circle cx="19.29" cy="22.15" r="1.5"/></g></svg>Spin</a></div>
+<a class="reset" href="#">Reset</a></main></section>
+
+<section data-phase="prep" hidden><main>
+<div class="pic small"><svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-label="Two people at a kitchen table, one holding a phone face-down"><rect width="400" height="300" fill="oklch(.86 .05 60)"/><rect y="180" width="400" height="120" fill="oklch(.68 .07 40)"/><circle cx="130" cy="120" r="46" fill="oklch(.78 .06 30)"/><circle cx="280" cy="130" r="46" fill="oklch(.74 .06 20)"/><rect x="90" y="150" width="80" height="90" rx="14" fill="oklch(.6 .1 250)"/><rect x="240" y="160" width="80" height="90" rx="14" fill="oklch(.55 .1 10)"/><rect x="180" y="205" width="40" height="10" rx="3" fill="oklch(.3 .01 0)"/></svg></div>
+<div class="clock"><svg viewBox="0 0 100 100"><circle class="track" cx="50" cy="50" r="45"/><circle class="arc" cx="50" cy="50" r="45" style="stroke-dashoffset:120"/></svg>
+<div class="time">0:47</div><div class="what">Think</div></div>
+<div class="notes-row"><div class="note">Phone face-down<span class="cnt">15/80</span></div><div class="note">Not really about the coffee<span class="cnt">25/80</span></div><div class="note"><span class="ph">Three words</span><span class="cnt">0/80</span></div></div>
+<div class="row"><a class="btn btn-primary" href="#">Speak now</a><a class="btn btn-ghost" href="#"><svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="14" y="3" width="5" height="18" rx="1"/><rect x="5" y="3" width="5" height="18" rx="1"/></svg> Pause</a></div>
+<a class="reset" href="#">Reset</a>
+<p class="hint">Three words per note. Don't write sentences - you'll read them.</p></main></section>
+
+<section data-phase="speak" hidden><main>
+<div class="pic small"><svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-label="Two people at a kitchen table, one holding a phone face-down"><rect width="400" height="300" fill="oklch(.86 .05 60)"/><rect y="180" width="400" height="120" fill="oklch(.68 .07 40)"/><circle cx="130" cy="120" r="46" fill="oklch(.78 .06 30)"/><circle cx="280" cy="130" r="46" fill="oklch(.74 .06 20)"/><rect x="90" y="150" width="80" height="90" rx="14" fill="oklch(.6 .1 250)"/><rect x="240" y="160" width="80" height="90" rx="14" fill="oklch(.55 .1 10)"/><rect x="180" y="205" width="40" height="10" rx="3" fill="oklch(.3 .01 0)"/></svg></div>
+<div class="clock ending"><svg viewBox="0 0 100 100"><circle class="track" cx="50" cy="50" r="45"/><circle class="arc" cx="50" cy="50" r="45" style="stroke-dashoffset:240"/></svg>
+<div class="time">0:09</div><div class="what">Speak</div></div>
+<div class="chips"><span class="nchip">Phone face-down</span><span class="nchip">Not really about the coffee</span></div>
+<div class="row"><a class="btn btn-primary" href="#">Done</a><a class="btn btn-ghost" href="#"><svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="14" y="3" width="5" height="18" rx="1"/><rect x="5" y="3" width="5" height="18" rx="1"/></svg> Pause</a></div>
+<a class="reset" href="#">Reset</a></main></section>
+</div>
+<script>
+const root=document.documentElement;
+function show(id){document.querySelectorAll('[data-phase]').forEach(s=>s.hidden=s.dataset.phase!==id);
+document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('on',b.dataset.tab===id));
+const f=document.querySelector('.frame');f.classList.toggle('filming',id==='prep'||id==='speak');}
+function theme(t){root.dataset.theme=t;document.querySelectorAll('[data-theme-set]').forEach(b=>b.classList.toggle('on',b.dataset.themeSet===t));}
+function width(w){document.body.classList.toggle('phone',w==='phone');document.querySelectorAll('[data-width]').forEach(b=>b.classList.toggle('on',b.dataset.width===w));}
+function notes(){const n=document.querySelector('.notes');n.hidden=!n.hidden;document.querySelector('[data-notes]').classList.toggle('on',!n.hidden);}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-tab],[data-theme-set],[data-width],[data-notes]');if(!t)return;
+if(t.dataset.tab)show(t.dataset.tab);if(t.dataset.themeSet)theme(t.dataset.themeSet);if(t.dataset.width)width(t.dataset.width);if(t.hasAttribute('data-notes'))notes();});
+theme(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+</script>
+</body></html>

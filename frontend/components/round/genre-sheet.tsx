@@ -94,7 +94,7 @@ export function GenreSheet({
           nothing to manage, so this is the only place the feature has to
           explain itself. */}
       {own.length === 0 && (
-        <p className="px-3 pt-0.5 pb-1 text-[13px] text-muted">Paste your own topics and practise them here.</p>
+        <p className="px-3 pt-0.5 pb-1 text-[13px] text-muted">Paste or generate with AI.</p>
       )}
     </div>
   );
