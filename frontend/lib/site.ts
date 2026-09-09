@@ -11,12 +11,12 @@
  * and stays in code.
  */
 
-export const SITE_NAME = "yapholic.com";
+export const SITE_NAME = "Yapholic";
 
-export const SITE_TAGLINE = "A random topic. A minute to think. A minute to talk.";
+export const SITE_TAGLINE = "Impromptu speaking practice with Feedback";
 
 export const SITE_DESCRIPTION =
-  "Get a random topic. A minute to think. A minute to talk. Free impromptu speaking practice, no account, nothing to install.";
+  "Free impromptu speaking practice, no account, nothing to install. Perfect for impromptu, extemporaneous speaking, and practicing for interviews, debates, and presentations.";
 
 /* No trailing slash, because everything here appends one. The default is
    the dev port rather than a domain: a wrong domain baked in as a fallback
