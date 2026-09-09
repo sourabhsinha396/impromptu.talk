@@ -82,31 +82,15 @@ export default async function AffiliateRoute() {
 
       <div className="mt-9 grid grid-cols-1 gap-3.5 sm:grid-cols-3">
         <Step n="One">
-          Send your link. It is your name after the site&rsquo;s, and it works from anywhere: a post, a video
-          description, a message.
+          Send your referral link.
         </Step>
         <Step n="Two">
-          They practise free, then buy. The click is remembered for {days} days, so it still counts weeks later.
+          The click is remembered for {days} days, so it still counts weeks later.
         </Step>
         <Step n="Three">
-          You keep {percent}% of what they were charged. Paid by PayPal once you are over {minimum}.
+          You keep {percent}% of what they were charged.
         </Step>
       </div>
-
-      <section className="mt-10">
-        <h2 className="mb-3 font-display text-[23px] font-semibold tracking-[-0.02em]">Who this is for</h2>
-        <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-3">
-          <Face initials="RS" name="Coach" what="Speaking, interviews">
-            Sends the link with a warm-up drill. Their students practise between sessions.
-          </Face>
-          <Face initials="AT" name="Teacher" what="A class of 30">
-            Puts the link in the class notes. A minute of speaking is the homework.
-          </Face>
-          <Face initials="MK" name="Creator" what="Short videos">
-            Films one round, drops the link below it. The tool is the video.
-          </Face>
-        </div>
-      </section>
 
       <section className="mt-10">
         <h2 className="mb-1 font-display text-[23px] font-semibold tracking-[-0.02em]">Questions</h2>
@@ -158,9 +142,6 @@ function Face({
         </span>
       </div>
       <p className="mt-3 text-sm leading-[1.5] text-muted">{children}</p>
-      <p className="mt-3.5 text-[11.5px] font-semibold tracking-[0.06em] text-muted uppercase">
-        Sample, not a real person
-      </p>
     </div>
   );
 }

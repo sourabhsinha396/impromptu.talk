@@ -28,23 +28,23 @@ describe("the features page, an explicit override of AGENTS.md's \"no features p
   it("unlocks the Pro cards, except the ones still marked Soon, for a Pro viewer", () => {
     render(<FeaturesPage isPro />);
     expect(screen.getByRole("link", { name: /Custom genre.*Your own topics/ })).toHaveAttribute("href", "/genres/yours");
-    /* Image impromptu and its custom-genre counterpart are not built yet,
-       so they stay unclickable whatever the viewer's plan. */
-    expect(screen.queryByRole("link", { name: /Image impromptu/ })).toBeNull();
+    /* The custom-genre-by-picture counterpart is not built yet, so it
+       stays unclickable whatever the viewer's plan. */
     expect(screen.queryByRole("link", { name: /Custom genre.*Your own pictures/ })).toBeNull();
     /* Already Pro, so the badge is a plain label rather than a link to
        the page selling the plan they're already on. */
     expect(screen.queryByRole("link", { name: "Pro" })).toBeNull();
   });
 
-  it("puts Pro first for a Pro viewer and free-forever first for everyone else", () => {
+  it("leads with free forever, and does not rearrange itself once somebody is Pro", () => {
+    /* The picker reorders for Pro because it promotes somebody's own
+       genres. Nothing here is anybody's, so the page stays put and the
+       reader keeps their bearings. */
     const { unmount } = render(<FeaturesPage isPro={false} />);
-    const headingsFree = screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent);
-    expect(headingsFree).toEqual(["Free forever", "Pro"]);
+    expect(screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent)).toEqual(["Free forever", "Pro"]);
     unmount();
     render(<FeaturesPage isPro />);
-    const headingsPro = screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent);
-    expect(headingsPro).toEqual(["Pro", "Free forever"]);
+    expect(screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent)).toEqual(["Free forever", "Pro"]);
   });
 });
 

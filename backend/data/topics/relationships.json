@@ -320,6 +320,266 @@
     {
       "text": "Tell me about a time you supported a friend",
       "style": "explain"
+    },
+    {
+      "text": "The joke I never got",
+      "style": "story",
+      "image": "/topics/friends-laughing.webp"
+    },
+    {
+      "text": "We need to talk",
+      "style": "story",
+      "image": "/topics/restaurant-plate.webp"
+    },
+    {
+      "text": "Dinner, before phones",
+      "style": "story",
+      "image": "/topics/dinner-before-phones.webp"
+    },
+    {
+      "text": "The hand I let go of",
+      "style": "story",
+      "image": "/topics/the-hand-i-let-go-of.webp"
+    },
+    {
+      "text": "We were not the same",
+      "style": "story",
+      "image": "/topics/we-were-not-the-same.webp"
+    },
+    {
+      "text": "Don't let go yet",
+      "style": "just-talk",
+      "image": "/topics/don-t-let-go-yet.webp"
+    },
+    {
+      "text": "The promise, in a book",
+      "style": "story",
+      "image": "/topics/the-promise-in-a-book.webp"
+    },
+    {
+      "text": "The moment it became real",
+      "style": "story",
+      "image": "/topics/the-moment-it-became-real.webp"
+    },
+    {
+      "text": "Sunday, and everyone came",
+      "style": "just-talk",
+      "image": "/topics/sunday-and-everyone-came.webp"
+    },
+    {
+      "text": "I stayed till morning",
+      "style": "story",
+      "image": "/topics/i-stayed-till-morning.webp"
+    },
+    {
+      "text": "Walking out of the picture",
+      "style": "story",
+      "image": "/topics/walking-out-of-the-picture.webp"
+    },
+    {
+      "text": "We match, mostly",
+      "style": "just-talk",
+      "image": "/topics/we-match-mostly.webp"
+    },
+    {
+      "text": "Everyone at one table",
+      "style": "story",
+      "image": "/topics/everyone-at-one-table.webp"
+    },
+    {
+      "text": "The speeches went on",
+      "style": "story",
+      "image": "/topics/the-speeches-went-on.webp"
+    },
+    {
+      "text": "The anniversary I forgot",
+      "style": "story",
+      "image": "/topics/the-anniversary-i-forgot.webp"
+    },
+    {
+      "text": "Made to finish my plate",
+      "style": "story",
+      "image": "/topics/made-to-finish-my-plate.webp"
+    },
+    {
+      "text": "Two coffees, one conversation",
+      "style": "story",
+      "image": "/topics/two-coffees-one-conversation.webp"
+    },
+    {
+      "text": "Everything we ordered, and more",
+      "style": "just-talk",
+      "image": "/topics/everything-we-ordered-and-more.webp"
+    },
+    {
+      "text": "Everyone went home early",
+      "style": "story",
+      "image": "/topics/everyone-went-home-early.webp"
+    },
+    {
+      "text": "Nothing said for a while",
+      "style": "just-talk",
+      "image": "/topics/nothing-said-for-a-while.webp"
+    },
+    {
+      "text": "The tea went cold",
+      "style": "story",
+      "image": "/topics/the-tea-went-cold.webp"
+    },
+    {
+      "text": "The table I booked for us",
+      "style": "story",
+      "image": "/topics/the-table-i-booked-for-us.webp"
+    },
+    {
+      "text": "The mugs that only come out in December",
+      "style": "story",
+      "image": "/topics/the-mugs-that-only-come-out-in-december.webp"
+    },
+    {
+      "text": "One of us always orders the same",
+      "style": "story",
+      "image": "/topics/one-of-us-always-orders-the-same.webp"
+    },
+    {
+      "text": "Left for somebody",
+      "style": "story",
+      "image": "/topics/left-for-somebody.webp"
+    },
+    {
+      "text": "The bench in February",
+      "style": "story",
+      "image": "/topics/the-bench-in-february.webp"
+    },
+    {
+      "text": "Two teas, no words",
+      "style": "just-talk",
+      "image": "/topics/two-teas-no-words.webp"
+    },
+    {
+      "text": "Two chairs, waiting",
+      "style": "just-talk",
+      "image": "/topics/two-chairs-waiting.webp"
+    },
+    {
+      "text": "Chai on the roof",
+      "style": "story",
+      "image": "/topics/chai-on-the-roof.webp"
+    },
+    {
+      "text": "The one who waited outside",
+      "style": "story",
+      "image": "/topics/the-one-who-waited-outside.webp"
+    },
+    {
+      "text": "The table on the pavement",
+      "style": "just-talk",
+      "image": "/topics/the-table-on-the-pavement.webp"
+    },
+    {
+      "text": "One more glass",
+      "style": "story",
+      "image": "/topics/one-more-glass.webp"
+    },
+    {
+      "text": "The meeting place",
+      "style": "story",
+      "image": "/topics/the-meeting-place.webp"
+    },
+    {
+      "text": "Two chairs, one argument",
+      "style": "hot-take",
+      "image": "/topics/two-chairs-one-argument.webp"
+    },
+    {
+      "text": "The hot chocolate we always get",
+      "style": "story",
+      "image": "/topics/the-hot-chocolate-we-always-get.webp"
+    },
+    {
+      "text": "The table where it was decided",
+      "style": "story",
+      "image": "/topics/the-table-where-it-was-decided.webp"
+    },
+    {
+      "text": "Two cups, one bench",
+      "style": "just-talk",
+      "image": "/topics/two-cups-one-bench.webp"
+    },
+    {
+      "text": "Coffee, somewhere far away",
+      "style": "story",
+      "image": "/topics/coffee-somewhere-far-away.webp"
+    },
+    {
+      "text": "Two seats, one direction",
+      "style": "story",
+      "image": "/topics/two-seats-one-direction.webp"
+    },
+    {
+      "text": "The bench we found",
+      "style": "story",
+      "image": "/topics/the-bench-we-found.webp"
+    },
+    {
+      "text": "Nobody sits here in winter",
+      "style": "just-talk",
+      "image": "/topics/nobody-sits-here-in-winter.webp"
+    },
+    {
+      "text": "Cake, somewhere better",
+      "style": "story",
+      "image": "/topics/cake-somewhere-better.webp"
+    },
+    {
+      "text": "Our shadows got on better",
+      "style": "story",
+      "image": "/topics/our-shadows-got-on-better.webp"
+    },
+    {
+      "text": "The game we never finished",
+      "style": "story",
+      "image": "/topics/the-game-we-never-finished.webp"
+    },
+    {
+      "text": "Ice cream in the car park",
+      "style": "story",
+      "image": "/topics/ice-cream-in-the-car-park.webp"
+    },
+    {
+      "text": "Everyone popped out",
+      "style": "just-talk",
+      "image": "/topics/everyone-popped-out.webp"
+    },
+    {
+      "text": "The mugs that don't match",
+      "style": "story",
+      "image": "/topics/the-mugs-that-don-t-match.webp"
+    },
+    {
+      "text": "I waited longer than I said",
+      "style": "story",
+      "image": "/topics/i-waited-longer-than-i-said.webp"
+    },
+    {
+      "text": "The park in the off season",
+      "style": "just-talk",
+      "image": "/topics/the-park-in-the-off-season.webp"
+    },
+    {
+      "text": "Feet up, nothing to say",
+      "style": "just-talk",
+      "image": "/topics/feet-up-nothing-to-say.webp"
+    },
+    {
+      "text": "The waiting room chairs",
+      "style": "story",
+      "image": "/topics/the-waiting-room-chairs.webp"
+    },
+    {
+      "text": "The cake we shared",
+      "style": "story",
+      "image": "/topics/the-cake-we-shared.webp"
     }
   ]
 }

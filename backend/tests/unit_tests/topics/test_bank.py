@@ -1,8 +1,11 @@
 """The bank endpoint: the whole built-in bank, public and cacheable, and
 nothing that is switched off or belongs to somebody."""
 
+from pathlib import Path
+
 import pytest
 
+from apps.topics import bank
 from apps.topics.models import Genre, Topic
 from apps.topics.services import seed_topics
 from tests.unit_tests import factories
@@ -20,11 +23,44 @@ def test_the_whole_bank_arrives_in_one_cacheable_answer(seeded, client):
     assert response.status_code == 200
     assert response["Cache-Control"] == "public, max-age=3600"
     body = response.json()
-    assert [g["slug"] for g in body["genres"]][:3] == ["general", "everyday-life", "relationships"]
-    assert len(body["topics"]) == 1000
+    assert [g["slug"] for g in body["genres"]][:3] == ["general", "relationships", "career"]
+    assert len(body["topics"]) == sum(len(bank.load(slug) or ()) for slug, *_ in bank.GENRES)
+    # A topic with no picture carries no `image` key at all: home ships the
+    # whole bank inline, and an empty key on every row is 34KB of JSON the
+    # browser parses on every visit for the sake of the few hundred that do.
     assert body["topics"][0] == {"text": "Low tide", "genre": "general", "style": "just-talk", "slug": "low-tide"}
     assert [s["key"] for s in body["styles"]] == ["surprise", "just-talk", "hot-take", "explain", "story"]
     assert {t["genre"] for t in body["topics"]} == {g["slug"] for g in body["genres"]}
+
+
+def test_the_picture_bank_is_whole_and_every_path_names_a_file_that_exists(seeded, client):
+    """The picture is the whole prompt, so a path that 404s is a round with
+    nothing to talk about, which no amount of frontend care can recover
+    from. Two hundred and twenty is an inventory and not a count somebody
+    might drift past: each one was looked at before its line was written
+    (docs/DECISIONS.md, 2026-09-09), so it moves only on purpose.
+
+    Not every genre carries one. Deep research ships with none, because a
+    caption written without seeing the photograph is a caption that does
+    not fit it, and `pool` covers a genre with none by borrowing from the
+    bank rather than handing back a sentence. What must hold is that the
+    bank as a whole is never empty, or that fallback has nothing to reach
+    for and picture mode silently stops being a mode.
+
+    Counted off the files with a floor under it rather than pinned to a
+    literal. The literal was 220 and went stale the week the picture bank
+    grew, which failed six tests that were not about pictures at all; what
+    has to hold is that every picture in a file reaches the endpoint and
+    every path resolves, and neither of those is a number somebody types."""
+    frontend = Path(__file__).resolve().parents[3].parent / "frontend" / "public"
+    body = client.get(BANK).json()
+    pictures = [t for t in body["topics"] if t.get("image")]
+    in_files = sum(1 for slug, *_ in bank.GENRES for t in bank.load(slug) or () if t["image"])
+    assert len(pictures) == in_files > 200
+    assert {t["genre"] for t in pictures} <= {g["slug"] for g in body["genres"]}
+    for topic in pictures:
+        assert topic["image"].startswith("/topics/"), topic["image"]
+        assert (frontend / topic["image"].lstrip("/")).exists(), topic["image"]
 
 
 def test_what_is_switched_off_or_owned_by_somebody_stays_out(seeded, client):

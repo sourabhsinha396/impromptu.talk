@@ -400,6 +400,266 @@
     {
       "text": "Explain why the wind blows",
       "style": "explain"
+    },
+    {
+      "text": "Older than every argument",
+      "style": "explain",
+      "image": "/topics/cliffs-in-mist.webp"
+    },
+    {
+      "text": "Quiet, but not empty",
+      "style": "just-talk",
+      "image": "/topics/sunlit-forest.webp"
+    },
+    {
+      "text": "Ice that remembers everything",
+      "style": "explain",
+      "image": "/topics/ice-that-remembers-everything.webp"
+    },
+    {
+      "text": "A city under the water",
+      "style": "explain",
+      "image": "/topics/a-city-under-the-water.webp"
+    },
+    {
+      "text": "Nothing has walked here",
+      "style": "just-talk",
+      "image": "/topics/nothing-has-walked-here.webp"
+    },
+    {
+      "text": "The first light of anything",
+      "style": "story",
+      "image": "/topics/the-first-light-of-anything.webp"
+    },
+    {
+      "text": "Everything we haven't been to",
+      "style": "just-talk",
+      "image": "/topics/everything-we-haven-t-been-to.webp"
+    },
+    {
+      "text": "A home with teeth",
+      "style": "explain",
+      "image": "/topics/a-home-with-teeth.webp"
+    },
+    {
+      "text": "Where the map stops",
+      "style": "story",
+      "image": "/topics/where-the-map-stops.webp"
+    },
+    {
+      "text": "The wind's handwriting",
+      "style": "explain",
+      "image": "/topics/the-wind-s-handwriting.webp"
+    },
+    {
+      "text": "Where stars get made",
+      "style": "explain",
+      "image": "/topics/where-stars-get-made.webp"
+    },
+    {
+      "text": "What the tide left",
+      "style": "story",
+      "image": "/topics/what-the-tide-left.webp"
+    },
+    {
+      "text": "Explain fermentation to a beginner",
+      "style": "explain"
+    },
+    {
+      "text": "Explain why onions make you cry",
+      "style": "explain"
+    },
+    {
+      "text": "Lab-grown meat is the future",
+      "style": "hot-take"
+    },
+    {
+      "text": "Explain time zones to a child",
+      "style": "explain"
+    },
+    {
+      "text": "Is anywhere still undiscovered?",
+      "style": "just-talk"
+    },
+    {
+      "text": "The instrument that measures wind",
+      "style": "explain",
+      "image": "/topics/the-instrument-that-measures-wind.webp"
+    },
+    {
+      "text": "Rocks somebody bothered to label",
+      "style": "explain",
+      "image": "/topics/rocks-somebody-bothered-to-label.webp"
+    },
+    {
+      "text": "Water you can see the bottom of",
+      "style": "just-talk",
+      "image": "/topics/water-you-can-see-the-bottom-of.webp"
+    },
+    {
+      "text": "Colour that took a century",
+      "style": "explain",
+      "image": "/topics/colour-that-took-a-century.webp"
+    },
+    {
+      "text": "The half we always see",
+      "style": "explain",
+      "image": "/topics/the-half-we-always-see.webp"
+    },
+    {
+      "text": "Two trees, and a lot of nothing",
+      "style": "just-talk",
+      "image": "/topics/two-trees-and-a-lot-of-nothing.webp"
+    },
+    {
+      "text": "Looking up on a good day",
+      "style": "just-talk",
+      "image": "/topics/looking-up-on-a-good-day.webp"
+    },
+    {
+      "text": "The two minutes it went dark",
+      "style": "story",
+      "image": "/topics/the-two-minutes-it-went-dark.webp"
+    },
+    {
+      "text": "The hill they took apart",
+      "style": "hot-take",
+      "image": "/topics/the-hill-they-took-apart.webp"
+    },
+    {
+      "text": "Somebody small, somewhere high",
+      "style": "story",
+      "image": "/topics/somebody-small-somewhere-high.webp"
+    },
+    {
+      "text": "The plant that grows anywhere",
+      "style": "explain",
+      "image": "/topics/the-plant-that-grows-anywhere.webp"
+    },
+    {
+      "text": "One flower, a million stones",
+      "style": "story",
+      "image": "/topics/one-flower-a-million-stones.webp"
+    },
+    {
+      "text": "Shadows doing the drawing",
+      "style": "just-talk",
+      "image": "/topics/shadows-doing-the-drawing.webp"
+    },
+    {
+      "text": "The pattern nobody designed",
+      "style": "explain",
+      "image": "/topics/the-pattern-nobody-designed.webp"
+    },
+    {
+      "text": "The one you must not eat",
+      "style": "explain",
+      "image": "/topics/the-one-you-must-not-eat.webp"
+    },
+    {
+      "text": "Down where the light stops",
+      "style": "just-talk",
+      "image": "/topics/down-where-the-light-stops.webp"
+    },
+    {
+      "text": "Made one drop at a time",
+      "style": "explain",
+      "image": "/topics/made-one-drop-at-a-time.webp"
+    },
+    {
+      "text": "What grows on what dies",
+      "style": "explain",
+      "image": "/topics/what-grows-on-what-dies.webp"
+    },
+    {
+      "text": "The sky doing something strange",
+      "style": "just-talk",
+      "image": "/topics/the-sky-doing-something-strange.webp"
+    },
+    {
+      "text": "Ice older than any of us",
+      "style": "explain",
+      "image": "/topics/ice-older-than-any-of-us.webp"
+    },
+    {
+      "text": "The day the dust came",
+      "style": "story",
+      "image": "/topics/the-day-the-dust-came.webp"
+    },
+    {
+      "text": "The lake copying the sky",
+      "style": "just-talk",
+      "image": "/topics/the-lake-copying-the-sky.webp"
+    },
+    {
+      "text": "One plant, no water",
+      "style": "explain",
+      "image": "/topics/one-plant-no-water.webp"
+    },
+    {
+      "text": "Nobody has stood there",
+      "style": "just-talk",
+      "image": "/topics/nobody-has-stood-there.webp"
+    },
+    {
+      "text": "The hole the mountain made",
+      "style": "explain",
+      "image": "/topics/the-hole-the-mountain-made.webp"
+    },
+    {
+      "text": "Weather on its way",
+      "style": "story",
+      "image": "/topics/weather-on-its-way.webp"
+    },
+    {
+      "text": "The fish that lives in the sting",
+      "style": "explain",
+      "image": "/topics/the-fish-that-lives-in-the-sting.webp"
+    },
+    {
+      "text": "The tide's leftovers",
+      "style": "just-talk",
+      "image": "/topics/the-tide-s-leftovers.webp"
+    },
+    {
+      "text": "Something coming up",
+      "style": "explain",
+      "image": "/topics/something-coming-up.webp"
+    },
+    {
+      "text": "The grass that holds the dune",
+      "style": "explain",
+      "image": "/topics/the-grass-that-holds-the-dune.webp"
+    },
+    {
+      "text": "What the sea leaves out",
+      "style": "just-talk",
+      "image": "/topics/what-the-sea-leaves-out.webp"
+    },
+    {
+      "text": "The bird that waits",
+      "style": "story",
+      "image": "/topics/the-bird-that-waits.webp"
+    },
+    {
+      "text": "Cold enough to stop the water",
+      "style": "explain",
+      "image": "/topics/cold-enough-to-stop-the-water.webp"
+    },
+    {
+      "text": "The mountain letting off steam",
+      "style": "explain",
+      "image": "/topics/the-mountain-letting-off-steam.webp"
+    },
+    {
+      "text": "The day the sun went out",
+      "style": "story",
+      "image": "/topics/the-day-the-sun-went-out.webp"
+    },
+    {
+      "text": "The gap in the rock",
+      "style": "just-talk",
+      "image": "/topics/the-gap-in-the-rock.webp"
     }
   ]
 }

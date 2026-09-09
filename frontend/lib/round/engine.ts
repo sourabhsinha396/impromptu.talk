@@ -179,7 +179,7 @@ export class Engine {
 
   private showTopic(): void {
     this.phase = "topic";
-    this.track("topic_shown", { topic_style: this.topic?.style });
+    this.track("topic_shown", { topic_style: this.topic?.style, picture: Boolean(this.topic?.image) });
     this.changed();
   }
 
@@ -360,6 +360,19 @@ export class Engine {
     this.changed();
   }
 
+  /** Spin for pictures rather than sentences. The no-repeat pool is
+      cleared with it, as choosing a genre or a style does: the two modes
+      draw from different halves of the bank, and carrying the sentences
+      you have already seen into a mode that cannot land on them only
+      makes the next picture pool run dry sooner. */
+  setPictures(on: boolean): void {
+    this.prefs.pictures = on;
+    this.used.clear();
+    savePrefs(this.store, this.prefs);
+    this.effect({ type: "track", name: "pictures_toggled", props: { on } });
+    this.changed();
+  }
+
   /* ------------------------------------------------------------ keyboard */
 
   /** Space starts and pauses, N asks for another topic, Escape resets.
@@ -408,6 +421,15 @@ export class Engine {
   arrive(params: URLSearchParams): boolean {
     const wantGenre = params.get("genre");
     const wantTopic = params.get("topic");
+    /* `?pictures=1` turns the mode on and remembers it, which is how
+       /features opens it: the home stage carries no control for it, so a
+       link is the one way in that costs the stage nothing. `=0` is the
+       way back out, so the link is reversible by hand. */
+    const wantPictures = params.get("pictures");
+    if (wantPictures !== null) {
+      this.prefs.pictures = wantPictures !== "0";
+      savePrefs(this.store, this.prefs);
+    }
     if (wantGenre && this.genre(wantGenre)) {
       this.prefs.genre = wantGenre;
       this.prefs.style = settledStyle(this.bank, this.prefs);
@@ -426,7 +448,7 @@ export class Engine {
       }
     }
     this.changed();
-    return Boolean(wantGenre || wantTopic || params.has("ref"));
+    return Boolean(wantGenre || wantTopic || wantPictures !== null || params.has("ref"));
   }
 }
 

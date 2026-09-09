@@ -5,9 +5,20 @@ import { GenreIcon } from "@/components/site/icons";
 import type { Bank } from "@/lib/bank";
 import { topicCounts } from "@/lib/bank";
 
-/* The hub, as approved in docs/mocks/genres.html: ten cards with the count
-   on each so the page says what it holds before anybody clicks, and one
-   button into the tool. It is load-bearing for the crawl: every genre
+/* How many genres the heading says. Spelled out and counted from the bank
+   rather than typed, because the word was "Ten" while the list held nine:
+   folding Everyday life into General left the heading behind, and a page
+   that miscounts its own cards is the kind of wrong a reader spots first. */
+const WORDS = ["no", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
+
+function spell(n: number): string {
+  const word = WORDS[n] ?? String(n);
+  return word[0].toUpperCase() + word.slice(1);
+}
+
+/* The hub, as approved in docs/mocks/genres.html: a card per genre with the
+   count on each so the page says what it holds before anybody clicks, and
+   one button into the tool. It is load-bearing for the crawl: every genre
    page is one hop from here, and the footer links here rather than to
    six genres. */
 export function Hub({ bank }: { bank: Bank }) {
@@ -15,7 +26,9 @@ export function Hub({ bank }: { bank: Bank }) {
   const total = bank.topics.length;
   return (
     <main className="mx-auto w-full max-w-[960px] flex-1 px-[clamp(16px,4vw,32px)] pt-7 pb-16">
-      <h1 className="font-display text-headline font-semibold">Ten genres, {total} topics.</h1>
+      <h1 className="font-display text-headline font-semibold">
+        {spell(bank.genres.length)} genres, {total} topics.
+      </h1>
       <p className="mt-3 max-w-[60ch] text-[17px] text-muted">
         Pick what you want to talk about. Every genre has every style, so a hot take and a story are always one
         setting away.

@@ -45,6 +45,67 @@ export function thinkLabel(prepSeconds: number): string {
   return `Think for ${lengthWords(prepSeconds)}`;
 }
 
+/* The picture on a picture topic. Nothing is drawn for a topic without
+   one, so every phase can ask for it unconditionally and a sentence round
+   is untouched.
+
+   `big` is the topic screen, where the picture is the thing you are
+   reading; the timed phases take the small one, because the ring is the
+   fixed point of those screens and must not move down the page to make
+   room. The aspect box is fixed and the image covers it, so a portrait
+   and a landscape leave the sentence under them in the same place and
+   nothing reflows when the file finally lands.
+
+   `alt` is deliberately empty: the prompt underneath is the picture's
+   description as far as the round is concerned, and a screen reader
+   reading a guess at the photograph before the sentence would give away
+   the one thing the speaker is meant to supply. */
+function Picture({ topic, big }: { topic: Topic; big?: boolean }) {
+  if (!topic.image) return null;
+  return (
+    <div
+      className={
+        big
+          ? "mx-auto mt-5 aspect-[4/3] w-full max-w-[460px] overflow-hidden rounded-[18px] bg-card2 shadow-[0_10px_30px_rgb(0_0_0/0.16)]"
+          : "aspect-[4/3] w-[92px] shrink-0 overflow-hidden rounded-xl bg-card2 sm:w-[112px]"
+      }
+    >
+      <img
+        src={topic.image}
+        alt=""
+        width={1000}
+        height={750}
+        /* The topic screen's picture is the largest thing on the page and
+           the round cannot start without it, so it is not lazy. */
+        fetchPriority={big ? "high" : "low"}
+        className="h-full w-full object-cover"
+      />
+    </div>
+  );
+}
+
+/* The prompt on the two timed screens, with its picture beside it rather
+   than above it when there is one.
+
+   Beside, because the ring is the fixed point of these screens: stacking
+   a thumbnail over the prompt cost 132px and pushed the notes and the
+   buttons off a 1280x800 laptop, on a screen that was already 34px tight
+   before any picture existed. Side by side it costs almost nothing, and
+   the prompt still reads first because it is the larger half. */
+function TimedTopic({ topic }: { topic: Topic }) {
+  if (!topic.image) {
+    return <p className="mb-7 font-display text-topic-mid font-semibold text-accent text-balance">{topic.text}</p>;
+  }
+  return (
+    <div className="mb-7 flex max-w-[46rem] items-center justify-center gap-4 sm:gap-5">
+      <Picture topic={topic} />
+      <p className="text-left font-display text-[clamp(1.15rem,2.6vw,1.9rem)] leading-tight font-semibold text-accent text-balance">
+        {topic.text}
+      </p>
+    </div>
+  );
+}
+
 function Reset({ onReset, label = "Reset" }: { onReset: () => void; label?: string }) {
   return (
     <button
@@ -96,7 +157,18 @@ export function TopicPhase({
           {styleLabel}
         </span>
       </div>
-      <p className="mt-5 mb-11 font-display text-topic font-semibold text-accent text-balance">{topic.text}</p>
+      <Picture topic={topic} big />
+      {/* A picture topic's sentence is the same sentence, and still the
+          biggest words on the screen; it only stops being the *only*
+          thing there. It steps down a size because a picture above it is
+          already carrying the screen, and the two at full size fought. */}
+      <p
+        className={`mb-11 font-display font-semibold text-accent text-balance ${
+          topic.image ? "mt-6 text-topic-mid" : "mt-5 text-topic"
+        }`}
+      >
+        {topic.text}
+      </p>
       <div className={ROW}>
         <Button size="lg" onClick={onThink}>
           {thinkLabel(prepSeconds)}
@@ -148,7 +220,7 @@ export function PrepPhase({
   const tilts = ["-rotate-[1.2deg]", "rotate-[0.9deg]", "-rotate-[0.6deg]"];
   return (
     <>
-      <p className="mb-7 font-display text-topic-mid font-semibold text-accent text-balance">{topic.text}</p>
+      <TimedTopic topic={topic} />
       <Ring fraction={clock.fraction} text={clock.text} label="Think" ending={clock.ending} />
       <div className="mb-8 flex flex-wrap justify-center gap-4.5">
         {notes.map((note, index) => (
@@ -200,7 +272,7 @@ export function SpeakPhase({
   const chips = notes.filter((note) => note.trim());
   return (
     <>
-      <p className="mb-7 font-display text-topic-mid font-semibold text-accent text-balance">{topic.text}</p>
+      <TimedTopic topic={topic} />
       <Ring fraction={clock.fraction} text={clock.text} label="Speak" ending={clock.ending} />
       {listener && <Meter listener={listener} speaking={!clock.paused} />}
       {chips.length > 0 && (

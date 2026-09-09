@@ -69,6 +69,15 @@ class Topic(models.Model):
     style = models.CharField(max_length=24, db_index=True)
     is_active = models.BooleanField(default=True)
     sort_order = models.IntegerField(default=100)
+    # A picture as well as a sentence: `image` is what makes a topic one, not
+    # a separate row kind or table (docs/DECISIONS.md, 2026-09-09). Empty is
+    # the whole of "not a picture topic". `text` stays the prompt in both
+    # kinds, which is what keeps a picture round the same round: the same
+    # sentence is shown, recorded and read back, with a picture over it.
+    # A CharField and not a URLField because a built-in holds a site-relative
+    # path (`/topics/castle-in-mist.webp`), which URLValidator rejects; an
+    # uploaded one will hold an absolute URL, and both belong in this column.
+    image = models.CharField(max_length=500, blank=True)
 
     class Meta:
         db_table = "topics"

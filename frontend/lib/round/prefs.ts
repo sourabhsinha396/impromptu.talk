@@ -27,6 +27,11 @@ export type Prefs = {
       phone at their screen, so it lives behind Additional settings and
       never on the front page of the sheet. */
   filming: boolean;
+  /** Spin for pictures rather than sentences. A setting and not a control
+      on the home stage: the stage is the genre chip, the question and one
+      button, and the ten-second rule outranks putting a second axis on it
+      (docs/DECISIONS.md, 2026-09-09). */
+  pictures: boolean;
 };
 
 export const DEFAULT_PREFS: Prefs = {
@@ -37,6 +42,7 @@ export const DEFAULT_PREFS: Prefs = {
   sound: true,
   mic: "ask",
   filming: false,
+  pictures: false,
 };
 
 /* The sliders' reach. Thinking may be none at all or up to half an hour (a
@@ -72,6 +78,7 @@ export function loadPrefs(store: Store | null): Prefs {
     sound: saved.sound === undefined ? true : Boolean(saved.sound),
     mic: saved.mic === "on" || saved.mic === "off" ? saved.mic : "ask",
     filming: saved.filming === true,
+    pictures: saved.pictures === true,
   };
 }
 

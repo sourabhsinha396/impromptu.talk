@@ -33,6 +33,7 @@ export function SettingsSheet({
   onSound,
   onMic,
   onFilming,
+  onPictures,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -44,6 +45,7 @@ export function SettingsSheet({
   onSound: (on: boolean) => void;
   onMic: (on: boolean) => void;
   onFilming: (on: boolean) => void;
+  onPictures: (on: boolean) => void;
 }) {
   const coined = ownStyles(bank, prefs.genre);
   const builtIn = bank.styles.find((style) => style.key === prefs.style);
@@ -147,6 +149,25 @@ export function SettingsSheet({
                 ))}
               </select>
               {hint && <p className="mt-1.5 text-[13px] text-muted">{hint}</p>}
+            </div>
+
+            {/* Beside the style, because it answers the same question: what
+                you are handed when you spin. It is a setting and not a
+                control on the home stage, which stays the chip, the
+                question and one button. */}
+            <div>
+              <label className="flex cursor-pointer items-center gap-2.5 text-sm font-semibold">
+                <input
+                  type="checkbox"
+                  checked={prefs.pictures}
+                  onChange={(event) => onPictures(event.target.checked)}
+                  className="size-4 accent-accent"
+                />
+                Talk about pictures
+              </label>
+              <p className="mt-1.5 text-[13px] text-muted">
+                Image Impromptu: an image and minutes to talk about it
+              </p>
             </div>
 
             {/* The way back after "Not now" on the done screen, and the only

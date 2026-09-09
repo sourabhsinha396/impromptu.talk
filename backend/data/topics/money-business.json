@@ -400,6 +400,220 @@
     {
       "text": "Tell me about a time you negotiated",
       "style": "explain"
+    },
+    {
+      "text": "Somebody owns all this",
+      "style": "hot-take",
+      "image": "/topics/towers-from-below.webp"
+    },
+    {
+      "text": "The lights nobody turns off",
+      "style": "explain",
+      "image": "/topics/skyline-at-sunset.webp"
+    },
+    {
+      "text": "The skyline keeps growing",
+      "style": "hot-take",
+      "image": "/topics/the-skyline-keeps-growing.webp"
+    },
+    {
+      "text": "Everything you own came through here",
+      "style": "explain",
+      "image": "/topics/everything-you-own-came-through-here.webp"
+    },
+    {
+      "text": "Somebody's order, at sea",
+      "style": "explain",
+      "image": "/topics/somebody-s-order-at-sea.webp"
+    },
+    {
+      "text": "The building with my rent in it",
+      "style": "hot-take",
+      "image": "/topics/the-building-with-my-rent-in-it.webp"
+    },
+    {
+      "text": "The jar I never filled",
+      "style": "story",
+      "image": "/topics/the-jar-i-never-filled.webp"
+    },
+    {
+      "text": "The port that never sleeps",
+      "style": "just-talk",
+      "image": "/topics/the-port-that-never-sleeps.webp"
+    },
+    {
+      "text": "The price of eggs",
+      "style": "hot-take",
+      "image": "/topics/the-price-of-eggs.webp"
+    },
+    {
+      "text": "Somebody's whole year, stacked",
+      "style": "explain",
+      "image": "/topics/somebody-s-whole-year-stacked.webp"
+    },
+    {
+      "text": "Lifted, moved, forgotten",
+      "style": "explain",
+      "image": "/topics/lifted-moved-forgotten.webp"
+    },
+    {
+      "text": "Built while we slept",
+      "style": "story",
+      "image": "/topics/built-while-we-slept.webp"
+    },
+    {
+      "text": "The till my grandfather rang",
+      "style": "story",
+      "image": "/topics/the-till-my-grandfather-rang.webp"
+    },
+    {
+      "text": "More stuff than anyone needs",
+      "style": "hot-take",
+      "image": "/topics/more-stuff-than-anyone-needs.webp"
+    },
+    {
+      "text": "The business that lasted",
+      "style": "story",
+      "image": "/topics/the-business-that-lasted.webp"
+    },
+    {
+      "text": "Everything, on paper, somewhere",
+      "style": "explain",
+      "image": "/topics/everything-on-paper-somewhere.webp"
+    },
+    {
+      "text": "Nice view, expensive rent",
+      "style": "hot-take",
+      "image": "/topics/nice-view-expensive-rent.webp"
+    },
+    {
+      "text": "Saving up for something",
+      "style": "story",
+      "image": "/topics/saving-up-for-something.webp"
+    },
+    {
+      "text": "The warehouse that has your order",
+      "style": "explain",
+      "image": "/topics/the-warehouse-that-has-your-order.webp"
+    },
+    {
+      "text": "Meal kits are a scam",
+      "style": "hot-take"
+    },
+    {
+      "text": "The stall that sells one thing",
+      "style": "story",
+      "image": "/topics/the-stall-that-sells-one-thing.webp"
+    },
+    {
+      "text": "The piggy bank I broke",
+      "style": "story",
+      "image": "/topics/the-piggy-bank-i-broke.webp"
+    },
+    {
+      "text": "Everything in here has a price",
+      "style": "hot-take",
+      "image": "/topics/everything-in-here-has-a-price.webp"
+    },
+    {
+      "text": "Sold by the basket",
+      "style": "just-talk",
+      "image": "/topics/sold-by-the-basket.webp"
+    },
+    {
+      "text": "Twenty cents, and what it buys",
+      "style": "hot-take",
+      "image": "/topics/twenty-cents-and-what-it-buys.webp"
+    },
+    {
+      "text": "The bike you rent by the minute",
+      "style": "hot-take",
+      "image": "/topics/the-bike-you-rent-by-the-minute.webp"
+    },
+    {
+      "text": "The sweets sold by weight",
+      "style": "story",
+      "image": "/topics/the-sweets-sold-by-weight.webp"
+    },
+    {
+      "text": "The masks nobody bargains for",
+      "style": "just-talk",
+      "image": "/topics/the-masks-nobody-bargains-for.webp"
+    },
+    {
+      "text": "Nothing here fits anybody",
+      "style": "hot-take",
+      "image": "/topics/nothing-here-fits-anybody.webp"
+    },
+    {
+      "text": "Souvenirs of somewhere you went",
+      "style": "story",
+      "image": "/topics/souvenirs-of-somewhere-you-went.webp"
+    },
+    {
+      "text": "Sold dried, sold cheap",
+      "style": "explain",
+      "image": "/topics/sold-dried-sold-cheap.webp"
+    },
+    {
+      "text": "The pot nobody can carry home",
+      "style": "story",
+      "image": "/topics/the-pot-nobody-can-carry-home.webp"
+    },
+    {
+      "text": "Handmade, and haggled over",
+      "style": "story",
+      "image": "/topics/handmade-and-haggled-over.webp"
+    },
+    {
+      "text": "Closed, and the rent still due",
+      "style": "story",
+      "image": "/topics/closed-and-the-rent-still-due.webp"
+    },
+    {
+      "text": "The shop that burned",
+      "style": "story",
+      "image": "/topics/the-shop-that-burned.webp"
+    },
+    {
+      "text": "Market day, rained off",
+      "style": "story",
+      "image": "/topics/market-day-rained-off.webp"
+    },
+    {
+      "text": "Every one the same price",
+      "style": "explain",
+      "image": "/topics/every-one-the-same-price.webp"
+    },
+    {
+      "text": "Half open, half closed",
+      "style": "story",
+      "image": "/topics/half-open-half-closed.webp"
+    },
+    {
+      "text": "The coins from another country",
+      "style": "story",
+      "image": "/topics/the-coins-from-another-country.webp"
+    },
+    {
+      "text": "Half price, still too much",
+      "style": "hot-take",
+      "image": "/topics/half-price-still-too-much.webp"
+    },
+    {
+      "text": "Sold from a tray on the street",
+      "style": "story",
+      "image": "/topics/sold-from-a-tray-on-the-street.webp"
+    },
+    {
+      "text": "Discounted, and still there",
+      "style": "hot-take",
+      "image": "/topics/discounted-and-still-there.webp"
+    },
+    {
+      "text": "The market before the crowd",
+      "style": "just-talk",
+      "image": "/topics/the-market-before-the-crowd.webp"
     }
   ]
 }

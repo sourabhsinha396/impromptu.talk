@@ -400,6 +400,236 @@
     {
       "text": "Explain a moral rule you follow",
       "style": "explain"
+    },
+    {
+      "text": "The road I didn't take",
+      "style": "story",
+      "image": "/topics/forest-path-in-fog.webp"
+    },
+    {
+      "text": "A room of my own",
+      "style": "just-talk",
+      "image": "/topics/empty-desk-by-a-window.webp"
+    },
+    {
+      "text": "Someone came this way",
+      "style": "story",
+      "image": "/topics/someone-came-this-way.webp"
+    },
+    {
+      "text": "The light left on",
+      "style": "story",
+      "image": "/topics/the-light-left-on.webp"
+    },
+    {
+      "text": "One candle, one wish",
+      "style": "story",
+      "image": "/topics/one-candle-one-wish.webp"
+    },
+    {
+      "text": "Everything anyone worked out",
+      "style": "explain",
+      "image": "/topics/everything-anyone-worked-out.webp"
+    },
+    {
+      "text": "The day that never brightened",
+      "style": "just-talk",
+      "image": "/topics/the-day-that-never-brightened.webp"
+    },
+    {
+      "text": "Progress, in the fog",
+      "style": "hot-take",
+      "image": "/topics/progress-in-the-fog.webp"
+    },
+    {
+      "text": "Round the next bend",
+      "style": "story",
+      "image": "/topics/round-the-next-bend.webp"
+    },
+    {
+      "text": "The move I saw too late",
+      "style": "story",
+      "image": "/topics/the-move-i-saw-too-late.webp"
+    },
+    {
+      "text": "One match, one chance",
+      "style": "story",
+      "image": "/topics/one-match-one-chance.webp"
+    },
+    {
+      "text": "The path with no far end",
+      "style": "just-talk",
+      "image": "/topics/the-path-with-no-far-end.webp"
+    },
+    {
+      "text": "Everything ever written down",
+      "style": "explain",
+      "image": "/topics/everything-ever-written-down.webp"
+    },
+    {
+      "text": "The page I keep returning to",
+      "style": "story",
+      "image": "/topics/the-page-i-keep-returning-to.webp"
+    },
+    {
+      "text": "Sitting still for centuries",
+      "style": "just-talk",
+      "image": "/topics/sitting-still-for-centuries.webp"
+    },
+    {
+      "text": "The stairs I keep climbing",
+      "style": "story",
+      "image": "/topics/the-stairs-i-keep-climbing.webp"
+    },
+    {
+      "text": "One tree, a lot of sky",
+      "style": "just-talk",
+      "image": "/topics/one-tree-a-lot-of-sky.webp"
+    },
+    {
+      "text": "Where I go to think",
+      "style": "just-talk",
+      "image": "/topics/where-i-go-to-think.webp"
+    },
+    {
+      "text": "Time, made visible",
+      "style": "explain",
+      "image": "/topics/time-made-visible.webp"
+    },
+    {
+      "text": "The door left ajar",
+      "style": "story",
+      "image": "/topics/the-door-left-ajar.webp"
+    },
+    {
+      "text": "Where the land gives up",
+      "style": "just-talk",
+      "image": "/topics/where-the-land-gives-up.webp"
+    },
+    {
+      "text": "The empty room I was given",
+      "style": "story",
+      "image": "/topics/the-empty-room-i-was-given.webp"
+    },
+    {
+      "text": "The room where nothing happens",
+      "style": "just-talk",
+      "image": "/topics/the-room-where-nothing-happens.webp"
+    },
+    {
+      "text": "One light, a lot of dark",
+      "style": "just-talk",
+      "image": "/topics/one-light-a-lot-of-dark.webp"
+    },
+    {
+      "text": "Where the line is",
+      "style": "just-talk",
+      "image": "/topics/where-the-line-is.webp"
+    },
+    {
+      "text": "The corridor of identical doors",
+      "style": "story",
+      "image": "/topics/the-corridor-of-identical-doors.webp"
+    },
+    {
+      "text": "Time, through a lens",
+      "style": "explain",
+      "image": "/topics/time-through-a-lens.webp"
+    },
+    {
+      "text": "The clock that knows more than the time",
+      "style": "explain",
+      "image": "/topics/the-clock-that-knows-more-than-the-time.webp"
+    },
+    {
+      "text": "The step into deep water",
+      "style": "story",
+      "image": "/topics/the-step-into-deep-water.webp"
+    },
+    {
+      "text": "Footprints, going one way",
+      "style": "story",
+      "image": "/topics/footprints-going-one-way.webp"
+    },
+    {
+      "text": "The steps somebody built",
+      "style": "story",
+      "image": "/topics/the-steps-somebody-built.webp"
+    },
+    {
+      "text": "The tree that stayed",
+      "style": "just-talk",
+      "image": "/topics/the-tree-that-stayed.webp"
+    },
+    {
+      "text": "Something starting",
+      "style": "story",
+      "image": "/topics/something-starting.webp"
+    },
+    {
+      "text": "The sun does this every day",
+      "style": "just-talk",
+      "image": "/topics/the-sun-does-this-every-day.webp"
+    },
+    {
+      "text": "The long straight bit",
+      "style": "just-talk",
+      "image": "/topics/the-long-straight-bit.webp"
+    },
+    {
+      "text": "Someone passed while I slept",
+      "style": "story",
+      "image": "/topics/someone-passed-while-i-slept.webp"
+    },
+    {
+      "text": "Time, or money",
+      "style": "hot-take",
+      "image": "/topics/time-or-money.webp"
+    },
+    {
+      "text": "The stairs, and the shadow of them",
+      "style": "just-talk",
+      "image": "/topics/the-stairs-and-the-shadow-of-them.webp"
+    },
+    {
+      "text": "A clock made of flowers",
+      "style": "just-talk",
+      "image": "/topics/a-clock-made-of-flowers.webp"
+    },
+    {
+      "text": "The thing I cannot name",
+      "style": "just-talk",
+      "image": "/topics/the-thing-i-cannot-name.webp"
+    },
+    {
+      "text": "The door somebody left open",
+      "style": "story",
+      "image": "/topics/the-door-somebody-left-open.webp"
+    },
+    {
+      "text": "The bench facing the water",
+      "style": "just-talk",
+      "image": "/topics/the-bench-facing-the-water.webp"
+    },
+    {
+      "text": "One foot out of the car",
+      "style": "story",
+      "image": "/topics/one-foot-out-of-the-car.webp"
+    },
+    {
+      "text": "The tree on the hill",
+      "style": "just-talk",
+      "image": "/topics/the-tree-on-the-hill.webp"
+    },
+    {
+      "text": "Two people, a lot of water",
+      "style": "just-talk",
+      "image": "/topics/two-people-a-lot-of-water.webp"
+    },
+    {
+      "text": "Going in, or coming out",
+      "style": "just-talk",
+      "image": "/topics/going-in-or-coming-out.webp"
     }
   ]
 }

@@ -12,7 +12,6 @@ import type { Bank } from "@/lib/bank";
 const TOPICS_DIR = path.resolve(import.meta.dirname, "../../../backend/data/topics");
 const ORDER = [
   "general",
-  "everyday-life",
   "relationships",
   "career",
   "money-business",
@@ -21,6 +20,7 @@ const ORDER = [
   "health",
   "philosophy",
   "culture",
+  "deep-research",
 ];
 const STYLES = [
   { key: "surprise", label: "Surprise me", hint: "" },
@@ -68,7 +68,11 @@ describe("the genre pages, which are the growth plan", () => {
       expect(headings.some((h) => h.startsWith("Surprise me"))).toBe(false);
       unmount();
     }
-    expect(bank.topics).toHaveLength(1000);
+    /* A floor, not the exact count: this guards against the loop above
+       passing over an empty bank, and an exact number would fail every
+       time somebody writes a topic, which is the one edit that must stay
+       cheap. The thousand is the documented size (docs/SPEC.md). */
+    expect(bank.topics.length).toBeGreaterThan(1000);
   });
 
   it("reads as the long-tail query, opens the tool with the genre picked, and links every other genre", () => {
@@ -81,12 +85,18 @@ describe("the genre pages, which are the growth plan", () => {
     expect(more.map((a) => a.getAttribute("href"))).not.toContain("/genre/career");
   });
 
-  it("lists the ten genres on the hub with their counts and one way into the tool", () => {
+  /* Counted off the bank rather than typed, because the heading said "Ten"
+     while the list held nine for as long as it took to notice. Writing a
+     topic must not fail a test; miscounting the cards must. */
+  it("lists every genre on the hub with its count and one way into the tool", () => {
     render(<Hub bank={bank} />);
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Ten genres, 1000 topics.");
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
+      `Ten genres, ${bank.topics.length} topics.`,
+    );
     const cards = screen.getAllByRole("link").filter((a) => a.getAttribute("href")?.startsWith("/genre/"));
-    expect(cards).toHaveLength(10);
-    expect(cards[0]).toHaveTextContent("80 topics");
+    expect(cards).toHaveLength(ORDER.length);
+    const first = bank.topics.filter((topic) => topic.genre === ORDER[0]).length;
+    expect(cards[0]).toHaveTextContent(`${first} topics`);
     expect(screen.getByRole("link", { name: "Spin" })).toHaveAttribute("href", "/");
   });
 });

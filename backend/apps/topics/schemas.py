@@ -12,10 +12,16 @@ class GenreOut(Schema):
 
 
 class TopicOut(Schema):
+    """`image` is absent on a topic that has none rather than an empty
+    string on all thousand of them: home ships the whole bank inline, and
+    a key repeated across every row for the sake of the few that use it
+    is 34KB of JSON the browser parses on every visit."""
+
     text: str
     genre: str
     style: str
     slug: str
+    image: str | None = None
 
 
 class StyleOut(Schema):

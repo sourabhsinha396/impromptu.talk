@@ -400,6 +400,225 @@
     {
       "text": "Tell me about a time you changed a process",
       "style": "explain"
+    },
+    {
+      "text": "It made sense on paper",
+      "style": "explain",
+      "image": "/topics/desk-with-diagram.webp"
+    },
+    {
+      "text": "Nobody said a word",
+      "style": "hot-take",
+      "image": "/topics/team-around-table.webp"
+    },
+    {
+      "text": "The place that makes the thing",
+      "style": "explain",
+      "image": "/topics/the-place-that-makes-the-thing.webp"
+    },
+    {
+      "text": "Where the decision got made",
+      "style": "story",
+      "image": "/topics/where-the-decision-got-made.webp"
+    },
+    {
+      "text": "The same train, every day",
+      "style": "story",
+      "image": "/topics/the-same-train-every-day.webp"
+    },
+    {
+      "text": "Built to make things, once",
+      "style": "hot-take",
+      "image": "/topics/built-to-make-things-once.webp"
+    },
+    {
+      "text": "Nobody came to the meeting",
+      "style": "hot-take",
+      "image": "/topics/nobody-came-to-the-meeting.webp"
+    },
+    {
+      "text": "Building someone else's house",
+      "style": "story",
+      "image": "/topics/building-someone-else-s-house.webp"
+    },
+    {
+      "text": "Everyone going somewhere else",
+      "style": "just-talk",
+      "image": "/topics/everyone-going-somewhere-else.webp"
+    },
+    {
+      "text": "The tools my father kept",
+      "style": "story",
+      "image": "/topics/the-tools-my-father-kept.webp"
+    },
+    {
+      "text": "The view from up there",
+      "style": "just-talk",
+      "image": "/topics/the-view-from-up-there.webp"
+    },
+    {
+      "text": "The corridor to the exit interview",
+      "style": "hot-take",
+      "image": "/topics/the-corridor-to-the-exit-interview.webp"
+    },
+    {
+      "text": "The startup that didn't",
+      "style": "story",
+      "image": "/topics/the-startup-that-didn-t.webp"
+    },
+    {
+      "text": "Twelve chairs, one decision",
+      "style": "hot-take",
+      "image": "/topics/twelve-chairs-one-decision.webp"
+    },
+    {
+      "text": "The toolbox I inherited",
+      "style": "story",
+      "image": "/topics/the-toolbox-i-inherited.webp"
+    },
+    {
+      "text": "Answering it after hours",
+      "style": "hot-take",
+      "image": "/topics/answering-it-after-hours.webp"
+    },
+    {
+      "text": "Everything waiting to leave",
+      "style": "just-talk",
+      "image": "/topics/everything-waiting-to-leave.webp"
+    },
+    {
+      "text": "The train I nearly missed",
+      "style": "story",
+      "image": "/topics/the-train-i-nearly-missed.webp"
+    },
+    {
+      "text": "Folding the same shirt again",
+      "style": "story",
+      "image": "/topics/folding-the-same-shirt-again.webp"
+    },
+    {
+      "text": "The office before computers",
+      "style": "hot-take",
+      "image": "/topics/the-office-before-computers.webp"
+    },
+    {
+      "text": "The kit by the door",
+      "style": "story",
+      "image": "/topics/the-kit-by-the-door.webp"
+    },
+    {
+      "text": "The climb, from the bottom",
+      "style": "just-talk",
+      "image": "/topics/the-climb-from-the-bottom.webp"
+    },
+    {
+      "text": "Work that starts at four",
+      "style": "story",
+      "image": "/topics/work-that-starts-at-four.webp"
+    },
+    {
+      "text": "Tell me about a time you adapted quickly",
+      "style": "explain"
+    },
+    {
+      "text": "The train that still runs",
+      "style": "story",
+      "image": "/topics/the-train-that-still-runs.webp"
+    },
+    {
+      "text": "Watching the clock",
+      "style": "hot-take",
+      "image": "/topics/watching-the-clock.webp"
+    },
+    {
+      "text": "Somebody's job for the next two years",
+      "style": "just-talk",
+      "image": "/topics/somebody-s-job-for-the-next-two-years.webp"
+    },
+    {
+      "text": "Ten past nine, still",
+      "style": "hot-take",
+      "image": "/topics/ten-past-nine-still.webp"
+    },
+    {
+      "text": "The platform at the end of the shift",
+      "style": "story",
+      "image": "/topics/the-platform-at-the-end-of-the-shift.webp"
+    },
+    {
+      "text": "The blue flame",
+      "style": "story",
+      "image": "/topics/the-blue-flame.webp"
+    },
+    {
+      "text": "Where the material comes from",
+      "style": "explain",
+      "image": "/topics/where-the-material-comes-from.webp"
+    },
+    {
+      "text": "The building that isn't there yet",
+      "style": "story",
+      "image": "/topics/the-building-that-isn-t-there-yet.webp"
+    },
+    {
+      "text": "The cranes came first",
+      "style": "just-talk",
+      "image": "/topics/the-cranes-came-first.webp"
+    },
+    {
+      "text": "The machine that does my old job",
+      "style": "hot-take",
+      "image": "/topics/the-machine-that-does-my-old-job.webp"
+    },
+    {
+      "text": "The plant at shift change",
+      "style": "story",
+      "image": "/topics/the-plant-at-shift-change.webp"
+    },
+    {
+      "text": "The corridor clock",
+      "style": "just-talk",
+      "image": "/topics/the-corridor-clock.webp"
+    },
+    {
+      "text": "The machine that feeds us",
+      "style": "explain",
+      "image": "/topics/the-machine-that-feeds-us.webp"
+    },
+    {
+      "text": "The hill they are eating",
+      "style": "hot-take",
+      "image": "/topics/the-hill-they-are-eating.webp"
+    },
+    {
+      "text": "The room after the meeting",
+      "style": "story",
+      "image": "/topics/the-room-after-the-meeting.webp"
+    },
+    {
+      "text": "Half past nothing",
+      "style": "just-talk",
+      "image": "/topics/half-past-nothing.webp"
+    },
+    {
+      "text": "Two time zones, one job",
+      "style": "hot-take",
+      "image": "/topics/two-time-zones-one-job.webp"
+    },
+    {
+      "text": "The field that was here last year",
+      "style": "story",
+      "image": "/topics/the-field-that-was-here-last-year.webp"
+    },
+    {
+      "text": "The machine they left behind",
+      "style": "story",
+      "image": "/topics/the-machine-they-left-behind.webp"
+    },
+    {
+      "text": "First on site",
+      "style": "story",
+      "image": "/topics/first-on-site.webp"
     }
   ]
 }

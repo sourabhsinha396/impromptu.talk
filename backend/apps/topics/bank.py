@@ -16,8 +16,7 @@ TOPICS_DIR = Path(__file__).resolve().parent.parent.parent / "data" / "topics"
 #: more: a flat scroll list stops working somewhere around fifteen, which is
 #: why ten needs no shelves.
 GENRES: tuple[tuple[str, str, str, str], ...] = (
-    ("general", "General", "dices", "A bit of everything. Start here."),
-    ("everyday-life", "Everyday life", "coffee", "Ordinary things, meals, journeys - hard to fake, easy to start."),
+    ("general", "General", "dices", "Ordinary things, meals, journeys. A bit of everything - start here."),
     ("relationships", "Relationships", "heart", "Friends, family, love, and the awkward bits."),
     ("career", "Career & work", "briefcase", "Work, ambition, focus, and the questions interviewers ask."),
     ("money-business", "Money & business", "banknote", "Money, building things, and selling them."),
@@ -31,6 +30,12 @@ GENRES: tuple[tuple[str, str, str, str], ...] = (
         "Big questions with no right answer, and hard choices with no clean side.",
     ),
     ("culture", "Culture", "clapperboard", "History, screens, and the hypotheticals you have argued at 2am."),
+    (
+        "deep-research",
+        "Deep research",
+        "graduation-cap",
+        "Quantum, economics, machine learning. Hard ideas said out loud, and the one genre worth a long prep.",
+    ),
 )
 
 #: (key, label, hint): how you are asked to talk about a topic. Surprise me is
@@ -51,6 +56,7 @@ SURPRISE = "surprise"
 STYLE_KEYS: frozenset[str] = frozenset(key for key, *_ in STYLES if key != SURPRISE)
 
 MAX_TEXT = 200
+MAX_IMAGE = 500
 
 
 def slugify_topic(text: str) -> str:
@@ -77,5 +83,11 @@ def load(slug: str) -> list[dict] | None:
             raise ValueError(f"{path.name}: blank or overlong topic {text!r}")
         if style not in STYLE_KEYS:
             raise ValueError(f"{path.name}: unknown style {style!r} on {text!r}")
-        topics.append({"text": text, "style": style})
+        # A picture as well as a sentence: `image` on the row is what makes
+        # it a picture topic (docs/DECISIONS.md, 2026-09-09). The key is not
+        # required, so every file written before this one still loads.
+        image = item.get("image", "").strip()
+        if len(image) > MAX_IMAGE:
+            raise ValueError(f"{path.name}: overlong image on {text!r}")
+        topics.append({"text": text, "style": style, "image": image})
     return topics

@@ -4,7 +4,13 @@ import { BACKEND_ORIGIN } from "@/lib/api";
    every active topic, and the styles for the select. One shape for the
    picker, the reel and the style select. */
 export type Genre = { slug: string; name: string; icon: string; blurb: string; own?: boolean };
-export type Topic = { text: string; genre: string; style: string; slug: string };
+/* `image` is what makes a topic a picture topic (docs/DECISIONS.md,
+   2026-09-09); `text` stays the prompt in both kinds, so a picture round
+   is the same round with a picture over the same sentence. Optional, and
+   absent rather than empty on the wire: home ships the whole bank inline
+   and an empty key on all thousand rows is 34KB the browser parses for
+   the sake of the twenty that use it. */
+export type Topic = { text: string; genre: string; style: string; slug: string; image?: string };
 export type Style = { key: string; label: string; hint: string };
 export type Bank = { genres: Genre[]; topics: Topic[]; styles: Style[] };
 

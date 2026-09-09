@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "
 import { GenreSheet } from "@/components/round/genre-sheet";
 import { Idle } from "@/components/round/idle";
 import { DonePhase, PrepPhase, SpeakPhase, TopicPhase, type Summary } from "@/components/round/phases";
+import { PictureReel } from "@/components/round/picture-reel";
 import { Reel } from "@/components/round/reel";
 import { SettingsSheet } from "@/components/round/settings-sheet";
 import { track } from "@/lib/analytics";
@@ -267,6 +268,7 @@ export function Round({
               onStyle={(key) => engine.chooseStyle(key)}
               onSound={(on) => engine.setSound(on)}
               onFilming={(on) => engine.setFilming(on)}
+              onPictures={(on) => engine.setPictures(on)}
               onMic={(on) => (on ? void turnOnMic() : engine.setMic("off"))}
             />
           </>
@@ -289,7 +291,14 @@ export function Round({
       <h1 className="sr-only">Impromptu speaking practice, a free random topic generator and timer</h1>
       {engine.phase === "spin" && topic && (
         <>
-          <Reel decoys={engine.decoys} winner={topic.text} onSettle={settle} />
+          {/* Same strip, same timing, different rows: a picture round
+              rolls skeletons and lands on the photograph, a sentence
+              round rolls sentences. */}
+          {topic.image ? (
+            <PictureReel rows={engine.decoys.length} image={topic.image} onSettle={settle} />
+          ) : (
+            <Reel decoys={engine.decoys} winner={topic.text} onSettle={settle} />
+          )}
           {/* The footprint of the topic phase's button row, so the settle
               does not shove the page. */}
           <div className="invisible mt-11 h-[54px]" aria-hidden />

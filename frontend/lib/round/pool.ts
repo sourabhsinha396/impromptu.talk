@@ -1,15 +1,38 @@
+/* Type-only, and it has to stay that way: `lib/bank.ts` also holds
+   `fetchBank`, which reaches `lib/api.ts` and `next/headers`. This module
+   is in the client bundle through the engine, so importing a *value* from
+   there drags the server-only half of it into the browser and the build
+   stops with "next/headers ... in the Pages Router". Hence the predicate
+   below rather than one shared from the bank. */
 import type { Bank, Topic } from "@/lib/bank";
 
 import { STAGE_KEY, SURPRISE, type Prefs, type Store } from "@/lib/round/prefs";
 
 export const REEL_DECOYS = 11;
 
+function hasImage(topic: Topic): boolean {
+  return Boolean(topic.image);
+}
+
 /* What a spin may land on: the genre, narrowed by the style when that
    leaves anything. A filter that empties the bank is worse than a filter
    that is ignored, so an empty narrowing falls back to the genre, and an
-   empty genre to the whole bank. */
+   empty genre to the whole bank.
+
+   Picture mode is the one narrowing that never falls back to a sentence.
+   The others are preferences and a round is still a round without them;
+   this one is a promise about what the next screen holds, and answering
+   it with a topic that has no picture is the mode silently not working.
+   So it prefers the genre's pictures, then any picture in the bank, and
+   only a bank holding none at all gives way. */
 export function pool(bank: Bank, prefs: Prefs): Topic[] {
   const all = bank.topics.filter((topic) => topic.genre === prefs.genre);
+  if (prefs.pictures) {
+    const here = all.filter(hasImage);
+    if (here.length) return here;
+    const anywhere = bank.topics.filter(hasImage);
+    if (anywhere.length) return anywhere;
+  }
   if (prefs.style !== SURPRISE) {
     const narrowed = all.filter((topic) => topic.style === prefs.style);
     if (narrowed.length) return narrowed;
@@ -38,7 +61,13 @@ export function shuffled<T>(items: T[], random: () => number = Math.random): T[]
 }
 
 /* Decoys are pure theatre, so a thin filter borrows from the genre, then
-   the whole bank, and repeats itself before it ever gives up the spin. */
+   the whole bank, and repeats itself before it ever gives up the spin.
+
+   A picture round spins too, on the same count: the page swaps the strip
+   of sentences for a strip of skeletons and lands on the photograph. The
+   spin is the moment of no take-backs and the most filmable thing on the
+   site, and a picture round that skipped it felt like a different, lesser
+   product. Only the rows differ, never the timing. */
 export function decoysFor(bank: Bank, prefs: Prefs, winner: Topic, random: () => number = Math.random): string[] {
   const seen = new Set([winner.text]);
   let out: string[] = [];

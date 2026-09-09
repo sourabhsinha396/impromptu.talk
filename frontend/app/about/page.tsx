@@ -34,8 +34,9 @@ export default function AboutRoute() {
       <h2>What it includes</h2>
       <ul>
         <li>
-          A thousand topics across <A href="/genres">ten genres</A>, covering everyday life, work and interviews,
-          money, technology, science, health, philosophy and culture.
+          Over fifteen hundred topics across <A href="/genres">ten genres</A>, covering everyday life, work and
+          interviews, money, technology, science, health, philosophy, culture, and hard ideas worth researching
+          before you speak.
         </li>
         <li>Four styles, so the same topic can be an open answer, an argument, an explanation or a story.</li>
         <li>Prep and speaking lengths you can change, set to a minute each by default.</li>

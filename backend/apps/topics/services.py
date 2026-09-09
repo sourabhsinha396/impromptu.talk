@@ -51,6 +51,7 @@ def seed_topics() -> tuple[int, int]:
                 topic = Topic(text=text, slug=bank.slugify_topic(text), is_active=True)
                 existing[text] = topic
             topic.genre, topic.style, topic.sort_order = genre, item["style"], order
+            topic.image = item["image"]
             topic.save()
             seen.add(topic.id)
             written += 1

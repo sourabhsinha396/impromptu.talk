@@ -26,7 +26,7 @@ from apps.topics.schemas import (
 api = Router(tags=["topics"])
 
 
-@api.get("/bank", response=BankOut)
+@api.get("/bank", response=BankOut, exclude_none=True)
 def bank(request, response: HttpResponse):
     """The whole built-in bank in one answer, so a respin costs no round
     trip. A settled decision: never fetched per spin, never paginated.
@@ -45,7 +45,10 @@ def bank(request, response: HttpResponse):
     response["Cache-Control"] = "public, max-age=3600"
     return {
         "genres": [{"slug": g.slug, "name": g.name, "icon": g.icon, "blurb": g.blurb} for g in genres],
-        "topics": [{"text": t.text, "genre": t.genre.slug, "style": t.style, "slug": t.slug} for t in topics],
+        "topics": [
+            {"text": t.text, "genre": t.genre.slug, "style": t.style, "slug": t.slug, "image": t.image or None}
+            for t in topics
+        ],
         "styles": [{"key": key, "label": label, "hint": hint} for key, label, hint in STYLES],
     }
 

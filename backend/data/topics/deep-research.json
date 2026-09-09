@@ -1,0 +1,859 @@
+{
+  "genre": "Deep research",
+  "topics": [
+    {
+      "text": "Entropy",
+      "style": "just-talk"
+    },
+    {
+      "text": "Infinity",
+      "style": "just-talk"
+    },
+    {
+      "text": "Emergence",
+      "style": "just-talk"
+    },
+    {
+      "text": "Randomness",
+      "style": "just-talk"
+    },
+    {
+      "text": "Feedback loops",
+      "style": "just-talk"
+    },
+    {
+      "text": "Equilibrium",
+      "style": "just-talk"
+    },
+    {
+      "text": "Symmetry",
+      "style": "just-talk"
+    },
+    {
+      "text": "Recursion",
+      "style": "just-talk"
+    },
+    {
+      "text": "Abstraction",
+      "style": "just-talk"
+    },
+    {
+      "text": "Approximation",
+      "style": "just-talk"
+    },
+    {
+      "text": "Compression",
+      "style": "just-talk"
+    },
+    {
+      "text": "Proof",
+      "style": "just-talk"
+    },
+    {
+      "text": "The observer",
+      "style": "just-talk"
+    },
+    {
+      "text": "Wave and particle",
+      "style": "just-talk"
+    },
+    {
+      "text": "What a model leaves out",
+      "style": "just-talk"
+    },
+    {
+      "text": "What we cannot compute",
+      "style": "just-talk"
+    },
+    {
+      "text": "Things that are true but unprovable",
+      "style": "just-talk"
+    },
+    {
+      "text": "What a number cannot say",
+      "style": "just-talk"
+    },
+    {
+      "text": "The gap between a theory and the world",
+      "style": "just-talk"
+    },
+    {
+      "text": "An idea you can use but not explain",
+      "style": "just-talk"
+    },
+    {
+      "text": "The subject that beat you",
+      "style": "just-talk"
+    },
+    {
+      "text": "Which hard idea should everyone know?",
+      "style": "just-talk"
+    },
+    {
+      "text": "What is the hardest thing you have understood?",
+      "style": "just-talk"
+    },
+    {
+      "text": "Is intuition worth anything in a hard subject?",
+      "style": "just-talk"
+    },
+    {
+      "text": "What makes an explanation click?",
+      "style": "just-talk"
+    },
+    {
+      "text": "Describe a concept you keep re-learning",
+      "style": "just-talk"
+    },
+    {
+      "text": "Describe the last thing you had to read twice",
+      "style": "just-talk"
+    },
+    {
+      "text": "Describe a field you wish you had studied",
+      "style": "just-talk"
+    },
+    {
+      "text": "The volunteer's dilemma",
+      "style": "just-talk"
+    },
+    {
+      "text": "The tragedy of the commons",
+      "style": "just-talk"
+    },
+    {
+      "text": "The stag hunt",
+      "style": "just-talk"
+    },
+    {
+      "text": "The ultimatum game",
+      "style": "just-talk"
+    },
+    {
+      "text": "The Abilene paradox",
+      "style": "just-talk"
+    },
+    {
+      "text": "Braess's paradox",
+      "style": "just-talk"
+    },
+    {
+      "text": "The free rider problem",
+      "style": "just-talk"
+    },
+    {
+      "text": "The principal-agent problem",
+      "style": "just-talk"
+    },
+    {
+      "text": "The winner's curse",
+      "style": "just-talk"
+    },
+    {
+      "text": "Schelling points",
+      "style": "just-talk"
+    },
+    {
+      "text": "The prosecutor's fallacy",
+      "style": "just-talk"
+    },
+    {
+      "text": "The base rate fallacy",
+      "style": "just-talk"
+    },
+    {
+      "text": "The Monty Hall problem",
+      "style": "just-talk"
+    },
+    {
+      "text": "The birthday problem",
+      "style": "just-talk"
+    },
+    {
+      "text": "The gambler's fallacy",
+      "style": "just-talk"
+    },
+    {
+      "text": "The St Petersburg paradox",
+      "style": "just-talk"
+    },
+    {
+      "text": "Benford's law",
+      "style": "just-talk"
+    },
+    {
+      "text": "Regression to the mean",
+      "style": "just-talk"
+    },
+    {
+      "text": "Berkson's paradox",
+      "style": "just-talk"
+    },
+    {
+      "text": "Survivorship bias",
+      "style": "just-talk"
+    },
+    {
+      "text": "The Texas sharpshooter fallacy",
+      "style": "just-talk"
+    },
+    {
+      "text": "The multiple comparisons problem",
+      "style": "just-talk"
+    },
+    {
+      "text": "The compromise effect",
+      "style": "just-talk"
+    },
+    {
+      "text": "The endowment effect",
+      "style": "just-talk"
+    },
+    {
+      "text": "The decoy effect",
+      "style": "just-talk"
+    },
+    {
+      "text": "Loss aversion",
+      "style": "just-talk"
+    },
+    {
+      "text": "Anchoring",
+      "style": "just-talk"
+    },
+    {
+      "text": "The sunk cost fallacy",
+      "style": "just-talk"
+    },
+    {
+      "text": "Hyperbolic discounting",
+      "style": "just-talk"
+    },
+    {
+      "text": "The IKEA effect",
+      "style": "just-talk"
+    },
+    {
+      "text": "The peak-end rule",
+      "style": "just-talk"
+    },
+    {
+      "text": "Choice overload",
+      "style": "just-talk"
+    },
+    {
+      "text": "Baumol's cost disease",
+      "style": "just-talk"
+    },
+    {
+      "text": "Jevons paradox",
+      "style": "just-talk"
+    },
+    {
+      "text": "The lump of labour fallacy",
+      "style": "just-talk"
+    },
+    {
+      "text": "The broken window fallacy",
+      "style": "just-talk"
+    },
+    {
+      "text": "Adverse selection",
+      "style": "just-talk"
+    },
+    {
+      "text": "The impossible trinity",
+      "style": "just-talk"
+    },
+    {
+      "text": "Goodhart's law",
+      "style": "just-talk"
+    },
+    {
+      "text": "Diminishing marginal utility",
+      "style": "just-talk"
+    },
+    {
+      "text": "Maxwell's demon",
+      "style": "just-talk"
+    },
+    {
+      "text": "The Fermi paradox",
+      "style": "just-talk"
+    },
+    {
+      "text": "Olbers' paradox",
+      "style": "just-talk"
+    },
+    {
+      "text": "The twin paradox",
+      "style": "just-talk"
+    },
+    {
+      "text": "Bell's theorem",
+      "style": "just-talk"
+    },
+    {
+      "text": "Landauer's principle",
+      "style": "just-talk"
+    },
+    {
+      "text": "The measurement problem",
+      "style": "just-talk"
+    },
+    {
+      "text": "Russell's paradox",
+      "style": "just-talk"
+    },
+    {
+      "text": "The liar paradox",
+      "style": "just-talk"
+    },
+    {
+      "text": "Hilbert's hotel",
+      "style": "just-talk"
+    },
+    {
+      "text": "Cantor's diagonal argument",
+      "style": "just-talk"
+    },
+    {
+      "text": "The Byzantine generals problem",
+      "style": "just-talk"
+    },
+    {
+      "text": "The CAP theorem",
+      "style": "just-talk"
+    },
+    {
+      "text": "The curse of dimensionality",
+      "style": "just-talk"
+    },
+    {
+      "text": "The Chinese room",
+      "style": "just-talk"
+    },
+    {
+      "text": "Conway's law",
+      "style": "just-talk"
+    },
+    {
+      "text": "Parkinson's law",
+      "style": "just-talk"
+    },
+    {
+      "text": "The Peter principle",
+      "style": "just-talk"
+    },
+    {
+      "text": "Path dependence",
+      "style": "just-talk"
+    },
+    {
+      "text": "The Matthew effect",
+      "style": "just-talk"
+    },
+    {
+      "text": "Most economics is storytelling with numbers",
+      "style": "hot-take"
+    },
+    {
+      "text": "GDP measures the wrong things and everyone knows it",
+      "style": "hot-take"
+    },
+    {
+      "text": "String theory has cost physics a generation",
+      "style": "hot-take"
+    },
+    {
+      "text": "Quantum mechanics is taught backwards",
+      "style": "hot-take"
+    },
+    {
+      "text": "Large language models do not understand anything",
+      "style": "hot-take"
+    },
+    {
+      "text": "Scaling is not a research programme",
+      "style": "hot-take"
+    },
+    {
+      "text": "Statistical significance should be retired",
+      "style": "hot-take"
+    },
+    {
+      "text": "Interpretability will never catch up with capability",
+      "style": "hot-take"
+    },
+    {
+      "text": "Economists should not advise governments",
+      "style": "hot-take"
+    },
+    {
+      "text": "A machine should never be a named author",
+      "style": "hot-take"
+    },
+    {
+      "text": "Central banks have too much power",
+      "style": "hot-take"
+    },
+    {
+      "text": "Inflation targeting is a political choice dressed as a technical one",
+      "style": "hot-take"
+    },
+    {
+      "text": "Most benchmarks only measure the benchmark",
+      "style": "hot-take"
+    },
+    {
+      "text": "Mathematics is discovered, not invented",
+      "style": "hot-take"
+    },
+    {
+      "text": "Consciousness is an unfinished problem, not a hard one",
+      "style": "hot-take"
+    },
+    {
+      "text": "Complexity is an excuse for bad predictions",
+      "style": "hot-take"
+    },
+    {
+      "text": "Popular science does more harm than good",
+      "style": "hot-take"
+    },
+    {
+      "text": "Nobody should cite a paper they have not read",
+      "style": "hot-take"
+    },
+    {
+      "text": "Every model is wrong and most are not useful",
+      "style": "hot-take"
+    },
+    {
+      "text": "Argue that the multiverse is not science",
+      "style": "hot-take"
+    },
+    {
+      "text": "Argue that determinism changes nothing",
+      "style": "hot-take"
+    },
+    {
+      "text": "Argue that we should stop training larger models",
+      "style": "hot-take"
+    },
+    {
+      "text": "Argue against explaining things simply",
+      "style": "hot-take"
+    },
+    {
+      "text": "Argue that a proof nobody can check is not a proof",
+      "style": "hot-take"
+    },
+    {
+      "text": "Argue that economics is not a science",
+      "style": "hot-take"
+    },
+    {
+      "text": "Sell me a theory you do not believe",
+      "style": "hot-take"
+    },
+    {
+      "text": "Sell me a subject you failed",
+      "style": "hot-take"
+    },
+    {
+      "text": "Sell me an idea that took you a year to get",
+      "style": "hot-take"
+    },
+    {
+      "text": "Explain superposition without mentioning a cat",
+      "style": "explain"
+    },
+    {
+      "text": "Explain Schrödinger's cat, and what it was arguing against",
+      "style": "explain"
+    },
+    {
+      "text": "Explain the uncertainty principle without the word fuzzy",
+      "style": "explain"
+    },
+    {
+      "text": "Explain entanglement without saying spooky",
+      "style": "explain"
+    },
+    {
+      "text": "Explain wave-particle duality to somebody who left school at sixteen",
+      "style": "explain"
+    },
+    {
+      "text": "Explain why nothing travels faster than light",
+      "style": "explain"
+    },
+    {
+      "text": "Explain why time runs slower near mass",
+      "style": "explain"
+    },
+    {
+      "text": "Explain entropy without using the word disorder",
+      "style": "explain"
+    },
+    {
+      "text": "Explain the second law of thermodynamics in a minute",
+      "style": "explain"
+    },
+    {
+      "text": "Explain what a field is in physics",
+      "style": "explain"
+    },
+    {
+      "text": "Explain why the standard model is not finished",
+      "style": "explain"
+    },
+    {
+      "text": "Explain what dark matter is evidence of",
+      "style": "explain"
+    },
+    {
+      "text": "Explain why an expanding universe has no centre",
+      "style": "explain"
+    },
+    {
+      "text": "Explain half-life without using the word decay",
+      "style": "explain"
+    },
+    {
+      "text": "Explain what a transformer does, layer by layer",
+      "style": "explain"
+    },
+    {
+      "text": "Explain attention in a neural network",
+      "style": "explain"
+    },
+    {
+      "text": "Explain what training a model actually changes",
+      "style": "explain"
+    },
+    {
+      "text": "Explain why a language model invents a citation",
+      "style": "explain"
+    },
+    {
+      "text": "Explain the difference between a parameter and a token",
+      "style": "explain"
+    },
+    {
+      "text": "Explain fine-tuning to somebody who has only used a chatbot",
+      "style": "explain"
+    },
+    {
+      "text": "Explain gradient descent with no equations",
+      "style": "explain"
+    },
+    {
+      "text": "Explain overfitting with an example from your own life",
+      "style": "explain"
+    },
+    {
+      "text": "Explain what a diffusion model is doing",
+      "style": "explain"
+    },
+    {
+      "text": "Explain correlation and causation with a real case",
+      "style": "explain"
+    },
+    {
+      "text": "Explain Bayes' theorem to somebody who hates maths",
+      "style": "explain"
+    },
+    {
+      "text": "Explain a confidence interval without the word probability",
+      "style": "explain"
+    },
+    {
+      "text": "Explain why the average is often the wrong number",
+      "style": "explain"
+    },
+    {
+      "text": "Explain Simpson's paradox",
+      "style": "explain"
+    },
+    {
+      "text": "Explain elasticity of demand using one product",
+      "style": "explain"
+    },
+    {
+      "text": "Explain why raising rates is supposed to slow prices",
+      "style": "explain"
+    },
+    {
+      "text": "Explain quantitative easing to somebody who has never held a bond",
+      "style": "explain"
+    },
+    {
+      "text": "Explain the difference between debt and deficit",
+      "style": "explain"
+    },
+    {
+      "text": "Explain comparative advantage without the two-country example",
+      "style": "explain"
+    },
+    {
+      "text": "Explain moral hazard with a case you have seen",
+      "style": "explain"
+    },
+    {
+      "text": "Explain what a recession actually is",
+      "style": "explain"
+    },
+    {
+      "text": "Explain the prisoner's dilemma, and where it fails",
+      "style": "explain"
+    },
+    {
+      "text": "Explain a Nash equilibrium in a minute",
+      "style": "explain"
+    },
+    {
+      "text": "Explain P versus NP to a friend who codes",
+      "style": "explain"
+    },
+    {
+      "text": "Explain what makes a problem intractable",
+      "style": "explain"
+    },
+    {
+      "text": "Explain public key cryptography with no maths",
+      "style": "explain"
+    },
+    {
+      "text": "Explain what a hash function guarantees",
+      "style": "explain"
+    },
+    {
+      "text": "Explain Gödel's incompleteness in sixty seconds",
+      "style": "explain"
+    },
+    {
+      "text": "Explain the halting problem",
+      "style": "explain"
+    },
+    {
+      "text": "Explain why randomness is hard for a computer",
+      "style": "explain"
+    },
+    {
+      "text": "Explain CRISPR to somebody who last did biology at school",
+      "style": "explain"
+    },
+    {
+      "text": "Explain what a protein fold is, and why it was hard",
+      "style": "explain"
+    },
+    {
+      "text": "Explain what a derivative measures, to somebody who never did calculus",
+      "style": "explain"
+    },
+    {
+      "text": "The subject you gave up on",
+      "style": "story"
+    },
+    {
+      "text": "A concept you faked understanding",
+      "style": "story"
+    },
+    {
+      "text": "The teacher who made a hard thing simple",
+      "style": "story"
+    },
+    {
+      "text": "The first time an idea actually clicked",
+      "style": "story"
+    },
+    {
+      "text": "Something you believed because it was elegant",
+      "style": "story"
+    },
+    {
+      "text": "A paper you could not get through",
+      "style": "story"
+    },
+    {
+      "text": "Defend a theory that turned out to be wrong",
+      "style": "story"
+    },
+    {
+      "text": "A day in the life of a photon",
+      "style": "story"
+    },
+    {
+      "text": "Narrate a proof as a heist",
+      "style": "story"
+    },
+    {
+      "text": "Explain your work to your family at dinner",
+      "style": "story"
+    },
+    {
+      "text": "The exam you understood a year too late",
+      "style": "story"
+    },
+    {
+      "text": "Pitch a discovery nobody funded",
+      "style": "story"
+    },
+    {
+      "text": "A time you argued a technical point and lost",
+      "style": "story"
+    },
+    {
+      "text": "A time you were the only one in the room who did not follow",
+      "style": "story"
+    },
+    {
+      "text": "The question you were too embarrassed to ask",
+      "style": "story"
+    },
+    {
+      "text": "Recap a hard book badly",
+      "style": "story"
+    },
+    {
+      "text": "A time the numbers said what you did not want",
+      "style": "story"
+    },
+    {
+      "text": "The idea you cannot stop bringing up",
+      "style": "story"
+    },
+    {
+      "text": "Nobody is leading this",
+      "style": "just-talk",
+      "image": "/topics/nobody-is-leading-this.webp"
+    },
+    {
+      "text": "Almost nothing, arranged",
+      "style": "just-talk",
+      "image": "/topics/almost-nothing-arranged.webp"
+    },
+    {
+      "text": "The curve it makes without trying",
+      "style": "just-talk",
+      "image": "/topics/the-curve-it-makes-without-trying.webp"
+    },
+    {
+      "text": "Built overnight, to a plan",
+      "style": "explain",
+      "image": "/topics/built-overnight-to-a-plan.webp"
+    },
+    {
+      "text": "The same shape, everywhere",
+      "style": "explain",
+      "image": "/topics/the-same-shape-everywhere.webp"
+    },
+    {
+      "text": "Life in the cracks",
+      "style": "just-talk",
+      "image": "/topics/life-in-the-cracks.webp"
+    },
+    {
+      "text": "The same window, a hundred times",
+      "style": "explain",
+      "image": "/topics/the-same-window-a-hundred-times.webp"
+    },
+    {
+      "text": "Patterns with nobody drawing them",
+      "style": "explain",
+      "image": "/topics/patterns-with-nobody-drawing-them.webp"
+    },
+    {
+      "text": "Everything is connected, annoyingly",
+      "style": "hot-take",
+      "image": "/topics/everything-is-connected-annoyingly.webp"
+    },
+    {
+      "text": "Symmetry, on purpose",
+      "style": "explain",
+      "image": "/topics/symmetry-on-purpose.webp"
+    },
+    {
+      "text": "Down, level by level",
+      "style": "just-talk",
+      "image": "/topics/down-level-by-level.webp"
+    },
+    {
+      "text": "One shape, endlessly repeated",
+      "style": "explain",
+      "image": "/topics/one-shape-endlessly-repeated.webp"
+    },
+    {
+      "text": "Roots that lost track",
+      "style": "just-talk",
+      "image": "/topics/roots-that-lost-track.webp"
+    },
+    {
+      "text": "What drying looks like",
+      "style": "explain",
+      "image": "/topics/what-drying-looks-like.webp"
+    },
+    {
+      "text": "Built to be reflected",
+      "style": "just-talk",
+      "image": "/topics/built-to-be-reflected.webp"
+    },
+    {
+      "text": "Order, hanging over us",
+      "style": "just-talk",
+      "image": "/topics/order-hanging-over-us.webp"
+    },
+    {
+      "text": "Halfway between water and stone",
+      "style": "explain",
+      "image": "/topics/halfway-between-water-and-stone.webp"
+    },
+    {
+      "text": "The spiral it was born with",
+      "style": "explain",
+      "image": "/topics/the-spiral-it-was-born-with.webp"
+    },
+    {
+      "text": "Built by nobody in charge",
+      "style": "explain",
+      "image": "/topics/built-by-nobody-in-charge.webp"
+    },
+    {
+      "text": "The copy, slightly wrong",
+      "style": "just-talk",
+      "image": "/topics/the-copy-slightly-wrong.webp"
+    },
+    {
+      "text": "The same joint, ten thousand times",
+      "style": "explain",
+      "image": "/topics/the-same-joint-ten-thousand-times.webp"
+    },
+    {
+      "text": "Hexagons, decided by nobody",
+      "style": "explain",
+      "image": "/topics/hexagons-decided-by-nobody.webp"
+    },
+    {
+      "text": "Every drop holding on",
+      "style": "just-talk",
+      "image": "/topics/every-drop-holding-on.webp"
+    },
+    {
+      "text": "The shape that holds itself up",
+      "style": "explain",
+      "image": "/topics/the-shape-that-holds-itself-up.webp"
+    },
+    {
+      "text": "Everything reaching for the same light",
+      "style": "just-talk",
+      "image": "/topics/everything-reaching-for-the-same-light.webp"
+    },
+    {
+      "text": "The writing left by something small",
+      "style": "just-talk",
+      "image": "/topics/the-writing-left-by-something-small.webp"
+    }
+  ]
+}

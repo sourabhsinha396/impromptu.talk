@@ -87,19 +87,19 @@ function Group({ title, features, isPro }: { title: string; features: Feature[];
    features page": as separate capabilities pile up (image topics, owned
    genres in two shapes, the streak, the model-written case) a stranger
    needs one place to see the shape of the whole product without ten
-   spins. Free-forever first for a stranger, and Pro-first order is left
-   to the caller rather than decided here, matching the genre picker's own
-   rule for owned genres. */
+   spins.
+
+   Free forever leads, always, and the order does not move for a
+   subscriber (owner's call). The genre picker reorders for Pro because
+   the group it promotes is somebody's own genres - their things, which
+   they came for. Nothing here is anybody's; it is the same list of what
+   the product does either way, and a page that rearranges itself once
+   you have paid makes the reader re-find their bearings for nothing. */
 export function FeaturesPage({ isPro }: { isPro: boolean }) {
-  const groups = isPro
-    ? [
-        { title: "Pro", features: PRO_FEATURES },
-        { title: "Free forever", features: FREE_FEATURES },
-      ]
-    : [
-        { title: "Free forever", features: FREE_FEATURES },
-        { title: "Pro", features: PRO_FEATURES },
-      ];
+  const groups = [
+    { title: "Free forever", features: FREE_FEATURES },
+    { title: "Pro", features: PRO_FEATURES },
+  ];
   return (
     <main className="mx-auto w-full max-w-[960px] flex-1 px-[clamp(16px,4vw,32px)] pt-7 pb-16">
       <h1 className="font-display text-headline font-semibold">Features</h1>

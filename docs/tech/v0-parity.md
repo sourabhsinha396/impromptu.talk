@@ -82,7 +82,7 @@ Ticked as of 2026-09-07, after cards 01 to 26.
 
 ### Content
 
-- [x] Ten genres, one flat list, the merge map; 1000 topics (v0 had 800; 200 added for v1); every style in every built-in genre (07)
+- [x] Ten genres, one flat list, the merge map; 1000 topics (v0 had 800; 200 added for v1); every style in every built-in genre (07). Still ten after 9 September 2026: Everyday life folded into General and Deep research took the freed slot, `DECISIONS.md`
 - [x] Seeder as a one-off management command, never on boot; idempotent, never deletes a topic, deletes an emptied built-in genre, deactivates one still owning topics, never touches an owned genre (07)
 - [x] Style (v0 format) as a tag, four values plus Surprise me (07)
 - [x] The bank ships with the home page as one public, hour-cached endpoint; 24.7KB gzipped for 1000 topics (08)

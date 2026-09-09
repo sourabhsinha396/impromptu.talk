@@ -39,7 +39,7 @@ class GenreAdmin(admin.ModelAdmin):
 class TopicAdmin(admin.ModelAdmin):
     # The seeder never re-activates a row switched off here: that is what
     # makes this the kill switch and not a suggestion.
-    list_display = ("text", "genre", "style", "is_active", "sort_order")
+    list_display = ("text", "genre", "style", "is_active", "sort_order", "image")
     list_filter = ("genre", "genre__owner", "style", "is_active")
     search_fields = ("text",)
     ordering = ("genre", "sort_order", "id")

@@ -19,6 +19,7 @@ const bank: Bank = {
     topic("general", "Tipping should end", "hot-take"),
     topic("career", "Your first job"),
     topic("career", "Job titles are meaningless", "hot-take"),
+    { ...topic("general", "A castle"), image: "/topics/castle-in-mist.webp" },
   ],
   styles: [
     { key: "surprise", label: "Surprise me", hint: "" },
@@ -155,6 +156,32 @@ describe("the round", () => {
     expect(store.map.has(PREFS_KEY)).toBe(false);
   });
 
+  it("spins a picture in picture mode, through the reel like any other round, and remembers the mode", () => {
+    /* The reel is the moment of no take-backs and the most filmable thing
+       on the site; a picture round that skipped it felt like a lesser
+       product. The page swaps the rows for skeletons, the engine does not
+       know or care. */
+    const { engine, store } = build();
+    engine.setPictures(true);
+    engine.spin();
+    expect(engine.phase).toBe("spin");
+    expect(engine.decoys.length).toBeGreaterThan(0);
+    expect(engine.topic?.image).toBe("/topics/castle-in-mist.webp");
+    engine.settle();
+    expect(engine.phase).toBe("topic");
+    expect(loadPrefs(store).pictures).toBe(true);
+  });
+
+  it("opens picture mode from a link, because the home stage carries no control for it", () => {
+    const { engine, store } = build({}, { reduceMotion: true });
+    expect(engine.arrive(new URLSearchParams("?pictures=1"))).toBe(true);
+    expect(engine.prefs.pictures).toBe(true);
+    expect(loadPrefs(store).pictures).toBe(true);
+    /* Reversible by hand, so a link somebody was sent is not a one-way door. */
+    engine.arrive(new URLSearchParams("?pictures=0"));
+    expect(engine.prefs.pictures).toBe(false);
+  });
+
   it("reads v0's prefs, format key included, and drops a coined style when the genre changes", () => {
     const { engine, store } = build({
       [PREFS_KEY]: JSON.stringify({ genre: "career", prep: 120, speak: 5000, format: "hot-take", sound: 0 }),
@@ -170,6 +197,7 @@ describe("the round", () => {
       sound: false,
       mic: "ask",
       filming: false,
+      pictures: false,
     });
     engine.chooseGenre("general");
     expect(engine.prefs.style).toBe("hot-take");

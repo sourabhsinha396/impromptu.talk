@@ -320,6 +320,201 @@
     {
       "text": "Explain two-factor authentication to a friend who hates it",
       "style": "explain"
+    },
+    {
+      "text": "Nobody knows how it works",
+      "style": "explain",
+      "image": "/topics/circuit-board.webp"
+    },
+    {
+      "text": "It smiled back",
+      "style": "hot-take",
+      "image": "/topics/robot-with-tablet.webp"
+    },
+    {
+      "text": "Typing at two in the morning",
+      "style": "story",
+      "image": "/topics/typing-at-two-in-the-morning.webp"
+    },
+    {
+      "text": "A city nobody can visit",
+      "style": "explain",
+      "image": "/topics/a-city-nobody-can-visit.webp"
+    },
+    {
+      "text": "Everyone watching the same thing",
+      "style": "story",
+      "image": "/topics/everyone-watching-the-same-thing.webp"
+    },
+    {
+      "text": "Where the cloud actually is",
+      "style": "explain",
+      "image": "/topics/where-the-cloud-actually-is.webp"
+    },
+    {
+      "text": "Everything we say, passing through",
+      "style": "explain",
+      "image": "/topics/everything-we-say-passing-through.webp"
+    },
+    {
+      "text": "Listening for someone",
+      "style": "story",
+      "image": "/topics/listening-for-someone.webp"
+    },
+    {
+      "text": "The computer we all shared",
+      "style": "story",
+      "image": "/topics/the-computer-we-all-shared.webp"
+    },
+    {
+      "text": "Built by people in white suits",
+      "style": "explain",
+      "image": "/topics/built-by-people-in-white-suits.webp"
+    },
+    {
+      "text": "The computer that filled a room",
+      "style": "explain",
+      "image": "/topics/the-computer-that-filled-a-room.webp"
+    },
+    {
+      "text": "Sparks, and steady hands",
+      "style": "story",
+      "image": "/topics/sparks-and-steady-hands.webp"
+    },
+    {
+      "text": "Built to leave and never come back",
+      "style": "story",
+      "image": "/topics/built-to-leave-and-never-come-back.webp"
+    },
+    {
+      "text": "Pointed at nothing, listening",
+      "style": "just-talk",
+      "image": "/topics/pointed-at-nothing-listening.webp"
+    },
+    {
+      "text": "The dish nobody watches now",
+      "style": "story",
+      "image": "/topics/the-dish-nobody-watches-now.webp"
+    },
+    {
+      "text": "The street that glows",
+      "style": "just-talk",
+      "image": "/topics/the-street-that-glows.webp"
+    },
+    {
+      "text": "Watched, even here",
+      "style": "hot-take",
+      "image": "/topics/watched-even-here.webp"
+    },
+    {
+      "text": "Old power, new power",
+      "style": "explain",
+      "image": "/topics/old-power-new-power.webp"
+    },
+    {
+      "text": "The cupboard that runs everything",
+      "style": "explain",
+      "image": "/topics/the-cupboard-that-runs-everything.webp"
+    },
+    {
+      "text": "The machines that ate my pocket money",
+      "style": "story",
+      "image": "/topics/the-machines-that-ate-my-pocket-money.webp"
+    },
+    {
+      "text": "The wires across the view",
+      "style": "hot-take",
+      "image": "/topics/the-wires-across-the-view.webp"
+    },
+    {
+      "text": "The thing nobody can explain",
+      "style": "just-talk",
+      "image": "/topics/the-thing-nobody-can-explain.webp"
+    },
+    {
+      "text": "The phone box that still works",
+      "style": "story",
+      "image": "/topics/the-phone-box-that-still-works.webp"
+    },
+    {
+      "text": "Somebody dropped their whole life",
+      "style": "story",
+      "image": "/topics/somebody-dropped-their-whole-life.webp"
+    },
+    {
+      "text": "The wires going somewhere",
+      "style": "just-talk",
+      "image": "/topics/the-wires-going-somewhere.webp"
+    },
+    {
+      "text": "The memory nobody remembers",
+      "style": "explain",
+      "image": "/topics/the-memory-nobody-remembers.webp"
+    },
+    {
+      "text": "One more go",
+      "style": "story",
+      "image": "/topics/one-more-go.webp"
+    },
+    {
+      "text": "The drawer of dead chargers",
+      "style": "hot-take",
+      "image": "/topics/the-drawer-of-dead-chargers.webp"
+    },
+    {
+      "text": "The hole somebody dug",
+      "style": "just-talk",
+      "image": "/topics/the-hole-somebody-dug.webp"
+    },
+    {
+      "text": "The windows nobody replaced",
+      "style": "story",
+      "image": "/topics/the-windows-nobody-replaced.webp"
+    },
+    {
+      "text": "The pipes that fed the town",
+      "style": "story",
+      "image": "/topics/the-pipes-that-fed-the-town.webp"
+    },
+    {
+      "text": "The box nobody phones from",
+      "style": "story",
+      "image": "/topics/the-box-nobody-phones-from.webp"
+    },
+    {
+      "text": "The phone in the weeds",
+      "style": "story",
+      "image": "/topics/the-phone-in-the-weeds.webp"
+    },
+    {
+      "text": "The works at sunset",
+      "style": "story",
+      "image": "/topics/the-works-at-sunset.webp"
+    },
+    {
+      "text": "Somebody sits in here",
+      "style": "just-talk",
+      "image": "/topics/somebody-sits-in-here.webp"
+    },
+    {
+      "text": "The mast above the roofs",
+      "style": "hot-take",
+      "image": "/topics/the-mast-above-the-roofs.webp"
+    },
+    {
+      "text": "Too much, all at once",
+      "style": "just-talk",
+      "image": "/topics/too-much-all-at-once.webp"
+    },
+    {
+      "text": "The dial with the cities on it",
+      "style": "story",
+      "image": "/topics/the-dial-with-the-cities-on-it.webp"
+    },
+    {
+      "text": "Fixing it myself",
+      "style": "story",
+      "image": "/topics/fixing-it-myself.webp"
     }
   ]
 }

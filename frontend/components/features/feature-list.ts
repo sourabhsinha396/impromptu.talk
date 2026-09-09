@@ -17,10 +17,11 @@ export const FREE_FEATURES: Feature[] = [
   { slug: "genres", name: "All genres", blurb: "Open, argue, teach, tell - four ways to be asked the same topic.", href: "/genres" },
   {
     slug: "image-impromptu",
-    name: "Image impromptu",
-    blurb: "A picture instead of a sentence. Not yet built.",
-    href: "/",
-    soon: true,
+    name: "Enable Image impromptu",
+    blurb: "A photograph instead of a sentence, in every genre. The round is the same.",
+    /* The home stage carries no control for it, so this link is the way
+       in: it turns the mode on for the visit and remembers it. */
+    href: "/?pictures=1",
   },
 ];
 
@@ -34,7 +35,7 @@ export const PRO_FEATURES: Feature[] = [
   },
   {
     slug: "custom-genre-image",
-    name: "Custom genre",
+    name: "Custom genre (Images)",
     blurb: "Your own pictures in place of sentences, in your own picker.",
     href: "/genres/yours",
     pro: true,
