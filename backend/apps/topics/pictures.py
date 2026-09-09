@@ -25,9 +25,13 @@ from PIL import Image, UnidentifiedImageError
 # that a genre of two hundred is not a bill worth thinking about.
 MAX_SIDE = 1400
 
-# What the upload route will read off the wire at all. A phone photograph
-# is a few megabytes; anything past this is not a mistake worth carrying.
-MAX_BYTES = 12 * 1024 * 1024
+# What the upload route will read off the wire at all. A picture is drawn
+# at 460 CSS pixels and stored re-encoded well under this, so a megabyte
+# is already more detail than the round can show. A modern phone
+# photograph is several megabytes and will not go up untouched, which is
+# deliberate: the ceiling is on what the bucket holds per account, not on
+# what a camera happens to write.
+MAX_BYTES = 1024 * 1024
 
 # Below this in either direction there is nothing to talk about, and it is
 # almost always somebody's avatar or a stray icon.
@@ -37,7 +41,7 @@ QUALITY = 72
 
 PREFIX = "uploads"
 
-TOO_BIG = "That picture is over 12MB. Try a smaller one."
+TOO_BIG = "That picture is over 1MB. Try a smaller one."
 NOT_AN_IMAGE = "That file is not an image we can read."
 TOO_SMALL = f"That picture is smaller than {MIN_SIDE} pixels on a side."
 

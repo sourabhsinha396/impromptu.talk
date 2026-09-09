@@ -8,7 +8,8 @@ import { CopyField } from "@/components/account/copy-field";
 import { Button } from "@/components/site/button";
 import { CloseIcon, EditIcon, GenreIcon } from "@/components/site/icons";
 import type { Style } from "@/lib/bank";
-import type { OwnedGenre, OwnedTopic } from "@/lib/owned";
+import { PICTURE_TOO_BIG, type OwnedGenre, type OwnedTopic } from "@/lib/owned";
+import { compress } from "@/lib/pictures";
 import { absolute } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
@@ -351,7 +352,26 @@ function AddPicture({
   const [text, setText] = useState("");
   const [style, setStyle] = useState("just-talk");
   const [busy, setBusy] = useState(false);
+  const [refused, setRefused] = useState("");
   const real = styles.filter((s) => s.key !== "surprise");
+
+  /* Shrunk here rather than only checked here: a camera roll picture is
+     several megabytes and the ceiling is one, so a check on its own would
+     refuse most of what anybody actually has. What the picker holds after
+     this is what goes up, which is also what the KB beside it counts. */
+  async function pick(chosen: File | null) {
+    setRefused("");
+    setFile(null);
+    if (!chosen) return;
+    setBusy(true);
+    try {
+      const ready = await compress(chosen);
+      if (!ready) return setRefused(PICTURE_TOO_BIG);
+      setFile(ready);
+    } finally {
+      setBusy(false);
+    }
+  }
 
   /* Revoked when it is replaced or the component goes, or every pick
      leaks the last one for the life of the page. */
@@ -368,6 +388,7 @@ function AddPicture({
     try {
       if (await onUpload(file, text.trim(), style)) {
         setFile(null);
+        setRefused("");
         setText("");
       }
     } finally {
@@ -398,11 +419,12 @@ function AddPicture({
                 accept="image/*"
                 className="sr-only"
                 disabled={!editable || busy}
-                onChange={(event) => setFile(event.target.files?.[0] ?? null)}
+                onChange={(event) => pick(event.target.files?.[0] ?? null)}
               />
               {file ? "Choose another" : "Choose a picture"}
             </label>
             {file && <span className="text-[13px] text-muted">{Math.round(file.size / 1024)}KB</span>}
+            {refused && <span className="text-[13px] text-ink">{refused}</span>}
           </div>
 
           {preview && (

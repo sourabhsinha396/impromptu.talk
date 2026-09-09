@@ -51,6 +51,14 @@ export type SharedGenre = {
   topics: OwnedTopic[];
 };
 
+/* The picture ceiling, in step with `MAX_BYTES` in
+   backend/apps/topics/pictures.py. Checked here too so an oversized file
+   is refused before it is uploaded: the backend reads the size and not
+   the bytes, but the browser still has to push the whole body up the
+   wire before it hears the refusal, which on a phone is the slow half. */
+export const MAX_PICTURE_BYTES = 1024 * 1024;
+export const PICTURE_TOO_BIG = "That picture is over 1MB. Try a smaller one.";
+
 export const NO_GENRES: Mine = {
   genres: [],
   max_genres: 10,

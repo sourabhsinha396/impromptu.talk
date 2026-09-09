@@ -76,6 +76,20 @@ def test_whatever_arrives_is_re_encoded_to_webp_and_capped(pro, genre):
     assert max(written.size) == pictures.MAX_SIDE
 
 
+def test_a_picture_over_the_ceiling_is_refused_on_its_size_alone(pro, genre):
+    """Asked of the size, not the bytes, so a big file is cheap to say no
+    to. The browser shrinks a camera roll picture under this before it
+    sends anything, and this is the wall behind that."""
+    from apps.topics import pictures
+
+    big = io.BytesIO(b"x" * (pictures.MAX_BYTES + 1))
+    big.name = "photo.jpg"
+    response = upload(pro, genre, big)
+    assert response.status_code == 400
+    assert response.json()["detail"] == pictures.TOO_BIG
+    assert not Topic.objects.exclude(image="").exists()
+
+
 def test_a_file_that_is_not_an_image_is_refused_whatever_it_is_called(pro, genre):
     """The content type is the browser's claim, not evidence. Pillow
     failing to decode it is the evidence."""
