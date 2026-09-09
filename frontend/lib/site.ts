@@ -39,4 +39,4 @@ export const OWNER = process.env.NEXT_PUBLIC_COMPANY_NAME || SITE_NAME;
 
 /* The one address anyone is invited to write to: the contact page, the
    legal documents and the footer of every page. */
-export const CONTACT_EMAIL = process.env.NEXT_PUBLIC_COMPANY_EMAIL || "hello@yapholic.com";
+export const CONTACT_EMAIL = process.env.NEXT_PUBLIC_COMPANY_EMAIL || "team@yapholic.com";
