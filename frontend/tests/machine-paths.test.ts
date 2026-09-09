@@ -24,7 +24,11 @@ const PATTERNS = [
    the variables it forbids, which is the one place they belong. */
 const PROSE = /^docs\/|\.md$/;
 const SELF = "frontend/tests/machine-paths.test.ts";
-const BINARY = /\.(png|ico|woff2)$/;
+/* Read as UTF-8, a compressed image is random text, and five of the
+   picture bank's WebPs happen to contain bytes that read as a drive
+   letter. Nothing configures a tool from an image, so they are excluded
+   rather than the pattern loosened: the pattern is the point. */
+const BINARY = /\.(png|ico|woff2|webp)$/;
 
 function tracked(): string[] {
   const listing = execFileSync("git", ["ls-files", "-z"], { cwd: ROOT, encoding: "utf8" });

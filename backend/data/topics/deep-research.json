@@ -82,38 +82,6 @@
       "style": "just-talk"
     },
     {
-      "text": "The subject that beat you",
-      "style": "just-talk"
-    },
-    {
-      "text": "Which hard idea should everyone know?",
-      "style": "just-talk"
-    },
-    {
-      "text": "What is the hardest thing you have understood?",
-      "style": "just-talk"
-    },
-    {
-      "text": "Is intuition worth anything in a hard subject?",
-      "style": "just-talk"
-    },
-    {
-      "text": "What makes an explanation click?",
-      "style": "just-talk"
-    },
-    {
-      "text": "Describe a concept you keep re-learning",
-      "style": "just-talk"
-    },
-    {
-      "text": "Describe the last thing you had to read twice",
-      "style": "just-talk"
-    },
-    {
-      "text": "Describe a field you wish you had studied",
-      "style": "just-talk"
-    },
-    {
       "text": "The volunteer's dilemma",
       "style": "just-talk"
     },
@@ -454,18 +422,6 @@
       "style": "hot-take"
     },
     {
-      "text": "Sell me a theory you do not believe",
-      "style": "hot-take"
-    },
-    {
-      "text": "Sell me a subject you failed",
-      "style": "hot-take"
-    },
-    {
-      "text": "Sell me an idea that took you a year to get",
-      "style": "hot-take"
-    },
-    {
       "text": "Explain superposition without mentioning a cat",
       "style": "explain"
     },
@@ -654,30 +610,6 @@
       "style": "explain"
     },
     {
-      "text": "The subject you gave up on",
-      "style": "story"
-    },
-    {
-      "text": "A concept you faked understanding",
-      "style": "story"
-    },
-    {
-      "text": "The teacher who made a hard thing simple",
-      "style": "story"
-    },
-    {
-      "text": "The first time an idea actually clicked",
-      "style": "story"
-    },
-    {
-      "text": "Something you believed because it was elegant",
-      "style": "story"
-    },
-    {
-      "text": "A paper you could not get through",
-      "style": "story"
-    },
-    {
       "text": "Defend a theory that turned out to be wrong",
       "style": "story"
     },
@@ -690,170 +622,618 @@
       "style": "story"
     },
     {
-      "text": "Explain your work to your family at dinner",
-      "style": "story"
-    },
-    {
-      "text": "The exam you understood a year too late",
-      "style": "story"
-    },
-    {
       "text": "Pitch a discovery nobody funded",
       "style": "story"
     },
     {
-      "text": "A time you argued a technical point and lost",
+      "text": "Swarm intelligence",
+      "style": "explain",
+      "image": "/topics/swarm-intelligence.webp"
+    },
+    {
+      "text": "Desertification",
+      "style": "explain",
+      "image": "/topics/desertification.webp"
+    },
+    {
+      "text": "Allometry",
+      "style": "explain",
+      "image": "/topics/allometry.webp"
+    },
+    {
+      "text": "Tensegrity",
+      "style": "explain",
+      "image": "/topics/tensegrity.webp"
+    },
+    {
+      "text": "Self-similarity",
+      "style": "explain",
+      "image": "/topics/self-similarity.webp"
+    },
+    {
+      "text": "Ecological succession",
+      "style": "explain",
+      "image": "/topics/ecological-succession.webp"
+    },
+    {
+      "text": "Modularity",
+      "style": "explain",
+      "image": "/topics/modularity.webp"
+    },
+    {
+      "text": "Turing patterns",
+      "style": "explain",
+      "image": "/topics/turing-patterns.webp"
+    },
+    {
+      "text": "Network effects",
+      "style": "just-talk",
+      "image": "/topics/network-effects.webp"
+    },
+    {
+      "text": "Wallpaper groups",
+      "style": "explain",
+      "image": "/topics/wallpaper-groups.webp"
+    },
+    {
+      "text": "Nested hierarchies",
+      "style": "just-talk",
+      "image": "/topics/nested-hierarchies.webp"
+    },
+    {
+      "text": "Periodicity",
+      "style": "explain",
+      "image": "/topics/periodicity.webp"
+    },
+    {
+      "text": "Hysteresis",
+      "style": "explain",
+      "image": "/topics/hysteresis.webp"
+    },
+    {
+      "text": "Voronoi tessellation",
+      "style": "explain",
+      "image": "/topics/voronoi-tessellation.webp"
+    },
+    {
+      "text": "Duality",
+      "style": "just-talk",
+      "image": "/topics/duality.webp"
+    },
+    {
+      "text": "Crystalline order",
+      "style": "explain",
+      "image": "/topics/crystalline-order.webp"
+    },
+    {
+      "text": "Phase transitions",
+      "style": "explain",
+      "image": "/topics/phase-transitions.webp"
+    },
+    {
+      "text": "Logarithmic spirals",
+      "style": "explain",
+      "image": "/topics/logarithmic-spirals.webp"
+    },
+    {
+      "text": "Stigmergy",
+      "style": "explain",
+      "image": "/topics/stigmergy.webp"
+    },
+    {
+      "text": "Noise",
+      "style": "just-talk",
+      "image": "/topics/noise.webp"
+    },
+    {
+      "text": "Redundancy",
+      "style": "just-talk",
+      "image": "/topics/redundancy.webp"
+    },
+    {
+      "text": "Close packing",
+      "style": "explain",
+      "image": "/topics/close-packing.webp"
+    },
+    {
+      "text": "Surface tension",
+      "style": "explain",
+      "image": "/topics/surface-tension.webp"
+    },
+    {
+      "text": "The catenary arch",
+      "style": "explain",
+      "image": "/topics/the-catenary-arch.webp"
+    },
+    {
+      "text": "Phototropism",
+      "style": "explain",
+      "image": "/topics/phototropism.webp"
+    },
+    {
+      "text": "Bioturbation",
+      "style": "explain",
+      "image": "/topics/bioturbation.webp"
+    },
+    {
+      "text": "The Sorites paradox",
+      "style": "just-talk"
+    },
+    {
+      "text": "The ship of Theseus",
+      "style": "just-talk"
+    },
+    {
+      "text": "Newcomb's problem",
+      "style": "just-talk"
+    },
+    {
+      "text": "Pascal's mugging",
+      "style": "just-talk"
+    },
+    {
+      "text": "The doomsday argument",
+      "style": "just-talk"
+    },
+    {
+      "text": "The simulation argument",
+      "style": "just-talk"
+    },
+    {
+      "text": "The anthropic principle",
+      "style": "just-talk"
+    },
+    {
+      "text": "Occam's razor",
+      "style": "just-talk"
+    },
+    {
+      "text": "The demarcation problem",
+      "style": "just-talk"
+    },
+    {
+      "text": "Underdetermination",
+      "style": "just-talk"
+    },
+    {
+      "text": "The raven paradox",
+      "style": "just-talk"
+    },
+    {
+      "text": "The problem of induction",
+      "style": "just-talk"
+    },
+    {
+      "text": "The Gettier problem",
+      "style": "just-talk"
+    },
+    {
+      "text": "Mary's room",
+      "style": "just-talk"
+    },
+    {
+      "text": "The philosophical zombie",
+      "style": "just-talk"
+    },
+    {
+      "text": "The frame problem",
+      "style": "just-talk"
+    },
+    {
+      "text": "The symbol grounding problem",
+      "style": "just-talk"
+    },
+    {
+      "text": "Moravec's paradox",
+      "style": "just-talk"
+    },
+    {
+      "text": "The alignment problem",
+      "style": "just-talk"
+    },
+    {
+      "text": "Instrumental convergence",
+      "style": "just-talk"
+    },
+    {
+      "text": "Campbell's law",
+      "style": "just-talk"
+    },
+    {
+      "text": "The Streisand effect",
+      "style": "just-talk"
+    },
+    {
+      "text": "The cobra effect",
+      "style": "just-talk"
+    },
+    {
+      "text": "Regulatory capture",
+      "style": "just-talk"
+    },
+    {
+      "text": "Rent seeking",
+      "style": "just-talk"
+    },
+    {
+      "text": "Information asymmetry",
+      "style": "just-talk"
+    },
+    {
+      "text": "The bullwhip effect",
+      "style": "just-talk"
+    },
+    {
+      "text": "Little's law",
+      "style": "just-talk"
+    },
+    {
+      "text": "Amdahl's law",
+      "style": "just-talk"
+    },
+    {
+      "text": "Brooks's law",
+      "style": "just-talk"
+    },
+    {
+      "text": "Zipf's law",
+      "style": "just-talk"
+    },
+    {
+      "text": "The Pareto principle",
+      "style": "just-talk"
+    },
+    {
+      "text": "Preferential attachment",
+      "style": "just-talk"
+    },
+    {
+      "text": "Small-world networks",
+      "style": "just-talk"
+    },
+    {
+      "text": "The friendship paradox",
+      "style": "just-talk"
+    },
+    {
+      "text": "Self-organised criticality",
+      "style": "just-talk"
+    },
+    {
+      "text": "The butterfly effect",
+      "style": "just-talk"
+    },
+    {
+      "text": "The three-body problem",
+      "style": "just-talk"
+    },
+    {
+      "text": "Ergodicity",
+      "style": "just-talk"
+    },
+    {
+      "text": "Fat tails",
+      "style": "just-talk"
+    },
+    {
+      "text": "Knightian uncertainty",
+      "style": "just-talk"
+    },
+    {
+      "text": "Prospect theory",
+      "style": "just-talk"
+    },
+    {
+      "text": "Bounded rationality",
+      "style": "just-talk"
+    },
+    {
+      "text": "Satisficing",
+      "style": "just-talk"
+    },
+    {
+      "text": "The curse of knowledge",
+      "style": "just-talk"
+    },
+    {
+      "text": "The illusion of explanatory depth",
+      "style": "just-talk"
+    },
+    {
+      "text": "Publication bias",
+      "style": "just-talk"
+    },
+    {
+      "text": "The file drawer problem",
+      "style": "just-talk"
+    },
+    {
+      "text": "Selection bias",
+      "style": "just-talk"
+    },
+    {
+      "text": "The ecological fallacy",
+      "style": "just-talk"
+    },
+    {
+      "text": "The equivalence principle",
+      "style": "just-talk"
+    },
+    {
+      "text": "Renormalisation",
+      "style": "just-talk"
+    },
+    {
+      "text": "The hierarchy problem",
+      "style": "just-talk"
+    },
+    {
+      "text": "The cosmological constant problem",
+      "style": "just-talk"
+    },
+    {
+      "text": "The black hole information paradox",
+      "style": "just-talk"
+    },
+    {
+      "text": "Hawking radiation",
+      "style": "just-talk"
+    },
+    {
+      "text": "The Casimir effect",
+      "style": "just-talk"
+    },
+    {
+      "text": "Quantum decoherence",
+      "style": "just-talk"
+    },
+    {
+      "text": "The many-worlds interpretation",
+      "style": "just-talk"
+    },
+    {
+      "text": "The no-cloning theorem",
+      "style": "just-talk"
+    },
+    {
+      "text": "Rice's theorem",
+      "style": "just-talk"
+    },
+    {
+      "text": "The travelling salesman problem",
+      "style": "just-talk"
+    },
+    {
+      "text": "The FLP impossibility result",
+      "style": "just-talk"
+    },
+    {
+      "text": "Kin selection",
+      "style": "just-talk"
+    },
+    {
+      "text": "Hamilton's rule",
+      "style": "just-talk"
+    },
+    {
+      "text": "Convergent evolution",
+      "style": "just-talk"
+    },
+    {
+      "text": "Punctuated equilibrium",
+      "style": "just-talk"
+    },
+    {
+      "text": "Endosymbiosis",
+      "style": "just-talk"
+    },
+    {
+      "text": "Horizontal gene transfer",
+      "style": "just-talk"
+    },
+    {
+      "text": "Trophic cascades",
+      "style": "just-talk"
+    },
+    {
+      "text": "Keystone species",
+      "style": "just-talk"
+    },
+    {
+      "text": "Island biogeography",
+      "style": "just-talk"
+    },
+    {
+      "text": "Explain Noether's theorem and what it buys you",
+      "style": "explain"
+    },
+    {
+      "text": "Explain Kolmogorov complexity with an example",
+      "style": "explain"
+    },
+    {
+      "text": "Explain the Church-Turing thesis",
+      "style": "explain"
+    },
+    {
+      "text": "Explain Shannon entropy without the word information",
+      "style": "explain"
+    },
+    {
+      "text": "Explain error-correcting codes with a real failure",
+      "style": "explain"
+    },
+    {
+      "text": "Explain differential privacy to a data protection officer",
+      "style": "explain"
+    },
+    {
+      "text": "Explain zero-knowledge proofs with a physical analogy",
+      "style": "explain"
+    },
+    {
+      "text": "Explain NP-completeness with one reduction",
+      "style": "explain"
+    },
+    {
+      "text": "Explain the pigeonhole principle and something it proves",
+      "style": "explain"
+    },
+    {
+      "text": "Explain natural selection without once saying survival of the fittest",
+      "style": "explain"
+    },
+    {
+      "text": "Explain genetic drift and why population size matters",
+      "style": "explain"
+    },
+    {
+      "text": "Explain the Red Queen hypothesis",
+      "style": "explain"
+    },
+    {
+      "text": "Explain epigenetics without overclaiming",
+      "style": "explain"
+    },
+    {
+      "text": "Explain the central dogma and its exceptions",
+      "style": "explain"
+    },
+    {
+      "text": "Explain herd immunity with real numbers",
+      "style": "explain"
+    },
+    {
+      "text": "Explain a p-value to a journalist",
+      "style": "explain"
+    },
+    {
+      "text": "Explain statistical power and why studies fail",
+      "style": "explain"
+    },
+    {
+      "text": "Explain confounding with a case that fooled people",
+      "style": "explain"
+    },
+    {
+      "text": "Explain instrumental variables to somebody who distrusts statistics",
+      "style": "explain"
+    },
+    {
+      "text": "Explain the Kelly criterion and when it ruins you",
+      "style": "explain"
+    },
+    {
+      "text": "Peer review does not work",
+      "style": "hot-take"
+    },
+    {
+      "text": "Most published research findings are false",
+      "style": "hot-take"
+    },
+    {
+      "text": "The impact factor has corrupted science",
+      "style": "hot-take"
+    },
+    {
+      "text": "Preprints have already replaced journals",
+      "style": "hot-take"
+    },
+    {
+      "text": "Negative results deserve equal space",
+      "style": "hot-take"
+    },
+    {
+      "text": "Citation counts measure fashion, not quality",
+      "style": "hot-take"
+    },
+    {
+      "text": "Reproducibility should be a condition of publication",
+      "style": "hot-take"
+    },
+    {
+      "text": "University research is optimised for grants, not truth",
+      "style": "hot-take"
+    },
+    {
+      "text": "Simulation has replaced experiment without anyone admitting it",
+      "style": "hot-take"
+    },
+    {
+      "text": "Interdisciplinary work is punished by every incentive there is",
+      "style": "hot-take"
+    },
+    {
+      "text": "Textbooks are a decade behind and nobody minds",
+      "style": "hot-take"
+    },
+    {
+      "text": "Science journalism should quote the effect size or nothing",
+      "style": "hot-take"
+    },
+    {
+      "text": "Narrate the discovery of penicillin",
       "style": "story"
     },
     {
-      "text": "A time you were the only one in the room who did not follow",
+      "text": "Tell the story of the Michelson-Morley experiment",
       "style": "story"
     },
     {
-      "text": "The question you were too embarrassed to ask",
+      "text": "Narrate the race to the structure of DNA",
       "style": "story"
     },
     {
-      "text": "Recap a hard book badly",
+      "text": "Tell the story of Fermat's last theorem",
       "style": "story"
     },
     {
-      "text": "A time the numbers said what you did not want",
+      "text": "Narrate the Challenger O-ring decision",
       "style": "story"
     },
     {
-      "text": "The idea you cannot stop bringing up",
+      "text": "Tell the story of the Tacoma Narrows bridge",
       "style": "story"
     },
     {
-      "text": "Nobody is leading this",
-      "style": "just-talk",
-      "image": "/topics/nobody-is-leading-this.webp"
+      "text": "Narrate the eradication of smallpox",
+      "style": "story"
     },
     {
-      "text": "Almost nothing, arranged",
-      "style": "just-talk",
-      "image": "/topics/almost-nothing-arranged.webp"
+      "text": "Tell the story of the ozone hole and what fixed it",
+      "style": "story"
     },
     {
-      "text": "The curve it makes without trying",
-      "style": "just-talk",
-      "image": "/topics/the-curve-it-makes-without-trying.webp"
+      "text": "Narrate the discovery of the cosmic microwave background",
+      "style": "story"
     },
     {
-      "text": "Built overnight, to a plan",
-      "style": "explain",
-      "image": "/topics/built-overnight-to-a-plan.webp"
+      "text": "Tell the story of Semmelweis and handwashing",
+      "style": "story"
     },
     {
-      "text": "The same shape, everywhere",
-      "style": "explain",
-      "image": "/topics/the-same-shape-everywhere.webp"
+      "text": "Narrate the LIGO detection of gravitational waves",
+      "style": "story"
     },
     {
-      "text": "Life in the cracks",
-      "style": "just-talk",
-      "image": "/topics/life-in-the-cracks.webp"
+      "text": "Tell the story of the Human Genome Project race",
+      "style": "story"
     },
     {
-      "text": "The same window, a hundred times",
-      "style": "explain",
-      "image": "/topics/the-same-window-a-hundred-times.webp"
+      "text": "Narrate the fall of the Ptolemaic model",
+      "style": "story"
     },
     {
-      "text": "Patterns with nobody drawing them",
-      "style": "explain",
-      "image": "/topics/patterns-with-nobody-drawing-them.webp"
+      "text": "Tell the story of the Millennium Bridge wobble",
+      "style": "story"
     },
     {
-      "text": "Everything is connected, annoyingly",
-      "style": "hot-take",
-      "image": "/topics/everything-is-connected-annoyingly.webp"
+      "text": "Narrate the Lighthill report and the winter that followed",
+      "style": "story"
     },
     {
-      "text": "Symmetry, on purpose",
-      "style": "explain",
-      "image": "/topics/symmetry-on-purpose.webp"
-    },
-    {
-      "text": "Down, level by level",
-      "style": "just-talk",
-      "image": "/topics/down-level-by-level.webp"
-    },
-    {
-      "text": "One shape, endlessly repeated",
-      "style": "explain",
-      "image": "/topics/one-shape-endlessly-repeated.webp"
-    },
-    {
-      "text": "Roots that lost track",
-      "style": "just-talk",
-      "image": "/topics/roots-that-lost-track.webp"
-    },
-    {
-      "text": "What drying looks like",
-      "style": "explain",
-      "image": "/topics/what-drying-looks-like.webp"
-    },
-    {
-      "text": "Built to be reflected",
-      "style": "just-talk",
-      "image": "/topics/built-to-be-reflected.webp"
-    },
-    {
-      "text": "Order, hanging over us",
-      "style": "just-talk",
-      "image": "/topics/order-hanging-over-us.webp"
-    },
-    {
-      "text": "Halfway between water and stone",
-      "style": "explain",
-      "image": "/topics/halfway-between-water-and-stone.webp"
-    },
-    {
-      "text": "The spiral it was born with",
-      "style": "explain",
-      "image": "/topics/the-spiral-it-was-born-with.webp"
-    },
-    {
-      "text": "Built by nobody in charge",
-      "style": "explain",
-      "image": "/topics/built-by-nobody-in-charge.webp"
-    },
-    {
-      "text": "The copy, slightly wrong",
-      "style": "just-talk",
-      "image": "/topics/the-copy-slightly-wrong.webp"
-    },
-    {
-      "text": "The same joint, ten thousand times",
-      "style": "explain",
-      "image": "/topics/the-same-joint-ten-thousand-times.webp"
-    },
-    {
-      "text": "Hexagons, decided by nobody",
-      "style": "explain",
-      "image": "/topics/hexagons-decided-by-nobody.webp"
-    },
-    {
-      "text": "Every drop holding on",
-      "style": "just-talk",
-      "image": "/topics/every-drop-holding-on.webp"
-    },
-    {
-      "text": "The shape that holds itself up",
-      "style": "explain",
-      "image": "/topics/the-shape-that-holds-itself-up.webp"
-    },
-    {
-      "text": "Everything reaching for the same light",
-      "style": "just-talk",
-      "image": "/topics/everything-reaching-for-the-same-light.webp"
-    },
-    {
-      "text": "The writing left by something small",
-      "style": "just-talk",
-      "image": "/topics/the-writing-left-by-something-small.webp"
+      "text": "Tell the story of the Manhattan Project's first test",
+      "style": "story"
     }
   ]
 }
