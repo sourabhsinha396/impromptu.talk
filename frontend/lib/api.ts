@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 
+import { NO_GENRES, type Mine, type OwnedGenre, type SharedGenre } from "@/lib/owned";
 import type { Report } from "@/lib/report";
 import { EMPTY_HISTORY, type History, type Shared } from "@/lib/practice";
 
@@ -231,5 +232,45 @@ export async function refreshEntitlement(): Promise<void> {
     await backendFetch("/api/v1/payments/refresh", { method: "POST" });
   } catch {
     // A provider having a day is not a page that fails to render.
+  }
+}
+
+/* Somebody's own genres. The fetchers live here with the rest of the
+   server-only calls, because `lib/owned.ts` holds the shapes the editor
+   reads in the browser and may not import `next/headers`. */
+
+/** Every genre this account owns. Empty for a stranger and for a backend
+    that is not answering, so the page draws rather than fails. */
+export async function fetchMine(): Promise<Mine> {
+  try {
+    const response = await backendFetch("/api/v1/topics/mine");
+    if (!response.ok) return NO_GENRES;
+    return (await response.json()) as Mine;
+  } catch {
+    return NO_GENRES;
+  }
+}
+
+/** One of this account's genres, or null, which the page turns into a
+    404: a slug somebody else holds is not this account's business. */
+export async function fetchOwned(slug: string): Promise<OwnedGenre | null> {
+  try {
+    const response = await backendFetch(`/api/v1/topics/mine/${encodeURIComponent(slug)}`);
+    if (!response.ok) return null;
+    return (await response.json()) as OwnedGenre;
+  } catch {
+    return null;
+  }
+}
+
+/** The genre behind a share link, to anybody holding it. Null for a token
+    nobody holds, which includes one whose owner turned sharing off. */
+export async function fetchSharedGenre(token: string): Promise<SharedGenre | null> {
+  try {
+    const response = await backendFetch(`/api/v1/topics/shared/${encodeURIComponent(token)}`);
+    if (!response.ok) return null;
+    return (await response.json()) as SharedGenre;
+  } catch {
+    return null;
   }
 }

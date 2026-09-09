@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { SharedGenrePage } from "@/components/genres/shared-genre";
+import { fetchSharedGenre } from "@/lib/api";
 import { pageMetadata } from "@/lib/metadata";
-import { fetchSharedGenre } from "@/lib/owned";
 
 type Params = { params: Promise<{ token: string }> };
 

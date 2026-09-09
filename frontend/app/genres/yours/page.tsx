@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { YourGenres } from "@/components/genres/yours";
-import { currentUser } from "@/lib/api";
+import { currentUser, fetchMine } from "@/lib/api";
 import { pageMetadata } from "@/lib/metadata";
-import { fetchMine } from "@/lib/owned";
 
 /* noindex: a page about one account's own topics. The bank's genre pages
    are the crawlable surface. */

@@ -1,7 +1,8 @@
 import { operator } from "@/app/administration/page";
 import { StagedTool } from "@/components/administration/staged";
+import { fetchMine } from "@/lib/api";
 import { fetchBank } from "@/lib/bank";
-import { fetchMine, withOwn } from "@/lib/owned";
+import { withOwn } from "@/lib/owned";
 
 export const metadata = { title: "Staged topic", robots: { index: false, follow: false } };
 

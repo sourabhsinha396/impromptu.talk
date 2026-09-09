@@ -1,7 +1,7 @@
 import { Round } from "@/components/round/round";
-import { currentUser } from "@/lib/api";
+import { currentUser, fetchMine, fetchSharedGenre } from "@/lib/api";
 import { fetchBank } from "@/lib/bank";
-import { fetchMine, fetchSharedGenre, isOwnSlug, withOwn, withShared } from "@/lib/owned";
+import { isOwnSlug, withOwn, withShared } from "@/lib/owned";
 import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/site";
 import { jsonLd, webApplication } from "@/lib/structured-data";
 

@@ -2,10 +2,9 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
 import { Editor } from "@/components/genres/editor";
-import { currentUser } from "@/lib/api";
+import { currentUser, fetchMine, fetchOwned } from "@/lib/api";
 import { fetchBank } from "@/lib/bank";
 import { pageMetadata } from "@/lib/metadata";
-import { fetchMine, fetchOwned } from "@/lib/owned";
 
 type Params = { params: Promise<{ slug: string }> };
 
