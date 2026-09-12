@@ -1,11 +1,16 @@
 """The genres people write for themselves.
 
-Not a second pair of tables. An owned genre is a `Genre` row with an
-owner and its topics are `Topic` rows, which is what removes v0's
-`PackTopic`, its `pack:` slug namespace and the second row shape its
-picker had to know about. The seeder never reads past `owner IS NULL`,
-and that one clause is what lets the public bank and somebody's private
-list share a table.
+Not a second set of genre tables. An owned genre is a `Genre` row with an
+owner, which is what removes v0's `PackTopic`, its `pack:` slug namespace
+and the second row shape its picker had to know about. The seeder never
+reads past `owner IS NULL`, and that one clause is what lets the public
+bank and somebody's private list share a table.
+
+What hangs under it follows the genre's mode: prompts are `Topic` rows and
+passages are `TongueTwister` rows. Every function here that takes a genre
+and touches its rows branches once, at the top, on `is_read` - and that
+branch is the honest one, because the two kinds are pasted differently,
+capped differently and carry different columns.
 
 Making is Pro and reading is free, sharing included: a link somebody was
 sent has to keep working after a subscription lapses, or sharing is a
@@ -21,7 +26,7 @@ from ninja.errors import HttpError
 
 from apps.topics import bank, pictures
 from apps.topics.icons import valid_icon
-from apps.topics.models import Genre, Topic
+from apps.topics.models import Genre, TongueTwister, Topic
 
 # Genres per account, and topics in each. Not arbitrary: home ships the
 # whole bank inline so another topic costs no round trip, and these ride
@@ -58,6 +63,8 @@ PASSAGE_TOO_SHORT = (
     f"A passage needs at least {bank.MIN_PASSAGE} characters, which is about twenty seconds of reading aloud."
 )
 PASSAGE_TOO_LONG = f"A passage stops at {bank.MAX_PASSAGE} characters. Split it into two."
+NO_PASSAGE = "No such passage."
+READ_NO_PICTURES = "A warm-up is words on a scroller, so it takes no pictures."
 NAME_TAKEN = "You already have a genre with that name."
 NEEDS_NAME = "Give the genre a name."
 NEEDS_TEXT = "A topic needs some words."
@@ -147,8 +154,17 @@ def mine(user) -> list[Genre]:
     answering that here saves every caller a guard."""
     if user is None or not getattr(user, "is_authenticated", False):
         return []
-    live = Count("topics", filter=Q(topics__is_active=True))
-    return list(Genre.objects.filter(owner=user).annotate(topic_count=live).order_by("id"))
+    # Counted per table and added afterwards rather than in one annotation:
+    # two aggregates over two joins in one query multiply each other, and
+    # `distinct` is what keeps each honest. A genre holds one kind or the
+    # other, so one of the two is always zero.
+    topics = Count("topics", filter=Q(topics__is_active=True), distinct=True)
+    passages = Count("tongue_twisters", filter=Q(tongue_twisters__is_active=True), distinct=True)
+    genres = Genre.objects.filter(owner=user).annotate(_topics=topics, _passages=passages).order_by("id")
+    rows = list(genres)
+    for genre in rows:
+        genre.topic_count = genre._topics + genre._passages
+    return rows
 
 
 def by_slug(user, slug: str) -> Genre:
@@ -174,6 +190,16 @@ def by_token(token: str) -> Genre | None:
 
 def topics_of(genre: Genre) -> list[Topic]:
     return list(genre.topics.filter(is_active=True).order_by("sort_order", "id"))
+
+
+def passages_of(genre: Genre) -> list[TongueTwister]:
+    return list(genre.tongue_twisters.filter(is_active=True).order_by("sort_order", "id"))
+
+
+def rows_of(genre: Genre) -> list[Topic] | list[TongueTwister]:
+    """Whatever this genre holds, for a caller that only needs to count or
+    list them and does not care which kind they are."""
+    return passages_of(genre) if is_read(genre) else topics_of(genre)
 
 
 def valid_mode(mode: str | None) -> str:
@@ -218,7 +244,7 @@ def check_passage(line: str) -> str:
     return line
 
 
-def parse_passages(text: str) -> list[tuple[str, str]]:
+def parse_passages(text: str) -> list[str]:
     """A paste of passages, split on blank lines rather than on newlines.
 
     A prompt is a line and a passage is a paragraph, so the two cannot
@@ -227,12 +253,12 @@ def parse_passages(text: str) -> list[tuple[str, str]]:
     for being too short. A blank line between them is what somebody types
     anyway and what a document pasted in already has.
 
-    Nothing carries a style tail here. In a hundred-word paragraph a
-    trailing comma clause belongs to the sentence far more often than it is
-    a tag, and difficulty is two values picked once rather than typed fifty
-    times.
+    Nothing carries a style tail here, and nothing carries a level: in a
+    hundred-word paragraph a trailing comma clause belongs to the sentence
+    far more often than it is a tag, and difficulty is two values set on
+    the row afterwards rather than typed fifty times into a paste.
     """
-    out: list[tuple[str, str]] = []
+    out: list[str] = []
     seen: set[str] = set()
     for block in text.split("\n\n"):
         line = " ".join(block.split())
@@ -242,33 +268,58 @@ def parse_passages(text: str) -> list[tuple[str, str]]:
         key = line.lower()
         if key not in seen:
             seen.add(key)
-            out.append((line, DEFAULT_LEVEL))
+            out.append(line)
     return out
 
 
 @transaction.atomic
 def add_topics(genre: Genre, text: str, default_style: str = DEFAULT_STYLE) -> int:
-    """Import a paste. Returns how many lines landed.
+    """Import a paste. Returns how many rows landed.
 
     Over the ceiling refuses the whole paste rather than taking a prefix
     of it: silently keeping the first thirty of somebody's ninety is
     worse than saying no, because they cannot see which thirty.
     """
-    read = is_read(genre)
-    lines = parse_passages(text) if read else parse(text, default_style)
+    lines = parse(text, default_style)
     if not lines:
         return 0
     held = list(genre.topics.all())
     have = {topic.text.lower() for topic in held}
     fresh = [(line, style) for line, style in lines if line.lower() not in have]
-    if len(held) + len(fresh) > cap_for(genre):
-        raise HttpError(400, TOO_MANY_PASSAGES if read else TOO_MANY_TOPICS)
+    if len(held) + len(fresh) > MAX_TOPICS:
+        raise HttpError(400, TOO_MANY_TOPICS)
 
     slugs = {topic.slug for topic in held}
     order = max((topic.sort_order for topic in held), default=0)
     for line, style in fresh:
         order += 1
         Topic.objects.create(genre=genre, text=line, slug=_free_slug(line, slugs), style=style, sort_order=order)
+    return len(fresh)
+
+
+@transaction.atomic
+def add_passages(genre: Genre, text: str) -> int:
+    """The same import, into the other table. Every difference from the one
+    above is a difference between a prompt and a paragraph: the paste splits
+    on blank lines, the cap is fifty rather than two hundred, there is no
+    style to carry, and a fresh row is filed at the default level for the
+    owner to change per row."""
+    lines = parse_passages(text)
+    if not lines:
+        return 0
+    held = list(genre.tongue_twisters.all())
+    have = {passage.text.lower() for passage in held}
+    fresh = [line for line in lines if line.lower() not in have]
+    if len(held) + len(fresh) > MAX_PASSAGES:
+        raise HttpError(400, TOO_MANY_PASSAGES)
+
+    slugs = {passage.slug for passage in held}
+    order = max((passage.sort_order for passage in held), default=0)
+    for line in fresh:
+        order += 1
+        TongueTwister.objects.create(
+            genre=genre, text=line, slug=_free_slug(line, slugs), level=DEFAULT_LEVEL, sort_order=order
+        )
     return len(fresh)
 
 
@@ -287,36 +338,50 @@ def _free_slug(text: str, taken: set[str]) -> str:
 
 
 def edit_topic(genre: Genre, topic_id: int, text: str, style: str) -> Topic:
-    """Change one line and its style. Scoped to the genre, so an id from
-    somebody else's is a 404 rather than an edit."""
+    """Change one prompt and the style it is asked in. Scoped to the genre,
+    so an id from somebody else's is a 404 rather than an edit."""
     topic = genre.topics.filter(pk=topic_id).first()
     if topic is None:
         raise HttpError(404, NO_TOPIC)
-    read = is_read(genre)
-    line = " ".join(text.split())[: bank.MAX_PASSAGE if read else bank.MAX_TEXT]
+    line = " ".join(text.split())[: bank.MAX_TEXT]
     if not line:
         raise HttpError(400, NEEDS_TEXT)
-    if read:
-        check_passage(line)
     if genre.topics.filter(text=line).exclude(pk=topic.pk).exists():
         raise HttpError(400, ALREADY_HERE)
-    if read:
-        # A passage has no style, only a difficulty, and that is two values
-        # from a fixed set rather than anything somebody coins.
-        coined = style if style in bank.READ_STYLE_KEYS else DEFAULT_LEVEL
-    else:
-        coined = coin_style(style)
-        # A style the genre already holds wins on spelling, so typing "panel
-        # round" beside an existing "Panel round" joins it rather than
-        # sitting next to it looking like a mistake.
-        for held in own_styles(genre):
-            if held.lower() == coined.lower():
-                coined = held
-                break
+    coined = coin_style(style)
+    # A style the genre already holds wins on spelling, so typing "panel
+    # round" beside an existing "Panel round" joins it rather than
+    # sitting next to it looking like a mistake.
+    for held in own_styles(genre):
+        if held.lower() == coined.lower():
+            coined = held
+            break
     topic.text, topic.style = line, coined
     topic.slug = _free_slug(line, {row.slug for row in genre.topics.exclude(pk=topic.pk)})
     topic.save(update_fields=["text", "style", "slug"])
     return topic
+
+
+def edit_passage(genre: Genre, passage_id: int, text: str, level: str) -> TongueTwister:
+    """The same edit on the other table. A passage is checked against the
+    feature's bounds rather than truncated to a prompt's, and its level is
+    one of two fixed values rather than anything somebody coins: a level
+    nobody offered is filed at the default rather than refused, because the
+    words are what the owner came to change."""
+    passage = genre.tongue_twisters.filter(pk=passage_id).first()
+    if passage is None:
+        raise HttpError(404, NO_PASSAGE)
+    line = " ".join(text.split())[: bank.MAX_PASSAGE]
+    if not line:
+        raise HttpError(400, NEEDS_TEXT)
+    check_passage(line)
+    if genre.tongue_twisters.filter(text=line).exclude(pk=passage.pk).exists():
+        raise HttpError(400, ALREADY_HERE)
+    passage.text = line
+    passage.level = level if level in bank.LEVEL_KEYS else DEFAULT_LEVEL
+    passage.slug = _free_slug(line, {row.slug for row in genre.tongue_twisters.exclude(pk=passage.pk)})
+    passage.save(update_fields=["text", "level", "slug"])
+    return passage
 
 
 def own_styles(genre: Genre) -> list[str]:
@@ -334,6 +399,14 @@ def add_picture(genre: Genre, user_id: int, upload, text: str, style: str) -> To
     row pointing at a file that was never written is a topic that draws
     a broken image every time it is drawn.
     """
+    # A warm-up takes none: the words are the whole of what is on screen
+    # while they scroll, and `image` is a column on the other table. The
+    # editor never draws the control, and the route refused nothing until
+    # this line existed - a picture posted at a read genre landed as a
+    # 200-character `Topic` row under it, past the fifty-passage cap, and
+    # nothing anywhere drew it.
+    if is_read(genre):
+        raise HttpError(400, READ_NO_PICTURES)
     line = " ".join(text.split())[:bank.MAX_TEXT]
     if not line:
         raise HttpError(400, NEEDS_TEXT)
@@ -366,6 +439,9 @@ def remove_topic(genre: Genre, topic_id: int) -> None:
     unique text has to stay reserved, so there is nothing a tombstone
     would buy. The uploaded file goes with the row, or a cancelled
     subscriber's bucket grows forever with pictures nothing points at."""
+    if is_read(genre):
+        genre.tongue_twisters.filter(pk=topic_id).delete()
+        return
     for topic in genre.topics.filter(pk=topic_id):
         pictures.remove(topic.image)
     genre.topics.filter(pk=topic_id).delete()
@@ -374,7 +450,7 @@ def remove_topic(genre: Genre, topic_id: int) -> None:
 def delete(genre: Genre) -> None:
     """The genre's own uploads go with it, for the reason above. Only
     uploads: a built-in's picture is a file in the repository and is not
-    this genre's to delete."""
+    this genre's to delete. Its rows of either kind go by cascade."""
     for topic in genre.topics.exclude(image=""):
         pictures.remove(topic.image)
     genre.delete()

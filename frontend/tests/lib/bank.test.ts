@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { EMPTY_BANK } from "@/lib/bank";
+import { EMPTY_BANK, passagesByDifficulty, type ReadGenre } from "@/lib/bank";
 import { fetchBank } from "@/lib/api";
 
 describe("fetchBank", () => {
@@ -21,5 +21,34 @@ describe("fetchBank", () => {
     expect(await fetchBank()).toEqual(EMPTY_BANK);
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("nope", { status: 500 })));
     expect(await fetchBank()).toEqual(EMPTY_BANK);
+  });
+});
+
+describe("grouping a warm-up's passages", () => {
+  const genre: ReadGenre = {
+    slug: "tongue-twisters",
+    name: "Tongue twisters",
+    icon: "mic",
+    blurb: "Read these aloud.",
+    passages: [
+      { text: "A hard one", slug: "a-hard-one", level: "hard", words: 3 },
+      { text: "An easy one", slug: "an-easy-one", level: "easy", words: 3 },
+      { text: "Another hard one", slug: "another-hard-one", level: "hard", words: 3 },
+    ],
+  };
+
+  it("groups on the level, easy first, because the page leads with it", () => {
+    /* `level` is what the wire carries now. Grouped on `style`, which is
+       a prompt's axis and absent here, every group came back empty and
+       the page rendered its headings over nothing. */
+    expect(passagesByDifficulty(genre).map((group) => [group.label, group.passages.length])).toEqual([
+      ["Easy", 1],
+      ["Hard", 2],
+    ]);
+  });
+
+  it("leaves out a level the bank happens not to hold", () => {
+    const easyOnly = { ...genre, passages: genre.passages.filter((passage) => passage.level === "easy") };
+    expect(passagesByDifficulty(easyOnly).map((group) => group.label)).toEqual(["Easy"]);
   });
 });

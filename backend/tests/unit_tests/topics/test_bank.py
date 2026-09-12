@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 
 from apps.topics import bank
-from apps.topics.models import Genre, Topic
+from apps.topics.models import Genre, TongueTwister, Topic
 from apps.topics.services import seed_topics
 from tests.unit_tests import factories
 
@@ -31,7 +31,7 @@ def test_the_whole_bank_arrives_in_one_cacheable_answer(seeded, client):
     assert body["topics"][0] == {"text": "Low tide", "genre": "general", "style": "just-talk", "slug": "low-tide"}
     assert [s["key"] for s in body["styles"]] == ["surprise", "just-talk", "hot-take", "explain", "story"]
     # Every genre listed carries topics here except the warm-ups, whose
-    # passages are fetched when one is picked.
+    # passages are in the other table and are fetched when one is picked.
     speaking = {g["slug"] for g in body["genres"] if not g.get("mode")}
     assert {t["genre"] for t in body["topics"]} == speaking
 
@@ -93,6 +93,9 @@ def test_a_warm_up_is_listed_in_the_picker_but_its_passages_are_not_shipped_inli
     warm_ups = [g for g in body["genres"] if g.get("mode") == bank.MODE_READ]
     assert [g["slug"] for g in warm_ups] == [slug for slug, *_ in bank.WARM_UPS]
     assert not [t for t in body["topics"] if t["genre"] == "tongue-twisters"]
+    # Nothing filters them out any more: the passages are simply not rows
+    # this endpoint reads, which is one guard fewer to forget.
+    assert TongueTwister.objects.filter(genre__slug="tongue-twisters").exists()
 
 
 def test_a_warm_up_hands_over_its_passages_whole_and_counts_their_words(seeded, client):
@@ -105,8 +108,11 @@ def test_a_warm_up_hands_over_its_passages_whole_and_counts_their_words(seeded, 
     body = response.json()
     assert body["name"] == "Tongue twisters"
     passages = body["passages"]
-    assert len(passages) == len(bank.load("tongue-twisters", bank.MODE_READ))
-    assert {p["style"] for p in passages} == set(bank.READ_STYLE_KEYS)
+    assert len(passages) == len(bank.load_passages("tongue-twisters"))
+    assert {p["level"] for p in passages} == set(bank.LEVEL_KEYS)
+    # `level`, not `style`. One key on the wire that meant a speaking style
+    # on one row and a difficulty on the next is what this rename ends.
+    assert "style" not in passages[0]
     for passage in passages:
         assert passage["words"] == len(passage["text"].split())
         # Long enough to be worth scrolling: 40 seconds at 150 words a
@@ -119,3 +125,23 @@ def test_a_speak_genre_has_no_passages_endpoint(seeded, client):
     """Two ways to ask for the same rows is two things to keep agreeing."""
     assert client.get(f"{BANK}/general").status_code == 404
     assert client.get(f"{BANK}/not-a-genre").status_code == 404
+
+
+def test_a_passage_switched_off_in_the_admin_leaves_the_page(seeded, client):
+    """The kill switch reaches the new table, and it is the only way a
+    passage stops being served: the seeder never deletes one."""
+    gone = TongueTwister.objects.first()
+    TongueTwister.objects.filter(pk=gone.pk).update(is_active=False)
+    body = client.get(f"{BANK}/tongue-twisters").json()
+    assert gone.slug not in {p["slug"] for p in body["passages"]}
+    assert len(body["passages"]) == TongueTwister.objects.filter(is_active=True).count()
+
+
+def test_a_warm_up_somebody_owns_is_not_the_public_one(seeded, client):
+    """`/bank/{slug}` reads the built-in bank only. An owned warm-up with
+    the same slug is behind the cookie on `/mine`, and a stranger asking
+    for this URL must never be handed somebody's private writing."""
+    own = factories.GenreFactory(owner=factories.UserFactory(), slug="tongue-twisters", mode=bank.MODE_READ)
+    factories.TongueTwisterFactory(genre=own, text="Mine alone. " + "She sells seashells. " * 12, slug="mine-alone")
+    body = client.get(f"{BANK}/tongue-twisters").json()
+    assert "mine-alone" not in {p["slug"] for p in body["passages"]}

@@ -4,13 +4,22 @@ import { isOwnSlug, ownSlug } from "@/lib/genres";
 export { isOwnSlug, OWN_PREFIX, ownPath, ownSlug } from "@/lib/genres";
 
 /* The genres somebody wrote for themselves. One shape for the list page,
-   the editor and the picker, because on the backend they are one table
-   with the built-in bank: a genre with an owner, and topics under it. */
+   the editor and the picker, because on the backend a genre is one table
+   with the built-in bank: a genre with an owner, and its rows under it.
+
+   What hangs under it is two tables, and the wire says so: a prompt
+   carries `style`, a passage carries `level` and `words`, and each is
+   absent on the other kind rather than one key meaning both. */
 export type OwnedTopic = {
   id: number;
   text: string;
-  style: string;
-  style_label: string;
+  /** A prompt's: how it is asked, and what that is called on a page. */
+  style?: string;
+  style_label?: string;
+  /** A passage's: easy or hard, and the count the editor states beside
+      it, because the scroller's speed is in words a minute. */
+  level?: string;
+  words?: number;
   /** Ready for an `img` tag, or empty. The row holds a storage key and
       the backend resolves it, so the CDN's name is never in our data. */
   image?: string;
@@ -98,6 +107,11 @@ export function withOwn(bank: Bank, genres: OwnedGenre[]): Bank {
       text: topic.text,
       genre: ownSlug(genre.slug),
       style: topic.style,
+      /* Carried as its own key, so the warm-up page's difficulty filter
+         narrows somebody's own passages exactly as it narrows the
+         built-in ones. Read off `style`, an owned passage was invisible
+         to every filter the moment the two stopped sharing a column. */
+      level: topic.level,
       slug: "",
       image: topic.image,
     })),

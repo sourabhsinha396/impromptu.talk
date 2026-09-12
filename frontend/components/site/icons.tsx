@@ -181,8 +181,11 @@ export const STYLE_ICONS: Record<string, Glyph> = {
   story: BookOpen,
 };
 
-export function StyleIcon({ style, ...rest }: IconProps & { style: string }) {
-  const Glyph = icon(STYLE_ICONS[style] ?? Shuffle);
+export function StyleIcon({ style, ...rest }: IconProps & { style?: string }) {
+  /* Optional, because a passage carries no style at all: it is a prompt's
+     axis, and the shuffle glyph was already the answer for a style this
+     map does not hold. */
+  const Glyph = icon((style && STYLE_ICONS[style]) ?? Shuffle);
   return <Glyph {...rest} />;
 }
 

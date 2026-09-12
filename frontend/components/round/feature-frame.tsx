@@ -62,8 +62,19 @@ export function FeatureFrame({
 
   return (
     <main className="mx-auto w-full max-w-[860px] flex-1 px-[clamp(16px,4vw,32px)] pt-7 pb-16">
-      <div className="flex items-start justify-between gap-4">
-        <h1 className="font-display text-headline font-semibold">{feature.title}</h1>
+      {/* The heading shares the tool's column rather than the page's, and
+          it is the smaller display size. Both are this page answering a
+          question no other page has: everywhere else an h1 sits over
+          full-width left-aligned content, so `text-headline` at the page's
+          own left edge is right. Here the content below is a 620px card
+          centred in an 860px page, which left the title hanging on its own
+          margin with nothing beneath it to line up with, and drawn at
+          4rem it was also the loudest thing on a screen whose whole job is
+          the passage. One left edge down the page now, and the gear lands
+          on the card's right edge, where it reads as belonging to the tool
+          it opens rather than to the page. */}
+      <div className="mx-auto flex w-full max-w-[620px] items-center justify-between gap-4">
+        <h1 className="font-display text-topic-mid font-semibold">{feature.title}</h1>
         <button
           type="button"
           aria-label="Settings"
@@ -75,11 +86,23 @@ export function FeatureFrame({
           <SettingsIcon size={18} />
         </button>
       </div>
-      <p className="mt-3 max-w-[62ch] text-[17px] text-muted">{feature.lede}</p>
+      {/* Only when there is one. An empty lede still drew a paragraph, and
+          an empty paragraph is 40px of nothing between the title and the
+          tool on the one page that is supposed to be the tool. */}
+      {feature.lede && <p className="mx-auto mt-3 w-full max-w-[620px] text-[17px] text-muted">{feature.lede}</p>}
 
       {/* The tool sits in its own screenful so it is what you land on, and
-          the bank begins below it rather than competing with it. */}
-      <div className="flex min-h-[62vh] w-full flex-col items-center justify-center py-8 text-center">
+          the bank begins below it rather than competing with it. The
+          screenful alone did not do it: at an ordinary laptop height the
+          first heading of the bank sat just inside the fold, so the page
+          you land on read as a tool with a list already starting under it.
+          `pb-64` is what buys the clear screen - it is padding rather than
+          a taller `min-h` because the tool should stay near the top of the
+          fold rather than being centred in an ever-taller box.
+          `pt-8` rather than `py-8`, since two utilities setting the same
+          side is decided by stylesheet order and not by which is written
+          last here. */}
+      <div className="flex min-h-[62vh] w-full flex-col items-center justify-center pt-8 pb-64 text-center">
         {phase === "ready" && engine && <ReadyPhase digit={engine.leadIn} wpm={prefs.wpm} />}
         {phase === "done" && engine && topic && (
           <WarmUpDone
@@ -96,10 +119,14 @@ export function FeatureFrame({
         {phase === "topic" && topic && (
           <PassagePhase
             topic={topic}
-            /* The bank it actually came from, not the page's name: with
-               your own passages selected, a card headed "Tongue twisters"
-               would be naming the wrong list. */
-            genre={engine?.currentGenre?.name ?? feature.title}
+            /* The bank it actually came from, and empty when that is the
+               page's own: the heading two inches above already says
+               "Tongue twisters", and saying it twice on one screen is
+               noise rather than orientation. It reappears the moment it
+               has something to tell you - with your own passages selected,
+               a card headed "Tongue twisters" would be naming the wrong
+               list, and that is exactly when the label earns its place. */
+            genre={engine?.currentGenre?.name === feature.title ? "" : (engine?.currentGenre?.name ?? "")}
             words={words}
             wpm={prefs.wpm}
             seconds={seconds}

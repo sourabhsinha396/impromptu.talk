@@ -10,7 +10,7 @@ from apps.payments import services as payments
 from apps.topics import generate as generation
 from apps.topics import owned, pictures
 from apps.topics.bank import MODE_READ, STYLES
-from apps.topics.models import Genre, Topic
+from apps.topics.models import Genre, TongueTwister, Topic
 from apps.topics.schemas import (
     BankOut,
     GeneratedOut,
@@ -39,12 +39,12 @@ def bank(request, response: HttpResponse):
     this one cacheable.
     """
     genres = list(Genre.objects.filter(owner__isnull=True, is_active=True).order_by("sort_order", "id"))
-    # Every genre is listed, because the picker draws them all; only the
-    # speak ones carry their topics here. A read genre's passages arrive
-    # from `/bank/{slug}` when somebody picks it.
-    speaking = [g for g in genres if g.mode != MODE_READ]
+    # Every genre is listed, because the picker draws them all, and only
+    # prompts ride along. Nothing filters the warm-ups out: their passages
+    # are not in this table, and they arrive from `/bank/{slug}` when
+    # somebody picks one.
     topics = (
-        Topic.objects.filter(genre__in=speaking, is_active=True)
+        Topic.objects.filter(genre__in=genres, is_active=True)
         .select_related("genre")
         .order_by("genre__sort_order", "genre_id", "sort_order", "id")
     )
@@ -80,16 +80,14 @@ def read_genre(request, slug: str, response: HttpResponse):
     genre = Genre.objects.filter(owner__isnull=True, is_active=True, mode=MODE_READ, slug=slug).first()
     if genre is None:
         raise Http404
-    passages = Topic.objects.filter(genre=genre, is_active=True).order_by("sort_order", "id")
+    passages = TongueTwister.objects.filter(genre=genre, is_active=True).order_by("sort_order", "id")
     response["Cache-Control"] = "public, max-age=3600"
     return {
         "slug": genre.slug,
         "name": genre.name,
         "icon": genre.icon,
         "blurb": genre.blurb,
-        "passages": [
-            {"text": t.text, "slug": t.slug, "style": t.style, "words": len(t.text.split())} for t in passages
-        ],
+        "passages": [{"text": p.text, "slug": p.slug, "level": p.level, "words": p.words} for p in passages],
     }
 
 
@@ -103,20 +101,22 @@ def _writer(request) -> None:
 
 
 def _genre(genre) -> dict:
-    topics = _topics(genre)
+    read = owned.is_read(genre)
+    topics = _rows(genre)
     return {
         "slug": genre.slug,
         "name": genre.name,
         "icon": genre.icon,
-        "mode": MODE_READ if owned.is_read(genre) else None,
+        "mode": MODE_READ if read else None,
         "topic_count": len(topics),
         "max_topics": owned.cap_for(genre),
         "share_token": genre.share_token,
         "topics": topics,
-        "own_styles": owned.own_styles(genre),
+        "own_styles": [] if read else owned.own_styles(genre),
         # The editor needs to know before the press, so Share can say why
-        # it is off rather than refusing after somebody has pressed it.
-        "has_pictures": any(t["image"] for t in topics),
+        # it is off rather than refusing after somebody has pressed it. A
+        # warm-up never holds one: `image` is a column on the other table.
+        "has_pictures": not read and any(t["image"] for t in topics),
     }
 
 
@@ -133,6 +133,20 @@ def _topics(genre) -> list[dict]:
         }
         for t in owned.topics_of(genre)
     ]
+
+
+def _passages(genre) -> list[dict]:
+    """The other table's rows in the same envelope. The keys a prompt uses
+    are simply absent, which is what lets one editor draw both without
+    either kind carrying a field that means something else on the other."""
+    return [{"id": p.id, "text": p.text, "level": p.level, "words": p.words} for p in owned.passages_of(genre)]
+
+
+def _rows(genre) -> list[dict]:
+    """Whatever this genre holds. Every caller listing a genre's rows goes
+    through here rather than naming a table: the share route named one
+    directly and handed a stranger an empty page for a shared warm-up."""
+    return _passages(genre) if owned.is_read(genre) else _topics(genre)
 
 
 @api.get("/mine", auth=session_auth, response=MineOut)
@@ -180,7 +194,10 @@ def remove(request, slug: str):
 def paste(request, slug: str, payload: PasteIn):
     _writer(request)
     genre = owned.by_slug(request.user, slug)
-    owned.add_topics(genre, payload.text, payload.default_style)
+    if owned.is_read(genre):
+        owned.add_passages(genre, payload.text)
+    else:
+        owned.add_topics(genre, payload.text, payload.default_style)
     return _genre(genre)
 
 
@@ -206,7 +223,10 @@ def add_picture(request, slug: str, picture: File[UploadedFile], text: Form[str]
 def edit(request, slug: str, topic_id: int, payload: TopicIn):
     _writer(request)
     genre = owned.by_slug(request.user, slug)
-    owned.edit_topic(genre, topic_id, payload.text, payload.style)
+    if owned.is_read(genre):
+        owned.edit_passage(genre, topic_id, payload.text, payload.level)
+    else:
+        owned.edit_topic(genre, topic_id, payload.text, payload.style)
     return _genre(genre)
 
 
@@ -275,5 +295,5 @@ def shared(request, token: str, response: HttpResponse):
         "icon": genre.icon,
         "owner_name": genre.owner.name or "",
         "token": token,
-        "topics": _topics(genre),
+        "topics": _rows(genre),
     }

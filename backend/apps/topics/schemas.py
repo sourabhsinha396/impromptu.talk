@@ -58,11 +58,15 @@ class BankOut(Schema):
 class PassageOut(Schema):
     """One passage, and the count the page states before it starts: words
     are what the speed is in, so the reading time is arithmetic the browser
-    can do rather than a number to store."""
+    can do rather than a number to store.
+
+    `level` is easy or hard and is the only axis a passage has. It was
+    `style` while passages were `Topic` rows, which made one key on the
+    wire mean a speaking style on one row and a difficulty on the next."""
 
     text: str
     slug: str
-    style: str
+    level: str
     words: int
 
 
@@ -82,8 +86,17 @@ class OwnedTopicOut(Schema):
 
     id: int
     text: str
-    style: str
-    style_label: str
+    #: A prompt's two: how it is asked, and what that is called on a page.
+    #: Empty on a passage, which has neither.
+    style: str = ""
+    style_label: str = ""
+    #: A passage's one, easy or hard, and empty on a prompt. Two keys that
+    #: are each absent on the other kind, rather than one key that means
+    #: two things (docs/DECISIONS.md).
+    level: str = ""
+    #: The count the editor states beside a passage, for the same reason
+    #: the page does: the speed is in words a minute.
+    words: int = 0
     #: Ready for an `img` tag, or empty. The row holds a storage key and
     #: the route resolves it, so the CDN's name lives in settings only.
     image: str = ""
@@ -165,14 +178,24 @@ class PasteIn(Schema):
 
 
 class TopicIn(Schema):
-    """`text` is bounded here at the longest a *passage* may be, not the
-    longest a prompt may be. The edge cannot know which kind of genre this
-    row belongs to; `owned.edit_topic` can, and enforces the tighter rule
-    where it does. Bounded at 200 here, editing a passage was refused at
-    the edge with a bare 422 that named nothing."""
+    """One edit, of a row of either kind, so `text` is bounded here at the
+    longest a *passage* may be and not the longest a prompt may be: the
+    edge cannot know which kind of genre this row belongs to, and
+    `owned.edit_topic` can. Bounded at 200 here, editing a passage was
+    refused at the edge with a bare 422 that named nothing.
+
+    A prompt's `style` and a passage's `level` are two fields, and the
+    route reads whichever its genre's mode names. One field carrying both
+    is exactly what this change took out of the table."""
 
     text: str = Field(max_length=bank.MAX_PASSAGE)
     style: str = Field(default="", max_length=MAX_STYLE)
+    # Bounded like `style` rather than at the column's eight characters. A
+    # level nobody offers is filed at the default by `owned.edit_passage`,
+    # which is an answer; bounded at eight, the same value came back as a
+    # bare 422 naming nothing, which is the failure this schema already
+    # carries a paragraph about.
+    level: str = Field(default="", max_length=MAX_STYLE)
 
 
 class ShareOut(Schema):

@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { CopyField } from "@/components/account/copy-field";
 import { Button } from "@/components/site/button";
 import { CloseIcon, EditIcon, GenreIcon } from "@/components/site/icons";
-import type { Style } from "@/lib/bank";
+import { LEVELS, type Style } from "@/lib/bank";
 import { PICTURE_TOO_BIG, type OwnedGenre, type OwnedTopic } from "@/lib/owned";
 import { compress } from "@/lib/pictures";
 import { absolute } from "@/lib/site";
@@ -191,7 +191,18 @@ export function Editor({
             styles={styles}
             ownStyles={genre.own_styles}
             editable={isPro}
-            onSave={(text, style) => write("PATCH", `${base}/topics/${topic.id}`, { text, style })}
+            read={genre.mode === "read"}
+            /* The key follows the kind: a prompt edits its `style` and a
+               passage its `level`, which is the split the tables took.
+               Sent under one key, the other kind's vocabulary arrived
+               where nothing could read it. */
+            onSave={(text, value) =>
+              write(
+                "PATCH",
+                `${base}/topics/${topic.id}`,
+                genre.mode === "read" ? { text, level: value } : { text, style: value },
+              )
+            }
             onDelete={() => write("DELETE", `${base}/topics/${topic.id}`)}
           />
         ))}
@@ -521,6 +532,7 @@ function Row({
   styles,
   ownStyles,
   editable,
+  read = false,
   onSave,
   onDelete,
 }: {
@@ -528,15 +540,23 @@ function Row({
   styles: Style[];
   ownStyles: string[];
   editable: boolean;
-  onSave: (text: string, style: string) => Promise<boolean>;
+  /** A passage rather than a prompt: longer, and carrying a level from a
+      fixed pair where a prompt carries a style it may have coined. */
+  read?: boolean;
+  onSave: (text: string, value: string) => Promise<boolean>;
   onDelete: () => Promise<boolean>;
 }) {
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState(topic.text);
-  const [style, setStyle] = useState(topic.style);
+  const [style, setStyle] = useState(read ? (topic.level ?? "hard") : (topic.style ?? ""));
   const [naming, setNaming] = useState(false);
   const [busy, setBusy] = useState(false);
   const real = styles.filter((entry) => entry.key !== "surprise");
+  /* The one place this row would have cut somebody's work in half. The
+     input was capped at a prompt's 200 characters and a passage runs to
+     1200, so editing one truncated it in the field, with nothing said
+     and the shortened version saved on the next press. */
+  const limit = read ? 1200 : 200;
 
   async function save() {
     setBusy(true);
@@ -550,13 +570,41 @@ function Row({
   if (editing) {
     return (
       <li className="flex flex-wrap items-center gap-2.5 border-b border-line px-1 py-2.5">
-        <input
-          value={text}
-          maxLength={200}
-          onChange={(event) => setText(event.target.value)}
-          className="min-w-[160px] flex-1 rounded-[10px] border border-line-strong bg-card2 px-3 py-2.5 text-[15px] text-ink"
-        />
-        {naming ? (
+        {read ? (
+          /* A textarea, because a passage is a paragraph: a hundred words
+             in a one-line input is a hundred words nobody can read while
+             they are changing them. */
+          <textarea
+            value={text}
+            maxLength={limit}
+            rows={5}
+            onChange={(event) => setText(event.target.value)}
+            className="min-w-[160px] flex-1 rounded-[10px] border border-line-strong bg-card2 px-3 py-2.5 text-[15px] leading-[1.6] text-ink"
+          />
+        ) : (
+          <input
+            value={text}
+            maxLength={limit}
+            onChange={(event) => setText(event.target.value)}
+            className="min-w-[160px] flex-1 rounded-[10px] border border-line-strong bg-card2 px-3 py-2.5 text-[15px] text-ink"
+          />
+        )}
+        {read ? (
+          <select
+            value={style}
+            onChange={(event) => setStyle(event.target.value)}
+            className="rounded-[10px] border border-line-strong bg-card2 px-3 py-2.5 text-sm font-semibold text-ink"
+          >
+            {/* Two values and no way to coin a third: nobody chooses how to
+                say words they are reading verbatim, so a passage has one
+                axis and it is this one. */}
+            {LEVELS.map((level) => (
+              <option key={level.key} value={level.key}>
+                {level.label}
+              </option>
+            ))}
+          </select>
+        ) : naming ? (
           <input
             value={style}
             maxLength={24}
@@ -599,7 +647,7 @@ function Row({
             setEditing(false);
             setNaming(false);
             setText(topic.text);
-            setStyle(topic.style);
+            setStyle(read ? (topic.level ?? "hard") : (topic.style ?? ""));
           }}
         >
           Cancel
@@ -620,8 +668,11 @@ function Row({
         />
       )}
       <span className="min-w-0 flex-1 text-[15.5px]">{topic.text}</span>
-      <span className="rounded-full border border-line bg-card2 px-2.5 py-0.5 text-[11.5px] font-semibold text-muted">
-        {topic.style_label}
+      <span className="rounded-full border border-line bg-card2 px-2.5 py-0.5 text-[11.5px] font-semibold whitespace-nowrap text-muted capitalize">
+        {/* A passage says its level and how long it is, because the speed
+            the scroller runs at is in words a minute. A prompt says how it
+            is asked. */}
+        {read ? `${topic.level} · ${topic.words} words` : topic.style_label}
       </span>
       {editable && (
         <span className="flex gap-0.5">

@@ -24,8 +24,12 @@ const PASSAGE =
 const SHORTER = "Which witch watched which watch, and which watch did the watching witch wish she had washed today.";
 
 const passages: Topic[] = [
-  { text: PASSAGE, genre: "tongue-twisters", style: "hard", slug: "sixty-speaking-scripts" },
-  { text: SHORTER, genre: "tongue-twisters", style: "easy", slug: "which-wristwatch" },
+  /* `level`, not `style`. A passage carries the one axis it has, and a
+     prompt carries the other, which is the split the tables took
+     (docs/DECISIONS.md): read off `style`, every passage was invisible to
+     the difficulty filter and the bank looked empty at both levels. */
+  { text: PASSAGE, genre: "tongue-twisters", level: "hard", slug: "sixty-speaking-scripts" },
+  { text: SHORTER, genre: "tongue-twisters", level: "easy", slug: "which-wristwatch" },
 ];
 
 /* What `/tongue-twisters` hands the round: its own genre and its own
@@ -216,10 +220,10 @@ describe("a warm-up", () => {
     const { engine } = build();
     engine.setLevel("easy");
     engine.spin();
-    expect(engine.topic?.style).toBe("easy");
+    expect(engine.topic?.level).toBe("easy");
     engine.setLevel("hard");
     engine.spin();
-    expect(engine.topic?.style).toBe("hard");
+    expect(engine.topic?.level).toBe("hard");
     /* A level the bank does not hold is ignored rather than accepted. */
     engine.setLevel("impossible");
     expect(engine.prefs.level).toBe("hard");
@@ -308,5 +312,48 @@ describe("a word too long for the column", () => {
         expect(word.length * WIDEST_CHAR_EM * cqw).toBeLessThanOrEqual(100);
       }
     }
+  });
+});
+
+/* Home opening on a genre it cannot draw from, which is the one way a
+   remembered preference could leave the site with nothing to press. */
+describe("a warm-up somebody's browser remembers", () => {
+  /* Home's bank as it really is: the ten, and the warm-up listed beside
+     them because the picker has to draw it, carrying none of its passages
+     because those are fetched by the page that runs them. */
+  const withWarmUp: Bank = {
+    ...home,
+    genres: [...home.genres, { slug: "tongue-twisters", name: "Tongue twisters", icon: "mic", blurb: "", mode: "read" }],
+  };
+
+  function atHome(genre: string, bank: Bank = withWarmUp) {
+    const store = memory({ [PREFS_KEY]: JSON.stringify({ ...DEFAULT_PREFS, genre }) });
+    return new Engine({ bank, store, random: () => 0 });
+  }
+
+  it("is not what home opens on, because home holds none of its passages", () => {
+    /* The failure this settles. Existing in the bank was the whole of the
+       old check and a warm-up does exist there, so a pref naming one left
+       home showing the warm-up in its chip with a Spin button that did
+       nothing at all - correctly, since `pool` has no rows to hand back
+       and they never arrive on this page. Every visit, with no way out but
+       picking another genre nobody would guess was the problem. */
+    const engine = atHome("tongue-twisters");
+    expect(engine.prefs.genre).toBe("general");
+    engine.spin();
+    engine.settle();
+    expect(engine.topic).not.toBeNull();
+  });
+
+  it("still leaves an ordinary remembered genre exactly where it was", () => {
+    expect(atHome("general").prefs.genre).toBe("general");
+  });
+
+  it("never falls back onto one either, whatever order the bank arrives in", () => {
+    /* The fallback reads the first genre in the bank, so a bank that ever
+       sorted a warm-up first would have landed straight back in the same
+       dead end. */
+    const warmUpFirst: Bank = { ...withWarmUp, genres: [...withWarmUp.genres].reverse() };
+    expect(atHome("gone-from-the-bank", warmUpFirst).prefs.genre).toBe("general");
   });
 });

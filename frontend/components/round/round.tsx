@@ -178,13 +178,30 @@ export function Round({
      idempotent, and the one open microphone is reused. */
   const phase = engine?.phase;
   const mic = engine?.prefs.mic ?? "ask";
+  /* A warm-up never opens the microphone, and this is the line that
+     enforces it. Nothing about a warm-up is heard: there is no transcript,
+     no report and nothing sent, which is why it costs nothing to run
+     (docs/DECISIONS.md). The rule met one case it did not survive - a
+     feature page opens *in* the topic phase rather than reaching it from a
+     press, so for anybody who had granted the microphone in an ordinary
+     round, loading /tongue-twisters opened it on arrival and held it for
+     the visit. The browser said so out loud with a recording dot on the
+     tab while the site quietly recorded nothing at all, which is the worst
+     of both: the cost of listening with none of the use. */
+  const reading = engine?.reading ?? false;
   useEffect(() => {
     const ears = listener.current;
     if (!ears || mic !== "on") return;
+    if (reading) {
+      // Stopped rather than merely not started: a round that walked into a
+      // warm-up with one already open must close it on the way in.
+      void ears.stop();
+      return;
+    }
     if (phase === "topic") void ears.start();
     else if (phase === "speak") ears.mark();
     else if (phase === "idle") void ears.stop();
-  }, [phase, mic]);
+  }, [phase, mic, reading]);
 
   /* Pausing stops the clock, so it stops the microphone with it. Camera
      mode lets somebody pause mid-round with the space bar, and a
@@ -257,8 +274,9 @@ export function Round({
 
   /* The microphone the meter and the check draw from, and null whenever
      the round is not listening: under "ask" and "off" there is nothing to
-     say about a microphone nobody switched on. */
-  const listening = mic === "on" ? listener.current : null;
+     say about a microphone nobody switched on, and a warm-up never listens
+     at all. */
+  const listening = mic === "on" && !reading ? listener.current : null;
 
   const genre = engine?.currentGenre ?? bank.genres[0] ?? { slug: "general", name: "General", icon: "dices", blurb: "" };
   const prefs = engine?.prefs ?? { ...DEFAULT_PREFS, genre: genre.slug };

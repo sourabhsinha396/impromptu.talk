@@ -34,6 +34,9 @@ afterEach(() => {
   vi.unstubAllGlobals();
   vi.useRealTimers();
   document.body.classList.remove("filming");
+  /* Put back, or the test above that relies on jsdom having no
+     `getUserMedia` at all passes or fails on the order it ran in. */
+  delete (navigator as { mediaDevices?: unknown }).mediaDevices;
 });
 
 describe("the round on the page", () => {
@@ -138,5 +141,55 @@ describe("the round on the page", () => {
     expect(thinkLabel(0)).toBe("Start talking");
     expect(lengthWords(90)).toBe("1 min 30s");
     expect(lengthWords(0)).toBe("None");
+  });
+});
+
+/* The microphone and the warm-up. Nothing about a warm-up is heard: no
+   transcript, no report, nothing sent, which is the whole reason it costs
+   nothing to run (docs/DECISIONS.md). */
+describe("what a warm-up does to the microphone", () => {
+  const PASSAGE =
+    "She sells seashells by the seashore, and the shells she sells are surely seashells, so if she sells " +
+    "shells on the seashore the shells she sells are seashore shells.";
+
+  const warmUp: Bank = {
+    genres: [{ slug: "tongue-twisters", name: "Tongue twisters", icon: "mic", blurb: "", mode: "read" }],
+    topics: [{ text: PASSAGE, genre: "tongue-twisters", level: "easy", slug: "sixty-shells" }],
+    styles: [],
+  };
+
+  function granted() {
+    const asked = vi.fn().mockRejectedValue(new Error("denied"));
+    Object.defineProperty(navigator, "mediaDevices", { value: { getUserMedia: asked }, configurable: true });
+    localStorage.setItem("yapholic.prefs", JSON.stringify({ mic: "on" }));
+    return asked;
+  }
+
+  it("never opens it, even for somebody who granted it in an ordinary round", async () => {
+    /* The bug. A feature page opens *in* the topic phase rather than
+       reaching it from a press, and the effect that opens the microphone
+       fires on that phase - so loading /tongue-twisters opened it on
+       arrival and held it for the visit, with the browser showing a
+       recording dot on the tab while the site recorded nothing at all. */
+    const asked = granted();
+    render(
+      <Round
+        bank={warmUp}
+        signedIn={false}
+        feature={{ slug: "tongue-twisters", title: "Tongue twisters", lede: "" }}
+        initialTopic={warmUp.topics[0]}
+      />,
+    );
+    await screen.findByText(new RegExp(PASSAGE.slice(0, 30)));
+    expect(asked).not.toHaveBeenCalled();
+  });
+
+  it("still opens it for an ordinary round, which is what makes the line above a warm-up rule", async () => {
+    const asked = granted();
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    render(<Round bank={bank} signedIn={false} />);
+    await user.click(await screen.findByRole("button", { name: "Spin" }));
+    await screen.findByText(/Low tide|Queues|Tipping should end/);
+    expect(asked).toHaveBeenCalled();
   });
 });

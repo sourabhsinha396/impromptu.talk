@@ -59,3 +59,34 @@ describe("folding somebody's own genres into the bank", () => {
     expect(bank.genres[1].blurb).toBe("Shared by Ada");
   });
 });
+
+const MY_WARM_UP: OwnedGenre = {
+  slug: "my-twisters",
+  name: "My twisters",
+  icon: "mic",
+  topic_count: 2,
+  share_token: null,
+  mode: "read",
+  topics: [
+    { id: 11, text: "A passage of mine", level: "easy", words: 4 },
+    { id: 12, text: "A harder one of mine", level: "hard", words: 5 },
+  ],
+  own_styles: [],
+};
+
+describe("folding somebody's own warm-up in", () => {
+  it("carries the level through, so the difficulty setting can narrow their passages too", () => {
+    /* A passage carries `level` where a prompt carries `style`, which is
+       the split the tables took. Read off `style`, an owned passage was
+       invisible to the warm-up's difficulty filter the moment the two
+       stopped sharing a column, and the page fell back to the whole bank
+       without saying so. */
+    const folded = withOwn(BANK, [MY_WARM_UP]).topics.filter((topic) => topic.genre === "yours:my-twisters");
+    expect(folded.map((topic) => topic.level)).toEqual(["easy", "hard"]);
+    expect(folded.every((topic) => topic.style === undefined)).toBe(true);
+  });
+
+  it("keeps it marked as a warm-up, since home must not offer it as a genre", () => {
+    expect(withOwn(BANK, [MY_WARM_UP]).genres[1].mode).toBe("read");
+  });
+});

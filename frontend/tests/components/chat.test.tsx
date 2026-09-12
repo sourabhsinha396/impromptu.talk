@@ -33,8 +33,11 @@ describe("Chat", () => {
   /* The front door is one button and nothing else; a bubble in its corner
      is exactly the kind of exclusion a later change removes without
      noticing. */
-  it("never loads on the home page", () => {
-    route.pathname = "/";
+  it.each(["/", "/tongue-twisters"])("never loads on %s, because that page is the tool", (pathname) => {
+    /* A feature page opens on a passage with no landing screen, so it is
+       the tool in exactly the way home is, and the argument against a
+       bubble is the same one. */
+    route.pathname = pathname;
     render(<Chat websiteId={WEBSITE_ID} />);
     expect(window.$crisp).toBeUndefined();
     expect(document.querySelector(`script[src="${CRISP_SCRIPT}"]`)).toBeNull();

@@ -14,7 +14,7 @@ from django.test import Client
 from PIL import Image
 
 from apps.topics import owned
-from apps.topics.models import Topic
+from apps.topics.models import Genre, Topic
 from tests.unit_tests import factories
 
 MINE = "/api/v1/topics/mine"
@@ -157,3 +157,20 @@ def test_uploading_is_pro_only_like_every_other_write(user, genre):
     response = upload(lapsed, genre, photo())
     assert response.status_code == 403
     assert response.json()["detail"] == owned.PRO_ONLY
+
+
+def test_a_warm_up_takes_no_picture_whatever_this_route_is_asked(pro):
+    """The hole the shared table left open, and the reason a passage has a
+    table of its own. The editor never drew the control here, and the route
+    refused nothing: a picture posted at a read genre landed as a
+    200-character `Topic` row underneath it, counted against the prompt cap
+    of two hundred rather than the fifty passages that genre is held to,
+    and nothing anywhere drew it. `image` is a column on the other table
+    now, so the refusal is the route saying what the schema already says."""
+    pro.post(MINE, {"name": "My twisters", "icon": "mic", "mode": "read"}, content_type=JSON)
+    response = upload(pro, "my-twisters", photo(), text="A picture over a passage")
+    assert response.status_code == 400
+    assert response.json()["detail"] == owned.READ_NO_PICTURES
+    genre = Genre.objects.get(slug="my-twisters")
+    assert not genre.topics.exists()
+    assert not genre.tongue_twisters.exists()

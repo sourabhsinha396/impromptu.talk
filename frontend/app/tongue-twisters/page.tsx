@@ -48,13 +48,14 @@ export default async function Page({ searchParams }: Search) {
 
   /* One genre and its passages, which is the whole bank this page needs.
      No styles: nobody chooses how to say words they are reading verbatim,
-     and the difficulty that does apply rides in `style` on the rows. */
+     and the one axis a passage does have rides in `level`, its own key on
+     its own column on its own table (docs/DECISIONS.md). */
   const own: Bank = {
     genres: [{ slug: genre.slug, name: genre.name, icon: genre.icon, blurb: genre.blurb, mode: "read" }],
     topics: genre.passages.map((passage) => ({
       text: passage.text,
       genre: genre.slug,
-      style: passage.style,
+      level: passage.level,
       slug: passage.slug,
     })),
     styles: [],

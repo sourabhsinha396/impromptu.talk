@@ -72,7 +72,7 @@ Removing a built-in genre from the seeder's list deletes its row once its topics
 
 Surprise me (the default, and not a style: it means no filter), Just talk, Hot take, Explain it simply, Tell a story.
 
-Cut from twelve on 5 September 2026. The four are four modes - open, argue, teach, tell - and that is the test a fifth has to pass. Anything naming an occasion (an interview, an exam, a club) is a context, and a context is a genre or somebody's own genre. The topics that carried a removed style were retagged, never deleted. **Every built-in style appears in every built-in speak genre**, or it is a chip that silently does nothing; the seeder test holds that. A warm-up has no styles at all, because nobody chooses how to say words they are reading verbatim; its `style` column carries the passage difficulty instead.
+Cut from twelve on 5 September 2026. The four are four modes - open, argue, teach, tell - and that is the test a fifth has to pass. Anything naming an occasion (an interview, an exam, a club) is a context, and a context is a genre or somebody's own genre. The topics that carried a removed style were retagged, never deleted. **Every built-in style appears in every built-in speak genre**, or it is a chip that silently does nothing; the seeder test holds that. A warm-up has no styles at all, because nobody chooses how to say words they are reading verbatim; its passages are `TongueTwister` rows in a table of their own, carrying a `level` and nothing else.
 
 A coined style exists only under an owned genre (§8).
 

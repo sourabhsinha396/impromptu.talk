@@ -119,7 +119,21 @@ export class Engine {
        time somebody opened the page, which is the leak the lock exists to
        stop. Locked, these two are left exactly as they were found. */
     if (!this.lockedGenre) {
-      if (!this.genre(this.prefs.genre)) this.prefs.genre = this.bank.genres[0]?.slug ?? DEFAULT_PREFS.genre;
+      /* A remembered warm-up is rewritten here as though it were missing,
+         because at home it may as well be. Its passages are deliberately
+         not in home's bank - they are fetched on the page that runs them -
+         so `pool` correctly hands back nothing and Spin waits for rows
+         that will never arrive. Existing in the bank was the whole of the
+         old check, and a warm-up does exist there: the picker lists it. So
+         a pref naming one left somebody with a home screen whose only
+         button did nothing, on every visit, with no way back except
+         picking another genre they had no reason to think was the
+         problem. The fallback skips warm-ups too, or a bank that ever
+         sorted one first would land straight back here. */
+      const remembered = this.genre(this.prefs.genre);
+      if (!remembered || isRead(remembered)) {
+        this.prefs.genre = this.bank.genres.find((genre) => !isRead(genre))?.slug ?? DEFAULT_PREFS.genre;
+      }
       this.prefs.style = settledStyle(this.bank, this.prefs);
     }
     /* Opened on a topic rather than on idle, which is what lets a feature
@@ -297,7 +311,14 @@ export class Engine {
 
   private showTopic(): void {
     this.phase = "topic";
-    this.track("topic_shown", { topic_style: this.topic?.style, picture: Boolean(this.topic?.image) });
+    /* One key per axis, as the rows carry them: a passage has no style and
+       reporting its level as one made two vocabularies share a column in
+       the analytics after they had stopped sharing one in the table. */
+    this.track("topic_shown", {
+      topic_style: this.topic?.style,
+      topic_level: this.topic?.level,
+      picture: Boolean(this.topic?.image),
+    });
     this.changed();
   }
 

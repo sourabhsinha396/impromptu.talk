@@ -1,10 +1,15 @@
-"""Genres and topics: the built-in bank and every genre a person makes.
+"""Genres and what hangs under them: the built-in bank and everything a
+person writes for themselves.
 
-One pair of tables for both. A built-in genre has no owner; an owned one
-(v0's pack) is the same row with an owner set, and its topics are the same
-rows under it. The seeder reads only rows without an owner and never
-past them, which is the one rule that lets the public bank and private
-genres share a table.
+One `Genre` table for both, built-in and owned. A built-in genre has no
+owner; an owned one (v0's pack) is the same row with an owner set. The
+seeder reads only rows without an owner and never past them, which is the
+one rule that lets the public bank and private genres share a table.
+
+Two kinds of row hang underneath, and they are two tables because they are
+two things: a `Topic` is a prompt you are asked to talk about, a
+`TongueTwister` is a paragraph you read aloud verbatim. `Genre.mode` says
+which kind a genre holds, and it is the only place the two meet.
 """
 
 from django.conf import settings
@@ -60,12 +65,10 @@ class Topic(models.Model):
     """One prompt: the thing a person is actually asked to talk about.
 
     `style` is how they are asked to talk about it: a built-in key on a
-    built-in genre, a built-in key or the words typed on an owned one. On a
-    read genre it holds the passage's difficulty instead, which is the only
-    axis a passage has, since nobody chooses how to say words they are
-    reading verbatim. Not
-    a foreign key, because the built-ins are a fixed editorial vocabulary
-    and a coined one is somebody's own words. `is_active` is the kill
+    built-in genre, a built-in key or the words typed on an owned one. One
+    vocabulary, because a passage's difficulty lives on `TongueTwister`
+    rather than in here. Not a foreign key, because the built-ins are a
+    fixed editorial vocabulary and a coined one is somebody's own words. `is_active` is the kill
     switch: a dud is switched off, never deleted, so re-adding it later
     cannot trip the unique constraint on text. Text and slug are unique
     per genre, not globally, because two owners may both write the same
@@ -73,12 +76,12 @@ class Topic(models.Model):
     """
 
     genre = models.ForeignKey(Genre, on_delete=models.CASCADE, related_name="topics")
-    # Wide enough for a read genre's passage (100 to 120 words), not just a
-    # speak genre's sentence. The 200-character product rule for a prompt is
-    # still enforced, in `bank.load` and in `owned`, where it belongs: it is
-    # editorial policy about prompts, and a column that enforced it here
-    # would instead have truncated every passage mid-sentence on save.
-    text = models.CharField(max_length=1200)
+    # The prompt ceiling, and back at 200 now that passages have a table of
+    # their own. It was widened to 1200 to hold them, and the width was the
+    # bug: `bank.load`, the owned paste and the edit schema each had to
+    # re-state the real rule, and each was found missing it separately. A
+    # prompt is a sentence, and the column says so again.
+    text = models.CharField(max_length=200)
     slug = models.SlugField(max_length=220)
     style = models.CharField(max_length=24, db_index=True)
     is_active = models.BooleanField(default=True)
@@ -103,6 +106,59 @@ class Topic(models.Model):
 
     def __str__(self) -> str:
         return self.text
+
+
+class TongueTwister(models.Model):
+    """One passage: a paragraph somebody reads aloud off the scroller.
+
+    A table of its own rather than a `Topic` under a genre with a mode,
+    which is what the first cut did (docs/DECISIONS.md). A prompt is a
+    sentence you are asked to talk about and a passage is a paragraph you
+    read verbatim, and every column the two shared had to mean two things
+    to hold both: `style` was a speaking style on one row and a difficulty
+    on the next, `text` carried one width for two different ceilings, and
+    `image` was dead on every passage. The prompt ceiling leaked into three
+    places while they shared a column, each one found as its own bug.
+
+    The genre above stays shared, because none of that is doubled there: an
+    owner, a share token, the ten-genre cap and the picker mean the same
+    thing whichever kind of row hangs underneath.
+    """
+
+    genre = models.ForeignKey(Genre, on_delete=models.CASCADE, related_name="tongue_twisters")
+    # A paragraph: 100 to 120 words, which is 40 to 60 seconds of reading
+    # aloud at the speeds the scroller offers. `bank.MIN_PASSAGE` and
+    # `bank.MAX_PASSAGE` are the real bounds and this is the guard behind
+    # them, nowhere near a prompt's 200.
+    text = models.CharField(max_length=1200)
+    # Named in the file rather than slugified from the text: slugifying 700
+    # characters gives 220 characters of the first sentence, which is no
+    # use in a link somebody is meant to paste. Written once, because
+    # `/tongue-twisters?topic=` resolves on it.
+    slug = models.SlugField(max_length=220)
+    # Difficulty, and the whole of what a passage carries: nobody chooses
+    # how to say words they are reading verbatim. Two values from a fixed
+    # set (`bank.LEVEL_KEYS`), never coined, which is the other half of why
+    # this is not `Topic.style`. Speed is what actually makes a passage
+    # hard; this is a label on the writing.
+    level = models.CharField(max_length=8, default="hard", db_index=True)
+    is_active = models.BooleanField(default=True)
+    sort_order = models.IntegerField(default=100)
+
+    class Meta:
+        db_table = "tongue_twisters"
+        ordering = ["sort_order", "id"]
+        constraints = [
+            models.UniqueConstraint(fields=["genre", "text"], name="tongue_twisters_genre_text"),
+            models.UniqueConstraint(fields=["genre", "slug"], name="tongue_twisters_genre_slug"),
+        ]
+
+    @property
+    def words(self) -> int:
+        return len(self.text.split())
+
+    def __str__(self) -> str:
+        return self.text[:60]
 
 
 class Generation(models.Model):

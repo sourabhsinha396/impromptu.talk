@@ -1,10 +1,13 @@
 """The genres people write for themselves: the paste, the caps, the
 styles they coin and the link they share.
 
-One pair of tables holds these and the built-in bank, so the test that
+One `Genre` table holds these and the built-in bank, so the test that
 matters most is not in this file: `test_seed.py` pins that the seeder
 never reads past `owner IS NULL`. What is here is everything the editor
 can do, and what a stranger holding a link may see.
+
+Two tables hang under that genre, and `TestOwnWarmUps` at the foot is
+where the difference between them is pinned.
 """
 
 import pytest
@@ -12,7 +15,7 @@ from django.test import Client
 
 from apps.payments.models import Purchase
 from apps.topics import bank, owned
-from apps.topics.models import Genre, Topic
+from apps.topics.models import Genre, TongueTwister, Topic
 from tests.unit_tests import factories
 
 MINE = "/api/v1/topics/mine"
@@ -299,18 +302,17 @@ SECOND = (
 class TestOwnWarmUps:
     """A warm-up somebody writes: the Pro half of tongue twisters.
 
-    The same table and the same routes as any owned genre, with one column
-    saying which round it runs. What differs is the parser, because a
-    prompt is a line and a passage is a paragraph, and the cap, because
-    fifty passages is already more text than two hundred prompts.
+    The same genre row and the same routes as any owned genre, with one
+    column saying which round it runs - and its passages in a table of
+    their own, because a prompt is a line with a style and a passage is a
+    paragraph with a level, and the caps are not the same number either.
     """
 
     def make_read(self, client, name="My twisters"):
-        return client.post(
-            "/api/v1/topics/mine",
-            {"name": name, "icon": "mic", "mode": "read"},
-            content_type="application/json",
-        )
+        return client.post(MINE, {"name": name, "icon": "mic", "mode": "read"}, content_type=JSON)
+
+    def add(self, client, text, slug="my-twisters"):
+        return client.post(f"{MINE}/{slug}/topics", {"text": text}, content_type=JSON)
 
     def test_a_warm_up_says_which_round_it_runs_and_holds_fewer_rows(self, pro):
         body = self.make_read(pro).json()
@@ -322,67 +324,140 @@ class TestOwnWarmUps:
         becomes one row per sentence, and every one of those is then
         refused for being too short to scroll."""
         self.make_read(pro)
-        paste = f"{PASSAGE}\n\n{SECOND}\n"
-        body = pro.post(
-            "/api/v1/topics/mine/my-twisters/topics",
-            {"text": paste},
-            content_type="application/json",
-        ).json()
+        body = self.add(pro, PASSAGE + "\n\n" + SECOND + "\n").json()
         assert body["topic_count"] == 2
         assert [t["text"] for t in body["topics"]] == [PASSAGE, SECOND]
 
     def test_a_line_too_short_to_scroll_is_refused_with_the_reason(self, pro):
         self.make_read(pro)
-        answer = pro.post(
-            "/api/v1/topics/mine/my-twisters/topics",
-            {"text": "She sells seashells"},
-            content_type="application/json",
+        answer = self.add(pro, "She sells seashells")
+        assert answer.status_code == 400
+        assert "at least" in answer.json()["detail"]
+
+    def test_a_passage_lands_in_its_own_table_and_never_among_the_prompts(self, pro):
+        """The split itself, from the editor's end. A warm-up holds no
+        `Topic` rows at all, so nothing that means "prompts" has to
+        remember to exclude them."""
+        self.make_read(pro)
+        self.add(pro, PASSAGE)
+        genre = Genre.objects.get(slug="my-twisters")
+        assert genre.tongue_twisters.count() == 1
+        assert not genre.topics.exists()
+        assert genre.tongue_twisters.first().text == PASSAGE
+
+    def test_a_passage_keeps_its_whole_length_where_a_prompt_would_be_cut(self, pro):
+        """A prompt is capped at 200 characters, in the column now as well
+        as in the code. Sharing that ceiling would have cut every passage
+        mid-sentence and saved the fragment without a word."""
+        self.make_read(pro)
+        self.add(pro, PASSAGE)
+        held = Genre.objects.get(slug="my-twisters").tongue_twisters.first()
+        assert len(PASSAGE) > bank.MAX_TEXT
+        assert held.text == PASSAGE
+
+    def test_a_passage_carries_a_level_and_never_a_coined_style(self, pro):
+        """Two fields on the wire, each absent on the other kind, rather
+        than one field meaning a style here and a difficulty there."""
+        self.make_read(pro)
+        row = self.add(pro, PASSAGE).json()["topics"][0]
+        assert row["level"] == owned.DEFAULT_LEVEL
+        assert row["style"] == "" and row["style_label"] == ""
+        assert row["words"] == len(PASSAGE.split())
+        edited = pro.patch(
+            f"{MINE}/my-twisters/topics/{row['id']}",
+            {"text": PASSAGE, "level": "easy"},
+            content_type=JSON,
+        ).json()
+        assert edited["topics"][0]["level"] == "easy"
+        # Anything outside the two falls back rather than coining itself:
+        # the words are what the owner came to change, not the label.
+        coined = pro.patch(
+            f"{MINE}/my-twisters/topics/{row['id']}",
+            {"text": PASSAGE, "level": "IELTS style"},
+            content_type=JSON,
+        ).json()
+        assert coined["topics"][0]["level"] == owned.DEFAULT_LEVEL
+
+    def test_an_edited_passage_is_held_to_the_passage_bounds(self, pro):
+        """The edit route reads the genre's mode to pick its rule, so a
+        passage cut down to a sentence is refused where the same words
+        would be a perfectly good prompt in a genre of prompts."""
+        self.make_read(pro)
+        row = self.add(pro, PASSAGE).json()["topics"][0]
+        answer = pro.patch(
+            f"{MINE}/my-twisters/topics/{row['id']}",
+            {"text": "Too short to scroll", "level": "easy"},
+            content_type=JSON,
         )
         assert answer.status_code == 400
         assert "at least" in answer.json()["detail"]
 
-    def test_a_passage_keeps_its_whole_length_where_a_prompt_would_be_cut(self, pro):
-        """A prompt is capped at 200 characters and the paste truncates to
-        it. Sharing that ceiling would have cut every passage mid-sentence
-        and saved the fragment without a word."""
+    def test_a_warm_up_is_capped_at_fifty_passages_and_the_paste_is_refused_whole(self, pro):
+        """Fifty, not two hundred: a passage is a hundred words, and the
+        page it is practised on server-renders its own bank. Over the line
+        the whole paste is refused, because somebody cannot see which of
+        their ninety would have been kept."""
         self.make_read(pro)
-        pro.post(
-            "/api/v1/topics/mine/my-twisters/topics",
-            {"text": PASSAGE},
-            content_type="application/json",
-        )
-        held = Genre.objects.get(slug="my-twisters").topics.first()
-        assert len(PASSAGE) > bank.MAX_TEXT
-        assert held.text == PASSAGE
+        genre = Genre.objects.get(slug="my-twisters")
+        factories.TongueTwisterFactory.create_batch(owned.MAX_PASSAGES, genre=genre)
+        answer = self.add(pro, PASSAGE)
+        assert answer.status_code == 400
+        assert str(owned.MAX_PASSAGES) in answer.json()["detail"]
+        assert genre.tongue_twisters.count() == owned.MAX_PASSAGES
 
-    def test_a_passage_carries_a_difficulty_rather_than_a_coined_style(self, pro):
+    def test_deleting_a_passage_removes_it_and_leaves_the_genre(self, pro):
         self.make_read(pro)
-        body = pro.post(
-            "/api/v1/topics/mine/my-twisters/topics",
-            {"text": PASSAGE},
-            content_type="application/json",
-        ).json()
-        assert body["topics"][0]["style"] == owned.DEFAULT_LEVEL
-        edited = pro.patch(
-            f"/api/v1/topics/mine/my-twisters/topics/{body['topics'][0]['id']}",
-            {"text": PASSAGE, "style": "easy"},
-            content_type="application/json",
-        ).json()
-        assert edited["topics"][0]["style"] == "easy"
-        # Anything outside the two falls back rather than coining itself.
-        coined = pro.patch(
-            f"/api/v1/topics/mine/my-twisters/topics/{body['topics'][0]['id']}",
-            {"text": PASSAGE, "style": "IELTS style"},
-            content_type="application/json",
-        ).json()
-        assert coined["topics"][0]["style"] == owned.DEFAULT_LEVEL
+        row = self.add(pro, PASSAGE).json()["topics"][0]
+        body = pro.delete(f"{MINE}/my-twisters/topics/{row['id']}").json()
+        assert body["topic_count"] == 0
+        assert not TongueTwister.objects.filter(pk=row["id"]).exists()
+        assert Genre.objects.filter(slug="my-twisters").exists()
+
+    def test_deleting_the_genre_takes_its_passages_with_it(self, pro):
+        self.make_read(pro)
+        self.add(pro, PASSAGE)
+        pro.delete(f"{MINE}/my-twisters")
+        assert not Genre.objects.filter(slug="my-twisters").exists()
+        assert not TongueTwister.objects.exists()
+
+    def test_the_same_passage_pasted_twice_lands_once(self, pro):
+        """The duplicate is dropped rather than refusing the paste, which
+        is what the prompts already do: a repeat is the one thing somebody
+        can see for themselves."""
+        self.make_read(pro)
+        self.add(pro, PASSAGE)
+        body = self.add(pro, PASSAGE + "\n\n" + SECOND).json()
+        assert body["topic_count"] == 2
+
+    def test_the_two_caps_are_counted_off_the_right_table(self, pro):
+        """A genre of prompts and a warm-up beside it. Each is measured
+        against its own rows and its own ceiling, and the ten-genre cap
+        counts both, because ten genres is ten whatever they hold."""
+        make(pro, name="Prompts")
+        self.make_read(pro)
+        paste(pro, "prompts", "A prompt line")
+        self.add(pro, PASSAGE)
+        body = pro.get(MINE).json()
+        held = {g["slug"]: g for g in body["genres"]}
+        assert held["prompts"]["topic_count"] == 1
+        assert held["prompts"]["max_topics"] == owned.MAX_TOPICS
+        assert held["my-twisters"]["topic_count"] == 1
+        assert held["my-twisters"]["max_topics"] == owned.MAX_PASSAGES
+        assert body["max_genres"] == owned.MAX_GENRES
+
+    def test_a_shared_warm_up_hands_a_stranger_its_passages(self, pro, client):
+        """Sharing is the genre's, not the row kind's: a link to a set of
+        passages has to work the same way a link to a set of prompts does,
+        and viewing stays free."""
+        self.make_read(pro)
+        self.add(pro, PASSAGE)
+        token = pro.post(f"{MINE}/my-twisters/share").json()["token"]
+        body = client.get(f"/api/v1/topics/shared/{token}").json()
+        assert [t["text"] for t in body["topics"]] == [PASSAGE]
+        assert body["topics"][0]["level"] == owned.DEFAULT_LEVEL
 
     def test_a_mode_nobody_offers_makes_an_ordinary_genre(self, pro):
-        body = pro.post(
-            "/api/v1/topics/mine",
-            {"name": "Sideways", "icon": "mic", "mode": "<script>"},
-            content_type="application/json",
-        ).json()
+        body = pro.post(MINE, {"name": "Sideways", "icon": "mic", "mode": "<script>"}, content_type=JSON).json()
         assert body["mode"] is None
         assert Genre.objects.get(slug="sideways").mode == "speak"
 

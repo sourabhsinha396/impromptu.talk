@@ -32,7 +32,7 @@ export function pool(bank: Bank, prefs: Prefs): Topic[] {
        falls back the same way: a filter that empties the bank is worse
        than one that is ignored. */
     if (prefs.level !== SURPRISE) {
-      const narrowed = all.filter((topic) => topic.style === prefs.level);
+      const narrowed = all.filter((topic) => topic.level === prefs.level);
       if (narrowed.length) return narrowed;
     }
     return all;

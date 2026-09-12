@@ -10,7 +10,7 @@ from factory.django import DjangoModelFactory
 from apps.authentication.models import User
 from apps.payments.models import Purchase
 from apps.runs.models import Run
-from apps.topics.models import Genre, Topic
+from apps.topics.models import Genre, TongueTwister, Topic
 
 PASSWORD = "correct horse battery"
 DEVICE = "0123456789abcdef0123456789abcdef"
@@ -61,6 +61,21 @@ class TopicFactory(DjangoModelFactory):
     text = factory.Sequence(lambda n: f"Topic {n}")
     slug = factory.LazyAttribute(lambda t: t.text.lower().replace(" ", "-"))
     style = "just-talk"
+
+
+class TongueTwisterFactory(DjangoModelFactory):
+    """One passage. `text` is padded to clear `bank.MIN_PASSAGE`, because a
+    row shorter than that is one the paste and the editor both refuse, and
+    a factory that builds rows the product would not accept is a factory
+    that hides its own bugs."""
+
+    class Meta:
+        model = TongueTwister
+
+    genre = factory.SubFactory(GenreFactory, mode="read")
+    text = factory.Sequence(lambda n: f"Passage {n}. " + "She sells seashells by the seashore. " * 8)
+    slug = factory.Sequence(lambda n: f"passage-{n}")
+    level = "hard"
 
 
 class RunFactory(DjangoModelFactory):

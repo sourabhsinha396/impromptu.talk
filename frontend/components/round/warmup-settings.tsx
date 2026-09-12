@@ -1,7 +1,7 @@
 "use client";
 
 import { Sheet, SheetContent } from "@/components/ui/sheet";
-import { READ_STYLES } from "@/lib/bank";
+import { LEVELS } from "@/lib/bank";
 import { SURPRISE } from "@/lib/round/prefs";
 
 /* A warm-up's own settings, and the reason feature pages have their own.
@@ -84,7 +84,7 @@ export function WarmUpSettings({
                   Surprise me means no filter here exactly as it does
                   there. Both levels are free, always. */}
               <option value={SURPRISE}>Surprise me</option>
-              {READ_STYLES.map((level) => (
+              {LEVELS.map((level) => (
                 <option key={level.key} value={level.key}>
                   {level.label}
                 </option>

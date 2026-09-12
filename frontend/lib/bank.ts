@@ -37,8 +37,14 @@ export function featurePath(slug: string): string {
    is the same round with a picture over the same sentence. Optional, and
    absent rather than empty on the wire: home ships the whole bank inline
    and an empty key on all thousand rows is 34KB the browser parses for
-   the sake of the twenty that use it. */
-export type Topic = { text: string; genre: string; style: string; slug: string; image?: string };
+   the sake of the twenty that use it.
+
+   One shape for what the round draws, because a round is a round: the
+   engine, the reel and the pool do not care which table a row came from.
+   What they must not do is read one key for two meanings, so a prompt
+   carries `style` and a passage carries `level`, each absent on the
+   other - the same split the tables took (docs/DECISIONS.md). */
+export type Topic = { text: string; genre: string; style?: string; slug: string; image?: string; level?: string };
 export type Style = { key: string; label: string; hint: string };
 export type Bank = { genres: Genre[]; topics: Topic[]; styles: Style[] };
 
@@ -49,21 +55,21 @@ export const EMPTY_BANK: Bank = { genres: [], topics: [], styles: [] };
    home ships the whole bank inline so a respin costs no round trip. That
    promise is about the reel; somebody who has just chosen to read a
    passage aloud for a minute will not notice one request. */
-export type Passage = { text: string; slug: string; style: string; words: number };
+export type Passage = { text: string; slug: string; level: string; words: number };
 export type ReadGenre = { slug: string; name: string; icon: string; blurb: string; passages: Passage[] };
 
 /* Grouped as the page shows them: easy first, because somebody who has
    never done this needs an obvious way in. A difficulty the bank does not
    hold is simply absent rather than an empty heading. */
-export const READ_STYLES: { key: string; label: string }[] = [
+export const LEVELS: { key: string; label: string }[] = [
   { key: "easy", label: "Easy" },
   { key: "hard", label: "Hard" },
 ];
 
 export function passagesByDifficulty(genre: ReadGenre): { label: string; passages: Passage[] }[] {
-  return READ_STYLES.map(({ key, label }) => ({
+  return LEVELS.map(({ key, label }) => ({
     label,
-    passages: genre.passages.filter((passage) => passage.style === key),
+    passages: genre.passages.filter((passage) => passage.level === key),
   })).filter((group) => group.passages.length > 0);
 }
 

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from apps.topics.models import Generation, Genre, Topic
+from apps.topics.models import Generation, Genre, TongueTwister, Topic
 
 
 class Shared(admin.SimpleListFilter):
@@ -42,6 +42,19 @@ class TopicAdmin(admin.ModelAdmin):
     list_display = ("text", "genre", "style", "is_active", "sort_order", "image")
     list_filter = ("genre", "genre__owner", "style", "is_active")
     search_fields = ("text",)
+    ordering = ("genre", "sort_order", "id")
+
+
+@admin.register(TongueTwister)
+class TongueTwisterAdmin(admin.ModelAdmin):
+    """The passages, and a console of their own because they are a table of
+    their own. Filtered by level rather than style, which is the only axis
+    a passage has; the kill switch works exactly as the topics' does, and
+    the seeder never re-activates a row switched off here."""
+
+    list_display = ("slug", "genre", "level", "is_active", "sort_order")
+    list_filter = ("genre", "genre__owner", "level", "is_active")
+    search_fields = ("text", "slug")
     ordering = ("genre", "sort_order", "id")
 
 

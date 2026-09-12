@@ -8,7 +8,7 @@ import pytest
 
 from apps.topics import bank
 from apps.topics.icons import ICONS
-from apps.topics.models import Genre, Topic
+from apps.topics.models import Genre, TongueTwister, Topic
 from apps.topics.services import seed_topics
 from tests.unit_tests import factories
 
@@ -17,7 +17,12 @@ from tests.unit_tests import factories
 #: typed: these tests are about rows moving between genres and never about
 #: how many topics somebody has written, and a literal here failed the whole
 #: suite every time one was added.
-BANK_SIZE = sum(len(bank.load(slug, mode) or ()) for slug, _n, _i, _b, mode in bank.all_genres())
+BANK_SIZE = sum(len(bank.load(slug) or ()) for slug, *_ in bank.GENRES)
+
+#: The passages, counted apart from the prompts because they are a table
+#: apart. `seed_topics` returns the two added together, which is the only
+#: place the total is still one number.
+PASSAGE_COUNT = sum(len(bank.load_passages(slug) or ()) for slug, *_ in bank.WARM_UPS)
 
 #: The picture half of it. A floor rather than a literal for the same
 #: reason, and because an empty picture bank is the one state that breaks
@@ -26,9 +31,9 @@ PICTURES = sum(1 for slug, *_ in bank.GENRES for t in bank.load(slug) or () if t
 
 #: The warm-ups are counted apart from the ten everywhere below, because
 #: almost nothing true of a speak genre is true of a read one: a passage is
-#: a paragraph rather than a sentence, it carries a difficulty rather than
-#: a style, and forty of them would be five thousand words of original
-#: writing rather than forty lines.
+#: a paragraph rather than a sentence, it carries a level rather than a
+#: style, it lives in its own table, and forty of them would be five
+#: thousand words of original writing rather than forty lines.
 WARM_UP_SLUGS = {slug for slug, *_ in bank.WARM_UPS}
 
 
@@ -54,9 +59,10 @@ def test_the_bank_is_ten_genres_and_a_thousand_topics_and_no_genre_is_thin(seede
 def test_every_built_in_style_reaches_every_genre_and_surprise_is_never_stored(seeded):
     """A style missing from a genre is a chip that silently does nothing.
 
-    Speak genres only. A read genre has no styles at all, because nobody
-    chooses how to say words they are reading verbatim; its `style` column
-    carries the passage difficulty instead."""
+    Every `Topic` is a prompt now, so this walks the whole table rather
+    than the speak genres: a read genre has no styles at all, because
+    nobody chooses how to say words they are reading verbatim, and its
+    passages are not in here to be asked."""
     for genre in Genre.objects.filter(owner__isnull=True, mode=bank.MODE_SPEAK):
         assert set(genre.topics.values_list("style", flat=True)) == set(bank.STYLE_KEYS), genre.slug
     assert not Topic.objects.filter(style=bank.SURPRISE).exists()
@@ -66,7 +72,7 @@ def test_every_built_in_style_reaches_every_genre_and_surprise_is_never_stored(s
 def test_a_second_run_changes_nothing_and_keeps_every_id(seeded):
     before = dict(Topic.objects.values_list("text", "id"))
     genres = dict(Genre.objects.values_list("slug", "id"))
-    assert seed_topics() == (len(bank.all_genres()), BANK_SIZE)
+    assert seed_topics() == (len(bank.all_genres()), BANK_SIZE + PASSAGE_COUNT)
     assert dict(Topic.objects.values_list("text", "id")) == before
     assert dict(Genre.objects.values_list("slug", "id")) == genres
 
@@ -95,8 +101,8 @@ def test_a_merged_genre_carries_its_topics_and_the_emptied_row_goes(seeded, monk
     monkeypatch.setattr(bank, "GENRES", tuple(g for g in bank.GENRES if g[0] != "tech-ai"))
     original = bank.load
 
-    def merged(slug, mode=bank.MODE_SPEAK):
-        topics = original(slug, mode)
+    def merged(slug):
+        topics = original(slug)
         return topics + original("tech-ai") if slug == "science" else topics
 
     monkeypatch.setattr(bank, "load", merged)
@@ -116,8 +122,8 @@ def test_a_genre_that_left_the_list_but_still_owns_topics_is_only_deactivated(se
 
 def test_a_topic_that_left_every_file_is_switched_off_not_deleted(seeded, monkeypatch):
     original = bank.load
-    def dropped_one(slug, mode=bank.MODE_SPEAK):
-        topics = original(slug, mode)
+    def dropped_one(slug):
+        topics = original(slug)
         return topics[1:] if slug == "general" else topics
 
     monkeypatch.setattr(bank, "load", dropped_one)
@@ -145,8 +151,8 @@ def test_the_same_line_in_two_files_is_refused(seeded, monkeypatch):
     between them on every run. A topic that keeps changing genre is far
     harder to notice than an import error."""
     original = bank.load
-    def duplicated(slug, mode=bank.MODE_SPEAK):
-        return original("general") if slug == "tech-ai" else original(slug, mode)
+    def duplicated(slug):
+        return original("general") if slug == "tech-ai" else original(slug)
 
     monkeypatch.setattr(bank, "load", duplicated)
     with pytest.raises(ValueError, match="appears in both"):
@@ -154,8 +160,11 @@ def test_the_same_line_in_two_files_is_refused(seeded, monkeypatch):
 
 
 def test_slugs_are_unique_within_every_genre(seeded):
+    """Both tables, because `?topic=` resolves on a slug whichever kind of
+    row it names."""
     for genre in Genre.objects.filter(owner__isnull=True):
         slugs = list(genre.topics.values_list("slug", flat=True))
+        slugs += list(genre.tongue_twisters.values_list("slug", flat=True))
         assert len(slugs) == len(set(slugs)), genre.slug
 
 
@@ -198,8 +207,8 @@ def test_a_seeded_picture_is_rewritten_from_the_file_on_every_run(seeded, monkey
 
     original = bank.load
 
-    def with_picture(slug, mode=bank.MODE_SPEAK):
-        topics = original(slug, mode)
+    def with_picture(slug):
+        topics = original(slug)
         if slug == "general":
             topics = [
                 *topics,
@@ -231,52 +240,121 @@ PASSAGE = (
 
 
 def test_a_passage_is_far_longer_than_a_prompt_may_be_and_is_not_truncated(tmp_path, monkeypatch):
-    """The bug this bound exists to stop. A prompt is capped at 200
-    characters and the paste truncates to it; a passage is three or four
-    times that, so sharing the ceiling would have cut every one of them
-    mid-sentence and saved the fragment without complaining."""
+    """The bug the separate table exists to stop. A prompt is capped at 200
+    characters in the column and truncated to it by every writer; a passage
+    is three or four times that, so while they shared a column the width
+    had to be the passage's and the prompt's real rule lived nowhere."""
     monkeypatch.setattr(bank, "TOPICS_DIR", tmp_path)
-    write_passages_file(tmp_path, [{"text": PASSAGE, "style": "easy", "slug": "sixty-scripts"}])
-    loaded = bank.load("warm", bank.MODE_READ)
+    write_passages_file(tmp_path, [{"text": PASSAGE, "level": "easy", "slug": "sixty-scripts"}])
+    loaded = bank.load_passages("warm")
     assert len(PASSAGE) > bank.MAX_TEXT
     assert loaded[0]["text"] == PASSAGE
     assert loaded[0]["slug"] == "sixty-scripts"
+    # The other loader refuses the same file, which is what makes the two
+    # loaders worth having: neither can be handed the wrong kind quietly.
     with pytest.raises(ValueError, match="characters"):
-        bank.load("warm", bank.MODE_SPEAK)
+        bank.load("warm")
 
 
 def test_a_passage_too_short_to_be_worth_scrolling_is_refused(tmp_path, monkeypatch):
     monkeypatch.setattr(bank, "TOPICS_DIR", tmp_path)
-    write_passages_file(tmp_path, [{"text": "She sells seashells", "style": "easy"}])
+    write_passages_file(tmp_path, [{"text": "She sells seashells", "level": "easy", "slug": "shells"}])
     with pytest.raises(ValueError, match="characters"):
-        bank.load("warm", bank.MODE_READ)
+        bank.load_passages("warm")
 
 
-def test_a_read_topic_carries_a_difficulty_where_a_prompt_carries_a_style(tmp_path, monkeypatch):
+def test_a_passage_carries_a_level_and_a_prompt_carries_a_style_and_the_two_never_meet(tmp_path, monkeypatch):
     """Nobody chooses how to say words they are reading verbatim, so the
-    four styles are meaningless here and the column holds the one axis a
-    passage does have."""
+    four styles are meaningless on a passage. Two vocabularies on two
+    columns on two tables, and nothing in one is a value in the other."""
     monkeypatch.setattr(bank, "TOPICS_DIR", tmp_path)
-    write_passages_file(tmp_path, [{"text": PASSAGE, "style": "just-talk"}])
-    with pytest.raises(ValueError, match="unknown style"):
-        bank.load("warm", bank.MODE_READ)
-    assert not bank.READ_STYLE_KEYS & bank.STYLE_KEYS
+    write_passages_file(tmp_path, [{"text": PASSAGE, "level": "just-talk", "slug": "wrong"}])
+    with pytest.raises(ValueError, match="unknown level"):
+        bank.load_passages("warm")
+    assert not bank.LEVEL_KEYS & bank.STYLE_KEYS
 
 
-def test_a_speak_file_may_not_name_its_own_slugs(tmp_path, monkeypatch):
+def test_a_passage_must_name_its_own_slug_and_a_prompt_may_not(tmp_path, monkeypatch):
     """A passage names its own because slugifying 700 characters gives a
     link nobody can paste. A prompt is short enough to slugify and never
-    has, so the two ways of getting a slug stay one way per mode."""
+    has, so the two ways of getting a slug stay one way per kind."""
     monkeypatch.setattr(bank, "TOPICS_DIR", tmp_path)
+    write_passages_file(tmp_path, [{"text": PASSAGE, "level": "easy"}])
+    with pytest.raises(ValueError, match="names its own slug"):
+        bank.load_passages("warm")
     write_passages_file(tmp_path, [{"text": "A short prompt", "style": "just-talk", "slug": "mine"}])
-    with pytest.raises(ValueError, match="names its own slugs"):
-        bank.load("warm", bank.MODE_SPEAK)
+    with pytest.raises(ValueError, match="names its own slug"):
+        bank.load("warm")
 
 
 def test_the_warm_ups_are_seeded_as_read_genres_and_the_ten_are_not(seeded):
     for slug in WARM_UP_SLUGS:
         genre = Genre.objects.get(slug=slug, owner__isnull=True)
         assert genre.mode == bank.MODE_READ
-        assert genre.topics.exists()
+        assert genre.tongue_twisters.exists()
     assert not Genre.objects.filter(owner__isnull=True, mode=bank.MODE_READ).exclude(slug__in=WARM_UP_SLUGS).exists()
     assert Genre.objects.filter(owner__isnull=True, mode=bank.MODE_SPEAK).count() == len(bank.GENRES)
+
+
+def test_a_passage_is_never_a_topic_and_a_prompt_is_never_a_tongue_twister(seeded):
+    """The split itself. A warm-up's rows are in `tongue_twisters` and
+    nowhere else: while they shared a table, every query that meant
+    "prompts" had to remember to say so, and the ones that forgot (the
+    picture route's cap among them) were wrong in ways nothing showed."""
+    assert TongueTwister.objects.count() == PASSAGE_COUNT > 20
+    assert not Topic.objects.filter(genre__mode=bank.MODE_READ).exists()
+    assert not TongueTwister.objects.exclude(genre__mode=bank.MODE_READ).exists()
+    assert set(TongueTwister.objects.values_list("level", flat=True)) == set(bank.LEVEL_KEYS)
+
+
+def test_a_reseed_keeps_every_passage_id_and_the_kill_switch_holds_here_too(seeded):
+    """A passage id is what a link resolves through and what the editor
+    addresses, so a second run must not mint new rows; and a passage
+    switched off in the admin has to stay off, exactly as a topic does."""
+    before = dict(TongueTwister.objects.values_list("text", "id"))
+    passage = TongueTwister.objects.first()
+    filed_as = passage.level
+    other = next(key for key in bank.LEVEL_KEYS if key != filed_as)
+    TongueTwister.objects.filter(pk=passage.pk).update(is_active=False, level=other)
+    seed_topics()
+    passage.refresh_from_db()
+    assert dict(TongueTwister.objects.values_list("text", "id")) == before
+    assert passage.is_active is False
+    # The level is the seeder's to own, like a topic's style: it comes back
+    # from the file while the kill switch does not.
+    assert passage.level == filed_as
+
+
+def test_a_passage_that_left_the_file_is_switched_off_not_deleted(seeded, monkeypatch):
+    original = bank.load_passages
+
+    def dropped_one(slug):
+        passages = original(slug)
+        return passages[1:] if slug == "tongue-twisters" else passages
+
+    monkeypatch.setattr(bank, "load_passages", dropped_one)
+    seed_topics()
+    assert TongueTwister.objects.count() == PASSAGE_COUNT
+    assert TongueTwister.objects.filter(is_active=False).count() == 1
+
+
+def test_the_same_passage_in_two_files_is_refused(seeded, monkeypatch):
+    """The rule the prompts have, held separately: text is what the seeder
+    upserts by, so a passage in two files would migrate between them on
+    every run."""
+    original = bank.load_passages
+    monkeypatch.setattr(bank, "WARM_UPS", bank.WARM_UPS + (("twice", "Twice", "mic", "Again"),))
+    monkeypatch.setattr(bank, "load_passages", lambda slug: original("tongue-twisters"))
+    with pytest.raises(ValueError, match="appears in both"):
+        seed_topics()
+
+
+def test_the_seeder_never_touches_a_passage_with_an_owner(seeded):
+    """The `owner IS NULL` rule, which has to hold on the new table as well
+    or somebody's own passages are rewritten by a content update."""
+    own = factories.GenreFactory(owner=factories.UserFactory(), slug="tongue-twisters", mode=bank.MODE_READ)
+    mine = factories.TongueTwisterFactory(genre=own, level="easy")
+    seed_topics()
+    mine.refresh_from_db()
+    assert (mine.level, mine.is_active) == ("easy", True)
+    assert TongueTwister.objects.count() == PASSAGE_COUNT + 1

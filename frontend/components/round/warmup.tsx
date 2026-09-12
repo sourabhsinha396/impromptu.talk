@@ -60,12 +60,16 @@ export function PassagePreview({ topic, words, genre }: { topic: Topic; words: n
   return (
     <div className="w-full max-w-[620px] rounded-2xl border border-line bg-card px-6 py-5 text-left">
       <p className="mb-3 flex items-baseline justify-between gap-3">
+        {/* Empty when the page's heading already named this bank. Rendered
+            anyway rather than dropped, because the row is a
+            `justify-between` pair and one child alone would swing the
+            level over to the left. */}
         <span className="text-[13px] font-bold tracking-[0.06em] text-muted uppercase">{genre}</span>
         {/* Difficulty, and it is a label rather than a gate: every passage
             is free at every level, because the hard ones are exactly the
             rows worth filming (docs/DECISIONS.md). */}
         <span className="text-[13px] font-semibold text-muted capitalize">
-          {topic.style} &middot; <span className="normal-case">{words} words</span>
+          {topic.level} &middot; <span className="normal-case">{words} words</span>
         </span>
       </p>
       {/* Faded rather than clipped: the point of this card is to show what

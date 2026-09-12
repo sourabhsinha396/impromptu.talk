@@ -179,8 +179,8 @@ Ticked as of 2026-09-07, after cards 01 to 26.
 
 - [x] The case you made: a model reads whether the round did what the topic asked, once, stored; the roles on the minute, the point's clock, the two progress cards; free sees a blurred sample (36)
 
-- [x] Tongue twisters, the first warm-up: `Genre.mode` holding `speak` or `read`, a scroller in place of the ring, speed in place of difficulty, twelve passages, `/tongue-twisters` as the feature's own URL (the round, its settings and its crawlable bank on one page), a link with a chevron in the picker, a card on `/features`. Not v0 parity and not in v0 at all, so it carries its own case in `DECISIONS.md`. Free at every difficulty, nothing written to the server, and nothing against the transcription allowance
-- [x] Your own tongue twisters, the Pro half: an owned genre with `mode=read`, a paste that splits on paragraphs, fifty passages, a difficulty rather than a coined style, no pictures, and a Passages row in the warm-up's settings that draws from it. The way in routes signed out to sign-in-then-Pro and signed in to Pro
+- [x] Tongue twisters, the first warm-up: `Genre.mode` holding `speak` or `read` and a `TongueTwister` table under it, a scroller in place of the ring, speed in place of difficulty, twenty-two passages, `/tongue-twisters` as the feature's own URL (the round, its settings and its crawlable bank on one page), a link with a chevron in the picker, a card on `/features`. Not v0 parity and not in v0 at all, so it carries its own case in `DECISIONS.md`. Free at every difficulty, nothing written to the server, and nothing against the transcription allowance
+- [x] Your own tongue twisters, the Pro half: an owned genre with `mode=read` whose rows are `TongueTwister`s, a paste that splits on paragraphs, fifty passages, a level rather than a coined style, no pictures, and a Passages row in the warm-up's settings that draws from it. The way in routes signed out to sign-in-then-Pro and signed in to Pro
 
 ### Launch
 
