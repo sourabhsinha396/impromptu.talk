@@ -74,8 +74,12 @@ export default async function Page({ searchParams }: Search) {
      request, which is what keeps a page somebody reloads from handing back
      the same passage every time. */
   const asked = typeof params.topic === "string" ? params.topic : "";
+  /* Only looked up when there is one. Searching for "" matched the first
+     row that happened to carry an empty slug rather than matching nothing,
+     which is how a link that named no passage opened one anyway. */
   const pool = own.topics;
-  const opening = bank.topics.find((topic) => topic.slug === asked) ?? pool[Math.floor(Math.random() * pool.length)];
+  const named = asked ? bank.topics.find((topic) => topic.slug === asked) : undefined;
+  const opening = named ?? pool[Math.floor(Math.random() * pool.length)];
 
   const groups = passagesByDifficulty(genre);
   const data = itemList(
@@ -88,6 +92,7 @@ export default async function Page({ searchParams }: Search) {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(data) }} />
+      <div className="mt-16"></div>
       <Round
         bank={bank}
         signedIn={user !== null}

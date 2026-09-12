@@ -139,7 +139,10 @@ def _passages(genre) -> list[dict]:
     """The other table's rows in the same envelope. The keys a prompt uses
     are simply absent, which is what lets one editor draw both without
     either kind carrying a field that means something else on the other."""
-    return [{"id": p.id, "text": p.text, "level": p.level, "words": p.words} for p in owned.passages_of(genre)]
+    return [
+        {"id": p.id, "text": p.text, "level": p.level, "words": p.words, "slug": p.slug}
+        for p in owned.passages_of(genre)
+    ]
 
 
 def _rows(genre) -> list[dict]:

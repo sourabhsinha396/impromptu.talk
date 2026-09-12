@@ -132,7 +132,7 @@ export function PassagePhase({
         </div>
       </div>
       <p className="mt-4 mb-7 text-[15px] text-muted">
-        About <b className="font-bold text-ink">{readLength(seconds)}</b> at this speed.
+        {/* About <b className="font-bold text-ink">{readLength(seconds)}</b> at this speed. */}
       </p>
       <div className={ROW}>
         <Button size="xl" onClick={onStart}>

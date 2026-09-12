@@ -97,6 +97,10 @@ class OwnedTopicOut(Schema):
     #: The count the editor states beside a passage, for the same reason
     #: the page does: the speed is in words a minute.
     words: int = 0
+    #: A passage's own name, which the warm-up page needs the moment it
+    #: draws one: the best speed per passage is keyed on it and a link
+    #: names it. Empty on a prompt, which is addressed by its text.
+    slug: str = ""
     #: Ready for an `img` tag, or empty. The row holds a storage key and
     #: the route resolves it, so the CDN's name lives in settings only.
     image: str = ""

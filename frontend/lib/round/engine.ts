@@ -147,6 +147,29 @@ export class Engine {
         this.phase = "topic";
       }
     }
+    /* A locked page opens on a passage from the bank in play, and two
+       things could leave it opening on neither. An opening slug the bank
+       does not hold left it with no passage at all, and since a feature
+       page has no idle screen to fall back on, that was a blank page below
+       the heading. And the server picks that opening from the page's own
+       bank, because the bank somebody chose is remembered in their browser
+       and the server cannot see it - so a visitor reading their own
+       passages was handed a built-in one under a card headed with their
+       own list's name. Drawn directly rather than through `spin`, so that
+       building an engine reports no round anybody started, and only
+       replaced when a draw actually lands. A link naming a passage still
+       wins: `arrive` re-opens it a moment after this. */
+    if (this.lockedGenre) {
+      const fromAnotherBank = this.topic !== null && this.topic.genre !== this.activeGenre;
+      if (!this.topic || fromAnotherBank) {
+        const drawn = draw(pool(this.bank, this.drawing), this.used, this.random);
+        if (drawn) {
+          this.topic = drawn;
+          this.used.add(drawn.text);
+          this.phase = "topic";
+        }
+      }
+    }
     this.timer = new Timer(
       {
         onTick: () => this.changed(),
@@ -213,7 +236,13 @@ export class Engine {
        or one a lapsed account no longer loads, must fall back to the
        page's own rather than leaving a round with nothing to draw. */
     const chosen = this.prefs.passages;
-    return chosen && isRead(this.genre(chosen)) ? chosen : this.lockedGenre;
+    /* Holding rows is part of being a bank worth drawing from, and it is
+       checked here for the same reason the genre is: a set somebody made
+       and has not written into yet would otherwise leave the page with an
+       empty pool, and an empty pool on a page whose only content is one
+       passage is a blank screen. */
+    const usable = chosen && isRead(this.genre(chosen)) && this.bank.topics.some((t) => t.genre === chosen);
+    return usable ? chosen : this.lockedGenre;
   }
 
   /** Every bank this page can draw from: its own first, then the
@@ -232,7 +261,12 @@ export class Engine {
       so a locked page draws from its own genre without that genre ever
       being written back as the visitor's default. */
   private get drawing(): Prefs {
-    return this.lockedGenre ? { ...this.prefs, genre: this.lockedGenre } : this.prefs;
+    /* The genre in play, which on a warm-up page is the bank the visitor
+       chose and not the page's slug. Pinned to the lock, the Passages
+       setting changed the name on the card and nothing else: the round
+       kept drawing built-in passages while the card said "Custom", so
+       somebody's own writing was never handed to them once. */
+    return this.lockedGenre ? { ...this.prefs, genre: this.activeGenre } : this.prefs;
   }
 
   get currentGenre() {

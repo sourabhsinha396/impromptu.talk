@@ -168,13 +168,17 @@ describe("a warm-up", () => {
   it("goes again one speed up, and stops climbing at the top", () => {
     const { engine } = build();
     engine.spin();
+    /* Read off the engine rather than named: a locked page opens on a
+       passage of its own accord now, so which one a spin lands on is not
+       the thing this test is about. */
+    const opened = engine.topic?.slug;
     engine.startReading();
     readToTheEnd(engine);
     engine.againFaster();
     expect(engine.prefs.wpm).toBe(180);
     expect(engine.phase).toBe("topic");
     /* The same passage, not another one: the loop here is repetition. */
-    expect(engine.topic?.slug).toBe(passages[0].slug);
+    expect(engine.topic?.slug).toBe(opened);
 
     engine.setSpeed(SPEEDS[SPEEDS.length - 1]);
     engine.startReading();
@@ -355,5 +359,79 @@ describe("a warm-up somebody's browser remembers", () => {
        dead end. */
     const warmUpFirst: Bank = { ...withWarmUp, genres: [...withWarmUp.genres].reverse() };
     expect(atHome("gone-from-the-bank", warmUpFirst).prefs.genre).toBe("general");
+  });
+});
+
+/* The bank somebody wrote for themselves, chosen in the warm-up's own
+   settings. Everything here is one failure seen from four sides: the page
+   is locked to its own genre, and the bank in play is not always that
+   genre. */
+describe("reading your own passages", () => {
+  const MINE = `Mine alone. ${"Six sleek swans swam swiftly southwards. ".repeat(6)}`;
+
+  /* The page's bank as the server builds it: its own genre and passages,
+     with `withOwn` having folded in one set of the visitor's. An owned
+     genre is `yours:<slug>`, and its rows carry their own slugs. */
+  const shared: Bank = {
+    genres: [...bank.genres, { slug: "yours:custom", name: "Custom", icon: "mic", blurb: "", own: true, mode: "read" }],
+    topics: [...passages, { text: MINE, genre: "yours:custom", level: "hard", slug: "mine-alone" }],
+    styles: [],
+  };
+
+  function open(passages: string, initialTopic = "sixty-speaking-scripts", from: Bank = shared) {
+    const store = memory({ [PREFS_KEY]: JSON.stringify({ ...DEFAULT_PREFS, passages }) });
+    return new Engine({ bank: from, store, random: () => 0, lockedGenre: "tongue-twisters", initialTopic });
+  }
+
+  it("hands over yours once you have chosen them, rather than naming yours and drawing ours", () => {
+    /* The bug. The pool read the genre the page is *locked* to instead of
+       the bank in play, so choosing "Custom (yours)" changed the name on
+       the card and nothing else: every passage drawn was still a built-in,
+       and somebody's own writing was never handed to them once. */
+    const engine = open("yours:custom");
+    expect(engine.currentGenre?.name).toBe("Custom");
+    expect(engine.topic?.text).toBe(MINE);
+    engine.spin();
+    expect(engine.topic?.text).toBe(MINE);
+  });
+
+  it("still hands over the page's own when nothing of yours is chosen", () => {
+    const engine = open("");
+    expect(engine.currentGenre?.name).toBe("Tongue twisters");
+    expect(engine.topic?.genre).toBe("tongue-twisters");
+  });
+
+  it("opens on a passage even when the opening slug names nothing here", () => {
+    /* The blank page. An owned passage arrived with `slug: ""` and the
+       page looks its opening up with `find(topic => topic.slug === asked)`
+       where `asked` is "" whenever the URL names none - so the page opened
+       on somebody's own row, handed the engine an empty slug, and the
+       engine resolved it against the bank, found nothing and stayed idle.
+       A feature page has no idle screen, so the whole thing went blank
+       below the heading. */
+    const engine = open("", "");
+    expect(engine.phase).toBe("topic");
+    expect(engine.topic).not.toBeNull();
+  });
+
+  it("falls back to the page's own bank when the set you chose holds nothing yet", () => {
+    /* A genre made and not yet written into. Left in play it would empty
+       the pool, and an empty pool on a page whose only content is one
+       passage is the blank screen again. */
+    const empty: Bank = {
+      ...shared,
+      genres: [...bank.genres, { slug: "yours:empty", name: "Empty", icon: "mic", blurb: "", own: true, mode: "read" }],
+      topics: passages,
+    };
+    const engine = open("yours:empty", "sixty-speaking-scripts", empty);
+    expect(engine.activeGenre).toBe("tongue-twisters");
+    expect(engine.topic?.genre).toBe("tongue-twisters");
+  });
+
+  it("keeps the best speed per passage apart, which needs each of yours to have a name", () => {
+    /* Every owned passage used to arrive with the same empty slug, so the
+       fastest speed for one was the fastest speed for all of them. */
+    const engine = open("yours:custom");
+    expect(engine.topic?.slug).toBe("mine-alone");
   });
 });

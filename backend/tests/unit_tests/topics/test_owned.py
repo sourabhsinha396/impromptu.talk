@@ -378,6 +378,20 @@ class TestOwnWarmUps:
         ).json()
         assert coined["topics"][0]["level"] == owned.DEFAULT_LEVEL
 
+    def test_a_passage_carries_its_own_name_so_the_page_can_tell_two_apart(self, pro):
+        """The slug the row was given when it landed. Left off the wire,
+        every passage somebody owned arrived as the empty string, and an
+        empty string is not an absent value: the warm-up page looks its
+        opening passage up by slug and "" matched the first of them, which
+        is how a page with no link in its URL opened somebody's own row and
+        then drew nothing at all. The best speed per passage is keyed on it
+        too, so one name for all of them is one score for all of them."""
+        self.make_read(pro)
+        row = self.add(pro, PASSAGE).json()["topics"][0]
+        held = Genre.objects.get(slug="my-twisters").tongue_twisters.first()
+        assert row["slug"] == held.slug
+        assert row["slug"]
+
     def test_an_edited_passage_is_held_to_the_passage_bounds(self, pro):
         """The edit route reads the genre's mode to pick its rule, so a
         passage cut down to a sentence is refused where the same words

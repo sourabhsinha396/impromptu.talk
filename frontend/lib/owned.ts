@@ -20,6 +20,11 @@ export type OwnedTopic = {
       it, because the scroller's speed is in words a minute. */
   level?: string;
   words?: number;
+  /** A passage's own name. Empty on a prompt, which is addressed by its
+      text; a passage needs one because the warm-up page keys the best
+      speed per passage on it, and because an empty one is a value that
+      matches an empty search (see `withOwn`). */
+  slug?: string;
   /** Ready for an `img` tag, or empty. The row holds a storage key and
       the backend resolves it, so the CDN's name is never in our data. */
   image?: string;
@@ -112,7 +117,16 @@ export function withOwn(bank: Bank, genres: OwnedGenre[]): Bank {
          built-in ones. Read off `style`, an owned passage was invisible
          to every filter the moment the two stopped sharing a column. */
       level: topic.level,
-      slug: "",
+      /* A real name, and the bug that came of not having one: every row
+         here carried `slug: ""`, and the warm-up page looks its opening
+         passage up with `find(topic => topic.slug === asked)` where
+         `asked` is "" whenever the URL names none. So the moment somebody
+         owned a passage, the page opened on *their* row, handed the engine
+         an empty slug, and the engine - which resolves that slug against
+         the bank - found nothing, stayed idle and drew a blank screen.
+         An empty string is not an absent value; it is a value that
+         matches. */
+      slug: topic.slug ?? "",
       image: topic.image,
     })),
   );
