@@ -68,7 +68,7 @@ Ticked as of 2026-09-07, after cards 01 to 26.
 
 ### Chrome
 
-- [x] Header: die and wordmark, "i.t" on phones, streak pill as the only door to `/streak`, account menu (05)
+- [x] Header: die and wordmark, the name written out at every width, streak pill as the only door to `/streak`, account menu (05)
 - [x] Account menu holds destinations by sign-in state; Administration for superusers only; Get Pro unless Pro; theme as three stops (05)
 - [x] Footer: brand column with the owner, Product, Company, Legal; bottom line by sign-in state, both halves pinned (05)
 - [x] "Proudly made in India" only when the visitor is placed in India; the country ladder (05)
@@ -178,6 +178,9 @@ Ticked as of 2026-09-07, after cards 01 to 26.
 ### Beyond parity
 
 - [x] The case you made: a model reads whether the round did what the topic asked, once, stored; the roles on the minute, the point's clock, the two progress cards; free sees a blurred sample (36)
+
+- [x] Tongue twisters, the first warm-up: `Genre.mode` holding `speak` or `read`, a scroller in place of the ring, speed in place of difficulty, twelve passages, `/tongue-twisters` as the feature's own URL (the round, its settings and its crawlable bank on one page), a link with a chevron in the picker, a card on `/features`. Not v0 parity and not in v0 at all, so it carries its own case in `DECISIONS.md`. Free at every difficulty, nothing written to the server, and nothing against the transcription allowance
+- [x] Your own tongue twisters, the Pro half: an owned genre with `mode=read`, a paste that splits on paragraphs, fifty passages, a difficulty rather than a coined style, no pictures, and a Passages row in the warm-up's settings that draws from it. The way in routes signed out to sign-in-then-Pro and signed in to Pro
 
 ### Launch
 

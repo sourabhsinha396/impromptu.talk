@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 
+import { FeatureFrame } from "@/components/round/feature-frame";
 import { GenreSheet } from "@/components/round/genre-sheet";
 import { Idle } from "@/components/round/idle";
 import { DonePhase, PrepPhase, SpeakPhase, TopicPhase, type Summary } from "@/components/round/phases";
@@ -9,8 +10,8 @@ import { PictureReel } from "@/components/round/picture-reel";
 import { Reel } from "@/components/round/reel";
 import { SettingsSheet } from "@/components/round/settings-sheet";
 import { track } from "@/lib/analytics";
+import type { Bank, Topic } from "@/lib/bank";
 import { attach, type Report } from "@/lib/report";
-import type { Bank } from "@/lib/bank";
 import { Engine, type Effect } from "@/lib/round/engine";
 import { Sound } from "@/lib/round/sound";
 import { DEFAULT_PREFS } from "@/lib/round/prefs";
@@ -64,12 +65,27 @@ export function Round({
   signedIn,
   isPro = false,
   ownCap,
+  feature,
+  initialTopic,
+  children,
 }: {
   bank: Bank;
   signedIn: boolean;
   isPro?: boolean;
   /** How many genres an account may hold, for the picker to say once. */
   ownCap?: number;
+  /** A feature page rather than home: the genre is fixed, no picker is
+      offered, and the idle screen is this feature's own landing copy.
+      Home stays the chip, the question and one button, and a feature that
+      would have added a mode to it takes a URL instead (docs/DECISIONS.md). */
+  feature?: { slug: string; title: string; lede: string };
+  /** The passage the server opened on, so the first paint is the tool
+      rather than a landing screen that spins itself away a frame later. */
+  initialTopic?: Topic;
+  /** What the feature page shows below its button while idle: its bank as
+      plain text, which is the half a crawler reads. Rendered by the
+      server like everything else here, so it is in the HTML. */
+  children?: ReactNode;
 }) {
   const [engine, setEngine] = useState<Engine | null>(null);
   const [sound, setSound] = useState<Sound | null>(null);
@@ -83,16 +99,32 @@ export function Round({
      round's own page. */
   const [runId, setRunId] = useState<number | null>(null);
   const [sheet, setSheet] = useState<"genre" | "settings" | null>(null);
+  /* Reset by the passage it describes, so "Link copied" never survives
+     onto the next one. */
+  const [copiedFor, setCopiedFor] = useState<string | null>(null);
   /* One listener for the life of the page. In a ref because nothing
      renders differently for it existing: it is a microphone, not state. */
   const listener = useRef<Listener | null>(null);
   if (listener.current === null && typeof window !== "undefined") listener.current = new Listener();
+
+  /* What the address bar said when this page first mounted, captured once.
+     `arrive` cleans the URL with replaceState, and an engine can be built
+     more than once for the same visit - StrictMode does it on every dev
+     mount - so reading `window.location.search` inside the effect gave the
+     second engine an address bar the first had already emptied, and the
+     committed engine was the one that had never seen the link. That is why
+     `/?topic=` opened nothing. A ref survives the remount; the params do
+     not have to be read twice. */
+  const arrived = useRef<string | null>(null);
+  if (arrived.current === null && typeof window !== "undefined") arrived.current = window.location.search;
 
   useEffect(() => {
     const made = new Engine({
       bank,
       store: safeStorage(),
       reduceMotion: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+      lockedGenre: feature?.slug,
+      initialTopic: initialTopic?.slug,
     });
     const audio = new Sound(() => made.prefs.sound);
     const off = made.onEffect((effect) => {
@@ -117,7 +149,7 @@ export function Round({
         });
       }
     });
-    if (made.arrive(new URLSearchParams(window.location.search))) {
+    if (made.arrive(new URLSearchParams(arrived.current ?? ""))) {
       window.history.replaceState(null, "", window.location.pathname);
     }
     setEngine(made);
@@ -126,7 +158,7 @@ export function Round({
       off();
       made.timer.stop();
     };
-  }, [bank]);
+  }, [bank, feature?.slug, initialTopic?.slug]);
 
   useSyncExternalStore(engine?.subscribe ?? noop, engine?.snapshot ?? (() => 0), () => 0);
 
@@ -230,6 +262,51 @@ export function Round({
 
   const genre = engine?.currentGenre ?? bank.genres[0] ?? { slug: "general", name: "General", icon: "dices", blurb: "" };
   const prefs = engine?.prefs ?? { ...DEFAULT_PREFS, genre: genre.slug };
+
+  /* A warm-up's passages are not in the bank the page shipped with: they
+     are 100 to 120 words each and most visitors never open that genre, so
+     they are fetched the moment it is picked. Through the proxy, like
+     every other call the browser makes. A failure leaves the genre with
+     nothing to draw, which the passage screen says rather than hanging. */
+  /* "Challenge your friend": the link is the passage and the speed, so the
+     dare is "I did this at 180, you try". Stateless - no token, no row,
+     nothing to clean up - because the deep link already resolves a topic
+     slug and the speed is one of four known values. */
+  const sharePassage = useCallback(async (slug: string, wpm: number) => {
+    /* The feature's own URL, not home's: a warm-up does not run at `/`
+       any more, so a link that opened there would land on a spoken round
+       with a slug it cannot resolve. */
+    const link = `${window.location.origin}/tongue-twisters?topic=${encodeURIComponent(slug)}&wpm=${wpm}`;
+    try {
+      await navigator.clipboard.writeText(link);
+      setCopiedFor(slug);
+    } catch {
+      /* A browser that refuses the clipboard leaves the label alone rather
+         than claiming a copy that did not happen. */
+    }
+  }, []);
+
+  /* A feature page is the tool the moment it loads: the server picks the
+     passage, so the first paint is the passage screen rather than a
+     landing screen that spins itself away. It has no idle at all - the way
+     out of a passage is another passage (docs/DECISIONS.md). */
+  if (feature) {
+    return (
+      <FeatureFrame
+        feature={feature}
+        engine={engine}
+        initialTopic={initialTopic}
+        prefs={prefs}
+        sheet={sheet}
+        setSheet={setSheet}
+        armed={armed}
+        copiedFor={copiedFor}
+        onShare={sharePassage}
+      >
+        {children}
+      </FeatureFrame>
+    );
+  }
 
   if (!engine || engine.phase === "idle") {
     return (

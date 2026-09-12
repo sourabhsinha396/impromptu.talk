@@ -17,6 +17,10 @@ export const PAGES: [string, number][] = [
   ["/", 1.0],
   ["/genres", 0.9],
   ...GENRE_SLUGS.map((slug): [string, number] => [`/genre/${slug}`, 0.8]),
+  /* Beside the genre pages and for the same reason: it carries a bank as
+     plain text and it routes into the tool. It is not under /genre/
+     because the URL has to survive being typed into a comment reply. */
+  ["/tongue-twisters", 0.8],
   ["/pro", 0.5],
   ["/affiliate", 0.4],
   ["/features", 0.4],

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { Hub } from "@/components/genres/hub";
-import { fetchBank } from "@/lib/bank";
+import { fetchBank } from "@/lib/api";
 import { pageMetadata } from "@/lib/metadata";
 import { collectionPage, jsonLd } from "@/lib/structured-data";
 

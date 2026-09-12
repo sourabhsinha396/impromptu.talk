@@ -32,6 +32,23 @@ export type Prefs = {
       button, and the ten-second rule outranks putting a second axis on it
       (docs/DECISIONS.md, 2026-09-09). */
   pictures: boolean;
+  /** How fast the scroller runs, in words a minute, on a warm-up. Speed is
+      the difficulty on a read genre - the same passage is gentle at 120
+      and brutal at 220 - so this is the one control those rounds have, and
+      it is remembered because somebody who has found their speed should
+      not have to find it again. */
+  wpm: number;
+  /** Which passages a warm-up hands you: a difficulty key, or Surprise me
+      for no filter. Its own value rather than sharing `style`, because the
+      two are different axes with different vocabularies, and a difficulty
+      left in `style` would follow somebody back to home as a filter no
+      genre there can match. */
+  level: string;
+  /** Which bank a warm-up draws from: a genre slug, or empty for the
+      built-in one the page owns. Its own value rather than `genre`, which
+      is what home opens on: choosing your own passages must not change
+      the subject home hands you tomorrow. */
+  passages: string;
 };
 
 export const DEFAULT_PREFS: Prefs = {
@@ -43,6 +60,9 @@ export const DEFAULT_PREFS: Prefs = {
   mic: "ask",
   filming: false,
   pictures: false,
+  wpm: 150,
+  level: SURPRISE,
+  passages: "",
 };
 
 /* The sliders' reach. Thinking may be none at all or up to half an hour (a
@@ -50,6 +70,18 @@ export const DEFAULT_PREFS: Prefs = {
    one to ten minutes. */
 export const PREP_RANGE: [number, number] = [0, 1800];
 export const SPEAK_RANGE: [number, number] = [60, 600];
+
+/* The speeds the scroller offers, in words a minute. Four, because it is a
+   segment and not a slider: a person picks the next one up when the last
+   one stopped being hard, and a continuous dial would make that a fiddle
+   rather than a press. 150 is an ordinary reading-aloud pace and is the
+   default; 220 is the one worth filming. */
+export const SPEEDS: readonly number[] = [120, 150, 180, 220];
+
+/* The difficulties a warm-up offers, beside Surprise me. Both free, always:
+   the hard ones are exactly the passages worth filming, so a gate on them
+   would close the channel the feature exists to open (docs/DECISIONS.md). */
+export const LEVELS: readonly string[] = ["easy", "hard"];
 
 /* Whatever holds the prefs: localStorage in the browser, a Map in tests,
    null where storage is refused. Every read and write is wrapped, because
@@ -79,6 +111,16 @@ export function loadPrefs(store: Store | null): Prefs {
     mic: saved.mic === "on" || saved.mic === "off" ? saved.mic : "ask",
     filming: saved.filming === true,
     pictures: saved.pictures === true,
+    /* An unknown speed falls back rather than being clamped to the nearest:
+       these are a fixed set with a validator in front of them, like the
+       accent and the icon, and the one thing they must never be is
+       whatever was in storage. */
+    wpm: SPEEDS.includes(saved.wpm as number) ? (saved.wpm as number) : DEFAULT_PREFS.wpm,
+    level: LEVELS.includes(saved.level as string) ? (saved.level as string) : SURPRISE,
+    /* Checked against the bank on the way out, not here: a genre deleted
+       since this was written must fall back to the page's own rather than
+       leaving a round with nothing to draw. */
+    passages: typeof saved.passages === "string" ? saved.passages : "",
   };
 }
 

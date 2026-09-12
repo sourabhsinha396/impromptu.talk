@@ -30,6 +30,12 @@ export type OwnedGenre = {
       unshareable: /g/<token> needs no account, so a shared genre of
       uploads would be image hosting behind a link. */
   has_pictures?: boolean;
+  /** "read" on a warm-up somebody wrote: passages read aloud off the
+      scroller rather than prompts to talk about. Absent otherwise. */
+  mode?: "read";
+  /** The cap this genre is held to, which differs by mode: a passage is a
+      hundred words, so a warm-up holds far fewer rows than a genre. */
+  max_topics?: number;
 };
 export type Mine = {
   genres: OwnedGenre[];
@@ -40,6 +46,9 @@ export type Mine = {
   /** Zero both when the allowance is spent and when there is no key, so a
       page asks one question and reads `can_generate` for which. */
   generations_left: number;
+  /** The cap a warm-up is held to, which is far lower than a genre's: a
+      passage is a hundred words, so fifty is already a long page. */
+  max_passages?: number;
 };
 export type SharedGenre = {
   name: string;
@@ -69,6 +78,11 @@ export const NO_GENRES: Mine = {
 /** The bank with somebody's own genres folded in, which is what the
     picker and the reel read. One payload, one row shape: a topic of
     theirs is a topic, and the round cannot tell the difference. */
+/** Whether a genre somebody owns is a warm-up. */
+export function isOwnRead(genre: OwnedGenre): boolean {
+  return genre.mode === "read";
+}
+
 export function withOwn(bank: Bank, genres: OwnedGenre[]): Bank {
   if (genres.length === 0) return bank;
   const own: Genre[] = genres.map((genre) => ({
@@ -77,6 +91,7 @@ export function withOwn(bank: Bank, genres: OwnedGenre[]): Bank {
     icon: genre.icon,
     blurb: `${genre.topic_count} of your own`,
     own: true,
+    mode: genre.mode,
   }));
   const topics = genres.flatMap((genre) =>
     genre.topics.map((topic) => ({

@@ -1,14 +1,21 @@
 from ninja import Field, Schema
 
+from apps.topics import bank
 from apps.topics.generate import MAX_PROMPT
 from apps.topics.owned import MAX_STYLE
 
 
 class GenreOut(Schema):
+    """`mode` says how the genre is practised: `speak` for the ten, `read`
+    for a warm-up whose topics are passages read off a scroller. Absent on
+    a speak genre rather than repeated on every row, for the reason
+    `TopicOut.image` gives."""
+
     slug: str
     name: str
     icon: str
     blurb: str
+    mode: str | None = None
 
 
 class TopicOut(Schema):
@@ -33,11 +40,38 @@ class StyleOut(Schema):
 class BankOut(Schema):
     """One shape for the picker, the reel and the style select. Full key
     names rather than v0's one-letter ones: the page ships gzipped, and a
-    repeated key costs nothing there."""
+    repeated key costs nothing there.
+
+    `topics` carries the speak genres only. A read genre's passages are
+    100 to 120 words each and are fetched when it is picked, because the
+    instant-spin promise is about the reel - a respin must cost no round
+    trip - and somebody who has just chosen to read a passage aloud for a
+    minute will not notice one. Shipping them inline would have put 45KB
+    of raw JSON on every home visit for a genre most visitors never open,
+    which is the same trade the picture key lost (docs/DECISIONS.md)."""
 
     genres: list[GenreOut]
     topics: list[TopicOut]
     styles: list[StyleOut]
+
+
+class PassageOut(Schema):
+    """One passage, and the count the page states before it starts: words
+    are what the speed is in, so the reading time is arithmetic the browser
+    can do rather than a number to store."""
+
+    text: str
+    slug: str
+    style: str
+    words: int
+
+
+class ReadGenreOut(Schema):
+    slug: str
+    name: str
+    icon: str
+    blurb: str
+    passages: list[PassageOut]
 
 
 class OwnedTopicOut(Schema):
@@ -74,6 +108,11 @@ class OwnedGenreOut(Schema):
     #: Whether this genre holds an uploaded picture, which is what makes
     #: it unshareable (docs/DECISIONS.md, 2026-09-09).
     has_pictures: bool = False
+    #: "read" on a warm-up, absent otherwise, the way the bank does it.
+    mode: str | None = None
+    #: The cap this genre is held to. It differs by mode: a passage is a
+    #: hundred words, so fifty of them is already a long page.
+    max_topics: int = 0
 
 
 class MineOut(Schema):
@@ -88,6 +127,7 @@ class MineOut(Schema):
     genres: list[OwnedGenreOut]
     max_genres: int
     max_topics: int
+    max_passages: int = 0
     can_generate: bool
     generations_left: int
 
@@ -105,21 +145,33 @@ class SharedGenreOut(Schema):
 
 
 class GenreIn(Schema):
+    """`mode` says which round this genre runs: `speak` for prompts you
+    talk about, `read` for passages you read aloud off a scroller. Absent
+    means speak, so anything written before warm-ups existed still creates
+    what it meant to."""
+
     name: str = Field(max_length=60)
     icon: str = ""
+    mode: str | None = None
 
 
 class PasteIn(Schema):
     """A whole paste in one field, and the style an untagged line gets.
-    Sized for the cap: 200 topics of 200 characters, with room for the
-    tails and the newlines."""
+    Sized for the larger of the two caps: 200 prompts of 200 characters,
+    or 50 passages of 1200, with room for the tails and the newlines."""
 
     text: str = Field(max_length=60000)
     default_style: str = ""
 
 
 class TopicIn(Schema):
-    text: str = Field(max_length=200)
+    """`text` is bounded here at the longest a *passage* may be, not the
+    longest a prompt may be. The edge cannot know which kind of genre this
+    row belongs to; `owned.edit_topic` can, and enforces the tighter rule
+    where it does. Bounded at 200 here, editing a passage was refused at
+    the edge with a bare 422 that named nothing."""
+
+    text: str = Field(max_length=bank.MAX_PASSAGE)
     style: str = Field(default="", max_length=MAX_STYLE)
 
 

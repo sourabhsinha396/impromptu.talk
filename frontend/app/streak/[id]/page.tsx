@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { PastRound } from "@/components/streak/past-round";
-import { currentUser, storedReport } from "@/lib/api";
-import { fetchBank } from "@/lib/bank";
+import { currentUser, fetchBank, storedReport } from "@/lib/api";
 import { pageMetadata } from "@/lib/metadata";
 
 /* noindex, like the streak page it hangs off: one person's own minute,

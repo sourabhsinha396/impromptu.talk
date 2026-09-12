@@ -1,10 +1,13 @@
-import type { Bank, Topic } from "@/lib/bank";
+import { isRead, type Bank, type Topic } from "@/lib/bank";
 
 import { clearStaged, decoysFor, draw, pool, settledStyle, stagedTopic, builtinStyles } from "@/lib/round/pool";
+import { loadBests, readSeconds, recordBest } from "@/lib/round/warmups";
 import {
   DEFAULT_PREFS,
+  LEVELS,
   PREP_RANGE,
   SPEAK_RANGE,
+  SPEEDS,
   SURPRISE,
   loadPrefs,
   savePrefs,
@@ -20,10 +23,24 @@ import { Timer } from "@/lib/round/timer";
    effects it emits, so each of those can be absent without the round
    noticing.
 
-   Six phases. Spin is the reel; the page tells the engine when the strip
-   has settled (or the engine skips it under reduced motion). Prep and
-   speak run the one timer. Done is what a finished round shows. */
-export type Phase = "idle" | "spin" | "topic" | "prep" | "speak" | "done";
+   Six phases for a speak genre. Spin is the reel; the page tells the
+   engine when the strip has settled (or the engine skips it under reduced
+   motion). Prep and speak run the one timer. Done is what a finished round
+   shows.
+
+   A warm-up (a genre whose mode is read) takes a different middle: topic
+   is the passage with its speed, then a three-second lead-in so somebody
+   who just pressed record can get ready, then the scroll. There is no prep
+   (nothing to think about) and no clock (the scroll is the timer), and
+   nothing is written to the server, because a warm-up does not build the
+   streak. Everything either side of that middle - the pool, the deep link,
+   the picker, camera mode - is untouched. */
+export type Phase = "idle" | "spin" | "topic" | "prep" | "speak" | "ready" | "reading" | "done";
+
+/** The lead-in before the words start moving. Three seconds is what it
+    takes to press record, sit back and find the camera; without it the
+    first line of every recording is somebody reaching for the mouse. */
+export const LEAD_IN = 3;
 
 export const MAX_NOTE = 80;
 
@@ -50,6 +67,16 @@ export type EngineOptions = {
   now?: () => number;
   /* prefers-reduced-motion: the spin is skipped and the topic just appears. */
   reduceMotion?: boolean;
+  /** A feature page fixes its own genre: `/tongue-twisters` is always the
+      tongue twisters, and the picker is not offered there. Held apart from
+      `prefs.genre` on purpose - that is the genre home opens on, and an
+      hour of warm-ups must not quietly become somebody's default topic. */
+  lockedGenre?: string;
+  /** The passage a feature page opened on, chosen by the server so the
+      first paint is already the tool. Without it the page would render its
+      landing screen, mount, and spin a frame later, which is a flash on
+      every visit. Overridden by `?topic=` when a link names one. */
+  initialTopic?: string;
   tzOffset?: () => number;
 };
 
@@ -62,12 +89,16 @@ export class Engine {
   notes: string[] = ["", "", ""];
   spokeFor = 0;
   prefs: Prefs;
+  /** The best speed this passage has been read at in this browser, filled
+      in when a read finishes so the done screen can say it. */
+  best = 0;
   readonly timer: Timer;
   readonly bank: Bank;
 
   private readonly store: Store | null;
   private readonly random: () => number;
   private readonly reduceMotion: boolean;
+  private readonly lockedGenre: string | null;
   private readonly tzOffset: () => number;
   private readonly used = new Set<string>();
   private version = 0;
@@ -79,10 +110,29 @@ export class Engine {
     this.store = options.store;
     this.random = options.random ?? Math.random;
     this.reduceMotion = options.reduceMotion ?? false;
+    this.lockedGenre = options.lockedGenre ?? null;
     this.tzOffset = options.tzOffset ?? (() => -new Date().getTimezoneOffset());
     this.prefs = loadPrefs(this.store);
-    if (!this.genre(this.prefs.genre)) this.prefs.genre = this.bank.genres[0]?.slug ?? DEFAULT_PREFS.genre;
-    this.prefs.style = settledStyle(this.bank, this.prefs);
+    /* Only home settles the remembered genre and style against the bank.
+       A feature page's bank holds one genre - its own - so doing it here
+       would find "career" missing and rewrite it to the feature every
+       time somebody opened the page, which is the leak the lock exists to
+       stop. Locked, these two are left exactly as they were found. */
+    if (!this.lockedGenre) {
+      if (!this.genre(this.prefs.genre)) this.prefs.genre = this.bank.genres[0]?.slug ?? DEFAULT_PREFS.genre;
+      this.prefs.style = settledStyle(this.bank, this.prefs);
+    }
+    /* Opened on a topic rather than on idle, which is what lets a feature
+       page be the tool the moment it loads. Set before the timer so the
+       first snapshot the page reads is already the topic phase. */
+    if (options.initialTopic) {
+      const hit = this.bank.topics.find((topic) => topic.slug === options.initialTopic);
+      if (hit) {
+        this.topic = hit;
+        this.used.add(hit.text);
+        this.phase = "topic";
+      }
+    }
     this.timer = new Timer(
       {
         onTick: () => this.changed(),
@@ -125,7 +175,7 @@ export class Engine {
       type: "track",
       name,
       props: {
-        genre: this.prefs.genre,
+        genre: this.activeGenre,
         style: this.prefs.style,
         prep_seconds: this.prefs.prep,
         speak_seconds: this.prefs.speak,
@@ -138,12 +188,80 @@ export class Engine {
     return this.bank.genres.find((genre) => genre.slug === slug);
   }
 
+  /** The genre in play: the one this page is locked to, or the remembered
+      one. Everything that draws reads this; only the picker writes
+      `prefs.genre`. */
+  get activeGenre(): string {
+    if (!this.lockedGenre) return this.prefs.genre;
+    /* A warm-up page draws from the bank the visitor chose, which is the
+       page's own unless they picked one of theirs. Checked against what
+       is actually here rather than trusted: a genre they deleted since,
+       or one a lapsed account no longer loads, must fall back to the
+       page's own rather than leaving a round with nothing to draw. */
+    const chosen = this.prefs.passages;
+    return chosen && isRead(this.genre(chosen)) ? chosen : this.lockedGenre;
+  }
+
+  /** Every bank this page can draw from: its own first, then the
+      visitor's. Empty on home, which picks a genre instead. */
+  get sources() {
+    if (!this.lockedGenre) return [];
+    return this.bank.genres.filter((genre) => isRead(genre));
+  }
+
+  /** Whether the genre is fixed by the page, so no picker is offered. */
+  get locked(): boolean {
+    return this.lockedGenre !== null;
+  }
+
+  /** What the pool and the decoys read: the prefs with the genre in play,
+      so a locked page draws from its own genre without that genre ever
+      being written back as the visitor's default. */
+  private get drawing(): Prefs {
+    return this.lockedGenre ? { ...this.prefs, genre: this.lockedGenre } : this.prefs;
+  }
+
   get currentGenre() {
-    return this.genre(this.prefs.genre) ?? this.bank.genres[0];
+    return this.genre(this.activeGenre) ?? this.bank.genres[0];
   }
 
   get filming(): boolean {
-    return this.phase === "prep" || this.phase === "speak";
+    return this.phase === "prep" || this.phase === "speak" || this.phase === "ready" || this.phase === "reading";
+  }
+
+  /** Whether the genre in play is a warm-up: read aloud off the scroller
+      rather than talked about. The one branch the round takes. */
+  get reading(): boolean {
+    return this.currentGenre?.mode === "read";
+  }
+
+  /** The lead-in's digit, 3 down to 1. Read off the timer rather than
+      stored, for the reason the streak gives at length: a second copy of a
+      number drifts the first moment something surprises it. */
+  get leadIn(): number {
+    return Math.max(1, Math.ceil(this.timer.left / 1000));
+  }
+
+  /** The words in the passage on screen. Counted rather than stored: the
+      text is here, and a column could only ever disagree with it. */
+  get words(): number {
+    return this.topic ? this.topic.text.trim().split(/\s+/).length : 0;
+  }
+
+  /** How long this passage runs at the chosen speed, in seconds. */
+  get readSeconds(): number {
+    return readSeconds(this.words, this.prefs.wpm);
+  }
+
+  /** One exact topic, from a link. */
+  private openTopic(hit: Topic): void {
+    this.topic = hit;
+    this.used.add(hit.text);
+    if (!this.locked) {
+      this.prefs.genre = hit.genre;
+      this.prefs.style = settledStyle(this.bank, this.prefs);
+    }
+    this.showTopic();
   }
 
   /* ------------------------------------------------------------ the round */
@@ -157,12 +275,12 @@ export class Engine {
       clearStaged(this.store);
       this.topic = staged;
     } else {
-      this.topic = draw(pool(this.bank, this.prefs), this.used, this.random) ?? null;
+      this.topic = draw(pool(this.bank, this.drawing), this.used, this.random) ?? null;
     }
     if (!this.topic) return;
     this.used.add(this.topic.text);
     this.notes = ["", "", ""];
-    this.decoys = decoysFor(this.bank, this.prefs, this.topic, this.random);
+    this.decoys = decoysFor(this.bank, this.drawing, this.topic, this.random);
     if (!this.decoys.length || this.reduceMotion) {
       this.showTopic();
       return;
@@ -185,6 +303,13 @@ export class Engine {
 
   startPrep(): void {
     if (!this.topic) return;
+    /* A warm-up has nothing to think about: the words are on the screen
+       and the whole task is keeping up with them. The primary button on
+       that screen starts the lead-in instead. */
+    if (this.reading) {
+      this.startReading();
+      return;
+    }
     /* With no thinking time the button does not think: it starts the
        talking. */
     if (!this.prefs.prep) {
@@ -211,7 +336,103 @@ export class Engine {
     this.changed();
   }
 
+  /* ------------------------------------------------------------ warm-ups */
+
+  /** The lead-in, then the scroll. Two timers rather than one, because the
+      digits and the words move at different rates and the page has to know
+      which it is drawing. */
+  startReading(): void {
+    if (!this.topic || !this.reading) return;
+    this.track("warmup_started", { wpm: this.prefs.wpm, words: this.words });
+    this.phase = "ready";
+    this.timer.start(LEAD_IN, () => this.scroll());
+    this.changed();
+  }
+
+  private scroll(): void {
+    this.effect({ type: "sound", sound: "chime" });
+    this.phase = "reading";
+    /* The page animates the words with one linear transform over this
+       many seconds, rather than moving them frame by frame off a tick:
+       a transition the compositor owns cannot stutter, and the round
+       already knows exactly how long it should take. This timer only
+       decides when it is over. */
+    this.timer.start(this.readSeconds, () => this.finishReading());
+    this.changed();
+  }
+
+  /** Stop early, or the scroll reached the end. Either way nothing is
+      written to the server: a warm-up does not build the streak, so there
+      is no run to record and no summary to show. What is kept is the
+      speed, in this browser, because that is what makes the next press
+      worth making. */
+  finishReading(): void {
+    if (this.phase !== "reading" && this.phase !== "ready") return;
+    const finished = this.phase === "reading" && this.timer.elapsedSeconds >= this.readSeconds - 1;
+    this.timer.stop();
+    if (finished) {
+      this.effect({ type: "sound", sound: "chime2" });
+      this.best = this.topic ? recordBest(this.store, this.topic.slug, this.prefs.wpm) : 0;
+    } else {
+      this.best = this.topic ? (loadBests(this.store)[this.topic.slug] ?? 0) : 0;
+    }
+    this.track("warmup_finished", { wpm: this.prefs.wpm, words: this.words, finished_early: !finished });
+    this.phase = "done";
+    this.changed();
+  }
+
+  /** The next speed up, from the done screen. The loop on a warm-up is
+      repetition rather than variety - you go again in two seconds to beat
+      your own number - so this is the primary button there, which is the
+      reverse of the round's done screen. At the top speed it simply goes
+      again at the top speed. */
+  againFaster(): void {
+    if (this.phase !== "done" || !this.topic) return;
+    const next = SPEEDS[Math.min(SPEEDS.indexOf(this.prefs.wpm) + 1, SPEEDS.length - 1)];
+    if (next && next !== this.prefs.wpm) this.setSpeed(next);
+    this.showTopic();
+  }
+
+  /** Which passages a warm-up hands you. The no-repeat pool is cleared with
+      it, as choosing a genre or a style does: the two levels are different
+      halves of the bank. */
+  setLevel(level: string): void {
+    if (level !== SURPRISE && !LEVELS.includes(level)) return;
+    this.prefs.level = level;
+    this.used.clear();
+    savePrefs(this.store, this.prefs);
+    this.effect({ type: "track", name: "level_chosen", props: { level } });
+    this.changed();
+  }
+
+  /** Which bank a warm-up draws from. Cleared to the page's own when the
+      slug names nothing here. The no-repeat pool is cleared with it, as
+      choosing a genre does: two banks are two different sets of rows. */
+  setSource(slug: string): void {
+    const wanted = slug && isRead(this.genre(slug)) ? slug : "";
+    this.prefs.passages = wanted;
+    this.used.clear();
+    savePrefs(this.store, this.prefs);
+    this.effect({ type: "track", name: "passages_chosen", props: { own: Boolean(wanted) } });
+    this.spin();
+  }
+
+  setSpeed(wpm: number): void {
+    if (!SPEEDS.includes(wpm)) return;
+    this.prefs.wpm = wpm;
+    savePrefs(this.store, this.prefs);
+    this.effect({ type: "track", name: "speed_chosen", props: { wpm } });
+    this.changed();
+  }
+
   togglePause(): void {
+    /* A read does not pause. The words move on a transition the compositor
+       owns and the clock is a separate timer, so pausing one stopped the
+       other dead and the round finished after the passage had already
+       scrolled past. Rather than teach the two to stop together for a
+       control nobody needs - an interrupted recording is restarted, not
+       resumed - the read simply has no pause, and Stop is the way out. */
+    if (this.reading) return;
     if (!this.timer.running) return;
     if (this.timer.paused) this.timer.resume();
     else this.timer.pause();
@@ -240,7 +461,7 @@ export class Engine {
         type: "record",
         payload: {
           topic_text: this.topic.text,
-          genre_slug: this.prefs.genre,
+          genre_slug: this.activeGenre,
           prep_seconds: this.prefs.prep,
           speak_seconds: this.prefs.speak,
           spoken_seconds: seconds,
@@ -257,6 +478,13 @@ export class Engine {
       Done beside it: Done records, this does not. */
   leaveRound(): void {
     if (!this.filming) return;
+    if (this.phase === "ready" || this.phase === "reading") {
+      this.timer.stop();
+      this.track("round_left", { left_from: this.phase, spoken_seconds: 0 });
+      this.phase = "topic";
+      this.changed();
+      return;
+    }
     this.track("round_left", {
       left_from: this.phase,
       spoken_seconds: this.phase === "speak" ? this.timer.elapsedSeconds : 0,
@@ -271,6 +499,12 @@ export class Engine {
       the gear are reachable again. */
   resetToIdle(): void {
     if (this.phase !== "topic") return;
+    /* A feature page never shows idle - it opens on the tool - so the way
+       out of a passage is another passage, not an empty screen. */
+    if (this.locked) {
+      this.spin();
+      return;
+    }
     this.track("round_left", { left_from: "topic", spoken_seconds: 0 });
     this.topic = null;
     this.notes = ["", "", ""];
@@ -294,7 +528,11 @@ export class Engine {
   /* ------------------------------------------------------------ settings */
 
   chooseGenre(slug: string): void {
-    if (!this.genre(slug)) return;
+    const wanted = this.genre(slug);
+    /* A warm-up is not selectable here: it is a page, and its bank does
+       not ship with home, so picking one would leave a genre chip naming
+       a genre this round can never draw from. */
+    if (this.locked || !wanted || isRead(wanted)) return;
     this.prefs.genre = slug;
     this.used.clear();
     this.prefs.style = settledStyle(this.bank, this.prefs);
@@ -398,6 +636,10 @@ export class Engine {
     if (code === "Space") {
       if (this.phase === "idle" || this.phase === "done") this.spin();
       else if (this.phase === "topic") this.startPrep();
+      /* A read has no pause, so space does not claim the key either: a
+         handled key is one this preventDefaults, and swallowing it to do
+         nothing is worse than leaving it alone. */
+      else if (this.reading) return false;
       else if (this.filming) this.togglePause();
       else return false;
       return true;
@@ -426,11 +668,23 @@ export class Engine {
        link is the one way in that costs the stage nothing. `=0` is the
        way back out, so the link is reversible by hand. */
     const wantPictures = params.get("pictures");
+    /* The speed a challenge link carries: "I did this at 180, you try". One
+       of four known values or it is ignored, like every other thing a
+       stranger can put in the address bar. */
+    const wantWpm = Number(params.get("wpm"));
+    if (SPEEDS.includes(wantWpm)) {
+      this.prefs.wpm = wantWpm;
+      savePrefs(this.store, this.prefs);
+    }
     if (wantPictures !== null) {
       this.prefs.pictures = wantPictures !== "0";
       savePrefs(this.store, this.prefs);
     }
-    if (wantGenre && this.genre(wantGenre)) {
+    /* A read genre named in a link is refused here as it is in the
+       picker: home cannot draw from one, and the redirect that catches a
+       built-in warm-up cannot see an owned one, which lives behind the
+       cookie rather than in the public bank. */
+    if (wantGenre && !this.locked && this.genre(wantGenre) && !isRead(this.genre(wantGenre))) {
       this.prefs.genre = wantGenre;
       this.prefs.style = settledStyle(this.bank, this.prefs);
       savePrefs(this.store, this.prefs);
@@ -439,16 +693,14 @@ export class Engine {
     if (staged) this.prefs.genre = staged.genre;
     if (wantTopic) {
       const hit = this.bank.topics.find((topic) => topic.slug === wantTopic);
-      if (hit) {
-        this.topic = hit;
-        this.used.add(hit.text);
-        this.prefs.genre = hit.genre;
-        this.prefs.style = settledStyle(this.bank, this.prefs);
-        this.showTopic();
-      }
+      /* A slug this page's bank does not hold names nothing here, and the
+         visitor gets the ordinary idle screen. Each feature's bank ships
+         with its own page, so a passage link is only ever opened by the
+         page that owns it. */
+      if (hit) this.openTopic(hit);
     }
     this.changed();
-    return Boolean(wantGenre || wantTopic || wantPictures !== null || params.has("ref"));
+    return Boolean(wantGenre || wantTopic || wantPictures !== null || params.has("wpm") || params.has("ref"));
   }
 }
 

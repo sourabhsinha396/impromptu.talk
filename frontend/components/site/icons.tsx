@@ -190,9 +190,11 @@ export function StyleIcon({ style, ...rest }: IconProps & { style: string }) {
 export const FEATURE_ICONS: Record<string, Glyph> = {
   streak: Flame,
   genres: Dices,
+  "tongue-twisters": Mic,
   "image-impromptu": ImageGlyph,
   "custom-genre-text": Pencil,
   "custom-genre-image": ImageGlyph,
+  "custom-tongue-twisters": NotebookPen,
   history: History,
 };
 

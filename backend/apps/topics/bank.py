@@ -1,4 +1,4 @@
-"""The built-in bank: the ten genres, the four styles, and the files.
+"""The built-in bank: the ten genres, the warm-ups, the styles and the files.
 
 The topics themselves are one JSON file per genre under `data/topics/`,
 carried over from v0 unchanged. Editing a file and running `seed_topics`
@@ -38,6 +38,34 @@ GENRES: tuple[tuple[str, str, str, str], ...] = (
     ),
 )
 
+#: How a genre is practised. `speak` is every genre above: a prompt you are
+#: asked to talk about. `read` is a warm-up: text you read aloud off a
+#: scroller, which skips prep (there is nothing to think about) and has no
+#: clock (the scroll is the timer). One column and one branch, not a second
+#: round (docs/DECISIONS.md).
+MODE_SPEAK = "speak"
+MODE_READ = "read"
+
+#: The warm-ups, kept out of GENRES on purpose: the ten are a flat unheaded
+#: list in the picker and the decision behind ten is not reopened by adding
+#: to it. These sit in their own labelled group, the way Yours already does.
+WARM_UPS: tuple[tuple[str, str, str, str], ...] = (
+    (
+        "tongue-twisters",
+        "Tongue twisters",
+        "mic",
+        "Long ones, read aloud off a scroller. Warm up your mouth before you talk.",
+    ),
+)
+
+
+def all_genres() -> tuple[tuple[str, str, str, str, str], ...]:
+    """Every built-in genre with its mode, in picker order: the ten, then
+    the warm-ups. The seeder and the API both walk this rather than GENRES,
+    so a warm-up cannot be half-declared."""
+    return tuple((*genre, MODE_SPEAK) for genre in GENRES) + tuple((*genre, MODE_READ) for genre in WARM_UPS)
+
+
 #: (key, label, hint): how you are asked to talk about a topic. Surprise me is
 #: first because it is the default, and it is not a style: it means no
 #: filter, and it is never stored on a topic. The other four are four modes
@@ -58,36 +86,63 @@ STYLE_KEYS: frozenset[str] = frozenset(key for key, *_ in STYLES if key != SURPR
 MAX_TEXT = 200
 MAX_IMAGE = 500
 
+#: A passage is a paragraph, not a prompt: 100 to 120 words, which is 40 to
+#: 60 seconds of reading aloud at the speeds the scroller offers. The
+#: ceiling is a guard against a runaway file, not a target.
+MAX_PASSAGE = 1200
+MIN_PASSAGE = 200
+
+#: What a read topic carries in `style`. Difficulty is the only axis a
+#: passage has - you do not choose how to talk about words you read
+#: verbatim - so it rides in the column that already exists rather than
+#: earning one of its own. Easy first, because the page leads with it.
+READ_STYLES: tuple[tuple[str, str], ...] = (("easy", "Easy"), ("hard", "Hard"))
+READ_STYLE_KEYS: frozenset[str] = frozenset(key for key, _ in READ_STYLES)
+
 
 def slugify_topic(text: str) -> str:
     return slugify(text)[:220]
 
 
-def load(slug: str) -> list[dict] | None:
+def load(slug: str, mode: str = MODE_SPEAK) -> list[dict] | None:
     """The topics in a genre's file, checked, or None when there is no file.
 
     A missing file is skipped rather than fatal, so a genre can be declared
     before its bank is written. A bad line is fatal: a topic that silently
     lands with no style, or none at all, is far harder to notice than an
     import error.
+
+    The mode decides what "checked" means, and the length bound is the
+    reason this takes one at all. A prompt is a sentence and a passage is a
+    paragraph, and the 200-character ceiling that keeps prompts short would
+    have silently truncated every passage mid-sentence had they shared it.
     """
     path = TOPICS_DIR / f"{slug}.json"
     if not path.exists():
         return None
+    read = mode == MODE_READ
+    low, high = (MIN_PASSAGE, MAX_PASSAGE) if read else (1, MAX_TEXT)
+    allowed = READ_STYLE_KEYS if read else STYLE_KEYS
     payload = json.loads(path.read_text(encoding="utf-8"))
     topics = []
     for item in payload["topics"]:
         text = item["text"].strip()
         style = item.get("style", item.get("format", "just-talk"))
-        if not text or len(text) > MAX_TEXT:
-            raise ValueError(f"{path.name}: blank or overlong topic {text!r}")
-        if style not in STYLE_KEYS:
-            raise ValueError(f"{path.name}: unknown style {style!r} on {text!r}")
+        if not low <= len(text) <= high:
+            raise ValueError(f"{path.name}: text must be {low} to {high} characters, got {len(text)}: {text[:60]!r}")
+        if style not in allowed:
+            raise ValueError(f"{path.name}: unknown style {style!r} on {text[:60]!r}")
         # A picture as well as a sentence: `image` on the row is what makes
         # it a picture topic (docs/DECISIONS.md, 2026-09-09). The key is not
         # required, so every file written before this one still loads.
         image = item.get("image", "").strip()
         if len(image) > MAX_IMAGE:
-            raise ValueError(f"{path.name}: overlong image on {text!r}")
-        topics.append({"text": text, "style": style, "image": image})
+            raise ValueError(f"{path.name}: overlong image on {text[:60]!r}")
+        # A passage slugifies to 220 characters of its first sentence, which
+        # is no use in a link somebody is meant to paste. Read files name
+        # their own; speak files never have and do not start now.
+        named = str(item.get("slug", "")).strip()
+        if named and not read:
+            raise ValueError(f"{path.name}: only a read genre names its own slugs")
+        topics.append({"text": text, "style": style, "image": image, "slug": named or slugify_topic(text)})
     return topics

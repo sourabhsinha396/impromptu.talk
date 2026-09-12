@@ -11,7 +11,7 @@ import pytest
 from django.test import Client
 
 from apps.payments.models import Purchase
-from apps.topics import owned
+from apps.topics import bank, owned
 from apps.topics.models import Genre, Topic
 from tests.unit_tests import factories
 
@@ -82,7 +82,7 @@ class TestMakingOne:
         body = make(pro).json()
         assert body == {"slug": "interview-questions", "name": "Interview questions", "icon": "mic",
                         "topic_count": 0, "share_token": None, "topics": [], "own_styles": [],
-                        "has_pictures": False}
+                        "has_pictures": False, "mode": None, "max_topics": owned.MAX_TOPICS}
         assert Genre.objects.get(slug="interview-questions").owner == user
 
     def test_an_icon_nobody_offers_becomes_the_default(self, pro):
@@ -282,3 +282,110 @@ class TestWhatProCloses:
         assert pro.delete(f"{MINE}/interview-questions/share").status_code == 200
         assert pro.delete(f"{MINE}/interview-questions").status_code == 204
         assert Genre.objects.filter(owner__isnull=False).count() == 0
+
+
+PASSAGE = (
+    "Six strict speech specialists structured sixty sophisticated speaking scripts, subtly switching stressed "
+    "syllables so that steady students stumbled slightly. Such scripts seemed simple, yet several speakers "
+    "stalled, sighed, and started again. Should serious speakers surrender, or should they slow right down?"
+)
+SECOND = (
+    "Which witch watched which watch, and which watch did the watching witch wish she had washed? The witch "
+    "which watched the wristwatch wished the wristwatch worked, but the wristwatch the watching witch wore "
+    "was worn out entirely, which is why the watching witch went on watching whichever watch was working."
+)
+
+
+class TestOwnWarmUps:
+    """A warm-up somebody writes: the Pro half of tongue twisters.
+
+    The same table and the same routes as any owned genre, with one column
+    saying which round it runs. What differs is the parser, because a
+    prompt is a line and a passage is a paragraph, and the cap, because
+    fifty passages is already more text than two hundred prompts.
+    """
+
+    def make_read(self, client, name="My twisters"):
+        return client.post(
+            "/api/v1/topics/mine",
+            {"name": name, "icon": "mic", "mode": "read"},
+            content_type="application/json",
+        )
+
+    def test_a_warm_up_says_which_round_it_runs_and_holds_fewer_rows(self, pro):
+        body = self.make_read(pro).json()
+        assert body["mode"] == "read"
+        assert body["max_topics"] == owned.MAX_PASSAGES < owned.MAX_TOPICS
+
+    def test_a_paste_splits_on_blank_lines_not_on_newlines(self, pro):
+        """The bug this parser exists to stop. Split per line, a passage
+        becomes one row per sentence, and every one of those is then
+        refused for being too short to scroll."""
+        self.make_read(pro)
+        paste = f"{PASSAGE}\n\n{SECOND}\n"
+        body = pro.post(
+            "/api/v1/topics/mine/my-twisters/topics",
+            {"text": paste},
+            content_type="application/json",
+        ).json()
+        assert body["topic_count"] == 2
+        assert [t["text"] for t in body["topics"]] == [PASSAGE, SECOND]
+
+    def test_a_line_too_short_to_scroll_is_refused_with_the_reason(self, pro):
+        self.make_read(pro)
+        answer = pro.post(
+            "/api/v1/topics/mine/my-twisters/topics",
+            {"text": "She sells seashells"},
+            content_type="application/json",
+        )
+        assert answer.status_code == 400
+        assert "at least" in answer.json()["detail"]
+
+    def test_a_passage_keeps_its_whole_length_where_a_prompt_would_be_cut(self, pro):
+        """A prompt is capped at 200 characters and the paste truncates to
+        it. Sharing that ceiling would have cut every passage mid-sentence
+        and saved the fragment without a word."""
+        self.make_read(pro)
+        pro.post(
+            "/api/v1/topics/mine/my-twisters/topics",
+            {"text": PASSAGE},
+            content_type="application/json",
+        )
+        held = Genre.objects.get(slug="my-twisters").topics.first()
+        assert len(PASSAGE) > bank.MAX_TEXT
+        assert held.text == PASSAGE
+
+    def test_a_passage_carries_a_difficulty_rather_than_a_coined_style(self, pro):
+        self.make_read(pro)
+        body = pro.post(
+            "/api/v1/topics/mine/my-twisters/topics",
+            {"text": PASSAGE},
+            content_type="application/json",
+        ).json()
+        assert body["topics"][0]["style"] == owned.DEFAULT_LEVEL
+        edited = pro.patch(
+            f"/api/v1/topics/mine/my-twisters/topics/{body['topics'][0]['id']}",
+            {"text": PASSAGE, "style": "easy"},
+            content_type="application/json",
+        ).json()
+        assert edited["topics"][0]["style"] == "easy"
+        # Anything outside the two falls back rather than coining itself.
+        coined = pro.patch(
+            f"/api/v1/topics/mine/my-twisters/topics/{body['topics'][0]['id']}",
+            {"text": PASSAGE, "style": "IELTS style"},
+            content_type="application/json",
+        ).json()
+        assert coined["topics"][0]["style"] == owned.DEFAULT_LEVEL
+
+    def test_a_mode_nobody_offers_makes_an_ordinary_genre(self, pro):
+        body = pro.post(
+            "/api/v1/topics/mine",
+            {"name": "Sideways", "icon": "mic", "mode": "<script>"},
+            content_type="application/json",
+        ).json()
+        assert body["mode"] is None
+        assert Genre.objects.get(slug="sideways").mode == "speak"
+
+    def test_writing_one_is_still_pro_only(self, client, user):
+        client.force_login(user)
+        assert self.make_read(client).status_code == 403

@@ -9,7 +9,7 @@ from apps.common.ratelimit import throttle
 from apps.payments import services as payments
 from apps.topics import generate as generation
 from apps.topics import owned, pictures
-from apps.topics.bank import STYLES
+from apps.topics.bank import MODE_READ, STYLES
 from apps.topics.models import Genre, Topic
 from apps.topics.schemas import (
     BankOut,
@@ -19,6 +19,7 @@ from apps.topics.schemas import (
     MineOut,
     OwnedGenreOut,
     PasteIn,
+    ReadGenreOut,
     SharedGenreOut,
     ShareOut,
     TopicIn,
@@ -38,19 +39,57 @@ def bank(request, response: HttpResponse):
     this one cacheable.
     """
     genres = list(Genre.objects.filter(owner__isnull=True, is_active=True).order_by("sort_order", "id"))
+    # Every genre is listed, because the picker draws them all; only the
+    # speak ones carry their topics here. A read genre's passages arrive
+    # from `/bank/{slug}` when somebody picks it.
+    speaking = [g for g in genres if g.mode != MODE_READ]
     topics = (
-        Topic.objects.filter(genre__in=genres, is_active=True)
+        Topic.objects.filter(genre__in=speaking, is_active=True)
         .select_related("genre")
         .order_by("genre__sort_order", "genre_id", "sort_order", "id")
     )
     response["Cache-Control"] = "public, max-age=3600"
     return {
-        "genres": [{"slug": g.slug, "name": g.name, "icon": g.icon, "blurb": g.blurb} for g in genres],
+        "genres": [
+            {
+                "slug": g.slug,
+                "name": g.name,
+                "icon": g.icon,
+                "blurb": g.blurb,
+                "mode": MODE_READ if g.mode == MODE_READ else None,
+            }
+            for g in genres
+        ],
         "topics": [
             {"text": t.text, "genre": t.genre.slug, "style": t.style, "slug": t.slug, "image": t.image or None}
             for t in topics
         ],
         "styles": [{"key": key, "label": label, "hint": hint} for key, label, hint in STYLES],
+    }
+
+
+@api.get("/bank/{slug}", response=ReadGenreOut, by_alias=True)
+def read_genre(request, slug: str, response: HttpResponse):
+    """One warm-up genre and its passages. Public and cached like `/bank`
+    for the same reason: it carries no account, so anything between here
+    and the page may hold it.
+
+    A 404 for a speak genre rather than its topics: those already ship
+    inline, and two ways to ask for the same rows is two things to keep
+    agreeing with each other."""
+    genre = Genre.objects.filter(owner__isnull=True, is_active=True, mode=MODE_READ, slug=slug).first()
+    if genre is None:
+        raise Http404
+    passages = Topic.objects.filter(genre=genre, is_active=True).order_by("sort_order", "id")
+    response["Cache-Control"] = "public, max-age=3600"
+    return {
+        "slug": genre.slug,
+        "name": genre.name,
+        "icon": genre.icon,
+        "blurb": genre.blurb,
+        "passages": [
+            {"text": t.text, "slug": t.slug, "style": t.style, "words": len(t.text.split())} for t in passages
+        ],
     }
 
 
@@ -69,7 +108,9 @@ def _genre(genre) -> dict:
         "slug": genre.slug,
         "name": genre.name,
         "icon": genre.icon,
+        "mode": MODE_READ if owned.is_read(genre) else None,
         "topic_count": len(topics),
+        "max_topics": owned.cap_for(genre),
         "share_token": genre.share_token,
         "topics": topics,
         "own_styles": owned.own_styles(genre),
@@ -105,6 +146,7 @@ def mine(request, response: HttpResponse):
         "genres": [_genre(genre) for genre in owned.mine(request.user)],
         "max_genres": owned.MAX_GENRES,
         "max_topics": owned.MAX_TOPICS,
+        "max_passages": owned.MAX_PASSAGES,
         "can_generate": openrouter.enabled(),
         "generations_left": generation.left(request.user),
     }
@@ -114,7 +156,7 @@ def mine(request, response: HttpResponse):
 @throttle("genres", "30/hour")
 def create(request, payload: GenreIn):
     _writer(request)
-    genre = owned.create(request.user, payload.name, payload.icon)
+    genre = owned.create(request.user, payload.name, payload.icon, payload.mode)
     return Status(201, _genre(genre))
 
 

@@ -1,10 +1,4 @@
-/* Type-only, and it has to stay that way: `lib/bank.ts` also holds
-   `fetchBank`, which reaches `lib/api.ts` and `next/headers`. This module
-   is in the client bundle through the engine, so importing a *value* from
-   there drags the server-only half of it into the browser and the build
-   stops with "next/headers ... in the Pages Router". Hence the predicate
-   below rather than one shared from the bank. */
-import type { Bank, Topic } from "@/lib/bank";
+import { isRead, type Bank, type Topic } from "@/lib/bank";
 
 import { STAGE_KEY, SURPRISE, type Prefs, type Store } from "@/lib/round/prefs";
 
@@ -27,6 +21,22 @@ function hasImage(topic: Topic): boolean {
    only a bank holding none at all gives way. */
 export function pool(bank: Bank, prefs: Prefs): Topic[] {
   const all = bank.topics.filter((topic) => topic.genre === prefs.genre);
+  /* A warm-up never falls back to a sentence, for the reason picture mode
+     never does: the fallbacks below exist so a *preference* cannot empty
+     the bank, and this is not a preference but a promise about the next
+     screen. Its passages are fetched rather than shipped, so the honest
+     answer before they land is nothing at all - handing back a one-line
+     prompt to be read off a scroller is the mode silently not working. */
+  if (isRead(bank.genres.find((genre) => genre.slug === prefs.genre))) {
+    /* Difficulty narrows a warm-up the way style narrows a genre, and it
+       falls back the same way: a filter that empties the bank is worse
+       than one that is ignored. */
+    if (prefs.level !== SURPRISE) {
+      const narrowed = all.filter((topic) => topic.style === prefs.level);
+      if (narrowed.length) return narrowed;
+    }
+    return all;
+  }
   if (prefs.pictures) {
     const here = all.filter(hasImage);
     if (here.length) return here;
@@ -69,6 +79,14 @@ export function shuffled<T>(items: T[], random: () => number = Math.random): T[]
    site, and a picture round that skipped it felt like a different, lesser
    product. Only the rows differ, never the timing. */
 export function decoysFor(bank: Bank, prefs: Prefs, winner: Topic, random: () => number = Math.random): string[] {
+  /* A warm-up does not spin. The reel is a strip of one-line prompts
+     rolling to a stop, and landing that on a 120-word passage promises
+     the wrong kind of answer - the same mismatch a photograph had, and
+     the fix there was to change what rolls. Nothing rolls here yet, and
+     no decoys is already a path the engine takes: it shows the passage
+     directly. The moment of no take-backs on a warm-up is the Start
+     press, which the passage screen already is. */
+  if (isRead(bank.genres.find((genre) => genre.slug === prefs.genre))) return [];
   const seen = new Set([winner.text]);
   let out: string[] = [];
   const tiers = [pool(bank, prefs), bank.topics.filter((topic) => topic.genre === prefs.genre), bank.topics];

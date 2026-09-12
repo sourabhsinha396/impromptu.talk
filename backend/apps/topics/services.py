@@ -20,9 +20,12 @@ def seed_topics() -> tuple[int, int]:
     """Returns (genres written, topics written)."""
     built_in: dict[str, Genre] = {g.slug: g for g in Genre.objects.filter(owner__isnull=True)}
 
-    for order, (slug, name, icon, blurb) in enumerate(bank.GENRES):
+    declared = bank.all_genres()
+
+    for order, (slug, name, icon, blurb, mode) in enumerate(declared):
         genre = built_in.get(slug) or Genre(slug=slug)
         genre.name, genre.icon, genre.blurb, genre.sort_order, genre.is_active = name, icon, blurb, order, True
+        genre.mode = mode
         genre.save()
         built_in[slug] = genre
 
@@ -34,8 +37,8 @@ def seed_topics() -> tuple[int, int]:
     claimed: dict[str, str] = {}
     seen: set[int] = set()
     written = 0
-    for slug, *_ in bank.GENRES:
-        topics = bank.load(slug)
+    for slug, _name, _icon, _blurb, mode in declared:
+        topics = bank.load(slug, mode)
         if topics is None:
             continue
         genre = built_in[slug]
@@ -48,7 +51,10 @@ def seed_topics() -> tuple[int, int]:
             if topic is None:
                 # New rows are live; existing ones keep whatever the admin
                 # decided, because a dud switched off there must stay off.
-                topic = Topic(text=text, slug=bank.slugify_topic(text), is_active=True)
+                # The slug is set once, on the row's first write, and never
+                # again: it is what `/?topic=` links resolve on, so changing
+                # a file must not break a link somebody already sent.
+                topic = Topic(text=text, slug=item["slug"], is_active=True)
                 existing[text] = topic
             topic.genre, topic.style, topic.sort_order = genre, item["style"], order
             topic.image = item["image"]
@@ -71,7 +77,7 @@ def seed_topics() -> tuple[int, int]:
     # deactivated instead: that is a broken state (a genre left the list
     # while its file still fed it), and the answer is to stop offering it,
     # not to delete forty topics on the way past.
-    live = {slug for slug, *_ in bank.GENRES}
+    live = {slug for slug, *_ in declared}
     for slug, genre in list(built_in.items()):
         if slug in live:
             continue
@@ -81,4 +87,4 @@ def seed_topics() -> tuple[int, int]:
         else:
             genre.delete()
 
-    return len(bank.GENRES), written
+    return len(declared), written

@@ -31,6 +31,12 @@ class Genre(models.Model):
         settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE, related_name="genres"
     )
     share_token = models.CharField(max_length=32, null=True, blank=True, unique=True)
+    # How this genre is practised: `speak` is a prompt you talk about,
+    # `read` is a warm-up passage you read aloud off a scroller. One column
+    # rather than a second round: the prep phase is skipped and the clock
+    # becomes the scroll, and everything else about the round is unchanged
+    # (docs/DECISIONS.md). Defaulted, so every existing row is a speak row.
+    mode = models.CharField(max_length=8, default="speak")
 
     class Meta:
         db_table = "genres"
@@ -54,7 +60,10 @@ class Topic(models.Model):
     """One prompt: the thing a person is actually asked to talk about.
 
     `style` is how they are asked to talk about it: a built-in key on a
-    built-in genre, a built-in key or the words typed on an owned one. Not
+    built-in genre, a built-in key or the words typed on an owned one. On a
+    read genre it holds the passage's difficulty instead, which is the only
+    axis a passage has, since nobody chooses how to say words they are
+    reading verbatim. Not
     a foreign key, because the built-ins are a fixed editorial vocabulary
     and a coined one is somebody's own words. `is_active` is the kill
     switch: a dud is switched off, never deleted, so re-adding it later
@@ -64,7 +73,12 @@ class Topic(models.Model):
     """
 
     genre = models.ForeignKey(Genre, on_delete=models.CASCADE, related_name="topics")
-    text = models.CharField(max_length=200)
+    # Wide enough for a read genre's passage (100 to 120 words), not just a
+    # speak genre's sentence. The 200-character product rule for a prompt is
+    # still enforced, in `bank.load` and in `owned`, where it belongs: it is
+    # editorial policy about prompts, and a column that enforced it here
+    # would instead have truncated every passage mid-sentence on save.
+    text = models.CharField(max_length=1200)
     slug = models.SlugField(max_length=220)
     style = models.CharField(max_length=24, db_index=True)
     is_active = models.BooleanField(default=True)

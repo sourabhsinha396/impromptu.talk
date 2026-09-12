@@ -1,6 +1,8 @@
+import { redirect } from "next/navigation";
+
 import { Round } from "@/components/round/round";
-import { currentUser, fetchMine, fetchSharedGenre } from "@/lib/api";
-import { fetchBank } from "@/lib/bank";
+import { currentUser, fetchBank, fetchMine, fetchSharedGenre } from "@/lib/api";
+import { featurePath, isRead } from "@/lib/bank";
 import { isOwnSlug, withOwn, withShared } from "@/lib/owned";
 import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/site";
 import { jsonLd, webApplication } from "@/lib/structured-data";
@@ -14,6 +16,14 @@ type Search = { searchParams: Promise<Record<string, string | string[] | undefin
 export default async function Home({ searchParams }: Search) {
   const [params, builtIn, user] = await Promise.all([searchParams, fetchBank(), currentUser()]);
   const wanted = typeof params.genre === "string" ? params.genre : "";
+  /* A warm-up has a page of its own and does not run here, so a link that
+     names one is sent there rather than opening a spoken round on a genre
+     whose bank home does not carry. Kept working rather than 404ed: the
+     shape `/?genre=` is how every other genre is linked, and somebody who
+     guesses it should land somewhere right. */
+  const feature = builtIn.genres.find((genre) => genre.slug === wanted && isRead(genre));
+  if (feature) redirect(featurePath(feature.slug));
+
   const mine = user ? await fetchMine() : null;
   let bank = mine ? withOwn(builtIn, mine.genres) : builtIn;
 

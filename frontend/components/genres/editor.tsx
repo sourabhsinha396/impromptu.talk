@@ -138,11 +138,17 @@ export function Editor({
   return (
     <main className="mx-auto w-full max-w-[960px] flex-1 px-[clamp(16px,4vw,32px)] pt-7 pb-16">
       <p className="mb-3.5 text-[13px] font-semibold text-muted">
-        <Link href="/genres" className="text-inherit no-underline hover:text-ink">
-          All genres
+        <Link
+          href={genre.mode === "read" ? "/tongue-twisters" : "/genres"}
+          className="text-inherit no-underline hover:text-ink"
+        >
+          {genre.mode === "read" ? "Tongue twisters" : "All genres"}
         </Link>{" "}
         /{" "}
-        <Link href="/genres/yours" className="text-inherit no-underline hover:text-ink">
+        <Link
+          href={genre.mode === "read" ? "/pro/custom-tongue-twisters" : "/genres/yours"}
+          className="text-inherit no-underline hover:text-ink"
+        >
           Yours
         </Link>{" "}
         / {genre.name}
@@ -152,11 +158,15 @@ export function Editor({
         {genre.name}
       </h1>
       <div className="mt-4 flex flex-wrap items-center gap-3">
-        <Button href={`/?genre=yours:${genre.slug}`} size="lg">
-          Practise this genre
+        {/* A warm-up is practised on the warm-up's page, where it appears
+            in the Passages setting: home does not run a read genre, so
+            sending somebody there would open a spoken round on a bank it
+            cannot draw from. */}
+        <Button href={genre.mode === "read" ? "/tongue-twisters" : `/?genre=yours:${genre.slug}`} size="lg">
+          {genre.mode === "read" ? "Read these on a scroller" : "Practise this genre"}
         </Button>
         <span className="text-[13px] font-semibold text-muted">
-          {genre.topic_count} of {maxTopics} topics
+          {genre.topic_count} of {genre.max_topics || maxTopics} {genre.mode === "read" ? "passages" : "topics"}
         </span>
       </div>
 
@@ -166,6 +176,7 @@ export function Editor({
         <AddTopics
           styles={styles}
           canGenerate={canGenerate}
+          read={genre.mode === "read"}
           left={left}
           onPaste={(text, defaultStyle) => write("POST", `${base}/topics`, { text, default_style: defaultStyle })}
           onGenerate={generate}
@@ -187,10 +198,18 @@ export function Editor({
       </ul>
 
       {genre.topics.length === 0 && (
-        <p className="mt-6 text-[15px] text-muted">Nothing in here yet. Paste a few lines above.</p>
+        <p className="mt-6 text-[15px] text-muted">
+          {genre.mode === "read"
+            ? "Nothing in here yet. Paste a passage above."
+            : "Nothing in here yet. Paste a few lines above."}
+        </p>
       )}
 
-      <AddPicture editable={isPro} shared={genre.share_token !== null} onUpload={upload} styles={styles} />
+      {/* A passage has nothing to put a picture over: the words are the
+          whole of what is on screen while it scrolls. */}
+      {genre.mode !== "read" && (
+        <AddPicture editable={isPro} shared={genre.share_token !== null} onUpload={upload} styles={styles} />
+      )}
 
       <Sharing
         token={genre.share_token}
@@ -207,12 +226,15 @@ export function Editor({
 function AddTopics({
   styles,
   canGenerate,
+  read = false,
   left,
   onPaste,
   onGenerate,
 }: {
   styles: Style[];
   canGenerate: boolean;
+  /** A warm-up: passages read aloud rather than prompts talked about. */
+  read?: boolean;
   left: number;
   onPaste: (text: string, defaultStyle: string) => Promise<boolean>;
   onGenerate: (prompt: string) => Promise<boolean>;
@@ -229,7 +251,15 @@ function AddTopics({
   /* What the button says it will do, counted the way the backend counts
      it: a blank line is not a topic. Seeing the number before pressing is
      the cheapest check there is against a bad paste. */
-  const lines = text.split("\n").filter((line) => line.trim() !== "").length;
+  /* Counted the way the backend counts it, which differs by kind: a
+     prompt is a line and a passage is a paragraph, so a warm-up splits on
+     blank lines. Counting per line there would promise fifty and add two.
+     Seeing the number before pressing is the cheapest check there is
+     against a bad paste. */
+  const lines = read
+    ? text.split(/\n\s*\n/).filter((block) => block.trim() !== "").length
+    : text.split("\n").filter((line) => line.trim() !== "").length;
+  const noun = read ? "passage" : "topic";
 
   async function add() {
     setBusy(true);
@@ -254,7 +284,7 @@ function AddTopics({
   return (
     <section className="mt-4.5 rounded-card border border-line bg-card p-4.5">
       <div className="mb-2.5 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-base font-semibold">Add topics</h2>
+        <h2 className="text-base font-semibold">{read ? "Add passages" : "Add topics"}</h2>
         {canGenerate && (
           <div className="inline-flex gap-0.5 rounded-full border border-line bg-card2 p-0.5">
             <button type="button" onClick={() => setWay("paste")} className={cn(tab, way === "paste" ? "bg-card text-ink" : "text-muted")}>
@@ -270,17 +300,32 @@ function AddTopics({
       {way === "paste" ? (
         <>
           <p className="mb-3 text-[13.5px] text-muted">
-            One line, one topic. End a line with a style to tag it: <b className="font-semibold">Tipping should end,
-            hot take</b>.
+            {read ? (
+              <>
+                One paragraph, one passage, with a blank line between them. Each has to be long enough to be worth
+                scrolling: about forty words and up.
+              </>
+            ) : (
+              <>
+                One line, one topic. End a line with a style to tag it:{" "}
+                <b className="font-semibold">Tipping should end, hot take</b>.
+              </>
+            )}
           </p>
           <textarea
             value={text}
             onChange={(event) => setText(event.target.value)}
-            placeholder={"Tell me about yourself\nWhy do you want this job\nDescribe a time you failed, tell a story"}
+            placeholder={
+              read
+                ? "Six strict speech specialists structured sixty sophisticated speaking scripts...\n\nWhich witch watched which watch..."
+                : "Tell me about yourself\nWhy do you want this job\nDescribe a time you failed, tell a story"
+            }
             className="min-h-[120px] w-full resize-y rounded-[10px] border border-line-strong bg-card2 px-3.5 py-3 text-[15px]/[1.5] text-ink"
           />
           <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-2 text-[13.5px] font-semibold text-muted">
+            {/* A passage has no style to default, only a difficulty, and
+                that is picked per row rather than for a whole paste. */}
+            <div className={cn("flex items-center gap-2 text-[13.5px] font-semibold text-muted", read && "hidden")}>
               <label htmlFor="default-style">Lines with no style</label>
               <select
                 id="default-style"
@@ -296,7 +341,7 @@ function AddTopics({
               </select>
             </div>
             <Button size="sm" disabled={busy || lines === 0} onClick={add}>
-              {lines > 0 ? `Add ${lines} topic${lines === 1 ? "" : "s"}` : "Add topics"}
+              {lines > 0 ? `Add ${lines} ${noun}${lines === 1 ? "" : "s"}` : `Add ${noun}s`}
             </Button>
           </div>
         </>

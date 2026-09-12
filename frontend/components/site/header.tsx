@@ -10,14 +10,18 @@ import type { SessionUser } from "@/lib/api";
    the account mark stay a header rather than ending up a screen apart.
    Hidden while filming: the frame is a laptop screen shot from across the
    room, and everything that is not the topic and the clock gets out of
-   the way. */
+   the way.
+
+   The name is written out on a phone too, which the row has room for; the
+   gap beside it tightens below `sm` so the widest case there - a 320px
+   screen carrying a three-digit streak - still fits on one line. */
 export function Header({ user, streak }: { user: SessionUser | null; streak: number }) {
   return (
     <header className="flex h-(--header-h) shrink-0 border-b border-accent px-[clamp(14px,4vw,28px)] py-2.5 filming:invisible">
       <div className="flex min-w-0 flex-1 items-center justify-between gap-3 md:mx-auto md:max-w-[80rem]">
-        <div className="flex min-w-0 items-center gap-5">
+        <div className="flex min-w-0 items-center gap-3.5 sm:gap-5">
           <Link href="/" aria-label="yapholic home" className="inline-flex min-w-0 items-center no-underline">
-            <Wordmark collapse />
+            <Wordmark />
           </Link>
           <Link href="/features" className="text-sm leading-none font-semibold text-muted no-underline hover:text-ink">
             Features

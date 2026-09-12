@@ -1,7 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
+import { FREE_FEATURES, PRO_FEATURES } from "@/components/features/feature-list";
 import { FeaturesPage } from "@/components/features/features-page";
+import { FEATURE_ICONS } from "@/components/site/icons";
 import { Header } from "@/components/site/header";
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }) }));
@@ -47,6 +49,21 @@ describe("the features page, an explicit override of AGENTS.md's \"no features p
     unmount();
     render(<FeaturesPage isPro />);
     expect(screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent)).toEqual(["Free forever", "Pro"]);
+  });
+  it("gives every card a glyph of its own, and a destination", () => {
+    /* `FeatureIcon` falls back to a gear, so a card added without an entry
+       draws a settings icon and nothing says so. Every card is also a
+       promise that there is somewhere to go: a feature listed here with no
+       surface behind it is the one thing this page must not do. */
+    for (const feature of [...FREE_FEATURES, ...PRO_FEATURES]) {
+      expect(FEATURE_ICONS[feature.slug], feature.slug).toBeDefined();
+      expect(feature.href.startsWith("/"), feature.slug).toBe(true);
+      expect(feature.blurb.length, feature.slug).toBeGreaterThan(0);
+    }
+    /* Slugs are what the icons are keyed on, so two cards sharing one
+       would silently draw the same glyph for different things. */
+    const slugs = [...FREE_FEATURES, ...PRO_FEATURES].map((feature) => feature.slug);
+    expect(new Set(slugs).size).toBe(slugs.length);
   });
 });
 

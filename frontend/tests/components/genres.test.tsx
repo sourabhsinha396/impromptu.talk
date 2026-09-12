@@ -30,8 +30,17 @@ const STYLES = [
   { key: "story", label: "Tell a story", hint: "" },
 ];
 
+/* A warm-up has a topics file like any genre, but its rows are passages
+   read aloud off a scroller and its page is `/tongue-twisters` rather than
+   `/genre/<slug>`, so it is not one of the pages under test here. Named
+   rather than inferred from the directory, or a new speak genre that
+   nobody gave a page would slip through as though it were a warm-up. */
+const WARM_UPS = ["tongue-twisters"];
+
 function realBank(): Bank {
-  const files = readdirSync(TOPICS_DIR).filter((name) => name.endsWith(".json"));
+  const files = readdirSync(TOPICS_DIR)
+    .filter((name) => name.endsWith(".json"))
+    .filter((name) => !WARM_UPS.includes(name.replace(/\.json$/, "")));
   const genres = ORDER.map((slug) => {
     const file = JSON.parse(readFileSync(path.join(TOPICS_DIR, `${slug}.json`), "utf8")) as {
       genre: string;

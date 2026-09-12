@@ -1,9 +1,37 @@
-import { BACKEND_ORIGIN } from "@/lib/api";
+/* The bank as the page receives it, and nothing that fetches it.
 
-/* The bank as the page receives it: the built-in genres in picker order,
+   This module is imported for its *values* by client components (the
+   picker asks whether a genre is a warm-up), so it must not reach
+   `lib/api.ts`: that imports `next/headers`, and a client component
+   pulling it in stops the build outright with "next/headers ... in the
+   Pages Router". The fetchers live in `lib/api.ts` with every other
+   server-only call, which is the split `lib/owned.ts` already made
+   (docs/DECISIONS.md, 2026-09-09).
+
+   The bank as the page receives it: the built-in genres in picker order,
    every active topic, and the styles for the select. One shape for the
    picker, the reel and the style select. */
-export type Genre = { slug: string; name: string; icon: string; blurb: string; own?: boolean };
+/* `mode` is absent on the ten and on anything somebody owns, and "read" on
+   a warm-up: a genre whose topics are passages read aloud off a scroller
+   rather than prompts to talk about. Absent rather than "speak" on every
+   row, for the reason `Topic.image` gives below. */
+export type Genre = { slug: string; name: string; icon: string; blurb: string; own?: boolean; mode?: "read" };
+
+export const READ = "read";
+
+/** Whether this genre is a warm-up: read aloud, no prep, no clock. */
+export function isRead(genre: Genre | undefined): boolean {
+  return genre?.mode === READ;
+}
+
+/** Where a feature lives. One URL per feature, named by its slug: home is
+    the tool and keeps the genre chip, the question and one button, and
+    anything that changes what the round *is* takes a page of its own
+    rather than a mode on that screen (docs/DECISIONS.md). */
+export function featurePath(slug: string): string {
+  return `/${slug}`;
+}
+
 /* `image` is what makes a topic a picture topic (docs/DECISIONS.md,
    2026-09-09); `text` stays the prompt in both kinds, so a picture round
    is the same round with a picture over the same sentence. Optional, and
@@ -16,18 +44,27 @@ export type Bank = { genres: Genre[]; topics: Topic[]; styles: Style[] };
 
 export const EMPTY_BANK: Bank = { genres: [], topics: [], styles: [] };
 
-/** The whole built-in bank, fetched on the server with no cookies and kept
-    for an hour, so a respin costs no round trip and a visit costs the
-    backend nothing most of the time. The page never fails on this call:
-    an unreachable backend yields an empty bank and the tool still draws. */
-export async function fetchBank(): Promise<Bank> {
-  try {
-    const response = await fetch(`${BACKEND_ORIGIN}/api/v1/topics/bank`, { next: { revalidate: 3600 } });
-    if (!response.ok) return EMPTY_BANK;
-    return (await response.json()) as Bank;
-  } catch {
-    return EMPTY_BANK;
-  }
+/* One warm-up genre and its passages. Fetched when the genre is picked
+   rather than shipped with the bank: a passage is 100 to 120 words, and
+   home ships the whole bank inline so a respin costs no round trip. That
+   promise is about the reel; somebody who has just chosen to read a
+   passage aloud for a minute will not notice one request. */
+export type Passage = { text: string; slug: string; style: string; words: number };
+export type ReadGenre = { slug: string; name: string; icon: string; blurb: string; passages: Passage[] };
+
+/* Grouped as the page shows them: easy first, because somebody who has
+   never done this needs an obvious way in. A difficulty the bank does not
+   hold is simply absent rather than an empty heading. */
+export const READ_STYLES: { key: string; label: string }[] = [
+  { key: "easy", label: "Easy" },
+  { key: "hard", label: "Hard" },
+];
+
+export function passagesByDifficulty(genre: ReadGenre): { label: string; passages: Passage[] }[] {
+  return READ_STYLES.map(({ key, label }) => ({
+    label,
+    passages: genre.passages.filter((passage) => passage.style === key),
+  })).filter((group) => group.passages.length > 0);
 }
 
 export function genreBySlug(bank: Bank, slug: string): Genre | undefined {

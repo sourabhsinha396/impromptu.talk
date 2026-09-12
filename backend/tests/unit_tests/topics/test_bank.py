@@ -30,7 +30,10 @@ def test_the_whole_bank_arrives_in_one_cacheable_answer(seeded, client):
     # browser parses on every visit for the sake of the few hundred that do.
     assert body["topics"][0] == {"text": "Low tide", "genre": "general", "style": "just-talk", "slug": "low-tide"}
     assert [s["key"] for s in body["styles"]] == ["surprise", "just-talk", "hot-take", "explain", "story"]
-    assert {t["genre"] for t in body["topics"]} == {g["slug"] for g in body["genres"]}
+    # Every genre listed carries topics here except the warm-ups, whose
+    # passages are fetched when one is picked.
+    speaking = {g["slug"] for g in body["genres"] if not g.get("mode")}
+    assert {t["genre"] for t in body["topics"]} == speaking
 
 
 def test_the_picture_bank_is_whole_and_every_path_names_a_file_that_exists(seeded, client):
@@ -78,3 +81,41 @@ def test_what_is_switched_off_or_owned_by_somebody_stays_out(seeded, client):
     assert "mine" not in {g["slug"] for g in body["genres"]}
     assert "tech-ai" not in {g["slug"] for g in body["genres"]}
     assert not any(t["genre"] == "tech-ai" for t in body["topics"])
+
+
+def test_a_warm_up_is_listed_in_the_picker_but_its_passages_are_not_shipped_inline(seeded, client):
+    """The reason the two are split. A passage is 100 to 120 words, and home
+    ships the whole bank inline so a respin costs no round trip; putting
+    every passage in that answer would charge every visitor for a genre
+    most of them never open. The genre still has to be listed, or there is
+    nothing in the picker to press."""
+    body = client.get(BANK).json()
+    warm_ups = [g for g in body["genres"] if g.get("mode") == bank.MODE_READ]
+    assert [g["slug"] for g in warm_ups] == [slug for slug, *_ in bank.WARM_UPS]
+    assert not [t for t in body["topics"] if t["genre"] == "tongue-twisters"]
+
+
+def test_a_warm_up_hands_over_its_passages_whole_and_counts_their_words(seeded, client):
+    """Words, because the speed the scroller runs at is in words a minute,
+    so how long a passage takes is arithmetic the browser does rather than
+    a number anybody stores."""
+    response = client.get(f"{BANK}/tongue-twisters")
+    assert response.status_code == 200
+    assert response["Cache-Control"] == "public, max-age=3600"
+    body = response.json()
+    assert body["name"] == "Tongue twisters"
+    passages = body["passages"]
+    assert len(passages) == len(bank.load("tongue-twisters", bank.MODE_READ))
+    assert {p["style"] for p in passages} == set(bank.READ_STYLE_KEYS)
+    for passage in passages:
+        assert passage["words"] == len(passage["text"].split())
+        # Long enough to be worth scrolling: 40 seconds at 150 words a
+        # minute is 100 words, and that is the floor the feature exists for.
+        assert passage["words"] >= 90, passage["slug"]
+        assert passage["slug"] and " " not in passage["slug"]
+
+
+def test_a_speak_genre_has_no_passages_endpoint(seeded, client):
+    """Two ways to ask for the same rows is two things to keep agreeing."""
+    assert client.get(f"{BANK}/general").status_code == 404
+    assert client.get(f"{BANK}/not-a-genre").status_code == 404

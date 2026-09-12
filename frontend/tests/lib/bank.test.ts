@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { EMPTY_BANK, fetchBank } from "@/lib/bank";
+import { EMPTY_BANK } from "@/lib/bank";
+import { fetchBank } from "@/lib/api";
 
 describe("fetchBank", () => {
   afterEach(() => vi.unstubAllGlobals());

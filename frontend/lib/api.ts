@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 
+import { EMPTY_BANK, type Bank, type ReadGenre } from "@/lib/bank";
 import { NO_GENRES, type Mine, type OwnedGenre, type SharedGenre } from "@/lib/owned";
 import type { Report } from "@/lib/report";
 import { EMPTY_HISTORY, type History, type Shared } from "@/lib/practice";
@@ -270,6 +271,39 @@ export async function fetchSharedGenre(token: string): Promise<SharedGenre | nul
     const response = await backendFetch(`/api/v1/topics/shared/${encodeURIComponent(token)}`);
     if (!response.ok) return null;
     return (await response.json()) as SharedGenre;
+  } catch {
+    return null;
+  }
+}
+
+/** The whole built-in bank, fetched on the server with no cookies and kept
+    for an hour, so a respin costs no round trip and a visit costs the
+    backend nothing most of the time. The page never fails on this call:
+    an unreachable backend yields an empty bank and the tool still draws.
+
+    Here rather than in `lib/bank.ts` because client components import that
+    module for its values, and anything importing this one carries
+    `next/headers` into the browser bundle. */
+export async function fetchBank(): Promise<Bank> {
+  try {
+    const response = await fetch(`${BACKEND_ORIGIN}/api/v1/topics/bank`, { next: { revalidate: 3600 } });
+    if (!response.ok) return EMPTY_BANK;
+    return (await response.json()) as Bank;
+  } catch {
+    return EMPTY_BANK;
+  }
+}
+
+/** One warm-up genre and its passages, which the bank does not carry: a
+    passage is 100 to 120 words and most visitors never open that genre,
+    so they are fetched when it is asked for. Null rather than an empty
+    genre on failure, so the page can 404 instead of publishing a page
+    that promises tongue twisters and lists none. */
+export async function fetchReadGenre(slug: string): Promise<ReadGenre | null> {
+  try {
+    const response = await fetch(`${BACKEND_ORIGIN}/api/v1/topics/bank/${slug}`, { next: { revalidate: 3600 } });
+    if (!response.ok) return null;
+    return (await response.json()) as ReadGenre;
   } catch {
     return null;
   }

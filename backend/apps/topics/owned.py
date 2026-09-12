@@ -30,6 +30,16 @@ from apps.topics.models import Genre, Topic
 MAX_GENRES = 10
 MAX_TOPICS = 200
 
+# Passages in a read genre, and far fewer than topics, because a passage is
+# a hundred words rather than a line. Two hundred of them is 140KB of text
+# on a page that server-renders its own bank, which is the one page that
+# has to be the tool the moment it loads. Fifty is more than anybody has
+# written by hand and still a page that arrives.
+MAX_PASSAGES = 50
+
+# What a passage somebody writes is filed as until they say otherwise.
+DEFAULT_LEVEL = "hard"
+
 # A style somebody named themselves. Short, because it renders at the end
 # of a row beside the topic and a long one pushes the topic around.
 MAX_STYLE = 24
@@ -43,6 +53,11 @@ TOKEN_BYTES = 16
 
 TOO_MANY_GENRES = f"That is {MAX_GENRES} genres, which is the most an account can hold."
 TOO_MANY_TOPICS = f"A genre holds {MAX_TOPICS} topics, and this paste would go over."
+TOO_MANY_PASSAGES = f"A warm-up holds {MAX_PASSAGES} passages, and this paste would go over."
+PASSAGE_TOO_SHORT = (
+    f"A passage needs at least {bank.MIN_PASSAGE} characters, which is about twenty seconds of reading aloud."
+)
+PASSAGE_TOO_LONG = f"A passage stops at {bank.MAX_PASSAGE} characters. Split it into two."
 NAME_TAKEN = "You already have a genre with that name."
 NEEDS_NAME = "Give the genre a name."
 NEEDS_TEXT = "A topic needs some words."
@@ -161,7 +176,23 @@ def topics_of(genre: Genre) -> list[Topic]:
     return list(genre.topics.filter(is_active=True).order_by("sort_order", "id"))
 
 
-def create(user, name: str, icon: str) -> Genre:
+def valid_mode(mode: str | None) -> str:
+    """One of the two we offer, or the ordinary one. A fixed set with a
+    validator in front of it, like the icon and the accent: this value
+    decides which round a page runs, and the one thing it must never be is
+    whatever was posted."""
+    return bank.MODE_READ if mode == bank.MODE_READ else bank.MODE_SPEAK
+
+
+def is_read(genre: Genre) -> bool:
+    return genre.mode == bank.MODE_READ
+
+
+def cap_for(genre: Genre) -> int:
+    return MAX_PASSAGES if is_read(genre) else MAX_TOPICS
+
+
+def create(user, name: str, icon: str, mode: str | None = None) -> Genre:
     tidy = " ".join(name.split())[:60]
     slug = slugify(tidy)[:60]
     if not tidy or not slug:
@@ -170,7 +201,49 @@ def create(user, name: str, icon: str) -> Genre:
         raise HttpError(400, TOO_MANY_GENRES)
     if Genre.objects.filter(owner=user, slug=slug).exists():
         raise HttpError(400, NAME_TAKEN)
-    return Genre.objects.create(owner=user, name=tidy, slug=slug, icon=valid_icon(icon), sort_order=0)
+    return Genre.objects.create(
+        owner=user, name=tidy, slug=slug, icon=valid_icon(icon), sort_order=0, mode=valid_mode(mode)
+    )
+
+
+def check_passage(line: str) -> str:
+    """A passage, or the reason it is not one. The bounds are the feature's:
+    under two hundred characters there is nothing to scroll past, and over
+    twelve hundred the scroller is asking somebody to read for three
+    minutes without stopping."""
+    if len(line) < bank.MIN_PASSAGE:
+        raise HttpError(400, PASSAGE_TOO_SHORT)
+    if len(line) > bank.MAX_PASSAGE:
+        raise HttpError(400, PASSAGE_TOO_LONG)
+    return line
+
+
+def parse_passages(text: str) -> list[tuple[str, str]]:
+    """A paste of passages, split on blank lines rather than on newlines.
+
+    A prompt is a line and a passage is a paragraph, so the two cannot
+    share a parser: splitting a passage per line would file every sentence
+    of it as a passage of its own, and each of those would then be refused
+    for being too short. A blank line between them is what somebody types
+    anyway and what a document pasted in already has.
+
+    Nothing carries a style tail here. In a hundred-word paragraph a
+    trailing comma clause belongs to the sentence far more often than it is
+    a tag, and difficulty is two values picked once rather than typed fifty
+    times.
+    """
+    out: list[tuple[str, str]] = []
+    seen: set[str] = set()
+    for block in text.split("\n\n"):
+        line = " ".join(block.split())
+        if not line:
+            continue
+        check_passage(line)
+        key = line.lower()
+        if key not in seen:
+            seen.add(key)
+            out.append((line, DEFAULT_LEVEL))
+    return out
 
 
 @transaction.atomic
@@ -181,14 +254,15 @@ def add_topics(genre: Genre, text: str, default_style: str = DEFAULT_STYLE) -> i
     of it: silently keeping the first thirty of somebody's ninety is
     worse than saying no, because they cannot see which thirty.
     """
-    lines = parse(text, default_style)
+    read = is_read(genre)
+    lines = parse_passages(text) if read else parse(text, default_style)
     if not lines:
         return 0
     held = list(genre.topics.all())
     have = {topic.text.lower() for topic in held}
     fresh = [(line, style) for line, style in lines if line.lower() not in have]
-    if len(held) + len(fresh) > MAX_TOPICS:
-        raise HttpError(400, TOO_MANY_TOPICS)
+    if len(held) + len(fresh) > cap_for(genre):
+        raise HttpError(400, TOO_MANY_PASSAGES if read else TOO_MANY_TOPICS)
 
     slugs = {topic.slug for topic in held}
     order = max((topic.sort_order for topic in held), default=0)
@@ -218,19 +292,27 @@ def edit_topic(genre: Genre, topic_id: int, text: str, style: str) -> Topic:
     topic = genre.topics.filter(pk=topic_id).first()
     if topic is None:
         raise HttpError(404, NO_TOPIC)
-    line = " ".join(text.split())[: bank.MAX_TEXT]
+    read = is_read(genre)
+    line = " ".join(text.split())[: bank.MAX_PASSAGE if read else bank.MAX_TEXT]
     if not line:
         raise HttpError(400, NEEDS_TEXT)
+    if read:
+        check_passage(line)
     if genre.topics.filter(text=line).exclude(pk=topic.pk).exists():
         raise HttpError(400, ALREADY_HERE)
-    coined = coin_style(style)
-    # A style the genre already holds wins on spelling, so typing "panel
-    # round" beside an existing "Panel round" joins it rather than
-    # sitting next to it looking like a mistake.
-    for held in own_styles(genre):
-        if held.lower() == coined.lower():
-            coined = held
-            break
+    if read:
+        # A passage has no style, only a difficulty, and that is two values
+        # from a fixed set rather than anything somebody coins.
+        coined = style if style in bank.READ_STYLE_KEYS else DEFAULT_LEVEL
+    else:
+        coined = coin_style(style)
+        # A style the genre already holds wins on spelling, so typing "panel
+        # round" beside an existing "Panel round" joins it rather than
+        # sitting next to it looking like a mistake.
+        for held in own_styles(genre):
+            if held.lower() == coined.lower():
+                coined = held
+                break
     topic.text, topic.style = line, coined
     topic.slug = _free_slug(line, {row.slug for row in genre.topics.exclude(pk=topic.pk)})
     topic.save(update_fields=["text", "style", "slug"])

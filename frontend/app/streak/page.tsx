@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 
 import { StreakPage } from "@/components/streak/streak-page";
-import { currentUser, practiceHistory } from "@/lib/api";
-import { fetchBank } from "@/lib/bank";
+import { currentUser, fetchBank, practiceHistory } from "@/lib/api";
 import { pageMetadata } from "@/lib/metadata";
 
 /* noindex: one browser's own numbers, which say nothing to a crawler. */

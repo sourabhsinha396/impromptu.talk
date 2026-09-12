@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
 import { Editor } from "@/components/genres/editor";
-import { currentUser, fetchMine, fetchOwned } from "@/lib/api";
-import { fetchBank } from "@/lib/bank";
+import { currentUser, fetchBank, fetchMine, fetchOwned } from "@/lib/api";
 import { pageMetadata } from "@/lib/metadata";
 
 type Params = { params: Promise<{ slug: string }> };
@@ -24,6 +23,10 @@ export default async function EditorRoute({ params }: Params) {
   /* A slug somebody else holds is not this account's business, so it is
      the same 404 as a slug nobody holds. */
   if (!genre) notFound();
+  /* A warm-up opened here belongs to the feature that runs it. Sent there
+     rather than 404ed: the row exists and this account owns it, they have
+     just come by the wrong door. */
+  if (genre.mode === "read") redirect(`/pro/custom-tongue-twisters/${slug}`);
   return (
     <Editor
       genre={genre}

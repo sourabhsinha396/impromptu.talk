@@ -15,6 +15,15 @@ export const FREE_FEATURES: Feature[] = [
   { slug: "streak", name: "Streak", blurb: "Comes back tomorrow. Lives in your browser, or on your account.", href: "/streak" },
   { slug: "genres", name: "All genres", blurb: "Open, argue, teach, tell - four ways to be asked the same topic.", href: "/genres" },
   {
+    slug: "tongue-twisters",
+    name: "Tongue twisters",
+    blurb: "Long ones, read aloud off a scroller. Warm up your mouth before you talk.",
+    /* The page, not the tool: Streak and All genres already point at
+       pages, and unlike picture mode this one has a page worth landing
+       on. It is also the link somebody types into a comment reply. */
+    href: "/tongue-twisters",
+  },
+  {
     slug: "image-impromptu",
     name: "Enable Image impromptu",
     blurb: "A photograph instead of a sentence, in every genre. The round is the same.",
@@ -39,6 +48,16 @@ export const PRO_FEATURES: Feature[] = [
        surprises somebody: every other genre they make can be shared. */
     blurb: "Upload your own pictures. A genre with pictures in it stays private.",
     href: "/genres/yours",
+    pro: true,
+  },
+  {
+    slug: "custom-tongue-twisters",
+    name: "Custom tongue twisters",
+    /* Says what is sold rather than what is withheld: reading every
+       built-in passage is free at every difficulty, and what Pro buys is
+       putting your own words on the same scroller. */
+    blurb: "Your own passages on the scroller. A script, a class handout, a twister nobody else has.",
+    href: "/pro/custom-tongue-twisters",
     pro: true,
   },
   {

@@ -1,0 +1,357 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mock: tongue twisters</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..600&family=Plus+Jakarta+Sans:wght@400..700&display=swap" rel="stylesheet"><style>
+:root{color-scheme:light;--surface:#fff;--card:#fff;--card2:oklch(.965 .008 120);--ink:#1c1917;--muted:#57534e;--line:#e7e5e4;--line-strong:#918b87;
+--accent-h:120;--accent-c:.12;--accent-l:.5;--accent-l-strong:.42;--accent:oklch(var(--accent-l) var(--accent-c) var(--accent-h));--accent-strong:oklch(var(--accent-l-strong) var(--accent-c) var(--accent-h));
+--btn:#1c1917;--btn-ink:#fff;--btn-strong:#000;--note:oklch(.93 .13 118);--note-ink:oklch(.32 .06 120);--warn:oklch(.62 .2 30);--poor:oklch(.55 .18 12);
+--sans:"Plus Jakarta Sans",ui-sans-serif,system-ui,sans-serif;--display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;--header-h:60px}
+[data-theme=dark]{color-scheme:dark;--surface:#080808;--card:#161616;--card2:#101010;--ink:#f5f5f4;--muted:#a8a29e;--line:#292524;--line-strong:#6b6560;
+--accent-l:.796;--accent-l-strong:.86;--btn:#f5f5f4;--btn-ink:#111110;--btn-strong:#fff;--note:oklch(.86 .15 120);--note-ink:oklch(.2 .04 120);--warn:oklch(.75 .19 30);--poor:oklch(.78 .14 10)}
+*{box-sizing:border-box}html,body{margin:0}body{background:#3f3d3a;font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased}
+.mockbar{position:sticky;top:0;z-index:50;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:10px 16px;background:#26241f;color:#d6d3d1;font:600 12px/1 var(--sans);letter-spacing:.02em}
+.mockbar b{color:#fff;font-weight:700;margin-right:6px}.mockbar .seg{display:inline-flex;border:1px solid #57534e;border-radius:999px;overflow:hidden}
+.mockbar button{all:unset;cursor:pointer;padding:7px 12px;color:#d6d3d1}.mockbar button.on{background:#f5f5f4;color:#1c1917}
+.frame{margin:18px auto;max-width:1280px;min-height:calc(100vh - 80px);background:var(--surface);color:var(--ink);box-shadow:0 20px 60px rgb(0 0 0/.35);display:flex;flex-direction:column;position:relative;overflow:hidden}
+.phone .frame{max-width:390px;min-height:780px}
+.notes{max-width:1280px;margin:0 auto 40px;background:#fffbea;color:#3b2f0b;border-radius:14px;padding:18px 22px;font-size:14px;line-height:1.55}
+.notes h2{margin:0 0 8px;font:600 15px var(--sans)}.notes h3{margin:16px 0 6px;font:600 14px var(--sans)}.notes ul{margin:0;padding-left:18px}.notes li{margin:5px 0}.notes[hidden]{display:none}
+.notes code{background:#f2e9c8;padding:1px 5px;border-radius:4px;font-size:12.5px}
+.ico{flex:none}
+.topbar{height:var(--header-h);display:flex;padding:10px clamp(14px,4vw,28px);border-bottom:1px solid var(--accent);flex:none}
+.topbar-in{flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:80rem;margin-inline:auto}
+.wordmark{display:inline-flex;align-items:center;gap:8px;font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:-.02em;color:var(--ink);text-decoration:none;font-variation-settings:"wdth" 96}
+.die{width:21px;height:21px;color:var(--accent)}
+.navlink{font-size:14px;font-weight:600;color:var(--muted);text-decoration:none;margin-left:14px}
+.left{display:flex;align-items:center;min-width:0}
+.right{display:flex;align-items:center;gap:6px}
+.pill{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line-strong);background:var(--card2);border-radius:999px;padding:5px 11px 5px 9px;font-size:13.5px;font-weight:600;color:var(--ink);text-decoration:none}
+.pill .ico{color:var(--accent)}.pill b{color:var(--accent);font-weight:700}
+.iconbtn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border:1px solid var(--line-strong);background:var(--card2);color:var(--muted);border-radius:999px}
+.filming .topbar,.filming .foot,.filming .hint{visibility:hidden}
+main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px clamp(16px,4vw,32px);min-height:calc(100dvh - var(--header-h))}
+.phone main{min-height:640px}
+main.page{justify-content:flex-start;text-align:left;align-items:stretch;padding:28px clamp(16px,4vw,32px) 64px;max-width:860px;margin-inline:auto;width:100%}
+/* The reading stage is BOUNDED, not merely tall. min-height alone leaves
+   the height circular - main sizes to the stage, the stage sizes to a
+   1400px passage - and the scroller ends up with nothing to scroll
+   inside, the whole passage simply drawn down the page. A fixed height
+   plus overflow:hidden is what makes it a window. */
+main.bleed{padding:0;justify-content:stretch;height:calc(100dvh - var(--header-h));min-height:0;overflow:hidden}
+.phone main.bleed{height:720px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.q{font-family:var(--display);font-weight:600;letter-spacing:-.03em;font-variation-settings:"wdth" 96;font-size:clamp(2rem,6.5vw,4rem);line-height:1.05;margin:0;text-wrap:balance;color:var(--accent)}
+.btn{font:inherit;font-weight:600;border-radius:999px;border:1px solid transparent;padding:12px 24px;cursor:pointer;line-height:1;display:inline-flex;align-items:center;gap:8px;text-decoration:none}
+.btn-primary{background:var(--btn);color:var(--btn-ink)}.btn-ghost{background:none;color:var(--muted);border-color:var(--line-strong)}
+.btn-xl{font-size:18px;padding:17px 46px}
+.row{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap}
+.row .btn{font-size:17px;padding:16px 28px}
+.reset{display:inline-block;margin-top:22px;font-size:13.5px;font-weight:600;color:var(--muted);text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--line-strong)}
+.hint{font-size:14px;color:var(--muted);margin:26px 0 0;max-width:48ch}
+.label{display:inline-flex;gap:14px;align-items:center;font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.02em}
+.label span{display:inline-flex;align-items:center;gap:6px}.label .ico{color:var(--accent)}
+.chip{display:inline-flex;height:40px;align-items:center;gap:8px;border:1px solid var(--line-strong);background:var(--card2);border-radius:999px;padding:0 14px 0 12px;font-size:14px;font-weight:600;color:var(--ink);text-decoration:none}
+.chip .ico{color:var(--accent)}
+[hidden]{display:none!important}
+
+/* THE PASSAGE SCREEN. The whole thing is readable before it moves, because
+   a creator about to record needs to know what they are committing to and
+   how long the clip will be. */
+.prev{width:100%;max-width:620px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 24px;text-align:left}
+.prev .head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:0 0 12px}
+.prev .head b{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.prev .head .n{font-size:13px;color:var(--muted);font-weight:600}
+.prev p{margin:0;font-size:15.5px;line-height:1.6;color:var(--ink);max-height:8.2em;overflow:hidden;
+  -webkit-mask-image:linear-gradient(#000 68%,transparent);mask-image:linear-gradient(#000 68%,transparent)}
+.speed{margin:24px 0 6px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.speed .lb{font-size:13px;font-weight:600;color:var(--muted)}
+.segs{display:inline-flex;border:1px solid var(--line-strong);border-radius:999px;overflow:hidden}
+.segs span{padding:11px 20px;font-size:14.5px;font-weight:600;color:var(--muted);cursor:pointer;line-height:1;font-variant-numeric:tabular-nums}
+.segs span.on{background:var(--ink);color:var(--surface)}
+.eta{font-size:15px;color:var(--muted);margin:16px 0 26px}
+.eta b{color:var(--ink);font-weight:700}
+
+/* THE SCROLLER. This is the whole feature and the thing that gets filmed:
+   no clock, no chrome, nothing but the words moving. The stage is a
+   portrait column so a screen recording crops to 9:16 without losing a
+   word, and it is masked top and bottom so text arrives and leaves softly
+   rather than being guillotined by the edge. */
+/* min-height:0 or the flex item grows to its content instead of clipping
+   it, and a 1000px passage pushes the stage off the bottom of the page:
+   the scroller would have nothing to scroll inside. */
+.stage{position:relative;flex:1;min-height:0;width:100%;display:flex;justify-content:center;overflow:hidden;
+  -webkit-mask-image:linear-gradient(transparent,#000 18%,#000 82%,transparent);mask-image:linear-gradient(transparent,#000 18%,#000 82%,transparent)}
+/* Big, and only about seven lines in the window at once. Three or four
+   words a line, which is what the reference reels land on and what a
+   mouth already running at 180 a minute can take in without the eye
+   travelling. Twelve lines of smaller type held the same words and read
+   as a wall: the eye had to search for its place every time it came back
+   from the camera, which is the one thing this screen must never cost.
+
+   Sized off the viewport HEIGHT first (9vh), because the thing being held
+   constant is how many lines are in the window, and that is a height
+   question. A width-led clamp bottomed out on a narrow window and put
+   thirteen lines back on the screen, which is the wall again. The 10vw
+   term is only there to stop a tall narrow phone from rendering one word
+   a line. */
+.scroller{width:100%;max-width:640px;padding:0 clamp(18px,4vw,30px)}
+.passage{font-family:var(--display);font-weight:600;letter-spacing:-.022em;font-variation-settings:"wdth" 96;
+  color:var(--accent);font-size:clamp(1.6rem,min(9vh,10vw),4.2rem);line-height:1.62;text-align:center;margin:0;text-wrap:pretty}
+.bar{position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--line)}
+.bar i{display:block;height:100%;width:38%;background:var(--accent)}
+
+/* the lead-in, so somebody who just pressed record can get their face
+   ready before the first word arrives */
+.leadin{font-family:var(--display);font-weight:600;font-variation-settings:"wdth" 96;letter-spacing:-.04em;
+  font-size:clamp(5rem,18vw,11rem);line-height:1;color:var(--accent);margin:0;font-variant-numeric:tabular-nums}
+.leadin-s{font-size:15px;color:var(--muted);margin:18px 0 0}
+
+/* done */
+.done-h{font-family:var(--display);font-weight:600;font-variation-settings:"wdth" 96;letter-spacing:-.035em;font-size:clamp(2.2rem,6vw,3.6rem);line-height:1.05;margin:0 0 10px}
+.done-h b{color:var(--accent);font-weight:600}
+.done-s{font-size:16px;color:var(--muted);margin:0 0 32px;max-width:42ch;line-height:1.5}
+.crossover{margin:34px 0 0;font-size:14px;color:var(--muted);max-width:46ch;line-height:1.55}
+.crossover a{color:var(--accent-strong);font-weight:600;text-underline-offset:4px}
+/* the underline sits on the words only: run under the glyph too and the
+   icon reads as part of the sentence rather than the thing you press */
+.ghostlink{display:inline-flex;align-items:center;gap:7px;margin-top:18px;font-size:14px;font-weight:600;color:var(--muted);text-decoration:none}
+.ghostlink span{text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--line-strong)}
+.ghostlink .ico{color:var(--muted)}
+
+/* the picker sheet */
+.sheet{width:100%;max-width:420px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;text-align:left;box-shadow:0 20px 60px rgb(0 0 0/.14)}
+.sheet h2{font-family:var(--display);font-weight:600;font-variation-settings:"wdth" 96;letter-spacing:-.03em;font-size:21px;margin:4px 4px 10px}
+.grow{display:flex;width:100%;align-items:center;gap:12px;border-radius:10px;padding:10px 12px;font-size:15px;font-weight:600;color:var(--ink);text-decoration:none}
+.grow:hover{background:var(--card2)}.grow .ico{color:var(--accent)}
+.grow .tick{margin-left:auto;color:var(--accent)}
+.grow.on{background:var(--card2)}
+.group{margin:8px 0;border-block:1px solid var(--line);padding:8px 0}
+.group .gh{display:flex;justify-content:space-between;align-items:baseline;padding:0 12px 2px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.group .gh a{font-size:11.5px;letter-spacing:.02em;text-transform:none;color:var(--muted);text-decoration:none;font-weight:600}
+.new{color:var(--muted)}
+
+/* the crawlable page */
+.crumb{font-size:13px;font-weight:600;color:var(--muted);margin:0 0 14px}
+.crumb a{color:var(--muted);text-decoration:none}
+main.page h1{display:flex;align-items:center;gap:12px;font-family:var(--display);font-weight:600;font-variation-settings:"wdth" 96;letter-spacing:-.03em;font-size:clamp(2rem,5vw,3rem);line-height:1.05;margin:0}
+main.page h1 .ico{color:var(--accent);flex:none}
+.lede{margin:14px 0 0;max-width:62ch;font-size:17px;color:var(--muted);line-height:1.55}
+.page-cta{margin:22px 0 0}
+main.page h2{font-size:15px;font-weight:600;margin:36px 0 4px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.tw{border-top:1px solid var(--line);padding:18px 0 4px}
+.tw .meta{font-size:12.5px;font-weight:600;color:var(--muted);margin:0 0 8px;letter-spacing:.02em}
+.tw p{margin:0;font-size:16.5px;line-height:1.62}
+.more{margin:40px 0 8px;font-size:13px;font-weight:600;color:var(--muted)}
+.chips-row{display:flex;flex-wrap:wrap;gap:8px}
+.foot{border-top:1px solid var(--line);padding:18px clamp(16px,4vw,32px);font-size:13px;color:var(--muted);flex:none}
+</style></head><body>
+<div class="mockbar"><b>Mock</b><span class="seg"><button data-tab="idle" class="on">Idle</button><button data-tab="passage">Passage</button><button data-tab="ready">Ready</button><button data-tab="reading">Reading</button><button data-tab="done">Done</button><button data-tab="picker">Picker</button><button data-tab="page">The page</button></span>
+<span class="seg"><button data-theme-set="light" class="on">Light</button><button data-theme-set="dark">Dark</button></span>
+<span class="seg"><button data-width="desktop" class="on">Desktop</button><button data-width="phone">Phone</button></span>
+<span class="seg"><button data-notes class="on">Notes</button></span></div>
+
+<div class="notes"><h2>Tongue twisters: proposal, not yet decided</h2>
+<p style="margin:0 0 8px">Not v0 parity - v0 had no such thing - so it needs its own case, logged in <code>docs/DECISIONS.md</code> once the owner picks a shape. Nothing here is built. <b>This is the second drawing.</b> The first drew short twisters against the shipped ring clock and was wrong on both counts: the reference reels are long passages on a teleprompter, and the scroll is the timer.</p>
+
+<h3>The scroll is the timer, so there is no clock</h3>
+<ul>
+<li><b>The text moves upward at a speed you pick and you keep up.</b> That is the entire mechanic. Falling behind is the failure and you can hear it happen, so nothing needs to measure it - which is also why this costs nothing to run: no microphone, no transcript, no model, nothing against the allowance in <code>PRICING.md</code> &sect;6.</li>
+<li><b>Speed replaces difficulty.</b> The first drawing had three difficulty pips and an open question about where the value came from; a speed control answers it better, because the same passage is easy at 120 and brutal at 220, and the person picks. One control, no column, nothing to author.</li>
+<li><b>The ring would have been wrong here.</b> A ring measures a fixed length you are trying to fill. This is a fixed text you are trying to keep up with, and the honest progress indicator is the words themselves, with a hairline at the foot of the stage for how much is left.</li>
+</ul>
+
+<h3>Easy and hard is a label, and both are free (owner's call, 2026-09-12)</h3>
+<ul>
+<li><b>Passage difficulty is real and separate from speed.</b> The long-word pile-up at 150 is far harder than Peter Piper at 150, because the sounds differ rather than the pace. So a first-timer needs an obvious way in, and the page leads with Easy.</li>
+<li><b>Paywalling hard was considered and dropped, on mechanics rather than principle.</b> Speed already is the difficulty dial and it is free, so a free visitor routes around a content gate by running an easy passage at 220. And <code>SPEC.md</code> &sect;3 pins with a test that every row's text is on its genre page, so the hard passages are readable free there whatever the gate does; blocking the play button on text somebody is already looking at reads as petty rather than premium. The traffic is worth more than the gate, and the hard passages are the ones the reels are made of.</li>
+<li>What is sold instead is the rule already written in <code>PRICING.md</code> &sect;6, <b>creation not access</b>: your own passages on the scroller, which is what a coach, a teacher or one of these creators actually wants, and which is already built as an owned genre with <code>mode=read</code>.</li>
+</ul>
+
+<h3>The bank is passages, not one-liners</h3>
+<ul>
+<li>"Peter Piper picked a peck" is four seconds and makes nothing. The reference reels run 40 seconds and up, so a row here is <b>105 to 120 words</b>: 53 to 58 seconds at 120, 43 to 47 at 150, 36 to 39 at 180, and about 30 at 220. Five are written and drawn on the page tab.</li>
+<li>They are written, not collected: each is built around one sound family (the s cluster, th, p and b), one word chain, or the long-word pile-up, which is what makes them hard in a way that is fun rather than arbitrary.</li>
+<li><b>Weight is the one real cost and it needs a call.</b> Sixty passages is about 45KB of raw JSON, and the whole bank currently ships inline with home - the 2026-09-09 decision measured 34KB of raw JSON as worth removing. <b>Recommended:</b> a read-mode genre is fetched when it is picked rather than shipped with every home visit. The instant-spin promise is about the topic reel, and somebody who has just chosen to read a passage for a minute will not notice 200ms.</li>
+</ul>
+
+<h3>It is built to be screen-recorded</h3>
+<ul>
+<li>This is what the reference creators actually do: record the screen, record the webcam, stack the two. So the stage is a <b>portrait column</b> that survives a crop to 9:16 without losing a word, and the chrome hides itself exactly as camera mode already does during a round (<code>SPEC.md</code> &sect;4).</li>
+<li><b>The lead-in is not decoration.</b> Three, two, one before the first word arrives is what lets somebody press record, get their face ready and start clean. Without it the first line of every recording is somebody reaching for the mouse.</li>
+<li><b>About seven lines in the window, not thirteen</b> (owner's call, 2026-09-12: the first pass was cluttered). The type is sized off the viewport height rather than its width, because what is being held constant is how many lines are on screen and that is a height question; a width-led clamp bottomed out on a narrow window and put the wall of text back. Measured: 67px and 6.8 lines on a 1280x800 laptop, 37px and 12 lines on a 375px phone. The phone keeps more lines on purpose, because three words a line beats one and the phone is the surface somebody practises on, not the one they film from.</li>
+<li>The mask at the top and bottom of the stage is there for the same reason: text sliced by a hard edge looks like a bug on camera, and a soft entry and exit looks like an edit somebody paid for.</li>
+<li><b>Open call:</b> whether the stage is full-bleed as drawn, or draws an explicit 9:16 frame so the recording needs no cropping at all. The frame is better for the person recording and worse for the person just practising on a laptop, which is most people.</li>
+</ul>
+
+<h3>The done screen, and what it can honestly claim</h3>
+<ul>
+<li>Nothing was recorded, so the site does not know whether they kept up, and it does not pretend to. It says what it does know: the passage, the speed, the words. The person supplies the verdict, which they have already heard.</li>
+<li><b>Again, faster</b> is the primary button and it bumps the speed one notch. That is the loop, and it is the reverse of the round's done screen where Spin leads: a warm-up is repetition, not variety.</li>
+<li><b>"Challenge your friend"</b> with a copy glyph, not "Copy a link so somebody can try this one" (owner's call, 2026-09-12). The old line described the mechanism; this one says why anybody would press it, and the glyph carries the mechanism instead, which is what a glyph is for. The link is the passage and its speed, so a dare here is "I did this at 180, you try" - the stateless shape already drawn in <code>docs/mocks/challenge.html</code>, and the first surface that would use it.</li>
+<li>The last line is the conversion path, and it says a warm-up does not build your streak.</li>
+</ul>
+
+<h3>What it costs to build</h3>
+<ul>
+<li>One nullable column, <code>Genre.mode</code>, holding <code>speak</code> (every genre today) or <code>read</code>. The seeder, the picker, the genre page, <code>/?topic=</code> and the run POST are untouched.</li>
+<li>New: the scroller itself, which is one transform on a timer and belongs in the pure TypeScript engine beside the clock, plus the speed preference and the passage bank.</li>
+<li>Not new: camera mode, the spin, the account plumbing, the streak plumbing. There is no second round, only a second mode of the one that exists.</li>
+</ul>
+
+<h3>The streak, and the picker</h3>
+<ul>
+<li>Drawn as <b>a warm-up does not make your day</b>. If a 45-second read counts the same as a minute of unscripted speaking, the streak stops meaning "I practised speaking", which is the failure where a new feature eats the product. The name is doing that work: a warm-up is by definition not the workout.</li>
+<li>A <b>second labelled group</b> in the picker, exactly as <code>occasions.html</code> recommended and exactly how Yours already works, so the ten stay a flat unheaded list.</li>
+</ul>
+
+<h3>It gets a card on /features (owner's call, 2026-09-12)</h3>
+<ul>
+<li>The 2026-09-09 decision built <code>/features</code> exactly for this: a capability a stranger cannot discover by spinning, because it lives behind the genre picker. One card in the free group, <code>FREE_FEATURES</code> in <code>components/features/feature-list.ts</code>, with a <code>mic</code> glyph in <code>FEATURE_ICONS</code>.</li>
+<li><b>It links to <code>/tongue-twisters</code>, not into the tool.</b> Image impromptu links to <code>/?pictures=1</code> because that mode has no page to land on; this one has the better landing, and Streak and All genres already point at pages rather than at the stage.</li>
+<li>The card is named <b>Tongue twisters</b> rather than Warm-ups, because it should name the thing that exists. It becomes Warm-ups when there is a second one.</li>
+</ul>
+
+<h3>The page is the growth asset</h3>
+<ul>
+<li><code>/tongue-twisters</code>, not <code>/genre/tongue-twisters</code>: the URL has to survive being typed into a comment reply under somebody else's video, which is visibly where the demand is.</li>
+<li>Every passage in full as plain text, which is what makes a page rank, and it is long-form by nature rather than 200 fragments. One button at the top opens the tool.</li>
+<li>Free, no account. The Pro shape is the one already written in <code>PRICING.md</code> &sect;6, <b>creation, not access</b>: your own passages are an owned genre with <code>mode=read</code>, shared by the link that already exists. This is the one people will pay for, because a coach, a teacher or a creator wants their own script on the scroller.</li>
+</ul>
+</div>
+
+<div class="frame">
+<header class="topbar"><div class="topbar-in">
+<div class="left"><a class="wordmark" href="#"><svg class="die" viewBox="0 0 32 32" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4.6 26.4 10.6 26.4 21.4 16 27.4 5.6 21.4 5.6 10.6z"/><path d="M5.6 10.6 16 16 26.4 10.6M16 16v11.4"/></g><g fill="currentColor"><circle cx="16" cy="10.45" r="1.5"/><circle cx="8.9" cy="15.55" r="1.5"/><circle cx="12.71" cy="22.15" r="1.5"/><circle cx="21.2" cy="18.85" r="1.5"/><circle cx="23.11" cy="15.55" r="1.5"/><circle cx="19.29" cy="22.15" r="1.5"/></g></svg><span>yapholic</span></a><a class="navlink" href="#">Features</a></div>
+<div class="right"><a class="pill" href="#" title="7 day streak" aria-label="7 day streak"><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"/></svg><b>7</b></a><button class="iconbtn" aria-label="Account"><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button></div></div></header>
+
+<!-- 1. idle. The chip and the button are where they always are; only the question changes. -->
+<section data-phase="idle"><main>
+<h1 class="sr">Tongue twisters to read out loud, on a scrolling teleprompter</h1>
+<div style="margin:0 0 24px;display:flex;gap:8px;justify-content:center;align-items:center">
+<button class="chip"><svg class="ico" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19v3"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><rect x="9" y="2" width="6" height="13" rx="3"/></svg>Tongue twisters<svg class="ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--muted);margin-left:-2px"><path d="m6 9 6 6 6-6"/></svg></button>
+<button class="iconbtn" aria-label="Settings"><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+<p class="q">Can you keep up?</p>
+<div style="margin-top:32px"><button class="btn btn-primary btn-xl">Spin</button></div>
+<p class="hint">The words scroll. You read them out loud. No microphone, no account.</p>
+</main></section>
+
+<!-- 2. the passage, before it moves. A creator needs to know what they are committing to and how long the clip runs. -->
+<section data-phase="passage" hidden><main>
+<div class="prev">
+<p class="head"><b>Tongue twisters</b><span class="n">Hard &middot; 116 words</span></p>
+<p>Six strict speech specialists structured sixty sophisticated speaking scripts, subtly switching stressed syllables so that steady students stumbled slightly. Such scripts seemed simple, yet several speakers stalled, sighed, and started again. Should serious speakers surrender, or should they simply slow, steady themselves, and speak surely? Sensible speakers select shorter sections, shape each sound separately, and stay settled. Some shout. Some whisper. Some swallow whole syllables and hope nobody noticed.</p>
+</div>
+<div class="speed">
+<span class="lb">Words a minute</span>
+<div class="segs"><span>120</span><span class="on">150</span><span>180</span><span>220</span></div>
+</div>
+<p class="eta">About <b>46 seconds</b> at this speed.</p>
+<div class="row">
+<button class="btn btn-primary btn-xl">Start reading</button>
+<button class="btn btn-ghost"><svg class="ico" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 14 4 4-4 4"/><path d="m18 2 4 4-4 4"/><path d="M2 18h1.973a4 4 0 0 0 3.3-1.7l5.454-8.6a4 4 0 0 1 3.3-1.7H22"/><path d="M2 6h1.972a4 4 0 0 1 3.6 2.2"/><path d="M22 18h-6.041a4 4 0 0 1-3.3-1.8l-.359-.45"/></svg>Another one</button>
+</div>
+<a class="reset" href="#">Reset</a>
+</main></section>
+
+<!-- 3. the lead-in. Press record, get your face ready, start clean. -->
+<section data-phase="ready" hidden><main>
+<p class="leadin">3</p>
+<p class="leadin-s">Reading at 150 words a minute</p>
+</main></section>
+
+<!-- 4. the scroller. The whole surface is the words; this is what gets recorded. -->
+<section data-phase="reading" hidden><main class="bleed">
+<div class="stage">
+<div class="scroller">
+<p class="passage" style="transform:translateY(-3.1em)">Six strict speech specialists structured sixty sophisticated speaking scripts, subtly switching stressed syllables so that steady students stumbled slightly. Such scripts seemed simple, yet several speakers stalled, sighed, and started again. Should serious speakers surrender, or should they simply slow, steady themselves, and speak surely? Sensible speakers select shorter sections, shape each sound separately, and stay settled. Some shout. Some whisper. Some swallow whole syllables and hope nobody noticed. The sixth script is the shortest, the sixteenth is the sharpest, and the sixtieth has stopped sixty-six successive specialists since somebody senselessly submitted it. So say it softly, say it swiftly, say it seven successive times, and see whether steady speech survives sixty seconds of sustained strain.</p>
+</div>
+<div class="bar"><i></i></div>
+</div>
+</main></section>
+
+<!-- 5. done. It says only what it can honestly know. -->
+<section data-phase="done" hidden><main>
+<p class="done-h">116 words at <b>150</b> a minute.</p>
+<p class="done-s">Nothing was recorded, so only you know whether you kept up. Your fastest clean run on this one was 150.</p>
+<div class="row">
+<button class="btn btn-primary btn-xl">Again, at 180</button>
+<button class="btn btn-ghost"><svg class="ico" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 14 4 4-4 4"/><path d="m18 2 4 4-4 4"/><path d="M2 18h1.973a4 4 0 0 0 3.3-1.7l5.454-8.6a4 4 0 0 1 3.3-1.7H22"/><path d="M2 6h1.972a4 4 0 0 1 3.6 2.2"/><path d="M22 18h-6.041a4 4 0 0 1-3.3-1.8l-.359-.45"/></svg>Another passage</button>
+</div>
+<a class="ghostlink" href="#"><span>Challenge your friend</span><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg></a>
+<p class="crossover">A warm-up does not build your streak. <a href="#">Spin a real topic</a> and talk for a minute to keep day 7 alive.</p>
+</main></section>
+
+<!-- 6. the picker, with the second labelled group -->
+<section data-phase="picker" hidden><main>
+<div class="sheet">
+<h2>Pick a genre</h2>
+<a class="grow" href="#"><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>General</a>
+<a class="grow" href="#"><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>Relationships</a>
+<a class="grow" href="#"><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg>Career and work</a>
+<a class="grow" href="#"><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>Money and business</a>
+<a class="grow" href="#"><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2M20 14h2M15 13v2M9 13v2"/></svg>Tech and AI</a>
+<a class="grow" href="#"><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18h8M3 22h18M14 22a7 7 0 1 0 0-14h-1"/><path d="M9 14h2M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z"/><path d="M12 6V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3"/></svg>Science and climate</a>
+<a class="grow" href="#"><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 18V5M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4"/><circle cx="9" cy="9" r="5"/><circle cx="15" cy="9" r="5"/></svg>Health and mind</a>
+<a class="grow" href="#"><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1M2 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1M7 21h10M12 3v18M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>Philosophy and ethics</a>
+<a class="grow" href="#"><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Z"/><path d="m6.2 5.3 3.1 3.9M12.4 3.4l3.1 4M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg>Culture</a>
+<a class="grow" href="#"><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 12h9a6 6 0 0 0 0-12H6a6 6 0 0 0 0 12Z"/><circle cx="17" cy="18" r="3"/><path d="M2 12v6a3 3 0 0 0 3 3h9"/></svg>Deep research</a>
+
+<div class="group">
+<p class="gh"><span>Warm-ups</span></p>
+<a class="grow on" href="#"><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19v3"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><rect x="9" y="2" width="6" height="13" rx="3"/></svg>Tongue twisters<svg class="ico tick" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></a>
+</div>
+
+<div class="group">
+<p class="gh"><span>Yours</span><a href="#">Edit</a></p>
+<a class="grow" href="#"><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg>Standup practice</a>
+<a class="grow new" href="#"><svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--muted)"><path d="M5 12h14M12 5v14"/></svg>Make your own</a>
+</div>
+</div>
+<p class="hint">The ten stay a flat unheaded list. Warm-ups is the second tenant of the shelf Yours already built.</p>
+</main></section>
+
+<!-- 7. the crawlable page: every passage in full, which is what ranks -->
+<section data-phase="page" hidden><main class="page">
+<p class="crumb"><a href="#">All genres</a> / Tongue twisters</p>
+<h1><svg class="ico" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19v3"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><rect x="9" y="2" width="6" height="13" rx="3"/></svg>Tongue twisters</h1>
+<p class="lede">Designed to challenge your pronunciation and articulation skills.</p>
+<div class="page-cta"><a class="btn btn-primary btn-xl" href="#">Read these on a scroller</a></div>
+
+<h2>Easy</h2>
+
+<div class="tw"><p class="meta">117 words &middot; one word, repeated</p>
+<p>If a cyclist cycles another cyclist cycle, does the cycling cyclist cycle the borrowed cycle better than the cyclist who bought the cycle? Or does the better cycle make the cycling cyclist cycle so cleverly that every cyclist cycling nearby wants the cycle the first cyclist cycled? And if the cyclist who owns the cycle cycles the cycle the other cyclist cycled, does either cyclist cycle the cycle the way the cycle was cycled before either cyclist cycled it at all? The cyclists cannot say. One cyclist claims the cycle cycles itself. The other cyclist, who cycles more, says every cycle cycles differently for every cyclist who cycles it. Ask a third cyclist and the cycle continues.</p></div>
+
+<div class="tw"><p class="meta">109 words &middot; p and b</p>
+<p>Peter Piper picked a peck of pickled peppers, but the peck of pickled peppers Peter Piper picked was packed beside a proper copper coffee pot belonging to a particularly pompous producer. If a peck of pickled peppers popped past a proper copper coffee pot, and the pompous producer picked the peppers up, would the producer put the peppers back properly, or would the pickled peppers pass the copper pot permanently? Perhaps the peppers prefer the pot. Perhaps the pot prefers the peppers. The producer, predictably, prefers neither, and proposes packing both parcels apart. Practise it plainly, practise it promptly, practise it repeatedly, and probably, plausibly, painlessly, you will pass.</p></div>
+
+<h2>Hard</h2>
+
+<div class="tw"><p class="meta">116 words &middot; the s sounds</p>
+<p>Six strict speech specialists structured sixty sophisticated speaking scripts, subtly switching stressed syllables so that steady students stumbled slightly. Such scripts seemed simple, yet several speakers stalled, sighed, and started again. Should serious speakers surrender, or should they simply slow, steady themselves, and speak surely? Sensible speakers select shorter sections, shape each sound separately, and stay settled. Some shout. Some whisper. Some swallow whole syllables and hope nobody noticed. The sixth script is the shortest, the sixteenth is the sharpest, and the sixtieth has stopped sixty-six successive specialists since somebody senselessly submitted it. So say it softly, say it swiftly, say it seven successive times, and see whether steady speech survives sixty seconds of sustained strain.</p></div>
+
+<div class="tw"><p class="meta">113 words &middot; the th sounds</p>
+<p>The thirty-three thoughtful thieves thought throughout Thursday that they had thoroughly thwarted the thirsty thatcher thin brother. Those three, though, thought otherwise: they threw three thousand thimbles through the thickest thatch, then thanked them for it. This, that, these, those, there, their, they are. Think through them. Then think them through again. Thirty thirsty thinkers threw thirteen thick things through thin threads on Thursday, and by Thursday the thirtieth they had thought themselves thoroughly through. The truth is that the teeth are doing the thinking here and the tongue is merely following, so the moment the tongue thinks first, the whole thing falls through, and the thinker is left with nothing but breath.</p></div>
+
+<div class="tw"><p class="meta">107 words &middot; the long ones</p>
+<p>Antidisestablishmentarianism sounds ambitious until incomprehensibility interrupts, and then pneumonoultramicroscopicsilicovolcanoconiosis arrives uninvited beside floccinaucinihilipilification. Most speakers pause, panic, and lose their place entirely. Try honorificabilitudinitatibus without hesitating, then sesquipedalianism, then counterrevolutionaries, then uncharacteristically, then incontrovertibility, and finally supercalifragilisticexpialidocious, which everybody believes they can already say. Say each one cleanly. Say each one slowly. Then say every one of them again, faster, without stopping, without stumbling, and without pretending that the short words in between were ever the difficult part. The difficult part is that your mouth has to plan four syllables ahead while your eyes are already three words behind, and nobody has ever won that argument gracefully.</p></div>
+
+<p class="more">More warm-ups</p>
+<nav class="chips-row" aria-label="More warm-ups">
+<a class="chip" href="#"><svg class="ico" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>One breath</a>
+<a class="chip" href="#"><svg class="ico" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>All ten genres</a>
+</nav>
+</main>
+<footer class="foot">No account needed. Your streak lives in this browser.</footer>
+</section>
+</div>
+<script>
+const root=document.documentElement;
+function show(id){document.querySelectorAll('[data-phase]').forEach(s=>s.hidden=s.dataset.phase!==id);
+document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('on',b.dataset.tab===id));
+document.querySelector('.frame').classList.toggle('filming',id==='reading'||id==='ready');}
+function theme(t){root.dataset.theme=t;document.querySelectorAll('[data-theme-set]').forEach(b=>b.classList.toggle('on',b.dataset.themeSet===t));}
+function width(w){document.body.classList.toggle('phone',w==='phone');document.querySelectorAll('[data-width]').forEach(b=>b.classList.toggle('on',b.dataset.width===w));}
+function notes(){const n=document.querySelector('.notes');n.hidden=!n.hidden;document.querySelector('[data-notes]').classList.toggle('on',!n.hidden);}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-tab],[data-theme-set],[data-width],[data-notes]');if(!t)return;
+if(t.dataset.tab)show(t.dataset.tab);if(t.dataset.themeSet)theme(t.dataset.themeSet);if(t.dataset.width)width(t.dataset.width);if(t.hasAttribute('data-notes'))notes();});
+theme(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+</script>
+</body></html>

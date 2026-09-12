@@ -2,7 +2,7 @@
 
 import { CheckIcon, ChevronRightIcon, EditIcon, GenreIcon, PlusIcon } from "@/components/site/icons";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
-import type { Bank } from "@/lib/bank";
+import { featurePath, isRead, type Bank } from "@/lib/bank";
 import { ownPath } from "@/lib/genres";
 import { cn } from "@/lib/utils";
 
@@ -40,7 +40,8 @@ export function GenreSheet({
   ownCap?: number;
   onChoose: (slug: string) => void;
 }) {
-  const builtIn = bank.genres.filter((genre) => !genre.own);
+  const builtIn = bank.genres.filter((genre) => !genre.own && !isRead(genre));
+  const warmUps = bank.genres.filter(isRead);
   const own = bank.genres.filter((genre) => genre.own);
   const row =
     "flex w-full cursor-pointer items-center gap-3 rounded-[10px] px-3 py-2.5 text-left text-[15px] font-semibold text-ink no-underline transition-colors hover:bg-card2";
@@ -99,6 +100,28 @@ export function GenreSheet({
     </div>
   );
 
+  /* Warm-ups are links, not options, and they carry a chevron for it: a
+     genre is something you pick and stay here for, a warm-up is a page of
+     its own that you leave for. The picker already draws that difference
+     for the rows that manage your own genres, and this is the same shape
+     for the same reason - one row must not wear two meanings.
+
+     Listed here rather than only on /features because this sheet is where
+     somebody is already asking "what else can I practise", which is the
+     moment the feature answers. */
+  const warm = warmUps.length > 0 && (
+    <div className="my-2 border-y border-line py-2">
+      <p className="px-3 pb-1 text-xs font-semibold tracking-[0.08em] text-muted uppercase">Warm-ups</p>
+      {warmUps.map((genre) => (
+        <a key={genre.slug} href={featurePath(genre.slug)} className={row}>
+          <GenreIcon icon={genre.icon} className="text-accent" />
+          <span className="flex-1">{genre.name}</span>
+          <ChevronRightIcon size={15} className="text-muted" />
+        </a>
+      ))}
+    </div>
+  );
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent title="Genre" description="What you want to talk about.">
@@ -108,6 +131,7 @@ export function GenreSheet({
             <Option key={genre.slug} genre={genre} selected={genre.slug === current} onChoose={onChoose} className={row} />
           ))}
         </div>
+        {warm}
         {!isPro && yours}
       </SheetContent>
     </Sheet>

@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { GenrePage } from "@/components/genres/genre-page";
-import { fetchBank, genreBySlug, topicsOf } from "@/lib/bank";
+import { fetchBank } from "@/lib/api";
+import { genreBySlug, topicsOf } from "@/lib/bank";
 import { pageMetadata } from "@/lib/metadata";
 import { itemList, jsonLd } from "@/lib/structured-data";
 
