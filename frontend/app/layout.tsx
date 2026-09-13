@@ -37,7 +37,7 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const [user, country, jar, practice] = await Promise.all([currentUser(), visitorCountry(), cookies(), streakSummary()]);
-  const analytics = analyticsConfig();
+  const analytics = analyticsConfig(user);
   const crispWebsiteId = process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID ?? "";
 
   return (
@@ -63,7 +63,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {/* The address reaches the browser only when there is an account
             and analytics are on at all: an anonymous visitor stays
             anonymous, which is the promise /privacy makes to the people
-            who never sign up. */}
+            who never sign up. Nothing loads at all for an operator, so
+            the owner looking around the live site is not a visitor in the
+            numbers; signing in mid-tab detaches the sink but leaves
+            PostHog's own autocapture running until the next page load,
+            which is the one seam here and not worth an opt-out flag in
+            browser storage to close. */}
         {analytics && (
           <Analytics
             token={analytics.token}

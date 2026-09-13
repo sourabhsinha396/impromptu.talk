@@ -11,8 +11,19 @@ export type AnalyticsConfig = { token: string; host: string };
     than the build mode, so a production build run on a laptop to measure
     weight is not traffic, and flipping one line is how a developer watches
     their own events arrive. Resolved on the server and handed to the
-    browser as props. */
-export function analyticsConfig(env: Record<string, string | undefined> = process.env): AnalyticsConfig | null {
+    browser as props.
+
+    Off as well for an operator's own browser: the owner signs in on the
+    live site to look around, and those visits are not a visitor's. It
+    reads `is_superuser`, the flag the chrome already carries, and nothing
+    on the site raises that flag, so only the admin can put a browser in
+    this state. The decision is per request rather than per deploy because
+    it is the person, not the build, that makes the difference. */
+export function analyticsConfig(
+  user: { is_superuser: boolean } | null,
+  env: Record<string, string | undefined> = process.env,
+): AnalyticsConfig | null {
+  if (user?.is_superuser) return null;
   const token = env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN;
   if (env.DEBUG_ENV !== "production" || !token) return null;
   return { token, host: env.NEXT_PUBLIC_POSTHOG_HOST || POSTHOG_HOST };
