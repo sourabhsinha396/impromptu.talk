@@ -345,7 +345,7 @@ export function ReportInvitation({ onYes, onNo }: { onYes: () => void; onNo: () 
           twice. So the refusal is a link, the way Reset already is. */}
       <div className="mt-3.5 flex flex-col items-center gap-2.5">
         <Button size="sm" variant="ghost" onClick={onYes}>
-          Turn on feedback
+          Turn on Microphone
         </Button>
         <button
           type="button"
